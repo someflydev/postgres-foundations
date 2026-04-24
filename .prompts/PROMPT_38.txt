@@ -1,0 +1,166 @@
+PROMPT 38 — Extension-oriented capstones
+========================================
+
+## Context
+
+`postgres-foundations`. The core curriculum has four capstones
+(PROMPTS 25/26). The extension track now gets its own capstones,
+each one a legitimate cross-extension system challenge. Doctrine:
+every extension capstone must require a principled extension-posture
+writeup ("now / later / avoid for now"), with specific triggers for
+progression.
+
+## Prior work (verify before starting)
+
+- Extension track E1–E7 + ltree/pg_partman/PgBouncer authored
+  (PROMPTS 34–37).
+- Capstone schema supports composed rubrics and extension-posture
+  dimension (PROMPT_25/26).
+
+## Task
+
+Author four extension-oriented capstones under `capstones/` (IDs 05–08)
+following the same structure as capstones 01–04.
+
+### 1. Capstone 05: Geo-enabled logistics platform
+
+Directory `capstones/05-geo-logistics-platform/`.
+
+- Scenario: a regional on-demand logistics platform. 1–2k couriers,
+  10–20k daily deliveries, dispatch algorithm is off-platform; this
+  system owns the data: couriers, vehicles, deliveries, service
+  zones (polygons), historical GPS breadcrumbs, SLA metrics.
+- Constraints:
+  - PostGIS required.
+  - pg_partman-managed partitioning on breadcrumbs (~100M
+    rows/year) — learner must justify the partitioning scheme.
+  - Full-text search on delivery notes (core FTS).
+  - Spatial indexing (GiST) on zones + breadcrumbs.
+  - pg_stat_statements-based triage in the operational runbook.
+  - No pgvector (the capstone explicitly requires the learner to
+    argue why semantic retrieval is not needed).
+- Deliverables: schema, indexes, partitioning, critical queries
+  (zone-bounded top-N couriers, SLA reporting, breadcrumb
+  time-windowed replay), operational runbook, writeup.
+
+### 2. Capstone 06: Internal AI knowledge platform
+
+Directory `capstones/06-ai-knowledge-platform/`.
+
+- Scenario: an internal knowledge-search system for a 500-person
+  engineering organization. 80k documents, weekly growth. Use
+  cases: keyword search with typo tolerance, semantic retrieval
+  for "find docs conceptually related to …", hybrid search for
+  everything in between.
+- Constraints:
+  - Core FTS + pg_trgm + pgvector.
+  - Hybrid retrieval is required; the writeup must describe the
+    ranking fusion scheme (e.g. RRF).
+  - No TimescaleDB, no Citus.
+  - Managed-service portability: must run on a plain AWS RDS +
+    pgvector (assume available) or a cloud provider of the
+    learner's choosing.
+- Deliverables: schema for documents + embeddings, indexes
+  (GIN-FTS, GIN-trigram, HNSW), critical queries for lexical,
+  fuzzy, semantic, and hybrid retrieval; operational runbook
+  including reindex posture when embedding model changes;
+  writeup with extension-posture section.
+
+### 3. Capstone 07: Observability / event analytics system
+
+Directory `capstones/07-observability-event-analytics/`.
+
+- Scenario: an internal observability stack for a fleet of 500
+  services emitting 300M events/day, 30-day hot retention, 6-month
+  cold retention. Support engineers need slow-query-on-events
+  dashboards and ad-hoc incident backtrace queries.
+- Constraints:
+  - Core partitioning + BRIN + pg_partman for operational
+    automation.
+  - The learner must explicitly argue **whether** TimescaleDB is
+    justified. The writeup should present the decision in the
+    decision-engine idiom (now / later / avoid).
+  - pg_stat_statements operational posture.
+  - Logical replication to an analytics replica (optional but
+    discussed).
+- Deliverables: partitioning + retention + downsampling strategy,
+  index plan, critical queries (recent events by service,
+  percentiles over a time window, cross-service incident trace),
+  operational runbook, writeup.
+
+### 4. Capstone 08: Modernization bridge (extension-oriented)
+
+Directory `capstones/08-modernization-bridge-extensions/`.
+
+- Scenario: expands capstone 04 to include extension decisions.
+  The new service needs search (FTS + pg_trgm), needs to talk to
+  the legacy DB via FDW, and needs to provide aggregations to a
+  BI tool through a logical replica. A team member has proposed
+  Citus; the learner must either adopt or reject with a written
+  argument.
+- Constraints:
+  - postgres_fdw deep usage (pushdown, async append).
+  - pg_stat_statements on both sides.
+  - Logical replication configuration to the BI replica.
+  - Citus explicit decision in the writeup (the capstone's
+    judgment challenge).
+- Deliverables: new-service schema, FDW wiring, logical
+  replication configuration, materialized views, critical
+  queries, operational runbook, writeup.
+
+### 5. Starter and reference content
+
+Every capstone 05–08 includes:
+
+- `starter/` with a minimal skeleton schema and a
+  `README.md` that points the learner at the domain packs to
+  load.
+- `reference/` with a complete solution: schema, indexes, RLS
+  (where applicable), critical queries, operational runbook,
+  writeup (2500–3500 words).
+- `rubric.json` — composed rubric referencing
+  `extension-posture.rubric.json` with at least 20% weight.
+
+### 6. Review engine wiring
+
+Update the review engine's signal catalog to include:
+
+- `postgis_without_justification` (fires if a capstone enables
+  PostGIS but the writeup has fewer than 200 words in the
+  extension-posture section).
+- `pgvector_without_lexical_baseline` (fires if pgvector is
+  enabled without an explicit comparison to pg_trgm / FTS).
+- `citus_without_distribution_key_justification`.
+- `timescale_without_partition_comparison`.
+
+These signals feed the `extension-posture` rubric dimension and
+produce actionable findings.
+
+### 7. Docs
+
+- Update `capstones/README.md` with the four new capstones.
+- `docs/capstone-posture-signals.md` — documents the new review
+  signals and how reviewers interpret them.
+
+### 8. Tests
+
+- `tests/test_capstones_extension.py` — each capstone validates;
+  rubric weights sum to 1.0; reference solutions apply cleanly in
+  their respective lab profiles.
+- `tests/test_extension_posture_signals.py` — deliberately
+  deficient writeups produce the expected signals.
+
+## Verification
+
+1. For each capstone, apply the reference schema against the
+   appropriate lab profile; run the critical queries; all pass.
+2. `uv run pgfound capstone evaluate 05-geo-logistics-platform
+   --path capstones/05-geo-logistics-platform/reference --full`
+   scores near 100% and produces the LLM prompt bundle.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_39 begins the Decision-Engine subsystem with architecture and
+intake schema.

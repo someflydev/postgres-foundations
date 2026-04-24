@@ -1,0 +1,242 @@
+PROMPT 39 — Decision-engine architecture and intake schema
+==========================================================
+
+## Context
+
+`postgres-foundations`. The first 38 prompts established the training
+platform, lab, review engine, interview simulator, admin track, and
+extension track. This prompt starts the **decision-engine subsystem**.
+Doctrine from `docs/doctrine.md` and ADR-0005:
+
+- The engine is **explainable**. Every recommendation has "why now",
+  "why not yet", and "what triggers the next stage".
+- Core first; extensions only against real workload signals.
+- The engine consumes JSON catalogs (industries, data_shapes,
+  workload_patterns, core_features, extensions, index_patterns,
+  topology_patterns, anti_patterns) and rules, and produces
+  machine-readable + human-readable reports.
+- The engine shares catalog data with the extension track.
+
+This prompt defines the architecture, the intake schema, and the
+directory layout. Catalogs and rules follow in PROMPTS 40–42.
+
+## Prior work (verify before starting)
+
+- PROMPT_02 architecture doc references the decision engine at a
+  conceptual level.
+- `decision-engine/` exists with only `.gitkeep`.
+- `pgfound decision run` is a stub from PROMPT_04.
+
+## Task
+
+### 1. Directory layout
+
+Under `decision-engine/`:
+
+```
+decision-engine/
+  README.md
+  architecture.md
+  schemas/
+    intake.schema.json
+    industry.schema.json
+    data-shape.schema.json
+    workload-pattern.schema.json
+    core-feature.schema.json
+    extension.schema.json
+    index-pattern.schema.json
+    topology-pattern.schema.json
+    anti-pattern.schema.json
+    rule.schema.json
+    recommendation.schema.json
+    report.schema.json
+  catalogs/                      # authored in PROMPT_40/41
+  rules/                         # authored in PROMPT_42
+  prompts/                       # authored in PROMPT_44
+  fixtures/
+    intakes/                     # example intakes
+    reports/                     # golden reports
+  scripts/
+    examples/                    # CLI usage examples
+```
+
+### 2. Architecture doc
+
+`decision-engine/architecture.md` — a 1500–2000 word doc covering:
+
+- Purpose and scope.
+- Inputs: intake + catalogs + rules.
+- Processing model: rule matching → recommendations with
+  confidence → scoring → anti-pattern checks → report.
+- Outputs: machine-readable report + human-readable Markdown report.
+- How the engine composes with the training platform and the
+  interview simulator (e.g. `architect-decision-engine-review`).
+- How the engine stays honest: golden intakes/reports, rule
+  auditability, explicit "not yet" thresholds.
+- The limits of the engine: it is a tool for structured reasoning,
+  not an oracle. A human architect is always the final decision-
+  maker.
+
+Update `docs/architecture.md` to link here.
+
+### 3. Intake schema
+
+`decision-engine/schemas/intake.schema.json` — JSON Schema
+draft-2020-12. Fields:
+
+- `intake_id` (slug)
+- `as_of_date` (date)
+- `organization` (object):
+  - `industry` (slug, must reference the industries catalog)
+  - `team_size_engineers` (int)
+  - `operational_tolerance` (enum: `low | medium | high`)
+  - `managed_service_requirement` (enum:
+    `none | strongly_preferred | mandatory`)
+  - `portability_constraints` (array of slugs:
+    `aws_rds | azure_pg | gcp_cloud_sql | any_managed | none`)
+- `data_shapes` (array of slugs from data-shapes catalog)
+- `workload_patterns` (array of slugs from workload-patterns
+  catalog)
+- `scale_signals` (object):
+  - `row_counts_largest_tables` (integer map)
+  - `write_throughput_rows_per_sec` (number)
+  - `read_throughput_qps` (number)
+  - `concurrent_connections_peak` (int)
+  - `largest_object_bytes` (int, optional)
+  - `growth_rate_month_over_month` (number, 0–1)
+- `tenancy_model` (enum:
+  `single_tenant | multi_tenant_shared_schema | multi_tenant_schema_per_tenant | multi_tenant_database_per_tenant`)
+- `security_constraints` (array of enum:
+  `rls_required | audit_required | pii_in_scope | hipaa | pci |
+   gdpr_dsr`)
+- `migration_or_federation_needs` (object):
+  - `has_legacy_postgres_source` (bool)
+  - `has_legacy_non_postgres_source` (bool)
+  - `requires_zero_downtime_migration` (bool)
+  - `requires_federation_via_fdw` (bool)
+- `explicit_bias_against` (array of extension slugs the team
+  explicitly will not adopt, with reasons)
+- `explicit_bias_for` (array of extension slugs the team has
+  already committed to, with reasons)
+- `existing_postgres_topology` (enum:
+  `none | single_primary | primary_with_read_replicas |
+   logical_replication_pair | citus_cluster | other`)
+- `free_form_notes` (string, ≤ 4000 chars)
+
+All referenced slugs must resolve to the respective catalogs (which
+are authored in PROMPT_40/41). The intake schema references
+`https://postgres-foundations/schema/industry.schema.json` etc. via
+`$ref` to leaf catalogs — but the catalogs themselves are authored
+later, so the schema should reference them by file path relative
+to the schemas directory; the validator tolerates missing catalog
+data as a warning at this stage.
+
+### 4. Recommendation + report schemas
+
+`recommendation.schema.json`:
+
+```
+{
+  "kind": "core_feature" | "extension" | "index_pattern" |
+           "topology_pattern" | "anti_pattern_warning",
+  "target_slug": "...",
+  "verdict": "recommend_now" | "candidate_later" |
+             "not_enough_evidence" | "avoid_for_now",
+  "confidence": 0..1,
+  "why_now": ["..."],
+  "why_not_yet": ["..."],
+  "triggers_for_next_stage": ["..."],
+  "sources": [
+    { "rule_id": "...", "contribution": 0..1 }
+  ]
+}
+```
+
+`report.schema.json`:
+
+```
+{
+  "intake_id": "...",
+  "generated_at": "...",
+  "engine_version": "...",
+  "recommendations": [Recommendation],
+  "score_breakdown": {
+    "domain_fit": 0..1,
+    "data_shape_fit": 0..1,
+    "workload_fit": 0..1,
+    "operational_feasibility": 0..1,
+    "growth_urgency": 0..1,
+    "portability_penalty": 0..1,
+    "complexity_penalty": 0..1
+  },
+  "warnings": [
+    { "anti_pattern_slug": "...", "message": "..." }
+  ],
+  "followup_questions": ["..."]
+}
+```
+
+### 5. Engine stub implementation
+
+Under `src/pgfound/decision/`:
+
+- `engine.py` with a top-level `run_decision(intake_path)
+  -> Report`. For now, it:
+  - Validates the intake against `intake.schema.json`.
+  - Loads the (currently empty) catalog and rule directories with
+    graceful "catalog not yet authored" warnings.
+  - Returns an empty-but-valid Report.
+- `report_writer.py` that serializes Report to JSON and writes a
+  Markdown human-readable sibling.
+
+Wire `pgfound decision run <intake.json>`:
+
+- Accepts `--out-dir <path>` (default `tmp/decision-reports/<intake-
+  id>/<timestamp>/`).
+- Writes `report.json` + `report.md`.
+- Exits 0 on success, non-zero on validation errors.
+
+### 6. Fixtures
+
+Under `decision-engine/fixtures/intakes/`:
+
+- `fintech-payments-minimal.json`
+- `saas-multi-tenant-minimal.json`
+- `healthcare-ops-minimal.json`
+
+Each validates against the intake schema. They are used extensively
+later (PROMPT_42/43) as golden-report inputs. Keep them honest — not
+trivial, but small enough to reason about.
+
+Under `decision-engine/fixtures/reports/`:
+
+- Empty for now; populated in PROMPT_43.
+
+### 7. Docs
+
+- `decision-engine/README.md` — brief overview + pointers into
+  `architecture.md` and the catalog/rule/prompts directories.
+- Update `docs/cli.md` with the real (non-stub) `decision run`
+  behavior.
+
+### 8. Tests
+
+- `tests/test_intake_schema.py` — schema loads, examples validate,
+  intentionally invalid intakes fail.
+- `tests/test_decision_stub_run.py` — running `decision run` on
+  a fixture writes a valid report with zero recommendations and
+  a clear warning about missing catalogs/rules.
+
+## Verification
+
+1. `uv run pgfound decision run
+   decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json`
+   writes `tmp/decision-reports/.../report.json` + `.md`. Report
+   validates against `report.schema.json`.
+2. `uv run pytest -q` green.
+3. `uv run pgfound content validate` green (no new content types).
+
+## Next prompt
+
+PROMPT_40 authors the industries, data_shapes, and workload_patterns
+catalogs. PROMPT_41 authors the remaining catalogs.

@@ -1,0 +1,137 @@
+PROMPT 22 — Phase 8: PostgreSQL full-text search
+================================================
+
+## Context
+
+`postgres-foundations`, Phase 8. Doctrine: core Postgres already has a
+competent full-text search engine. A learner should be fluent with it
+before even considering a separate search index, and certainly before
+reaching for vector search for lexical-style needs. Vector search is
+phase E4 (PROMPT_35) — deliberately *after* this phase. See
+`docs/doctrine.md`.
+
+Phase 8 concepts: `tsvector`, `tsquery`, `to_tsvector`, `to_tsquery`,
+`plainto_tsquery`, `websearch_to_tsquery`, `ts_rank`,
+`ts_rank_cd`, `ts_headline`, `text search configuration`,
+`dictionary`, `stemming`, `unaccent`, `weighted search`,
+`ilike_vs_fts`, `trigram_preview` (pg_trgm pointer to phase E2,
+PROMPT_34).
+
+## Prior work (verify before starting)
+
+- Phases 0–7 active.
+- Document-search domain exists with some content (if not, this
+  prompt fleshes it out).
+
+## Task
+
+### 1. Domain extensions
+
+Build out `document_search` to real usefulness. Author
+`phase-08.sql` for it:
+
+- `documents.docs(id uuid, title text, body text, published_at
+  timestamptz, author text, tags text[], search_vec tsvector)` —
+  the `search_vec` column is maintained either via generated
+  column (preferred) or trigger (also shown as a lesson variant).
+- At least 5000 seed documents. Use a generator — realistic-ish
+  titles and multi-paragraph bodies drawn from word lists checked
+  into the repo or from a small deterministic corpus.
+- A `documents.categories` table plus a join table
+  `documents.doc_categories` for category-scoped searches.
+
+Also extend ecommerce: product names and descriptions get a
+tsvector for product search.
+
+### 2. Lessons
+
+Target **10 lessons** for phase 8:
+
+1. `fts/why-lexical-search-first` — before reaching for pgvector or
+   Elasticsearch, does core FTS solve the problem?
+2. `fts/tsvector-and-tsquery` — the data types; `to_tsvector` and
+   the default configuration; what lexemes are.
+3. `fts/parsers-and-dictionaries` — English config, stopwords,
+   stemming; switching configs.
+4. `fts/plainto-websearch-to-tsquery` — converting user input to
+   tsquery safely; escaping; Boolean operators.
+5. `fts/indexing-fts-with-gin` — the GIN index on tsvector; query
+   patterns it supports; build and maintenance cost.
+6. `fts/stored-vs-generated-tsvector` — generated columns vs
+   trigger-maintained tsvector; tradeoffs.
+7. `fts/weighted-search-and-ranking` — `setweight('A'..'D')`,
+   ts_rank, ts_rank_cd; why weighting usually beats a single
+   concatenated blob.
+8. `fts/headlines-and-snippets` — `ts_headline` for highlighted
+   snippets.
+9. `fts/multi-language-and-unaccent` — `unaccent` extension,
+   per-row language config, real-world messiness.
+10. `fts/when-to-leave-core-fts` — signals that core FTS is no
+    longer enough (you need typo-tolerance → pg_trgm; you need
+    semantic similarity → pgvector; you need a dedicated search
+    operator → external engine). Explicit "not yet" logic.
+
+### 3. Enable `unaccent` in the lab
+
+Update `docker/initdb/00-extensions.sql` (or a new
+`00-extensions-optional.sql`) to `CREATE EXTENSION IF NOT EXISTS
+unaccent;`. Document this in the phase 8 lab notes and in
+`docs/lab.md`.
+
+### 4. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. ~80 exercises.
+
+Required drills:
+
+- Level C: write a product search using weighted tsvector
+  (title=A, brand=B, description=C); rank results.
+- Level C: compare an `ILIKE '%pattern%'` query to an FTS-based
+  search on the same corpus; demonstrate both correctness and
+  performance differences.
+- Level D: an FTS query that returns no results because the user
+  used a hyphenated term; learner diagnoses and recommends
+  configuration or query changes.
+- Level D: a trigger-maintained tsvector that silently goes stale
+  for historical rows after the trigger is replaced; learner
+  diagnoses and repairs.
+
+### 5. pg_trgm preview
+
+Author one forward-pointer lesson that demonstrates pg_trgm fuzzy
+search against the same corpus. Mark the pg_trgm extension as a
+**preview** — the actual deep-dive is PROMPT_34 (extension track,
+E2).
+
+### 6. Docs
+
+- `docs/search-playbook.md` — a cross-cutting reference that
+  learners and architects can use. It covers lexical FTS, pg_trgm
+  fuzzy search, and pgvector semantic search at a high level, and
+  points to the phase where each is taught in depth. This doc is
+  consumed by the decision engine catalogs later (PROMPT_40–41).
+
+### 7. Tests
+
+- `tests/test_phase8_corpus.py` — validate + lint; at least one
+  lesson references pg_trgm as a preview and one references
+  pgvector as a later-phase pointer.
+- `tests/test_document_corpus.py` — the deterministic document
+  generator yields the expected row count and at least one tsquery
+  produces hits.
+
+## Verification
+
+1. Seed phase 8 document_search pack (≥ 5000 docs).
+2. Run `SELECT count(*) FROM documents.docs WHERE search_vec @@
+   websearch_to_tsquery('english', 'postgres indexing')` and
+   confirm a sensible hit count and that the plan uses the GIN
+   index.
+3. Run a weighted-ranking exercise and confirm ordering matches
+   the reference solution.
+4. `uv run pgfound content validate` + `lint` green.
+5. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_23 authors Phase 9 (partitioning and large-table operations).

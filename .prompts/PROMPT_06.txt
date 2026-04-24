@@ -1,0 +1,189 @@
+PROMPT 06 — Curriculum map, phases, and capability layers
+=========================================================
+
+## Context
+
+You are working in `postgres-foundations`, a serious PostgreSQL learning and
+planning platform. This prompt produces the **canonical curriculum map** —
+the document + structured data all later content prompts refer to when they
+create lessons, exercises, and capstones. See `docs/doctrine.md` and
+`docs/architecture.md` for doctrine.
+
+Doctrine reminder:
+
+- Capability **layers**, not feature catalogs. Each layer introduces just
+  enough new power to solve a class of problems the learner is ready to
+  feel.
+- Phases are ordered. Don't cross a phase until its Level D (critique +
+  repair) exercises are comfortable.
+- Reusable domains (ecommerce, scheduling, multi-tenant, event-heavy,
+  document/search, modernization) recur so richer features upgrade known
+  systems rather than always starting from scratch.
+- Five parallel loops: lesson, lab, debug, design, review.
+
+## Prior work (verify before starting)
+
+- PROMPT_02 docs (`docs/doctrine.md`, `docs/architecture.md`).
+- PROMPT_05 content schemas (including `capability_layer` enum).
+- `curriculum/` currently holds only `.gitkeep`.
+- Tests green.
+
+## Task
+
+Author the curriculum map in both machine-readable (JSON) and
+human-readable (Markdown) form, plus one shared glossary.
+
+### 1. `curriculum/map.json`
+
+A single JSON file that is the source of truth for the phase order and the
+lesson-cluster structure. Shape:
+
+```
+{
+  "$schema": "../content-schemas/curriculum.schema.json",
+  "phases": [
+    {
+      "number": 0,
+      "slug": "reality-before-syntax",
+      "title": "Reality before syntax",
+      "capability_layer": "schema_literacy",
+      "summary": "...",
+      "goals": [...],
+      "concepts_introduced": [...],
+      "prerequisites": [],
+      "exit_competencies": [...],
+      "clusters": [
+        { "slug": "what-data-is", "title": "...", "planned_lessons": 2 },
+        ...
+      ]
+    },
+    ...
+  ],
+  "domains": [
+    { "slug": "ecommerce", "first_used_in_phase": 1, "summary": "..." },
+    { "slug": "scheduling", ... },
+    { "slug": "saas_multi_tenant", ... },
+    { "slug": "event_heavy_ops", ... },
+    { "slug": "document_search", ... },
+    { "slug": "modernization_bridge", ... }
+  ],
+  "loops": [ "lesson", "lab", "debug", "design", "review" ]
+}
+```
+
+Include all eleven phases 0–10 exactly as described in the project brief,
+each with:
+
+- `goals` (short sentences, not marketing)
+- `concepts_introduced` (slugs like `foreign_key`, `cte`, `window_function`,
+  `gin_index`, `row_level_security`)
+- `exit_competencies` (specific, observable statements, e.g.: "Can explain
+  why this query uses a partial index instead of a full index and can
+  predict which rows will be read")
+- `capability_layer` from the content-schemas enum
+
+Also add a top-level `capstones` array referencing the four primary
+capstones planned for PROMPT_25/26.
+
+### 2. `content-schemas/curriculum.schema.json`
+
+A JSON Schema for `curriculum/map.json`. Fields enforced:
+
+- `phases[*].number` is unique and monotonic starting at 0.
+- `phases[*].slug` is unique and kebab-case.
+- `phases[*].capability_layer` is one of the allowed enum values.
+- `phases[*].exit_competencies` length ≥ 3.
+- `domains[*].slug` unique.
+- `capstones[*].id` unique.
+
+Wire this schema into the `pgfound content validate` command (it should
+find and validate `curriculum/map.json` along with the normal content
+kinds).
+
+### 3. `curriculum/README.md`
+
+The human-readable curriculum guide. Contents:
+
+- Top of the page: a compact phase table (phase number, slug, title,
+  capability layer, one-line goal).
+- For each phase: a short section (200–350 words) expanding on what the
+  phase is for, what the learner should be able to do at exit, and how
+  to know when they are ready for the next phase.
+- An explicit "capability layers vs phases" note explaining why the map
+  tracks both: phases are ordering, layers are family.
+- A "how to use this map" section for three audiences: self-learner, a
+  coach, and someone building scenario packs.
+
+Length: 2500–4000 words. This is the learner's north star; do not rush it.
+
+### 4. `curriculum/capability-layers.md`
+
+A focused 600–900 word doc explaining each capability layer in the enum,
+what problems it makes tractable, and how to tell when a learner has it.
+Cross-link from `curriculum/README.md`.
+
+### 5. `curriculum/domains.md`
+
+One short section per reusable domain (ecommerce, scheduling,
+saas_multi_tenant, event_heavy_ops, document_search,
+modernization_bridge). Each section:
+
+- Domain summary (2–3 sentences).
+- The core entities the domain will reuse across phases.
+- What new features each subsequent phase layers onto that domain.
+- Which capstones lean on this domain.
+
+This doc is what lesson authors consult before writing a new exercise in
+a given domain so everyone uses the same table names and semantics.
+
+### 6. `docs/glossary.md`
+
+A single shared glossary used by lesson authors, reviewers, and the
+decision engine. Define each term precisely and link to where it is first
+taught. Terms to include at minimum:
+
+- ACID, MVCC, Transaction isolation (snapshot), SERIALIZABLE,
+  REPEATABLE READ, READ COMMITTED, row-lock vs predicate-lock
+- Foreign key, composite key, surrogate vs natural key
+- Normal forms (1NF–3NF + BCNF briefly)
+- JSON vs JSONB, GIN, GiST, BRIN, B-tree
+- Partitioning (range, list, hash), partition pruning
+- tsvector, tsquery, lexeme, dictionary, ranking
+- Logical replication, physical replication, WAL, replication slot
+- Row-level security, policy, quals
+- FDW, IMPORT FOREIGN SCHEMA
+- Deadlock, lock wait, lock queue
+- Bloat, vacuum, autovacuum, freeze
+- Connection pooling, transaction pooling vs session pooling
+- Extension, contrib module
+
+Each entry ≤ 100 words. Cross-reference the phase where the term is first
+introduced (via phase slug from `curriculum/map.json`).
+
+### 7. Tests
+
+- `tests/test_curriculum_map.py`:
+  - Loads `curriculum/map.json` and validates against
+    `content-schemas/curriculum.schema.json`.
+  - Asserts phase numbers are monotonic 0..10.
+  - Asserts every `capability_layer` used in the map exists in the
+    `common.json` enum.
+- `tests/test_validator_includes_curriculum.py`:
+  - Runs `pgfound content validate` and asserts `curriculum/map.json`
+    is validated (e.g. appears in the output).
+
+## Verification
+
+1. `uv run pgfound content validate` green.
+2. `uv run pytest -q` green.
+3. `uv run ruff check .` + `ruff format --check .` green.
+4. Open `curriculum/README.md` and verify the phase table matches the
+   phases in `map.json` — same order, same titles.
+5. `docs/glossary.md` has at least 25 entries and every term has a phase
+   cross-reference.
+6. `curriculum/domains.md` has all six reusable domains from the brief.
+
+## Next prompt
+
+PROMPT_07 defines the lesson authoring schema in detail with worked-example
+conventions and file layout. PROMPT_08 does the same for exercises.

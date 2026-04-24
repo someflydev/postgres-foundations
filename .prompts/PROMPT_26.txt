@@ -1,0 +1,144 @@
+PROMPT 26 — Capstones 3 and 4: Event-heavy operations, Modernization bridge
+===========================================================================
+
+## Context
+
+`postgres-foundations`. Continue the capstone set. Doctrine: both of
+these capstones put the learner in scenarios where "not yet" is often
+the correct answer about extensions. Each capstone must require the
+learner to explicitly argue their extension-selection posture. See
+`docs/doctrine.md`, ADR-0004.
+
+## Prior work (verify before starting)
+
+- PROMPT_25 (capstones 01 + 02).
+- Phase 9 (partitioning) and phase 10 (FDW + logical replication)
+  active.
+
+## Task
+
+### 1. Capstone 3: Event-heavy operations
+
+Layout identical to capstones 01/02 under
+`capstones/03-event-heavy-ops/`.
+
+- Scenario: an operational analytics platform for an IoT-adjacent
+  product. 2M events/day from ~40k devices; dashboards for support
+  engineers; hot queries are "last 24 hours by device" and
+  "anomaly backtrace for a specific device over 7 days"; retention
+  18 months with cold-archive after 90 days.
+- Constraints:
+  - Postgres 16; **no TimescaleDB** (the learner will argue under
+    what signals Timescale becomes the right next step — this is
+    the capstone's explicit decision-engine-style question).
+  - Partitioning by range on event_time is required.
+  - BRIN on event_time + a B-tree on device_id per partition is
+    the starting point; justify any deviation.
+  - Logical replication to a read replica for analytics is
+    considered; writeup must state whether to do it now and why.
+  - pg_stat_statements is required; ties in to admin track.
+- Deliverables: schema + partitioning strategy, retention script,
+  indexes, critical queries including a "top-N devices by recent
+  anomaly count" query and a "device timeline" query, a writeup
+  that includes "when would TimescaleDB be worth it?" as its
+  own section.
+- Rubric emphasizes operational posture + extension justification.
+- Reference solution:
+  - Declaratively partitioned events table (monthly).
+  - BRIN + B-tree indexing plan.
+  - `detach_partition` + export-to-cold retention script.
+  - A short runbook for "a query is slow — where to start".
+  - A writeup including the explicit "TimescaleDB later" criteria.
+
+### 2. Capstone 4: Modernization bridge
+
+Layout under `capstones/04-modernization-bridge/`.
+
+- Scenario: a company with a legacy monolith database containing
+  `customers`, `orders`, and `products` in a schema that predates
+  any sane modeling discipline. A new product team wants to build
+  a fresh service that needs access to subsets of that data. The
+  organization does not have buy-in yet to migrate the monolith.
+  The team must ship the new service with accurate reads against
+  the legacy data, write-locally with strict correctness, and
+  plan an eventual migration without prematurely shipping a
+  rewrite.
+- Constraints:
+  - Postgres 16 on both sides (the legacy DB and the new service
+    DB). In the lab, this is the pg + pg-replica pair configured
+    as independent databases (not truly replicating), with
+    `postgres_fdw` wiring the "new" database to see the "legacy"
+    tables as foreign.
+  - Use `postgres_fdw`, `IMPORT FOREIGN SCHEMA`, and at least one
+    materialized view on the new side to cache an aggregate from
+    the legacy side.
+  - Discuss but do not implement logical replication for an
+    incremental migration; writeup must articulate when that step
+    becomes the right next move.
+  - RLS on the new side for tenant isolation even though the
+    legacy side has none.
+  - No Citus; capstone writeup must justify why not.
+- Deliverables: a clean new-service schema; the FDW wiring; the
+  chosen materialized views with refresh policy; 8+ critical
+  queries (several crossing the FDW); an operational writeup
+  covering failure modes of FDW and the explicit "promote to
+  logical replication when X" criteria.
+
+### 3. Cross-capstone rubric themes
+
+Both capstones emphasize:
+
+- "Extension selection is explainable." Require the learner to
+  produce a short "extension posture" section in every writeup:
+  which extensions are enabled now, which are explicitly deferred,
+  and under what signals they would be adopted.
+- "Operational tolerance is named." The writeup states what the
+  team can and cannot operate, and shapes decisions accordingly.
+
+Capture these themes in a shared rubric dimension by updating
+`rubrics/default/` with a new `extension-posture.rubric.json` and
+an updated `operational-reasoning.rubric.json`. Reference both from
+capstones 3 and 4 (and backport to 1 and 2 — edit those capstones'
+rubrics to include these dimensions with a small weight).
+
+### 4. Scenario YAML for capstone 4
+
+Author a concurrency scenario under
+`scenarios/concurrency/legacy-fdw-stale-matview.yaml` that
+demonstrates the "read-through-fdw-but-cached-by-matview" interaction
+and the staleness a careless refresh policy creates. Used by a
+Level D capstone-style critique drill under
+`exercises/phase-10.../` (back-fill one exercise into phase 10 that
+points at this capstone's scenario).
+
+### 5. Docs
+
+- Update `capstones/README.md` (author if missing) listing all four
+  capstones with links and summaries.
+- Update `docs/architecture.md` with a pointer to how capstones
+  exercise the cross-subsystem nature of the platform.
+
+### 6. Tests
+
+- `tests/test_capstones_all.py` — validates all four capstones,
+  asserts rubric weights sum to 1.0, asserts reference schema
+  applies cleanly for each.
+- `tests/test_extension_posture_rubric.py` — every capstone rubric
+  references the extension-posture dimension.
+
+## Verification
+
+1. `uv run pgfound capstone start 03-event-heavy-ops` and
+   `...04-modernization-bridge` print the brief.
+2. Apply capstone 03's reference schema + retention script in the
+   lab; confirm partition pruning.
+3. Apply capstone 04's reference FDW wiring in the lab (using the
+   `replication` profile to stand up the second pg as a stand-in
+   legacy DB); confirm foreign SELECT works.
+4. `uv run pgfound content validate` + `lint` green.
+5. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_27 builds the review engine and rubric-driven evaluation that
+turns `pgfound capstone evaluate` into a real command.

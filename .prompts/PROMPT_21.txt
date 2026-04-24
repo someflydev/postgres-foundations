@@ -1,0 +1,133 @@
+PROMPT 21 — Phase 7b: Partial/expression indexes, GIN/GiST/BRIN, EXPLAIN
+========================================================================
+
+## Context
+
+`postgres-foundations`, Phase 7b. Doctrine: every index pattern exists
+because a specific query pattern + data distribution made it the best
+answer. Learners pick indexes from first principles; the catalog of
+index types is a **consequence** of the workloads they have been
+taught to recognize.
+
+This prompt covers:
+
+4. partial indexes
+5. expression indexes
+6. GIN
+7. GiST
+8. BRIN
+9. EXPLAIN (deep)
+10. estimated vs actual
+
+## Prior work (verify before starting)
+
+- PROMPT_20 phase 7a active.
+- Phase 4b introduced arrays, ranges, JSONB — we will now
+  re-examine them with proper indexing.
+
+## Task
+
+### 1. Domain considerations
+
+No major schema changes. Use phase 7a data volumes. Possibly add:
+
+- A `ecommerce.orders.status` column with skew (90%+ "delivered";
+  the rest split across "pending", "refunded", "canceled") to make
+  partial-index reasoning vivid.
+- A `events.body jsonb` column with realistic payloads to make GIN
+  reasoning vivid (if not already present from phase 4a/b).
+
+### 2. Lessons
+
+Target **10 lessons** for phase 7b:
+
+1. `partial-indexes/when-partial-indexes-win` — index only the rows
+   that matter for a hot query (e.g. orders where status =
+   'pending').
+2. `partial-indexes/the-maintenance-win` — partial indexes are
+   smaller and cheaper to maintain; they also speed up vacuum.
+3. `expression-indexes/functional-indexes` — indexing
+   `lower(email)`, `date_trunc('day', created_at)`.
+4. `gin/gin-for-jsonb-and-arrays` — jsonb_path_ops vs default
+   jsonb_ops; array membership; when GIN does not help.
+5. `gin/gin-cost-model` — build time, bloat, `fastupdate`, pending
+   list.
+6. `gist/gist-for-ranges-and-exclusion` — revisit phase 4b's
+   exclusion constraint; now it actually has the right index to
+   be fast at scale.
+7. `gist/gist-for-geospatial-preview` — brief pointer to PostGIS
+   (PROMPT_35) — GiST underlies real geospatial indexing.
+8. `brin/brin-for-append-heavy-chronological-data` — the event-heavy
+   domain; correlation between physical layout and indexed column.
+9. `explain/explain-analyze-deep-dive` — reading nested plans;
+   actual vs estimated rows; mis-estimation; hints about
+   statistics.
+10. `explain/plan-debugging-workflow` — step-by-step: suspect slow
+    query → reproduce in lab → EXPLAIN ANALYZE BUFFERS →
+    hypothesize → test → measure → commit.
+
+Each lesson ≥ 700 words.
+
+### 3. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. ~80 exercises.
+
+Required drills:
+
+- Level C partial-index drill with a skewed `status` column; learner
+  must (a) demonstrate the regular index doesn't help, (b) add a
+  partial index, (c) demonstrate it does help.
+- Level C expression-index drill on
+  `lower(email) = lower($1)`.
+- Level C GIN-on-JSONB drill: a containment query that uses Seq
+  Scan without GIN and Index Scan with GIN; show plan diff.
+- Level C GiST exclusion-constraint-at-scale drill: attempt to
+  overlap without GiST backing the exclusion → learn that the
+  exclusion constraint *requires* a GiST index so it already works;
+  pivot to a query on ranges with `&&` and demonstrate that
+  indexed range containment can be fast.
+- Level C BRIN drill on events.
+- Level D: a partial index that is never used because the query
+  predicate does not match the partial-index WHERE clause exactly;
+  learner diagnoses with `EXPLAIN` and rewrites.
+- Level D: a GIN index whose bloat-to-value ratio makes it a bad
+  tradeoff; learner evaluates alternatives.
+- Level D: a plan with severe estimated-vs-actual mismatch; learner
+  proposes `ANALYZE`, extended statistics (`CREATE STATISTICS`),
+  or query rewrite.
+
+### 4. `CREATE STATISTICS`
+
+Include a short lesson or sub-section introducing extended
+statistics for correlated columns. This is often the real answer to
+"the planner picked the wrong plan" and should be in learners'
+vocabulary by the end of phase 7.
+
+### 5. Docs
+
+- `docs/indexing-playbook-part2.md` — extends part 1. Each index
+  type gets a short "when to use / when not to use / how to
+  verify" entry.
+- Update `docs/anti-patterns/` with:
+  - `unused_indexes.md` — how to detect and drop them.
+  - `redundant_indexes.md` — overlapping coverage.
+
+### 6. Tests
+
+- `tests/test_phase7b_corpus.py` — validate + lint.
+- `tests/test_explain_tool.py` — the `pgfound lab explain` tool
+  produces a diff when baseline vs post plans differ (fixture
+  plans in the repo; no actual Docker needed for this test).
+
+## Verification
+
+1. Run a partial-index exercise end-to-end and confirm the plan
+   diff.
+2. Run a GIN-on-JSONB exercise end-to-end and confirm the plan
+   diff.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_22 authors Phase 8 (full-text search in PostgreSQL core).

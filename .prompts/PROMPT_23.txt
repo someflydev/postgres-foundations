@@ -1,0 +1,142 @@
+PROMPT 23 — Phase 9: Partitioning and large-table operations
+============================================================
+
+## Context
+
+`postgres-foundations`, Phase 9. Doctrine: partitioning is an
+**operational tool**, not a badge. Teach it against a concrete
+operational problem (retention, lifecycle, hot/cold separation), not
+as a performance bandage. The anti-pattern "partition too early" is
+explicit and taught. See `docs/doctrine.md` and
+`docs/anti-patterns/` (which will gain a new entry in this prompt).
+
+Phase 9 concepts: `range_partitioning`, `list_partitioning`,
+`hash_partitioning`, `partition_pruning`, `attach_partition`,
+`detach_partition`, `default_partition`, `constraint_exclusion` (brief
+note; mostly superseded by pruning on declarative partitions),
+`indexes_on_partitioned_tables`, `uniqueness_on_partitioned_tables`
+(caveats), `retention_via_detach`, `pg_partman_preview`,
+`operational_cost_of_partitioning`.
+
+## Prior work (verify before starting)
+
+- Phases 0–8 active.
+- Events + ecommerce volumes large enough to make partitioning feel
+  necessary (phase-07a volumes were set to 200k+ orders, 50k
+  appointments, and we'll need a partitioning-ready events table
+  here).
+
+## Task
+
+### 1. Domain extensions
+
+Author `phase-09.sql` for event_heavy_ops and ecommerce.
+
+Event-heavy ops:
+
+- Introduce `events.event_log_partitioned` as a declaratively
+  partitioned-by-range-on-event_time table, with monthly partitions
+  for the last 12 months plus a default partition.
+- Populate ≥ 1M rows across the year (generator; deterministic).
+- Add an indexing plan on the partitioned parent: a BRIN on
+  `event_time`, a B-tree on `source_id` per partition, etc.
+- Seed an archival pattern: the oldest partition is detached and
+  optionally exported to a "cold" table.
+
+Ecommerce:
+
+- Introduce `ecommerce.orders_partitioned` as a range-partitioned
+  variant by `ordered_at` (quarterly). Used in a comparative
+  exercise: when is partitioning orders worth it vs not?
+
+Both new tables live alongside the unpartitioned originals so
+learners can compare.
+
+### 2. Lessons
+
+Target **10 lessons** for phase 9:
+
+1. `partitioning/what-problem-partitioning-solves` — retention,
+   lifecycle, vacuum scope, hot/cold separation. Not a magic
+   perf button.
+2. `partitioning/range-list-hash` — pick the right strategy; how
+   each works; when each fits.
+3. `partitioning/declarative-partitioning-basics` — CREATE TABLE
+   ... PARTITION BY ...; creating child partitions; default
+   partition.
+4. `partitioning/partition-pruning-and-plan-reading` — how to
+   verify pruning happens; EXPLAIN output; wrong predicates.
+5. `partitioning/indexes-on-partitioned-tables` — per-partition
+   indexes vs global; attached indexes.
+6. `partitioning/uniqueness-on-partitioned-tables` — the
+   partition-key-in-unique caveat; what it means for surrogate
+   keys; workarounds.
+7. `partitioning/attach-and-detach-lifecycle` — rolling retention
+   via DETACH; the concurrent ATTACH gotcha.
+8. `partitioning/pg-partman-preview` — a brief pointer to
+   pg_partman (extension track, PROMPT_37).
+9. `partitioning/when-not-to-partition` — how to tell partitioning
+   is premature or wrong; operational cost; backup size; replica
+   behavior.
+10. `partitioning/operational-checklist` — what an on-call engineer
+    needs to verify monthly (new partitions created, old ones
+    detached, statistics fresh, pruning working).
+
+### 3. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. ~80 exercises.
+
+Required drills:
+
+- Level C: create a range-partitioned events table, load data,
+  confirm pruning via EXPLAIN for a date-bounded query, compare
+  to the unpartitioned baseline.
+- Level C: implement retention via DETACH + drop; automate with a
+  SQL function; run it for a simulated "next month" and verify
+  the plan still prunes.
+- Level D: a partitioned table that does not prune because the
+  predicate uses a function that blocks constant-folding. Learner
+  diagnoses and rewrites.
+- Level D: a partitioned table with per-partition UNIQUE
+  constraints that silently allow duplicates across partitions
+  because the partition key is missing from the unique constraint.
+  Learner diagnoses and repairs.
+- Level D: a "partition-too-early" scenario — a table with 500k
+  rows pre-emptively partitioned by year; learner argues for
+  consolidating back or justifies the partitioning.
+
+### 4. Anti-pattern page
+
+Author `docs/anti-patterns/partition_too_early.md`. Referenced by
+lesson 9 and by the decision-engine anti-pattern catalog later.
+
+### 5. Docs
+
+- `docs/partitioning-playbook.md` — step-by-step authoring guide
+  for new partitioning schemes, including the retention script
+  template.
+- Update `docs/indexing-playbook-part2.md` with a note about
+  partitioned-table indexes.
+
+### 6. Tests
+
+- `tests/test_phase9_corpus.py` — validate + lint; at least one
+  Level D exercise references "premature" or "too early" wording.
+- `tests/test_partitioning_seed.py` — generator is deterministic
+  and phase-09 SQL can be applied + dropped idempotently.
+
+## Verification
+
+1. Seed to phase 9 cleanly; event_log_partitioned has the right
+   partition count.
+2. Manually run a date-bounded query against events and confirm
+   pruning via EXPLAIN.
+3. Detach an old partition; verify subsequent queries still work
+   and the detached partition is no longer visible.
+4. `uv run pgfound content validate` + `lint` green.
+5. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_24 authors Phase 10 (roles, row-level security, replication
+concepts, FDW). After that, capstones and review engine in Phase F.

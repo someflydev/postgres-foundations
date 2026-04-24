@@ -1,0 +1,185 @@
+PROMPT 45 — Industry scenarios batch 1: SaaS, fintech, healthcare, ecommerce
+============================================================================
+
+## Context
+
+`postgres-foundations`. This prompt authors industry **scenario
+packs** for the first four industries. Each scenario pack is both a
+learning artifact (consumed by lessons/capstones/interviews) and a
+decision-engine regression fixture (intake + expected recommendations
++ generated report).
+
+Doctrine: scenarios should be realistic, specific, and judgment-
+demanding. They should not reduce to "enable extension X". They
+should force the reader to weigh operational tolerance, portability,
+tenancy model, and scale against the available options.
+
+## Prior work (verify before starting)
+
+- Decision engine catalogs, rules, scoring, reports, prompt pack
+  in place (PROMPTS 39–44).
+- Scenario schema authored in PROMPT_05 (content-schemas/
+  scenario.schema.json).
+- `scenarios/` holds only `.gitkeep` (plus the concurrency
+  scenarios from PROMPT_19 and interview scenarios from PROMPT_28).
+
+## Task
+
+### 1. Scenario directory layout
+
+Under `scenarios/`:
+
+```
+scenarios/
+  industries/
+    saas-multi-tenant/
+      01-early-stage-crm/
+        scenario.json
+        narrative.md
+        intake.json             # decision-engine intake
+        expected-report.json    # golden decision-engine report
+        expected-report.md
+      02-mid-stage-saas-growth/
+      03-multi-region-saas-compliance/
+    fintech-payments/
+      01-startup-payments-gateway/
+      02-regional-bank-reconciliation/
+      03-high-volume-trading-adjacent/
+    healthcare-ops/
+      01-clinic-ops-ehr-adjacent/
+      02-hospital-system-audit-heavy/
+      03-telehealth-appointment-platform/
+    ecommerce-marketplace/
+      01-dtc-ecommerce-mid-stage/
+      02-marketplace-with-many-sellers/
+      03-cross-border-ecommerce-compliance/
+```
+
+Use the scenario schema from PROMPT_05 for `scenario.json`. Add
+per-scenario fields:
+
+- `context`, `data_shapes`, `workload_patterns`,
+  `suggested_lessons`, `suggested_exercises`,
+  `suggested_capstone_id`, `expected_decision_outputs`,
+  `tags`.
+
+### 2. Author three scenarios per industry (12 total in this batch)
+
+For each scenario:
+
+#### `narrative.md` (800–1500 words)
+
+A realistic product/company narrative that reads like a brief from
+the field. Include:
+
+- Company stage and team size.
+- Product and user archetype.
+- Current PostgreSQL topology and pain points.
+- Explicit operational tolerance ("we have one SRE", "we want no
+  2 AM pages").
+- Explicit portability constraint ("we're on RDS and plan to
+  stay").
+- Growth horizon (6/12/24 months).
+- Specific known decisions pending (e.g. "we are considering
+  pgvector for semantic search").
+- At least one detail that makes the scenario *not* a trivial
+  textbook case.
+
+#### `intake.json`
+
+A filled decision-engine intake that captures the narrative. All
+slugs resolve against the catalogs. Passes the intake schema
+validator.
+
+#### `expected-report.json` and `expected-report.md`
+
+Run the engine against `intake.json` and save the outputs as
+goldens. These become regression fixtures. The expected report
+should be *examined for plausibility* — if it produces a weird
+recommendation, either fix the rules, refine the intake, or
+document the edge case as an open ticket in
+`docs/decision-engine-known-edges.md` (author this doc file).
+
+#### `scenario.json`
+
+Links to lessons/exercises/capstones that are relevant, lists the
+expected recommendations, and is consumed by
+`pgfound content validate`.
+
+### 3. Expected recommendation shape
+
+Three scenarios per industry exercise different posture ranges:
+
+- One "small / early / conservative" scenario → mostly core
+  features + pg_stat_statements + basic index patterns.
+- One "mid-stage / pressure / judgment" scenario → mixed, with
+  extensions entering `candidate_later`.
+- One "high-scale / mature" scenario → a handful of extension
+  `recommend_now`s with explicit triggers.
+
+This progression is the pedagogical point of the scenario set.
+
+### 4. Scenario-specific notes
+
+- **SaaS multi-tenant**: scenarios 01/02/03 must move through the
+  tenant-isolation spectrum (shared schema + RLS → schema-per-tenant
+  for a single large tenant → a single-very-large-tenant scenario
+  that flirts with Citus but rejects it for portability reasons).
+- **Fintech payments**: scenario 03 must include strong audit
+  constraints and a reconciliation workload; the report must flag
+  `no_restore_drills` as an anti-pattern if the intake claims
+  strong RPO without documented drills.
+- **Healthcare ops**: at least one scenario has HIPAA in
+  `security_constraints`; the report must include a clear
+  "audit_required" posture.
+- **Ecommerce marketplace**: scenario 02 must include a "sellers
+  as tenants" tenancy angle, and the report must recommend
+  consideration of partitioning for orders and inventory.
+
+### 5. Validator integration
+
+`pgfound content validate` now walks `scenarios/industries/`:
+
+- `scenario.json` validates against the scenario schema.
+- `intake.json` validates against the intake schema.
+- `expected-report.json` validates against the report schema.
+- `expected-report.json` is up-to-date with respect to
+  running the engine against `intake.json` — this is a strict
+  check; any drift fails validation.
+
+### 6. `pgfound decision golden-refresh`
+
+Add a CLI command that regenerates all `expected-report.json` and
+`expected-report.md` files across `scenarios/industries/`. Requires
+`--confirm` to avoid accidental overwrite. This is the canonical
+path for updating goldens after catalog/rule changes.
+
+### 7. Docs
+
+- `scenarios/README.md` — scenario overview for the platform.
+- Update `docs/decision-engine-usage.md` to reference scenarios
+  as regression fixtures.
+
+### 8. Tests
+
+- `tests/test_scenarios_saas.py`, `test_scenarios_fintech.py`,
+  `test_scenarios_healthcare.py`, `test_scenarios_ecommerce.py`:
+  - Every scenario validates.
+  - Golden report matches current engine output.
+  - Expected recommendations (from `scenario.json`) appear in the
+    actual report.
+
+## Verification
+
+1. `uv run pgfound decision run
+   scenarios/industries/saas-multi-tenant/01-early-stage-crm/intake.json
+   --out-dir tmp/check` produces a report matching the recorded
+   golden.
+2. Same for one scenario from each of the other three industries.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_46 authors industry scenarios batch 2: logistics/geo,
+observability, knowledge/AI, modernization bridge.

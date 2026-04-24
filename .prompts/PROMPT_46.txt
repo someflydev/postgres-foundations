@@ -1,0 +1,133 @@
+PROMPT 46 — Industry scenarios batch 2: logistics/geo, observability, knowledge/AI, modernization
+=================================================================================================
+
+## Context
+
+`postgres-foundations`. Completes the industry scenario set. Same
+structure as PROMPT_45; four more industries. These scenarios
+exercise the extension-heavy and federation-heavy parts of the
+catalog/rules and are the primary regression fixtures for the
+PostGIS / pgvector / Timescale / FDW / Citus recommendation paths.
+
+## Prior work (verify before starting)
+
+- PROMPT_45 batch 1 scenarios authored and golden-matched.
+- Extension catalogs / rules cover all the relevant triggers.
+
+## Task
+
+### 1. Scenarios to author
+
+Three scenarios per industry × 4 industries = **12 scenario
+packs** under `scenarios/industries/`:
+
+- `logistics-geo/`
+  - `01-last-mile-delivery-single-city/`
+  - `02-multi-region-logistics-with-zones/`
+  - `03-global-fleet-analytics/`
+- `observability-iot/`
+  - `01-internal-observability-500-services/`
+  - `02-iot-fleet-telemetry-10k-devices/`
+  - `03-real-time-incident-ops-platform/`
+- `knowledge-ai/`
+  - `01-internal-eng-knowledge-search/`
+  - `02-customer-support-ai-assistant-backend/`
+  - `03-research-corpus-with-hybrid-retrieval/`
+- `modernization-bridge/`
+  - `01-legacy-monolith-carveout/`
+  - `02-multi-database-consolidation/`
+  - `03-near-zero-downtime-major-upgrade/`
+
+### 2. Scenario-specific posture targets
+
+- **Logistics/geo**:
+  - 01: mostly core + pg_stat_statements + GiST on a small zone
+    set; PostGIS is `candidate_later`.
+  - 02: PostGIS is `recommend_now`; pg_partman + BRIN on
+    breadcrumbs; Timescale is `candidate_later` with specific
+    triggers.
+  - 03: PostGIS recommend_now; partitioning required; Timescale
+    crosses into `recommend_now` for analytics workload.
+- **Observability/IoT**:
+  - 01: core partitioning + pg_partman + BRIN; Timescale
+    `candidate_later`.
+  - 02: Timescale `recommend_now`; hypertable + compression +
+    continuous aggregates; justification well-grounded.
+  - 03: Timescale + pgvector-for-anomaly-embedding-search as an
+    intentional discussion (should be `candidate_later` with
+    explicit triggers or `not_enough_evidence` — avoid hype).
+- **Knowledge/AI**:
+  - 01: core FTS + pg_trgm `recommend_now`; pgvector
+    `candidate_later`.
+  - 02: FTS + pg_trgm + pgvector `recommend_now`; hybrid retrieval.
+  - 03: heavy hybrid retrieval; pgvector + FTS + pg_trgm + RLS
+    for project scoping.
+- **Modernization bridge**:
+  - 01: postgres_fdw `recommend_now`; logical replication
+    `candidate_later` with triggers; Citus blocked
+    (`avoid_for_now`).
+  - 02: logical replication `recommend_now`; FDW as a transition
+    tool; specific migration playbook referenced.
+  - 03: blue-green upgrade via logical replication pair
+    `recommend_now`; pg_partman + pg_stat_statements always.
+
+### 3. Authoring requirements
+
+For each scenario, same as PROMPT_45:
+
+- `narrative.md` (800–1500 words) — realistic, specific,
+  judgment-demanding.
+- `intake.json` — valid, slugs resolve.
+- `expected-report.json` + `.md` — golden, matching engine output.
+- `scenario.json` — metadata with `expected_decision_outputs`.
+
+Emphasize **"not yet" reasoning** in each scenario's expected report.
+If any scenario's report reads like "turn on every extension", the
+rules need tightening — fix the rules and regenerate.
+
+### 4. Cross-scenario coverage audit
+
+Add `pgfound decision scenarios audit` that walks all scenarios in
+`scenarios/industries/` and produces a Rich table:
+
+- Each extension in the catalog, with counts of scenarios in which
+  it lands in `recommend_now`, `candidate_later`,
+  `not_enough_evidence`, `avoid_for_now`.
+
+This gives a quick view of whether any extension is either
+over-recommended or never surfacing. Use it as a reviewer tool.
+
+### 5. Tests
+
+- `tests/test_scenarios_logistics.py`,
+  `test_scenarios_observability.py`,
+  `test_scenarios_knowledge_ai.py`,
+  `test_scenarios_modernization.py`:
+  - Every scenario validates.
+  - Golden report matches current engine output.
+  - Expected decision outputs from `scenario.json` present in the
+    actual report.
+- `tests/test_scenarios_coverage_audit.py` — the audit produces a
+  non-empty row for every extension slug.
+
+### 6. Docs
+
+- Update `scenarios/README.md` with batch 2.
+- `docs/decision-engine-scenarios.md` — short reader's guide to
+  the scenario set, explaining how it doubles as a regression
+  suite and a teaching library.
+
+## Verification
+
+1. Run the engine against one scenario from each industry; golden
+   match.
+2. Run `pgfound decision scenarios audit`; confirm coverage is
+   reasonable (no extension with all zeros; no extension with
+   `recommend_now` in every scenario).
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_47 formalizes progress tracking and remediation flows on the
+training side.

@@ -1,0 +1,154 @@
+PROMPT 20 — Phase 7a: Scans, B-tree, composite indexes
+======================================================
+
+## Context
+
+`postgres-foundations`, Phase 7a. Doctrine: performance is not the
+first thing you teach, because the first thing you teach is correctness.
+Once learners trust the database, they can start reasoning about
+*how* it runs their queries. Indexing is taught as reasoning about
+access paths, not as a bag of tricks. Every index lesson must tie an
+index to a query pattern and require prediction, plan reading,
+measurement, and tradeoff explanation. See `docs/doctrine.md`.
+
+This prompt covers the first half of phase 7:
+
+1. scans vs index lookups
+2. B-tree
+3. composite indexes
+
+Phase 7b (PROMPT_21) covers partial/expression indexes, GIN/GiST/BRIN,
+and EXPLAIN in depth.
+
+## Prior work (verify before starting)
+
+- Phases 0–6 active.
+- `pg_stat_statements` extension is enabled in the lab
+  (`docker/initdb/00-extensions.sql`).
+- Phase 7 directories empty.
+
+## Task
+
+### 1. Domain extensions
+
+Author `phase-07a.sql` for ecommerce and scheduling. Purpose: scale
+row counts high enough that the cost of a sequential scan is
+**felt**, not theoretical.
+
+- Ecommerce: extend orders to ≥ 200k rows, order_items ≥ 1M rows,
+  products ≥ 5k rows. Use a deterministic Python generator under
+  `seed-data/packs/ecommerce/generators/` if one is not yet present.
+  Keep bulk fixtures out of git: generate them on demand via
+  `pgfound content seed ecommerce --phase 7a --generate` and load them
+  through the Python seed loader using `psycopg`/COPY helpers. Do
+  **not** rely on `\copy`, shell heredocs, or other psql-only loading
+  features inside `phase-07a.sql`.
+- Scheduling: ≥ 50k appointments across 10 professionals.
+
+Prefer runtime generation with a fixed seed and a caching step under
+`tmp/` or another explicitly documented generated-artifacts path. The
+learner's laptop is the constraint — do not require 10GB of
+fixtures.
+
+### 2. Lessons
+
+Target **8 lessons** for phase 7a:
+
+1. `access-paths/sequential-scan-vs-index-lookup` — what a sequential
+   scan actually does; when it is the correct plan.
+2. `access-paths/reading-explain-and-explain-analyze` — basic
+   EXPLAIN; `ANALYZE, BUFFERS`; cost vs actual time; rows estimated
+   vs actual.
+3. `btree/how-btree-works-in-30-minutes` — ordering; range queries;
+   equality; NULL-first-or-last; included columns (STORING).
+4. `btree/single-column-indexes-and-selectivity` — when a
+   single-column index helps; when it doesn't (low-selectivity
+   columns like status when there are 3 distinct values).
+5. `composite/leftmost-prefix-rule` — why `(a, b, c)` helps queries
+   filtering on `a`, on `a, b`, on `a, b, c`, but usually not on
+   `b` or `c` alone.
+6. `composite/column-order-matters` — ordering columns by equality
+   first, range next; why filtering precedes sorting in plan
+   choice.
+7. `composite/covering-indexes` — `INCLUDE` clause; when adding
+   payload columns saves a heap fetch; cost of bloat.
+8. `index-costs/write-amplification-and-bloat` — indexes are not
+   free; each write updates all indexes; bloat and maintenance
+   implications.
+
+Every lesson ≥ 700 words. Each must include a live lab session
+with `EXPLAIN (ANALYZE, BUFFERS)` output shown.
+
+### 3. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. ~64 exercises.
+
+Required drills:
+
+- Level A: "given this EXPLAIN plan, which access path did the
+  planner pick and why?"
+- Level C: "given this slow query, propose an index, apply it in
+  the lab, demonstrate the plan change, measure wall time." This
+  is the canonical phase-7a drill and must appear multiple times.
+- Level C: "explain why this query is not helped by the existing
+  composite index (wrong column order, leftmost-prefix violation)
+  and rewrite/re-index accordingly."
+- Level D: "this composite index was added to speed up one query;
+  diagnose why it has instead slowed the system" (bloat, write
+  amp, or being redundant to an existing index).
+- Level D: "this single-column index on `status` does not help the
+  hot query" — learner explains selectivity and proposes a partial
+  index (forward pointer to phase 7b).
+
+### 4. EXPLAIN utility
+
+Add `pgfound lab explain <sql-file-or-inline>`:
+
+- Runs `EXPLAIN (ANALYZE, BUFFERS, VERBOSE, FORMAT JSON)` against
+  the lab.
+- Parses the JSON plan and prints a simplified, syntax-highlighted
+  tree (use `rich.tree`).
+- Supports `--baseline <label>` to save the plan and `--compare
+  <label>` to diff against an earlier run (used in exercises).
+
+Plans are saved under `tmp/plans/<label>.json`.
+
+### 5. pg_stat_statements tour
+
+Add a small operator tour in `docs/observability-intro.md`:
+
+- What `pg_stat_statements` captures.
+- How to query it for the top 10 by total time.
+- How to reset stats.
+- Forward pointer to phase admin (PROMPT_33) for deeper usage.
+
+This doc is cited from the phase-7a lessons but not taught in full.
+
+### 6. Docs
+
+- Update glossary with index-related terms.
+- `docs/indexing-playbook-part1.md` — a rolling cookbook for the
+  indexing phases. Part 1 covers scans, B-tree, composite. Part 2
+  (PROMPT_21) extends.
+
+### 7. Tests
+
+- `tests/test_phase7a_corpus.py` — validate + lint; assert that at
+  least 6 exercises use `pgfound lab explain` or reference
+  `EXPLAIN ANALYZE` explicitly in their prompt.
+
+## Verification
+
+1. Generate + seed phase 7a ecommerce.
+2. Pick a Level C "add index, measure" exercise and run it:
+   - Baseline plan shows Seq Scan with measurable time.
+   - Apply recommended index; plan shows Index Scan; time drops.
+   - `pgfound lab explain --baseline pre --compare post` prints a
+     diff.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_21 finishes phase 7 with partial/expression indexes, GIN/GiST/
+BRIN, and deeper EXPLAIN analysis.

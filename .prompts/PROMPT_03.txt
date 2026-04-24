@@ -1,0 +1,178 @@
+PROMPT 03 — Docker Compose PostgreSQL lab environment
+=====================================================
+
+## Context
+
+You are working in `postgres-foundations`, a serious PostgreSQL learning and
+planning platform. The lab environment is **the** way learners interact with
+PostgreSQL — we do not expect anyone to install Postgres locally. The lab must
+be reproducible, fast to reset, and safe to blow away. See `docs/doctrine.md`
+and `docs/adr/0003-docker-for-the-lab.md` for the posture this prompt is
+implementing.
+
+Doctrine reminder:
+
+- PostgreSQL core first; extensions layered in by workload signal.
+- Operational awareness is first-class (pooling, monitoring, backup/restore,
+  replication concepts will all be exercised in this lab over time).
+- Keep things simple now. The lab grows later to support extensions
+  (PostGIS, pgvector, TimescaleDB, FDW, logical replication pairs). We do
+  **not** enable all of that today.
+
+## Prior work (verify before starting)
+
+- PROMPT_01 scaffolding complete (`pgfound` package, Makefile, pyproject).
+- PROMPT_02 docs complete (`docs/doctrine.md`, `docs/architecture.md`,
+  ADR-0003 present).
+- `docker/` directory exists with only `.gitkeep`.
+- `uv run pytest -q` green.
+
+If `docker/docker-compose.yml` already exists, read it before editing.
+
+## Task
+
+Build a clean, layered Docker lab that supports three modes right now — a
+core PostgreSQL server for lessons/exercises, an **ephemeral sandbox**
+variant for throwaway work, and a **concurrency** variant that lets two
+psql sessions drive the same database for concurrency labs. Later prompts
+will add profiles for PostGIS, pgvector, replication pairs, and PgBouncer.
+
+### 1. `docker/docker-compose.yml`
+
+Use Docker Compose v2 syntax (no `version:` top-level field). Define:
+
+- A top-level network `pgfound-net`.
+- A named volume `pgfound-data` for the main lab database.
+- Service `pg`:
+  - Image pinned to `postgres:16` (the latest even-numbered major Postgres
+    release — pin exactly, do not use `postgres:latest`).
+  - Environment: `POSTGRES_USER=pgfound`, `POSTGRES_PASSWORD=pgfound`,
+    `POSTGRES_DB=pgfound` sourced from a `.env` file with sensible defaults.
+  - Port `5433:5432` (5433 chosen so it does not collide with a local
+    Postgres install).
+  - Volume mounts: `pgfound-data:/var/lib/postgresql/data` and the
+    `docker/initdb/` directory mounted read-only at
+    `/docker-entrypoint-initdb.d/`.
+  - Healthcheck using `pg_isready -U pgfound -d pgfound`.
+  - Resource-friendly defaults (shared_buffers via command-line flag set to
+    `256MB`; `log_min_duration_statement=200`;
+    `shared_preload_libraries=pg_stat_statements`; and
+    `pg_stat_statements.track=all` so the extension can be created safely in
+    init SQL and is ready for later observability/indexing prompts.
+- Service `pg-sandbox` under profile `sandbox`:
+  - Same image, no persistent volume (uses an anonymous volume so data
+    evaporates on `down`).
+  - Port `5434:5432`.
+  - No init scripts.
+- Profiles:
+  - `pg` is unprofiled, so a normal `docker compose up -d pg` is the default
+    lab path.
+  - `sandbox` brings up `pg` and `pg-sandbox`.
+  - Do **not** define a separate `concurrency` service/profile here; the
+    concurrency workflow uses the normal `pg` service with two client sessions,
+    documented in `docs/lab.md` — see §5.
+
+### 2. `docker/initdb/`
+
+Create the init-SQL directory that `pg` mounts at entrypoint. Scripts here
+run once on first boot.
+
+- `docker/initdb/00-extensions.sql` — enable extensions that are safe to
+  enable universally now: `CREATE EXTENSION IF NOT EXISTS pgcrypto;`
+  `CREATE EXTENSION IF NOT EXISTS pg_stat_statements;` (safe here because the
+  service already preloads `pg_stat_statements`).
+- `docker/initdb/10-schemas.sql` — create a `pgfound` schema owned by
+  the `pgfound` role. Create a `_admin` schema used later for platform
+  metadata; grant `USAGE` on both to `pgfound`. Do NOT create exercise
+  tables here — those land in seed data packs.
+- `docker/initdb/99-audit.sql` — log the hostname, PostgreSQL version, and
+  current timestamp via `RAISE NOTICE` so boot output documents which
+  build came up.
+
+Keep every init script idempotent via `IF NOT EXISTS` guards.
+
+### 3. `docker/postgresql.conf.d/` (optional overlay)
+
+Leave a `.gitkeep` here but do **not** yet use it. Write a short comment
+file `docker/postgresql.conf.d/README.md` explaining that later prompts
+(especially the partitioning, logical replication, and pg_stat_statements
+modules) will add overlay config fragments here and that the compose file
+will mount this directory when those phases arrive.
+
+### 4. `.env.example`
+
+At repo root. Variables:
+
+```
+POSTGRES_USER=pgfound
+POSTGRES_PASSWORD=pgfound
+POSTGRES_DB=pgfound
+POSTGRES_PORT=5433
+```
+
+Add `.env` and other local secret env files to `.gitignore` while preserving
+`!.env.example` (it's probably already there — confirm).
+
+### 5. `docs/lab.md`
+
+A short operator's guide for the lab:
+
+- How to start: `docker compose up -d pg`.
+- How to reset: `docker compose down -v` (explicitly calls out that the
+  `-v` flag destroys the persisted database).
+- How to connect with psql: both via the `pg` exec path (`docker compose
+  exec pg psql -U pgfound`) and via a host psql against `localhost:5433`.
+- How to run the sandbox for throwaway work.
+- How to run concurrency labs: two host psql terminals against the normal
+  `pg` service, using `BEGIN;` blocks to hold transactions open; explain why
+  the sandbox is unsuitable for concurrency labs (ephemeral).
+- How lab roles work now (single `pgfound` superuser) and a note that
+  roles/least-privilege training arrives in PROMPT_24 and PROMPT_31.
+- Troubleshooting: port 5433 in use, permissions on the mounted initdb
+  dir, how to tail container logs.
+
+Length: 400–700 words.
+
+### 6. Makefile targets
+
+Extend the Makefile with lab targets — keep them thin and portable:
+
+- `make lab-up` — `docker compose up -d pg`
+- `make lab-down` — `docker compose down`
+- `make lab-nuke` — `docker compose down -v` (prompt is allowed to be
+  destructive; this is an operator tool)
+- `make lab-psql` — `docker compose exec pg psql -U pgfound`
+- `make lab-logs` — `docker compose logs -f pg`
+- `make lab-sandbox-up` — `docker compose --profile sandbox up -d`
+
+### 7. Tests
+
+Add `tests/test_docker_compose.py` that:
+
+- Parses `docker/docker-compose.yml` with PyYAML.
+- Asserts the pinned image tag (`postgres:16`).
+- Asserts the healthcheck is present on `pg`.
+- Asserts the init-SQL mount is correct.
+- Asserts `pg-sandbox` is gated behind the `sandbox` profile.
+
+This test does NOT start Docker — it only validates the compose file as data.
+
+## Verification
+
+1. `docker compose config` succeeds with no errors.
+2. `docker compose up -d pg` brings the DB up; `docker compose ps` shows
+   healthy; `docker compose exec pg psql -U pgfound -c '\\dx'` shows the
+   two extensions; `docker compose down` cleans up.
+3. `docker compose --profile sandbox up -d` brings up two services;
+   `docker compose down` cleans up.
+4. `uv run pytest -q` green, including the new compose-file test.
+5. `uv run ruff format --check .` green.
+
+Note in your summary if Docker itself is not available in your environment;
+skip the runtime checks but still run the compose-file-data test and
+document it.
+
+## Next prompt
+
+PROMPT_04 builds the `pgfound` CLI surface for interacting with the lab,
+running exercises, and (later) driving reviews and decision-engine flows.

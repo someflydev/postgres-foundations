@@ -1,0 +1,170 @@
+PROMPT 34 — Extension track: E1 pg_stat_statements (deep), E2 pg_trgm
+=====================================================================
+
+## Context
+
+`postgres-foundations`, Extension Mastery Track. Doctrine from
+`docs/doctrine.md`:
+
+- Core first, extensions by workload signal.
+- For every extension, teach: why it exists; when core is enough;
+  workload fit; operational cost; replication/backup implications;
+  managed-service portability; what "good enough without this
+  extension" looks like.
+
+This prompt authors **E1 pg_stat_statements** (beyond the preview in
+phase 7 / admin A5) and **E2 pg_trgm** (beyond the preview in phase 8).
+
+## Prior work (verify before starting)
+
+- PROMPTS 31–33 admin track authored.
+- Phase 7/8 previewed these extensions.
+- Extension track directory `curriculum/extensions/map.json` does
+  not yet exist — author it here.
+
+## Task
+
+### 1. Extension track map and content roots
+
+Create `curriculum/extensions/map.json`.
+
+Use the following canonical extension-track roots:
+
+```
+lessons/extensions/
+  <module-id>/
+    <lesson-slug>/
+      lesson.json
+      body.md
+exercises/extensions/
+  <module-id>/
+    <lesson-slug>/
+      level-a/<slug>/
+      ...
+```
+
+Extension lessons use the dedicated `module_id` field introduced in
+PROMPT_05; they do **not** overload `phase`. Update the validator to
+recognize the extension tree and enforce that `lesson.json.module_id`
+matches the enclosing extension module directory.
+
+`curriculum/extensions/map.json`:
+
+```
+{
+  "modules": [
+    {
+      "id": "e1-pg-stat-statements",
+      "title": "pg_stat_statements (deep)",
+      "capability_layer": "extension_mastery",
+      "prerequisites": [{"phase": 7}, {"admin_module": "a5-monitoring"}],
+      "goals": [...],
+      "exit_competencies": [...],
+      "replaces_or_complements_core": "complements",
+      "managed_service_availability": "broadly available"
+    },
+    {
+      "id": "e2-pg-trgm",
+      ...
+    },
+    ...
+  ]
+}
+```
+
+Author all extension modules in the map now (E1–E7 plus ltree,
+pg_partman, PgBouncer). This prompt fills content only for E1 and
+E2.
+
+### 2. E1 pg_stat_statements — lessons
+
+Target **6 lessons**:
+
+1. `what-pg-stat-statements-actually-captures` — normalized
+   queries, per-query total/mean time, I/O counters.
+2. `installation-and-configuration` — `shared_preload_libraries`;
+   `pg_stat_statements.max`; `track_io_timing` (pairs with pss
+   for I/O analytics).
+3. `reset-discipline-and-baselines` — when to reset; baseline
+   approach for before/after changes.
+4. `triage-patterns` — top-N by total time, by mean time,
+   regressions after a deploy.
+5. `integrating-with-explain-workflows` — going from a queryid
+   to a plan; how to recover the actual query text.
+6. `cost-and-caveats` — overhead; query normalization edge cases
+   (dynamic SQL, `IN` lists, JSONB path expressions).
+
+### 3. E2 pg_trgm — lessons
+
+Target **7 lessons**:
+
+1. `what-pg-trgm-is-for` — fuzzy matching, typo tolerance,
+   similarity search; how it differs from FTS and when you
+   need both.
+2. `similarity-and-word-similarity` — `similarity()`,
+   `word_similarity()`, thresholds, the `%` operator.
+3. `gin-and-gist-on-trigrams` — choosing the index type; query
+   patterns each supports.
+4. `combining-fts-and-trigrams` — a hybrid search pattern: FTS
+   for precision, trigrams for typo tolerance.
+5. `deduplication-candidates` — using similarity to find likely-
+   duplicate customer rows.
+6. `support-ui-search` — the classic "type-ahead over a support
+   article store" pattern.
+7. `cost-and-caveats` — index size; write overhead; when
+   dedicated search engines (Meilisearch, OpenSearch) are the
+   right next step — explicit "not yet" thresholds.
+
+### 4. Exercises
+
+Per lesson (E1+E2): 2A + 2B + 2C + 2D. ~104 exercises.
+
+Critical drills:
+
+- E1: Level C — "given pg_stat_statements output fixture,
+  identify the top regression after a fictional deploy, produce
+  a triage report."
+- E1: Level D — "a pg_stat_statements integration that is not
+  showing the worst queries because `pg_stat_statements.max`
+  is too low and the stats ring is being cycled."
+- E2: Level C — dedupe candidate customer rows in ecommerce; use
+  `word_similarity()` with a sensible threshold; justify the
+  threshold.
+- E2: Level D — a GIN-trigram index is present but not used
+  because the query uses `LIKE 'prefix%'` which a btree would
+  serve better; learner diagnoses and proposes a btree on the
+  expression.
+
+### 5. Lab support
+
+- Confirm `pg_stat_statements` is already preloaded
+  (PROMPT_03). Treat any drift here as a repair only; do not
+  redesign the base lab contract.
+- Enable `pg_trgm` via `docker/initdb/00-extensions.sql`
+  — add `CREATE EXTENSION IF NOT EXISTS pg_trgm;`.
+
+### 6. Docs
+
+- `docs/extension-track/README.md` — extension-track overview.
+- `docs/extension-track/e1-pg-stat-statements.md`.
+- `docs/extension-track/e2-pg-trgm.md`.
+- Update `docs/search-playbook.md` to cite the pg_trgm module.
+
+### 7. Tests
+
+- `tests/test_extension_map.py` — the map validates; E1–E7 and
+  ltree/pg_partman/PgBouncer all listed.
+- `tests/test_extension_e1_e2_corpus.py` — validate + lint.
+
+## Verification
+
+1. Lab up with pg_trgm enabled. Run a similarity query and
+   confirm results.
+2. `SELECT * FROM pg_stat_statements LIMIT 5;` returns rows.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_35 authors E3 PostGIS and E4 pgvector — two heavy extensions
+that each require their own lab profile.

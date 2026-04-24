@@ -1,0 +1,195 @@
+PROMPT 27 — Review engine and rubric system
+===========================================
+
+## Context
+
+`postgres-foundations`. The platform has lessons, exercises, capstones,
+rubrics, and a running lab. This prompt implements the **review
+engine** that mechanizes feedback: running learner answers against
+reference solutions, producing structured outputs (diff + rubric
+score), and optionally composing an LLM-driven narrative review
+(LLM calls arrive in PROMPT_29/30 — this prompt focuses on the
+mechanical engine that those prompts plug into).
+
+Doctrine reminder: the review engine is a *coach's assistant*, not
+a replacement for the coach. Its outputs are scaffolds. See
+`docs/doctrine.md`, `docs/llm-usage.md`.
+
+## Prior work (verify before starting)
+
+- Exercise `--check` path in place (PROMPT_11+).
+- Concurrency harness in place (PROMPT_19).
+- Four capstones authored with reference solutions (PROMPT_25/26).
+- `pgfound review run` is still a stub from PROMPT_04.
+
+## Task
+
+### 1. Review-engine architecture
+
+Implement under `src/pgfound/review/`:
+
+```
+review/
+  engine.py               # orchestrator
+  grading.py              # rubric evaluation
+  runners/
+    query.py              # runs a learner SELECT and compares
+    schema.py             # compares information_schema between refs
+    concurrency.py        # runs a scenario YAML (wraps PROMPT_19)
+    writeup.py            # lints a writeup file against a checklist
+  output/
+    report.py             # Rich console + markdown writer
+    json.py               # machine-readable
+  normalize.py            # from PROMPT_16
+```
+
+An `EvaluationRequest` is a dataclass carrying: the exercise or
+capstone ID, the path to the learner's artifacts, a context
+object (DB URL, repo root), and a `mode` (`auto`, `writeup`,
+`full`).
+
+An `EvaluationResult` is a dataclass carrying: per-dimension
+scores, overall score, pass/fail, a list of `Finding` records
+(each with severity, title, detail, pointer to the relevant
+artifact/path).
+
+### 2. Rubric evaluation
+
+`grading.py` takes a rubric and a list of `Finding`s and produces
+per-dimension scores. How: each rubric dimension declares a set of
+*signal patterns* (new field `signals: array` on rubric schema).
+Each signal maps a pattern to a score adjustment:
+
+```
+"signals": [
+  { "pattern": "missing_rls_policy", "levels": {"missing": 0, "present_but_weak": 2, "present_and_strict": 4} },
+  { "pattern": "seq_scan_on_hot_query", "levels": {"present": 0, "absent": 3} }
+]
+```
+
+Signals are produced by the runners. A signal is just a string
+key + observed value. Rubric authors declare which signals map to
+which dimensions. When a signal is absent, the dimension retains
+a "manual-review" score of -1 (meaning: a human must score this).
+Reports must clearly flag manual-review dimensions.
+
+Document this mapping in `docs/rubric-signals.md`.
+
+### 3. Exercise review flow
+
+`pgfound exercise review <exercise-id> --answer <path> [--auto|--full]`:
+
+- Ensures the correct seed pack is loaded.
+- Runs the exercise's `--check` comparator (query/schema/
+  concurrency) and emits signals for correctness.
+- Runs `EXPLAIN (ANALYZE, BUFFERS)` against the learner's SQL and
+  diffs against the reference's plan; emits index/plan signals
+  (`seq_scan_where_index_expected`,
+  `actual_rows_far_from_estimate`, `btree_not_used`).
+- Evaluates the rubric and returns the result.
+- Writes a Markdown report to
+  `tmp/reviews/<exercise-id>/<timestamp>.md` and a JSON sibling.
+
+### 4. Capstone review flow
+
+`pgfound capstone evaluate <capstone-id> --path <learner-dir>
+[--full]`:
+
+- Applies the learner's schema/indexes/rls files to a **fresh**
+  lab database (or the `sandbox` profile). Use the dedicated
+  ephemeral sandbox container (PROMPT_03) so a learner's
+  capstone cannot clobber the main lab.
+- Runs the capstone's critical-query set from
+  `reference/critical-queries.sql` against the learner's schema;
+  the learner's own queries from their `critical-queries.sql` are
+  also executed and compared to reference outputs (row-level, with
+  an `output_comparison` mode per capstone).
+- Runs any declared concurrency scenarios.
+- Evaluates:
+  - schema-literacy signals (expected tables/columns/constraints
+    present),
+  - indexing-reasoning signals (hot queries plan-checked),
+  - concurrency signals (scenario passes),
+  - RLS signals (cross-tenant isolation proven via a parameterized
+    test runner),
+  - extension-posture signals (parse the writeup for required
+    sections),
+  - writeup signals (length, required sections, "not yet" section
+    present).
+- Writes a capstone-sized report to `tmp/reviews/capstone/<id>/
+  <timestamp>.{md,json}`.
+
+### 5. Writeup lint
+
+`runners/writeup.py` checks the writeup:
+
+- Required section headers present (from
+  `capstone.json.writeup_required_sections`; add this field to
+  the capstone schema).
+- Minimum word count per section.
+- Presence of an "extension posture" / "not yet" block.
+- Emits signals consumed by the writeup-quality rubric dimension.
+
+### 6. Report format
+
+The Markdown report begins with a summary table (dimension, score,
+weight, contribution), followed by findings grouped by severity
+and dimension. Include a "manual-review queue" section listing
+every dimension that could not be auto-scored and what evidence
+the coach should look at.
+
+The JSON report is the same data in schema form:
+
+```
+{
+  "exercise_id": "...",
+  "rubric_id": "...",
+  "overall_score": 0.78,
+  "pass": true,
+  "dimensions": [...],
+  "findings": [...],
+  "plan_diffs": [...]
+}
+```
+
+### 7. Exercise/capstone schema updates
+
+- `capstone.json` adds `writeup_required_sections` and
+  `critical_queries_path`.
+- `rubric.json` adds `signals`.
+
+Update validator.
+
+### 8. Tests
+
+- `tests/test_review_engine_exercise.py` — evaluates a
+  deliberately-wrong solution against a fixture exercise and
+  asserts the correct set of findings fires.
+- `tests/test_review_engine_capstone.py` — evaluates a fixture
+  capstone attempt (also checked into the repo under
+  `tests/fixtures/capstone-attempt/`) and asserts the overall
+  score falls in an expected band.
+- `tests/test_plan_diff.py` — deterministic diffing of fixture
+  EXPLAIN JSON.
+
+### 9. Docs
+
+- `docs/review-engine.md` — the operator's guide.
+- Update `docs/cli.md` with the new commands.
+
+## Verification
+
+1. Pick one Level D phase-7 exercise; run `pgfound exercise review`
+   against a deliberately wrong answer and a correct answer. The
+   report shows different scores and the findings are actionable.
+2. Run `pgfound capstone evaluate 01-multi-tenant-saas-crm --path
+   capstones/01-multi-tenant-saas-crm/reference` — the reference
+   solution should score near 100% (manual-review dimensions
+   remain).
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_28 builds the interview simulator that composes lessons,
+exercises, and reviews into a mock-interview experience.

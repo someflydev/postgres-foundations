@@ -1,0 +1,196 @@
+PROMPT 25 — Capstones 1 and 2: Multi-tenant SaaS, Scheduling and availability
+=============================================================================
+
+## Context
+
+`postgres-foundations`. Phases 0–10 of the core curriculum are now
+complete. Doctrine: capstones are **cross-country flights**. They
+require the learner to compose many phases into a coherent system —
+schema, queries, indexes, security posture, operational notes, and a
+written explanation of tradeoffs. See `docs/doctrine.md` and
+`curriculum/README.md`.
+
+This prompt authors Capstones 1 and 2. Capstones 3 and 4 land in
+PROMPT_26.
+
+## Prior work (verify before starting)
+
+- PROMPTS 10–24 active.
+- `capstones/` directory exists with only `.gitkeep`.
+- `rubrics/default/` exists.
+
+## Task
+
+### 1. Capstone directory layout
+
+Under `capstones/`:
+
+```
+capstones/
+  01-multi-tenant-saas-crm/
+    capstone.json
+    narrative.md
+    brief.md
+    constraints.md
+    acceptance-criteria.md
+    starter/
+      schema-skeleton.sql
+      seed-sample.csv
+      README.md
+    reference/
+      schema.sql
+      indexes.sql
+      rls-policies.sql
+      critical-queries.sql
+      operational-runbook.md
+      writeup.md
+    rubric.json     # or reference by rubric_id to a rubric in rubrics/
+```
+
+Same layout for capstone 02.
+
+### 2. Capstone 1: Multi-tenant SaaS CRM
+
+- Scenario: an early-stage B2B SaaS CRM with 50 paying tenants
+  averaging 10 users each, planning to grow to 500 tenants and 100
+  users per tenant within a year. Tenants range from small single-
+  team startups to a 50-seat regional firm. The system stores
+  accounts, contacts, deals, activities, notes (rich text), and
+  audit events. Tenant data must be strictly isolated.
+- `narrative.md` (800–1200 words) reads like a real product brief:
+  the product context, the tenant profile, the team size (3
+  engineers), the operational tolerance ("we want not to get paged
+  at 3 AM"), the portability constraint ("probably Heroku/RDS, so
+  nothing weird"), and a deadline.
+- `brief.md` (600 words) lists the deliverables the learner must
+  produce: schema, indexes, RLS policies, 8–12 critical queries
+  (spelled out in `constraints.md`), operational runbook, writeup.
+- `constraints.md` spells out:
+  - Postgres 16, no extensions assumed beyond pgcrypto and
+    pg_stat_statements.
+  - Strict RLS + single database, single schema.
+  - JSONB used only for a clearly-bounded "custom_fields" pattern.
+  - Full-text search on notes (core FTS).
+  - Audit events are append-only; retention 18 months (partitioning
+    discussion required).
+  - Query latency target: p95 < 200ms for the dashboard landing
+    queries.
+- `acceptance-criteria.md` lists how the capstone is judged.
+- `starter/schema-skeleton.sql` — a deliberately incomplete
+  skeleton that the learner must extend.
+- `starter/seed-sample.csv` — 100 rows to help local testing.
+- `reference/` — a full reference solution including:
+  - `schema.sql` (tables, constraints, RLS policies).
+  - `indexes.sql` (justified in comments — each index references
+    the capstone query it serves).
+  - `rls-policies.sql`.
+  - `critical-queries.sql` — the 10 queries the brief requires.
+  - `operational-runbook.md` — how to observe, backup, and
+    partition-maintain.
+  - `writeup.md` — the learner-shaped writeup (2500–3500 words)
+    that explains decisions, tradeoffs, and "why not X".
+- `rubric.json` — either reference `rubrics/default/*` composed
+  (see §4) or a capstone-specific rubric. Rubric emphasizes:
+  - correctness of RLS isolation (weight 0.2)
+  - schema modeling quality (0.2)
+  - indexing justification (0.15)
+  - query correctness and performance (0.15)
+  - operational posture (0.1)
+  - writeup / defense quality (0.2)
+
+### 3. Capstone 2: Scheduling and availability
+
+- Scenario: a multi-region appointment platform for healthcare
+  providers. 200 professionals across 3 time zones, patient self-
+  scheduling, provider blackout windows, recurring availability
+  templates, double-booking must be impossible at the database
+  layer, waitlist on cancellations.
+- Narrative, brief, constraints, and acceptance criteria in the
+  same form as Capstone 1.
+- Constraints emphasize:
+  - Exclusion constraint on appointments (`tstzrange` +
+    `EXCLUDE USING gist`).
+  - Multirange availability for provider templates.
+  - Time-zone correctness (stored timestamptz, rendered per
+    provider timezone).
+  - Concurrency correctness under a "two patients book the same
+    slot at the same time" race — must be impossible.
+  - No PostGIS yet (the learner will argue why geo is not yet
+    justified given the stated scale).
+  - Full-text search on professional bios and specialties is
+    optional but encouraged.
+- Reference solution includes:
+  - Schema with exclusion constraints.
+  - A concurrency scenario YAML (linked from PROMPT_19 harness)
+    that demonstrates the exclusion-constraint fix works under
+    concurrent booking.
+  - Critical queries (provider availability, upcoming bookings,
+    cancellations + waitlist promotion).
+  - Indexing + partitioning decision (most will decide **not**
+    to partition appointments yet — and will be required to
+    explain why).
+  - Operational runbook + writeup.
+
+### 4. Capstone rubric composition
+
+Extend the rubric schema and validator to support "composed"
+rubrics — a rubric that `extends` one or more base rubrics by
+weighting them:
+
+```
+{
+  "id": "capstone-01-saas-crm",
+  "extends": [
+    { "rubric_id": "schema-design", "weight": 0.2 },
+    { "rubric_id": "indexing-reasoning", "weight": 0.15 },
+    { "rubric_id": "critique-and-repair", "weight": 0.1 }
+  ],
+  "own_dimensions": [ ... ]
+}
+```
+
+Composition rules:
+
+- Weights of `extends` + sum of `own_dimensions.weight` must sum
+  to 1.0.
+- The extended rubric is effectively inlined with its own
+  dimensions scaled by the composition weight.
+
+Update the validator, tests, and `docs/authoring-exercises.md`.
+
+### 5. Capstone CLI
+
+Add `pgfound capstone start <id>`:
+
+- Copies the `starter/` directory into `tmp/capstone-work/<id>/`.
+- Prints the brief, constraints, and acceptance criteria.
+- Registers an attempt record in `tmp/progress/capstones/<id>.json`.
+
+Add `pgfound capstone evaluate <id> --path <dir>`:
+
+- Stub for PROMPT_27 (review engine) — print a message pointing at
+  PROMPT_27 and exit 0. The command must exist for future wiring.
+
+### 6. Tests
+
+- `tests/test_capstone_corpus.py` — every capstone validates,
+  rubric sums to 1.0 (composed), reference/ schema applies cleanly
+  in the lab against a blank database.
+- `tests/test_capstone_start_cli.py` — `pgfound capstone start`
+  copies starter into tmp and prints the brief.
+
+## Verification
+
+1. `uv run pgfound capstone start 01-multi-tenant-saas-crm`
+   populates `tmp/capstone-work/.../` and prints the brief.
+2. Apply `reference/schema.sql` to a blank pg; run
+   `critical-queries.sql`; all queries run without error.
+3. Run the scheduling capstone's concurrency scenario YAML via
+   `pgfound lab concurrency run`; passes.
+4. `uv run pgfound content validate` + `lint` green.
+5. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_26 authors Capstones 3 and 4 (event-heavy operations and
+modernization bridge).

@@ -1,0 +1,136 @@
+PROMPT 17 — Phase 5: Expressive querying
+========================================
+
+## Context
+
+`postgres-foundations`, Phase 5. Doctrine: once the learner has a solid
+relational and data-modeling foundation, expressive SQL becomes a
+force multiplier. This phase makes them fluent in CTEs, window
+functions, lateral joins, recursive queries, upserts, views, and
+materialized views. See `docs/doctrine.md`.
+
+Phase 5 concepts: `cte`, `recursive_cte`, `window_function`,
+`partition_by`, `order_in_window`, `frame_clause`, `lateral_join`,
+`upsert` (`INSERT ... ON CONFLICT`), `view`, `materialized_view`,
+`correlated_subquery`, `exists`, `not_exists`.
+
+Still **not yet** (as subjects of study): transactions and concurrency
+(phase 6), indexes as a performance subject (phase 7), full-text (phase
+8), partitioning (phase 9), RLS (phase 10).
+
+## Prior work (verify before starting)
+
+- Phases 0–4 active.
+- Domain packs at phase 4b.
+- Phase 5 directories empty.
+
+## Task
+
+### 1. Domain extensions
+
+Author `phase-05.sql` for each of ecommerce, scheduling, saas,
+event_heavy_ops. Goal: provide enough data volume and scenarios to
+make window functions and lateral joins *feel like they matter*.
+
+- Ecommerce: ≥ 2000 orders across ≥ 200 customers over 12 months.
+- Scheduling: ≥ 500 appointments per professional across 3
+  professionals.
+- Saas: ≥ 50 tenants, each with 5–200 users, at least one usage
+  event table (small schema) to support lateral-join drills.
+- Event_heavy_ops: ≥ 50k event rows (use a generator; deterministic
+  seed) spanning multiple sources. Keep data volume bounded so the
+  lab works on a laptop.
+
+Document in each domain README the phase-05 volumes; include a line
+in each phase-05.sql header about expected row counts.
+
+### 2. Lessons
+
+Target **12 lessons** for phase 5:
+
+1. `ctes/what-a-cte-is` — readability; scoping; when a CTE
+   materializes (Postgres 12+ behavior — `MATERIALIZED` /
+   `NOT MATERIALIZED`).
+2. `ctes/chained-ctes-for-staged-logic`.
+3. `ctes/recursive-ctes` — hierarchy traversal on a small categories
+   table; running totals via recursion; stop conditions.
+4. `window-functions/what-window-functions-are` — `OVER()`,
+   `PARTITION BY`, `ORDER BY`, the frame concept.
+5. `window-functions/running-totals-and-rank` — `SUM(...)
+   OVER(...)`, `RANK`, `DENSE_RANK`, `ROW_NUMBER`.
+6. `window-functions/lead-lag-and-time-series-feel` — time-series
+   style queries without yet being a time-series database.
+7. `lateral-joins/what-lateral-unlocks` — "per-group top-N"
+   queries; correlated joins that finally compose well.
+8. `upserts/insert-on-conflict` — ON CONFLICT DO NOTHING vs DO
+   UPDATE; `EXCLUDED` semantics; ON CONFLICT and partial indexes
+   (forward pointer to phase 7).
+9. `subqueries/exists-and-not-exists` — `EXISTS` is often faster,
+   clearer, and more correct than `IN (subquery)`.
+10. `views/what-a-view-is-for` — readability, abstraction,
+    permissions (forward pointer to phase 10); views are not
+    performance tools.
+11. `materialized-views/when-a-materialized-view-helps` — expensive
+    aggregations refreshed periodically; staleness tradeoffs;
+    `REFRESH MATERIALIZED VIEW [CONCURRENTLY]`.
+12. `synthesis-choosing-the-right-shape` — a synthesis lesson
+    choosing between CTEs, subqueries, lateral joins, window
+    functions, views, matviews for a handful of real-world queries.
+
+Every lesson ≥ 600 words. Worked examples must use the extended
+domain packs and produce non-trivial output.
+
+### 3. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D (more D's this phase because there is
+so much to critique). Approximately **96 exercises**.
+
+Critical drills:
+
+- Level D: "equivalent" CTE and subquery that actually produce
+  different results in the presence of NULLs — learner must
+  diagnose.
+- Level D: a window-function query with the wrong frame clause.
+- Level D: `INSERT ... ON CONFLICT DO NOTHING` used where the
+  business required `DO UPDATE`.
+- Level D: a matview treated as a source of truth that has gone
+  stale; learner diagnoses the refresh policy and recommends a
+  schedule (or a switch to a regular view).
+- Level C: "per-customer top 3 orders by revenue" via lateral
+  join; oral-defense prompt: "Why is this noticeably different
+  from a `ROW_NUMBER()` approach and when would you use each?".
+
+### 4. Exercise runner updates
+
+- Window-function queries often require ordered output. Make sure
+  `output_comparison: ordered` is easy to set and document it.
+- Add a `--timing` flag to `pgfound exercise run --check` that
+  measures and reports execution time for the learner's query.
+  This is a soft gateway into phase 7.
+
+### 5. Docs
+
+- Update glossary with clear concise definitions for `CTE`,
+  `window function`, `PARTITION BY`, `LATERAL`, `EXCLUDED`,
+  `materialized view`.
+- Add `docs/expressive-sql-style.md` — a short style note on when
+  to prefer a CTE vs a subquery, when to use a view vs inline SQL,
+  and the team-scale implications.
+
+### 6. Tests
+
+- `tests/test_phase5_corpus.py` — validate + lint; assert the
+  expected lesson count and a minimum exercise count (≥ 80).
+
+## Verification
+
+1. Seed to phase 5 across all four domains cleanly.
+2. Pick the "per-customer top 3 orders" lateral-join exercise and
+   confirm `--check` passes.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_18 authors phase 6 (transactions, concurrency, correctness).
+PROMPT_19 builds the multi-session lab harness needed for those drills.

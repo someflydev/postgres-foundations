@@ -1,0 +1,130 @@
+PROMPT 36 — Extension track: E5 TimescaleDB, E6 postgres_fdw (deep)
+===================================================================
+
+## Context
+
+`postgres-foundations`. Doctrine:
+
+- **TimescaleDB** is a serious commitment — a separate image, AGPL
+  parts, specific operational posture. Adopt only when time-series
+  analytics is *central*, not merely present. Phase 9 taught
+  partitioning; that is often enough.
+- **postgres_fdw** was introduced in phase 10; this module goes
+  deeper into production-grade usage: predicate pushdown, async
+  FDW, pushdown pitfalls, authentication, reliability.
+
+## Prior work (verify before starting)
+
+- Phase 9 partitioning and phase 10 FDW authored.
+- Capstone 04 (modernization bridge) uses FDW.
+
+## Task
+
+### 1. Lab support
+
+Continue authoring extension-track lessons and exercises under
+`lessons/extensions/<module-id>/` and `exercises/extensions/<module-id>/`
+as established in PROMPT_34.
+
+Add a `timescale` profile running `timescale/timescaledb:latest-pg16`
+(pin a specific tag) on port 5438:5432 with its own init script
+enabling Timescale. Keep the main `pg` plain. Document in
+`docs/lab.md`. Extend `pgfound doctor` to show profile status.
+
+### 2. E5 TimescaleDB — lessons
+
+Target **9 lessons**:
+
+1. `timescale-what-it-is` — hypertables as automated range
+   partitioning + chunk management; what Timescale does that
+   core Postgres does not do as easily.
+2. `creating-a-hypertable` — `create_hypertable`, chunk time
+   intervals, space partitioning.
+3. `continuous-aggregates` — what they are, refresh policies,
+   when they beat plain matviews + scheduled refresh.
+4. `compression-and-downsampling` — compression policies,
+   tradeoffs, how it interacts with updates.
+5. `retention-policies` — declarative retention.
+6. `query-patterns-that-win` — where Timescale's planner wins vs
+   loses.
+7. `operational-posture` — backups, replication, upgrades; AGPL
+   vs commercial Timescale; managed-service choices (Timescale
+   Cloud, AWS TSDB managed offering landscape).
+8. `when-core-partitioning-is-enough` — the explicit "not yet"
+   framework — partition counts, query latency, operational
+   comfort, analytics maturity.
+9. `migrating-to-timescale` — how to move an existing partitioned
+   core table into a hypertable; how to revert.
+
+### 3. E6 postgres_fdw deep — lessons
+
+Target **8 lessons**:
+
+1. `predicate-pushdown-fundamentals` — which predicates push,
+   which do not; types and operators pushable.
+2. `join-pushdown-and-aggregate-pushdown` — Postgres 14+ joint
+   and aggregate pushdown; verifying via EXPLAIN VERBOSE.
+3. `async-append-for-fdw` — asynchronous execution for multi-FDW
+   queries.
+4. `foreign-table-statistics` — `ANALYZE` over FDW; the cost;
+   implications for planner.
+5. `authentication-patterns` — `CREATE USER MAPPING`; secrets
+   management; SSL considerations.
+6. `reliability-modes` — what happens when the foreign server
+   is slow or unavailable; timeouts; circuit-breaker-style
+   patterns at the application layer.
+7. `pushdown-trips-and-rewrites` — wrapping expressions in
+   pushdown-friendly forms; avoiding non-pushable functions.
+8. `from-fdw-to-logical-replication` — progressing from federation
+   to consolidation; the migration path into a single cluster or
+   to a proper ownership split.
+
+### 4. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. ~136 exercises.
+
+Critical drills:
+
+- Timescale Level C: convert a phase-09 partitioned events
+  table's analysis workload into a hypertable + continuous
+  aggregate; compare query times.
+- Timescale Level D: a compression policy that silently prevents
+  updates to historical rows that operations actually need to
+  update; learner diagnoses and proposes a different retention
+  posture.
+- FDW Level C: configure predicate pushdown to a foreign table and
+  demonstrate EXPLAIN VERBOSE showing the pushdown.
+- FDW Level D: an aggregate query that does not push down due to
+  a non-pushable function; learner rewrites.
+- FDW Level D: a reliability drill — foreign server is made slow
+  (via a `pg_sleep` trigger or similar); learner diagnoses via
+  pg_stat_activity and proposes a timeout/circuit-breaker
+  pattern at the app layer.
+
+### 5. Docs
+
+- `docs/extension-track/e5-timescaledb.md`.
+- `docs/extension-track/e6-postgres-fdw.md` (deep).
+- Update `docs/anti-patterns/` with
+  `timescale_too_early.md` referencing phase 9's
+  `partition_too_early.md`.
+
+### 6. Tests
+
+- `tests/test_timescale_profile.py` — compose parses; timescale
+  profile references pinned image.
+- `tests/test_extension_e5_e6_corpus.py` — validate + lint.
+
+## Verification
+
+1. `docker compose --profile timescale up -d timescale` — create
+   a hypertable against the timescale instance; insert; query.
+2. Run the FDW predicate-pushdown drill and confirm
+   `EXPLAIN VERBOSE` shows pushdown.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_37 authors E7 Citus and the remaining operational extensions
+(ltree, pg_partman, PgBouncer deep).

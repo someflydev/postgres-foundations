@@ -1,0 +1,164 @@
+PROMPT 02 — Doctrine, architecture overview, and ADR infrastructure
+===================================================================
+
+## Context
+
+You are working in `postgres-foundations`, a serious PostgreSQL learning and
+planning platform. This repo teaches PostgreSQL core from zero to strong
+practical competence, then admin/security, then extensions, then provides a
+decision-engine for PostgreSQL architecture planning.
+
+Core doctrine — be rigorous about embedding this in what you write:
+
+- PostgreSQL **core** first; extensions only against real workload signals.
+- "Not yet" is a valid and often correct recommendation.
+- Explainability, operational awareness, portability-consciousness.
+- Flight-school training model: drills, instrument reading, repeated
+  practice, failure scenarios, oral defense, capstones.
+- Competence ≠ producing correct SQL output. Competence = producing correct
+  output **AND** being able to explain, critique, and defend design choices.
+- The platform is one coherent thing: training lab + assessment system +
+  design studio + planning engine.
+
+## Prior work (verify before starting)
+
+- `src/pgfound/` stub package must exist with a working CLI.
+- `docs/` exists but should be empty (only `.gitkeep`).
+- `docs/adr/` exists but should be empty (only `.gitkeep`).
+- `pyproject.toml`, `README.md`, `Makefile`, `.gitignore` present.
+- Smoke test passes: `uv run pytest -q`.
+
+If `docs/` already has authored content, stop and read it first.
+
+## Task
+
+Produce the foundational documentation set that establishes doctrine and
+architecture for the whole repo. Everything authored later should be able to
+point back into these docs. Write in clear, operational prose — no hype, no
+generic blog voice, no "welcome to the world of databases" tone.
+
+### 1. `docs/doctrine.md`
+
+Canonical statement of principles. Cover at minimum:
+
+- Core-first posture and what it means in practice.
+- The "not yet" doctrine: when adding capability is premature, and how to
+  recognize it.
+- Capability-layer pedagogy: why the curriculum is layered rather than
+  feature-indexed.
+- The five parallel loops (lesson, lab, debug, design, review).
+- Scaffolding levels A–D (recognition, controlled production, independent
+  production, critique and repair) — name them and explain that Level D is
+  the competence bar.
+- Explainability as a first-class competence.
+- When to use an LLM in training, and when explicitly not to.
+- Operational awareness: replication, backups, bloat, pooling, monitoring,
+  and portability are not optional chapters — they are always present.
+- Anti-patterns the doctrine actively rejects (JSONB-everything,
+  partition-too-early, vector-before-lexical, shard-without-distribution-key,
+  replica-as-performance-bandage, no-pooling-high-connections,
+  geo-logic-without-PostGIS, no-restore-drills).
+
+Target length: roughly 900–1400 words. Structured with clear headings.
+
+### 2. `docs/architecture.md`
+
+Architectural overview of the three interlocking subsystems:
+
+- **Curriculum and training system** — phases 0–10, capstones, review engine,
+  interview simulator, local Docker lab, rubric corpus, progress concepts.
+- **Administration + extension mastery track** — admin modules A1–A6 and
+  extension modules E1–E7 (+ ltree, pg_partman, PgBouncer), always downstream
+  of core mastery.
+- **Decision engine** — JSON catalogs (industries, data_shapes,
+  workload_patterns, postgres_core_features, extensions, index_patterns,
+  topology_patterns, anti_patterns), rules, scoring, evaluator, and report
+  generator; plus the 4-layer decision-engine prompt pack.
+
+For each subsystem, include:
+
+- Purpose and scope.
+- Inputs and outputs.
+- Main data artifacts and where they live in the tree.
+- Primary user flows (learner, coach/reviewer, architect/planner).
+- How it interlocks with the other two subsystems (e.g. decision-engine
+  rules reference the same extension catalog referenced by the extension
+  track).
+
+Include one simple ASCII block diagram (no fancy graphics) showing the three
+subsystems and the shared artifacts between them. Target length: 1000–1600
+words.
+
+### 3. `docs/repo-layout.md`
+
+Short map of the directory tree and what each directory is for. One sentence
+per top-level directory is enough. Include a "things that live in multiple
+places on purpose" note (e.g. the extension catalog is authoritative in
+`decision-engine/catalogs/extensions.json` and referenced from the extension
+track docs — do not duplicate the metadata).
+
+### 4. `docs/llm-usage.md`
+
+Specific guidance on when and how an LLM participates in the platform:
+
+- Roles the LLM plays: coach, reviewer, interviewer, adversary, remediation
+  generator.
+- Explicit anti-roles: first-pass answer machine, SQL/schema bypass,
+  replacement for direct Postgres interaction, replacement for multi-session
+  concurrency labs.
+- When LLM involvement improves learning vs harms it.
+- How prompt templates in `llm-prompts/` (training side) and
+  `decision-engine/prompts/` (planning side) are used.
+
+Target length: 600–900 words.
+
+### 5. ADR infrastructure
+
+Set up a lightweight ADR system under `docs/adr/`.
+
+- `docs/adr/README.md` — explains the ADR format, numbering convention, and
+  status lifecycle (Proposed / Accepted / Superseded). Include the file-name
+  convention `NNNN-short-title.md`, monotonic.
+- `docs/adr/template.md` — the ADR template. Sections: Title, Status, Date,
+  Context, Decision, Consequences, Alternatives considered,
+  Related ADRs/docs.
+
+Then author these initial ADRs, all dated today and in **Accepted** status:
+
+- `docs/adr/0001-python-uv-ruff-pytest-toolchain.md`
+- `docs/adr/0002-json-first-content-model.md` — content and decision-engine
+  data are JSON-first, with YAML tolerated only where human ergonomics
+  demand it; rationale is diffability, programmatic validation, and the
+  intention to drive automated review.
+- `docs/adr/0003-docker-for-the-lab.md` — Docker Compose is the canonical
+  lab environment; learners are not expected to install PostgreSQL locally;
+  the lab must be reproducible across macOS/Linux.
+- `docs/adr/0004-core-first-extension-doctrine.md` — codifies the "core
+  first" posture and what that means for curriculum sequencing and
+  decision-engine rule authoring.
+- `docs/adr/0005-decision-engine-is-explainable.md` — the engine must
+  produce human-readable reports with explicit "why now", "why not yet",
+  and "what triggers the next stage" for every recommendation.
+
+Each ADR: 200–400 words. Fill every template section — no placeholders.
+
+### 6. README pointer
+
+Update `README.md` to point at `docs/doctrine.md` and `docs/architecture.md`
+for readers who want to understand the project's posture. Keep it short. Do
+not copy doctrine into the README.
+
+## Verification
+
+1. All files above exist and are non-trivial.
+2. `uv run pytest -q` still green.
+3. `uv run ruff format --check .` still green.
+4. Every ADR fills every section of the template.
+5. No file contains placeholder text like "TODO", "TBD", or "Lorem ipsum".
+6. `docs/architecture.md` references the three subsystems by name and shows a
+   simple diagram.
+
+## Next prompt
+
+PROMPT_03 will build the Docker Compose lab environment under `docker/`. It
+will reference `docs/architecture.md` and ADR-0003.

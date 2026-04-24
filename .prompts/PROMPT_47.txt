@@ -1,0 +1,149 @@
+PROMPT 47 — Progress tracking and remediation flow
+==================================================
+
+## Context
+
+`postgres-foundations`. Content, lab, review engine, interview
+simulator, admin track, extension track, decision engine, and
+scenario packs are all authored. This prompt builds the **progress
+tracking** and **remediation** layer that stitches it all together
+for a solo learner's self-study loop.
+
+Doctrine: the platform should feel like a training program that
+*knows where the learner is* and can suggest the next right thing to
+do. Not an LMS. Not gamified. Quiet, accurate, and useful.
+
+## Prior work (verify before starting)
+
+- `tmp/progress/` format established in PROMPT_14.
+- Review engine produces per-rubric-dimension results (PROMPT_27).
+- LLM remediation templates exist (PROMPT_29).
+- `pgfound progress show` stub exists.
+
+## Task
+
+### 1. Progress data model
+
+Formalize the progress schema under `src/pgfound/progress/`:
+
+- `models.py`:
+  - `LearnerProfile(name, started_at, goals)`.
+  - `ExerciseAttempt(exercise_id, started_at, completed_at,
+    self_assessment, check_result, rubric_scores, notes)`.
+  - `CapstoneAttempt(...)`.
+  - `InterviewAttempt(scenario_id, transcript_path, rubric_scores,
+    completed_at)`.
+  - `ModuleProgress(module_id, status, first_touched_at,
+    exit_met_at, evidence)`. Modules are phases, admin modules,
+    and extension modules.
+- `store.py`:
+  - Reads and writes `tmp/progress/` with atomic rename semantics
+    (write to `.tmp` then rename).
+- `derive.py`:
+  - `compute_module_progress()` — given attempts, decide whether
+    each module's exit competencies are met.
+  - Heuristic: a module is "met" when at least one Level D
+    exercise per lesson cluster has a passing rubric score.
+- `README.md` — a sketch of the data model.
+
+### 2. CLI
+
+- `pgfound progress init [--name <name>]` — creates
+  `tmp/progress/profile.json`.
+- `pgfound progress show` — prints a Rich dashboard:
+  - Per-phase module status (not-started / in-progress / met).
+  - Admin modules status.
+  - Extension modules status.
+  - Capstones status.
+  - Interview attempts summary.
+  - Top 3 recent attempts.
+- `pgfound progress show --module <id>` — drill into a module's
+  status.
+- `pgfound progress export [--format json|markdown]` — exports a
+  shareable summary (useful for a coaching session or a
+  screenshot).
+
+### 3. Remediation planner
+
+`pgfound remediate [--module <id>] [--scope recent|all]`:
+
+- Loads the learner's attempts.
+- Identifies weaknesses:
+  - Rubric dimensions that consistently score low.
+  - Exercises that have been skipped despite being in a
+    recommended path.
+  - Modules with exit competencies unmet.
+- Produces a remediation pack:
+  - A curated list of 2–4 lessons to re-read (existing content).
+  - A list of 3–6 exercises to complete (existing content),
+    preferring Level D drills aligned to the weakness.
+  - One new "failure lab" scaffolded via the
+    `remediation/failure-lab-generator.md` prompt from PROMPT_29,
+    with a rendered prompt saved for the learner to run against
+    an LLM if desired.
+- Writes the remediation pack to
+  `tmp/remediation/<timestamp>.md` and surfaces a summary on
+  stdout.
+
+### 4. Recommended next step
+
+`pgfound next`:
+
+- Looks at the learner's progress and recommends the single best
+  next action:
+  - Complete the next unmet exercise in the current phase.
+  - Attempt a specific Level D drill.
+  - Run an interview scenario.
+  - Run a remediation pack.
+  - Move to the next module.
+- The recommendation has a one-sentence rationale.
+
+This is the command a learner can run every morning.
+
+### 5. Progress signals to the decision engine
+
+Add a small glue: `pgfound decision from-progress` generates an
+intake from the learner's profile (for learners who are themselves
+architects practicing the decision-engine-review scenario, using
+their own team as the input). This is optional and exists mostly
+as a showcase — document it as "for the learner-as-architect
+workflow".
+
+### 6. Coach view
+
+`pgfound coach report <profile-path>` produces a coach-friendly
+Markdown report: latest attempts, rubric trends, open remediation
+packs, flagged manual-review dimensions. Intended to be pasted
+into a shared doc for a 1:1.
+
+### 7. Docs
+
+- `docs/progress-and-remediation.md` — the canonical learner loop
+  description: start → next → do → review → remediate → repeat.
+- Update `docs/cli.md`.
+
+### 8. Tests
+
+- `tests/test_progress_store.py` — atomic writes, schema
+  enforcement.
+- `tests/test_progress_derive.py` — module progress derivation
+  against fixture attempts.
+- `tests/test_remediation.py` — remediation recommendation given
+  fixture weak-dimension data.
+- `tests/test_next_command.py` — deterministic given a fixture
+  profile.
+
+## Verification
+
+1. `pgfound progress init --name "test"` then
+   `pgfound progress show` produces a populated dashboard.
+2. Submit a fixture attempt via the API in a test and
+   `pgfound next` recommends the next action.
+3. `pgfound remediate` generates a plausible pack against a
+   fixture profile.
+4. `uv run pgfound content validate` + `lint` green.
+5. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_48 authors cross-system integration tests and golden outputs.

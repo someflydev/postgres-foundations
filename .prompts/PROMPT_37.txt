@@ -1,0 +1,165 @@
+PROMPT 37 — Extension track: E7 Citus + ltree + pg_partman + PgBouncer (deep)
+=============================================================================
+
+## Context
+
+`postgres-foundations`. Finishing the extension track. Doctrine:
+
+- **Citus** is explicitly late-stage. Sharding is an architectural
+  commitment with serious locality implications. Most teams should
+  not adopt it until they have a proven distribution key, an
+  application layer that tolerates the locality model, and an
+  operational team comfortable with distributed failures.
+- **ltree** is narrow but occasionally exactly right.
+- **pg_partman** simplifies partitioning operations; it is the
+  operational counterpart to the phase-9 partitioning lessons.
+- **PgBouncer** is the canonical pooler; deep ops content here
+  complements the admin A3 primer.
+
+## Prior work (verify before starting)
+
+- Admin track (PROMPTS 31–33) and earlier extension modules done.
+- PgBouncer scaffolding present (PROMPT_32).
+- Phase 9 partitioning done.
+
+## Task
+
+### 1. Lab support
+
+Continue authoring extension-track lessons and exercises under
+`lessons/extensions/<module-id>/` and `exercises/extensions/<module-id>/`
+as established in PROMPT_34.
+
+Add profiles:
+
+- `citus`: a `citusdata/citus:12.1` image (or the current stable)
+  with a coordinator + 2 worker containers. Gated behind the
+  `citus` profile. Port mapping 5439:5432 for the coordinator.
+  Document in `docs/lab.md`. Extend `pgfound doctor` to show
+  profile status.
+- `pgpartman`: `pg_partman` can run on the main `pg` via a
+  re-image or via installing on boot; the cleanest path is to
+  use a pg image with contrib + pg_partman pre-installed. If
+  that requires a custom Dockerfile, add `docker/pg-with-partman/
+  Dockerfile` and wire it behind the `pgpartman` profile.
+
+### 2. E7 Citus — lessons
+
+Target **10 lessons**:
+
+1. `citus-what-it-is` — distributed Postgres; coordinator +
+   workers; distributed tables; reference tables; local tables.
+2. `distribution-key-discipline` — picking a distribution key that
+   aligns with the workload's locality; the cost of getting it
+   wrong.
+3. `reference-tables-vs-distributed-tables`.
+4. `co-located-joins-and-why-they-matter`.
+5. `multi-tenant-via-citus` — when Citus is a good tenant-
+   isolation fit vs. when plain Postgres schemas/RLS are still the
+   right answer.
+6. `real-time-analytics-via-citus` — the read-heavy analytics
+   pattern.
+7. `operational-cost-of-citus` — failover; backups; upgrades;
+   the distributed-system reality.
+8. `citus-on-managed-services` — Azure Cosmos DB for PostgreSQL
+   is the primary managed Citus story; others are rare.
+9. `moving-to-citus-from-a-single-node` — the migration cost and
+   timeline honest view.
+10. `when-not-to-adopt-citus` — anti-pattern explicit: sharding
+    without a distribution key, sharding as "performance
+    insurance", sharding to avoid having to index.
+
+### 3. ltree — lessons
+
+Target **5 lessons**:
+
+1. `what-ltree-is-for` — materialized-path hierarchies with GiST;
+   category trees, org charts, nested comment threads.
+2. `alternatives-to-ltree` — recursive CTEs on adjacency lists;
+   closure tables; when ltree wins.
+3. `gist-and-gin-indexes-on-ltree`.
+4. `ltree-operators` — `~`, `@>`, `<@`, `lquery`, `ltxtquery`.
+5. `when-not-to-use-ltree` — most hierarchies are not deep enough
+   to justify it.
+
+### 4. pg_partman — lessons
+
+Target **5 lessons**:
+
+1. `what-pg-partman-adds` — automated partition creation,
+   retention, and maintenance.
+2. `configuring-parent-tables` — `create_parent`; retention;
+   premake.
+3. `operational-rhythm` — scheduled maintenance; ways to make
+   this boring.
+4. `migrating-from-manual-partitioning`.
+5. `when-pg-partman-is-enough-and-when-to-go-further` — the
+   relationship to Timescale's retention/compression policies.
+
+### 5. PgBouncer deep — lessons
+
+Target **6 lessons**:
+
+1. `pool-modes-revisited` — session vs transaction vs statement
+   pooling; what breaks in each.
+2. `pgbouncer-config-surface` — the ini; authentication modes;
+   listen addresses; admin console.
+3. `pgbouncer-with-scram` — the modern auth posture; how to
+   pass-through.
+4. `pgbouncer-and-prepared-statements` — Postgres 14+ behavior
+   with transaction pooling and named prepared statements.
+5. `observability-of-pgbouncer` — `SHOW` commands; exporting
+   metrics.
+6. `when-pgbouncer-is-not-enough` — per-backend pooling, other
+   poolers (Odyssey), or moving pooling logic into the
+   application.
+
+### 6. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. ~104 exercises.
+
+Critical drills:
+
+- Citus Level C: take the ecommerce workload, propose a
+  distribution key, justify it; create the distributed tables
+  on the citus profile; run the hot queries; compare plan and
+  timing to the single-node case.
+- Citus Level D: a distributed table joined against a local
+  (non-distributed) table producing a broadcast that explodes;
+  learner diagnoses.
+- ltree Level C: build a categories tree for ecommerce products,
+  query ancestors/descendants.
+- pg_partman Level C: migrate the phase-09 manual partitioning
+  scheme onto pg_partman without losing data; demonstrate
+  retention.
+- PgBouncer Level D: transaction-pooling breaks session-scoped
+  `LISTEN`/`NOTIFY`; learner diagnoses and proposes alternatives
+  (move LISTEN connections to a non-pooled path).
+
+### 7. Docs
+
+- `docs/extension-track/e7-citus.md`.
+- `docs/extension-track/ltree.md`.
+- `docs/extension-track/pg_partman.md`.
+- `docs/extension-track/pgbouncer.md`.
+- `docs/anti-patterns/shard_without_distribution_key.md`.
+
+### 8. Tests
+
+- `tests/test_citus_profile.py` — compose parses.
+- `tests/test_extension_e7_misc_corpus.py` — validate + lint.
+
+## Verification
+
+1. `docker compose --profile citus up -d citus-coordinator
+   citus-worker-1 citus-worker-2` healthy; coordinator sees
+   workers.
+2. Run the distribution-key exercise; observe the plan
+   co-located join works.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_38 authors the extension-oriented capstones (geo-logistics,
+AI knowledge, observability, modernization).

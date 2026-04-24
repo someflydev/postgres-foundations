@@ -1,0 +1,228 @@
+PROMPT 41 — Decision-engine catalogs: core_features, extensions, index_patterns, topology_patterns, anti_patterns
+=================================================================================================================
+
+## Context
+
+`postgres-foundations`. PROMPT_40 authored industries, data shapes,
+and workload patterns. This prompt finishes the catalog set. These
+catalogs are the authoritative metadata consumed by the rules
+engine (PROMPT_42) and cited throughout the training platform.
+
+Doctrine: every extension entry has "when core is enough" first, then
+"workload fit", then "operational cost". No entry without an
+explicit "not yet" trigger section.
+
+## Prior work (verify before starting)
+
+- PROMPT_40 three catalogs authored and validating.
+- PROMPT_39 schemas directory has `core-feature.schema.json`,
+  `extension.schema.json`, `index-pattern.schema.json`,
+  `topology-pattern.schema.json`, `anti-pattern.schema.json`.
+
+## Task
+
+### 1. Catalog schemas
+
+Confirm the schemas from PROMPT_39. Extend if needed:
+
+- `core-feature.schema.json`: `id`, `title`, `summary`,
+  `introduced_in_phase`, `applies_to_data_shapes`,
+  `applies_to_workload_patterns`, `failure_modes`, `references`.
+- `extension.schema.json`: `id`, `title`, `summary`,
+  `why_it_exists`, `when_core_is_enough`, `workload_fit`,
+  `operational_cost`, `replication_backup_implications`,
+  `managed_service_availability` (enum:
+  `broadly_available | limited | rare | self_managed_only`),
+  `adoption_triggers` (array of slugs — workload signals),
+  `avoidance_triggers` (array of slugs), `prereq_extensions`
+  (array), `module_slug` (e.g. "e3-postgis"), `anti_patterns`
+  (array).
+- `index-pattern.schema.json`: `id`, `title`, `summary`,
+  `underlying_index_type` (btree/gin/gist/brin/hnsw/ivfflat),
+  `applies_to_data_shapes`, `applies_to_workload_patterns`,
+  `tradeoffs`.
+- `topology-pattern.schema.json`: `id`, `title`, `summary`,
+  `applies_to_workload_patterns`, `operational_cost`,
+  `failure_modes`, `references`.
+- `anti-pattern.schema.json`: `id`, `title`, `summary`,
+  `triggered_when` (array of signal descriptions),
+  `recommended_alternative`, `references` (link to
+  docs/anti-patterns/*).
+
+### 2. `core_features` catalog
+
+`decision-engine/catalogs/postgres_core_features.json`.
+
+Include these slugs (from the brief, with additions as needed):
+
+- `constraints` — PK/FK/UNIQUE/CHECK.
+- `jsonb`
+- `arrays`
+- `ranges`
+- `multiranges`
+- `partitioning`
+- `full_text_search`
+- `row_level_security`
+- `physical_replication`
+- `logical_replication`
+- `postgres_fdw` (core contrib)
+- `materialized_views`
+- `partial_indexes`
+- `expression_indexes`
+- `exclusion_constraints`
+- `generated_columns`
+
+Each entry is ~120–200 words of JSON-embedded prose.
+
+### 3. `extensions` catalog
+
+`decision-engine/catalogs/extensions.json`.
+
+Include:
+
+- `pg_stat_statements`
+- `pg_trgm`
+- `postgis`
+- `pgvector`
+- `timescaledb`
+- `postgres_fdw` (note: also appears in core_features as it ships
+  with contrib; the extension entry focuses on its managed-service
+  + ops posture)
+- `pgbouncer` (operational tool, not a Postgres extension per se
+  — include and mark with `kind: "operational_tool"` in the
+  schema)
+- `citus`
+- `ltree`
+- `pg_partman`
+- `unaccent`
+- `pgcrypto`
+
+Each entry is ~250–400 words worth of content spread across the
+explicit fields. Every entry's `adoption_triggers` and
+`avoidance_triggers` are concrete — they are the signals the rule
+engine (PROMPT_42) matches against.
+
+### 4. `index_patterns` catalog
+
+`decision-engine/catalogs/index_patterns.json`.
+
+Include:
+
+- `btree_equality`
+- `btree_composite_equality_then_range`
+- `btree_covering_include`
+- `partial_index_for_skew`
+- `expression_index_for_normalization` (e.g. `lower(email)`)
+- `gin_jsonb_containment`
+- `gin_trgm_similarity`
+- `gin_array_membership`
+- `gist_range_exclusion`
+- `gist_geospatial`
+- `brin_append_only_chronological`
+- `hnsw_vector_anns`
+- `ivfflat_vector_anns`
+
+Each has a short "when to reach for this" note and link to a phase-7
+lesson.
+
+### 5. `topology_patterns` catalog
+
+`decision-engine/catalogs/topology_patterns.json`.
+
+Include:
+
+- `single_primary`
+- `primary_with_read_replicas`
+- `logical_replication_pair`
+- `logical_replication_to_analytics_replica`
+- `postgres_fdw_federation`
+- `citus_distributed_cluster`
+- `pgbouncer_in_front`
+- `blue_green_upgrade_via_logical_replication`
+
+Each: when it fits, operational cost, failure modes, pointers to
+lessons.
+
+### 6. `anti_patterns` catalog
+
+`decision-engine/catalogs/anti_patterns.json`.
+
+Include at least the slugs from the brief:
+
+- `jsonb_everything`
+- `partition_too_early`
+- `vector_before_lexical`
+- `shard_without_distribution_key`
+- `replica_as_performance_bandage`
+- `no_pooling_high_connections`
+- `geo_logic_without_postgis`
+- `no_restore_drills`
+
+Plus these additions:
+
+- `arrays_over_child_tables`
+- `unused_indexes`
+- `redundant_indexes`
+- `vacuum_starvation_by_long_txn`
+- `naive_wall_clock_timestamp`
+- `fdw_without_pushdown_verification`
+
+Each entry links to the corresponding `docs/anti-patterns/*`
+Markdown page authored earlier in the curriculum (backfill any
+that are missing — author them here rather than failing late. At
+minimum, ensure these exact slug-aligned files exist by the end of
+this prompt:
+
+- `docs/anti-patterns/no_restore_drills.md`
+- `docs/anti-patterns/unused_indexes.md`
+- `docs/anti-patterns/redundant_indexes.md`
+- `docs/anti-patterns/vacuum_starvation_by_long_txn.md`
+- `docs/anti-patterns/naive_wall_clock_timestamp.md`
+- `docs/anti-patterns/fdw_without_pushdown_verification.md`
+
+### 7. Cross-link validator
+
+Update `pgfound decision catalog check`:
+
+- Every `extensions[*].anti_patterns` slug exists in the anti-
+  patterns catalog.
+- Every `data_shapes[*].extensions_that_apply` slug exists in the
+  extensions catalog.
+- Every `industries[*].typical_data_shapes` / `typical_workload_patterns`
+  resolve.
+- Every `docs/anti-patterns/<slug>.md` referenced exists.
+
+Fail the check on any unresolved reference.
+
+### 8. Docs
+
+- `decision-engine/catalogs/README.md` updated with entries for
+  every catalog.
+- `docs/extension-catalog-sync.md` — short note explaining that
+  the extension track's module IDs (e1–e7, ltree, etc.) must match
+  the `module_slug` fields in `extensions.json`; the validator
+  enforces this.
+
+### 9. Tests
+
+- `tests/test_catalogs_core_features.py`
+- `tests/test_catalogs_extensions.py`
+- `tests/test_catalogs_index_patterns.py`
+- `tests/test_catalogs_topology_patterns.py`
+- `tests/test_catalogs_anti_patterns.py`
+- `tests/test_catalog_cross_links.py` — comprehensive cross-link
+  integrity.
+
+## Verification
+
+1. `uv run pgfound decision catalog check` reports zero errors
+   and zero warnings.
+2. `uv run pgfound decision run
+   decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json`
+   runs without missing-catalog warnings.
+3. `uv run pytest -q` green.
+4. `uv run pgfound content validate` + `lint` green.
+
+## Next prompt
+
+PROMPT_42 authors the rules schema and the initial rule pack.

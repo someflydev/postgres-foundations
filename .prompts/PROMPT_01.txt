@@ -1,0 +1,145 @@
+PROMPT 01 — Repository scaffolding, Python/uv environment, top-level layout
+===========================================================================
+
+## Context (read carefully — this prompt is standalone)
+
+You are working in a repository called `postgres-foundations`. The repo's purpose
+is to be a serious, public-facing PostgreSQL learning and planning platform. It
+teaches PostgreSQL from absolute beginner through strong practical competence
+across SQL, core features, administration/security, and major extensions, and it
+also includes a PostgreSQL architecture decision-engine subsystem that helps
+people pick features, topology patterns, and extensions based on industry,
+workload, and data-shape signals.
+
+Core doctrine — apply it across every file you author in this prompt:
+
+1. PostgreSQL **core** first. Extensions only against real workload signals.
+2. "Not yet" is a valid and often excellent recommendation.
+3. Architecture choices must be explainable, operationally aware, and
+   portability-conscious.
+4. The platform is a **training lab + assessment system + design studio +
+   planning engine** — not a blog, not a course video set, not an LMS.
+5. Implementation-oriented. Concrete. No vague educational outlines.
+
+The promptset you are part of lives in `.prompts/` and is **strictly
+monotonic**. Each prompt runs in a fresh session. Do not assume prior session
+memory. Do not renumber later prompts.
+
+## Prior work (verify before starting)
+
+Run these checks first. Expect a nearly empty repo.
+
+```
+ls -la
+ls -la .prompts
+git status
+```
+
+You should see:
+- `.git/` initialized
+- `.prompts/PROMPT_*.txt` files
+- a `.gitignore` (probably minimal)
+- possibly a `human-notes.md` — leave it alone
+- no Python project files yet, no docs, no source tree
+
+If a Python project, Docker compose, or `pgfound` package already exists, stop
+and re-read the state carefully — this prompt assumes an empty scaffold.
+
+## Task
+
+Build the **foundational scaffolding only**. Do not author curriculum content,
+lessons, exercises, decision-engine data, or Docker files here — those come in
+later prompts. This prompt just makes the skeleton real.
+
+### 1. Tooling
+
+- Python 3.12+. Use `uv` for environment and dependency management (create a
+  `pyproject.toml`). Do not add a `requirements.txt`.
+- Add `ruff` for lint + format (default config is fine; 100-char line length).
+- Add `pytest` as the test runner.
+- Add `jsonschema` (will be used in PROMPT_05 to validate content).
+- Add `click` for the CLI entry point (used starting PROMPT_04).
+- Add `rich` for nicer CLI output.
+- Add `pyyaml` (content files may use YAML in later phases).
+
+The `pyproject.toml` should declare a `pgfound` package (src-layout, so source
+lives under `src/pgfound/`). Declare a console script `pgfound =
+pgfound.cli:main` even though the CLI does not exist yet — create a stub
+`src/pgfound/cli.py` with a `main()` that prints `"pgfound CLI — not yet
+implemented"` and exits 0.
+
+### 2. Directory layout
+
+Create these directories with a single `.gitkeep` (empty file) each, unless
+noted otherwise. Do **not** author content into them yet.
+
+```
+src/pgfound/                 # platform package (stub __init__.py + cli.py)
+tests/                       # pytest tests (.gitkeep for now)
+docs/                        # architecture and doctrine docs
+docs/adr/                    # architecture decision records (.gitkeep)
+curriculum/                  # curriculum map + phases (.gitkeep)
+lessons/                     # per-phase lesson content (.gitkeep)
+exercises/                   # per-phase exercise specs (.gitkeep)
+scenarios/                   # scenario packs (.gitkeep)
+seed-data/                   # SQL/CSV/JSON seed data (.gitkeep)
+capstones/                   # capstone specs + scaffolds (.gitkeep)
+rubrics/                     # review rubrics (.gitkeep)
+llm-prompts/                 # training-side LLM prompt templates (.gitkeep)
+decision-engine/             # decision engine data + logic (.gitkeep)
+decision-engine/catalogs/    # industries/data_shapes/etc JSON (.gitkeep)
+decision-engine/rules/       # rule files (.gitkeep)
+decision-engine/prompts/     # decision-engine prompt pack (.gitkeep)
+docker/                      # compose files + init SQL (.gitkeep)
+scripts/                     # task scripts (.gitkeep)
+tmp/                         # scratch space (gitignored)
+```
+
+### 3. Top-level files
+
+- `.gitignore` — expand the existing one to cover Python (`.venv/`,
+  `__pycache__/`, `*.pyc`, `.pytest_cache/`, `.ruff_cache/`, `dist/`, `build/`,
+  `*.egg-info/`), editor noise (`.DS_Store`, `*.swp`), local secret env files
+  (`.env`, `.env.local`, `.env.*`) while explicitly preserving
+  `!.env.example`, and the `tmp/` scratch dir. Keep any existing entries.
+- `README.md` — **very short** placeholder (5–10 lines) explaining the repo's
+  purpose in one paragraph and pointing readers to `docs/` for doctrine and
+  architecture (which will land in PROMPT_02). Do not over-author the README;
+  PROMPT_49 will finalize it.
+- `Makefile` — a small helper surface with targets: `install`, `fmt`, `lint`,
+  `test`, `cli`. Each should invoke the right `uv` or `ruff` or `pytest`
+  command. Keep it thin — this is a convenience, not the build system.
+- `.python-version` — `3.12` (or the closest available).
+
+### 4. Stub package
+
+- `src/pgfound/__init__.py` — `__version__ = "0.0.1"`.
+- `src/pgfound/cli.py` — Click-based stub described above. A single `main()`
+  command registered as a console script. Import and exercise `rich.console`
+  minimally so the dep is actually used.
+
+### 5. Starter test
+
+- `tests/test_smoke.py` — one test that imports `pgfound`, asserts
+  `__version__`, and invokes the Click CLI via `CliRunner` asserting exit code
+  0 and presence of the stub message. This test exists so CI has something
+  green to anchor on.
+
+## Verification
+
+Before finishing, all of these must pass:
+
+1. `uv sync` (or `uv pip install -e .`) succeeds.
+2. `uv run ruff check .` passes cleanly.
+3. `uv run ruff format --check .` passes cleanly.
+4. `uv run pytest -q` passes (at least the smoke test).
+5. `uv run pgfound` prints the stub message and exits 0.
+6. `git status` shows only the files this prompt was supposed to create.
+
+Then do a directory-tree sanity check — every directory listed in §2 must exist
+(either via `.gitkeep` or real files).
+
+## Next prompt
+
+PROMPT_02 will author the doctrine and architecture docs under `docs/` and
+bootstrap the ADR system. Leave `docs/` empty except for `.gitkeep` here.

@@ -1,0 +1,152 @@
+PROMPT 10 — Phase 0: Reality before syntax (paper modeling)
+===========================================================
+
+## Context
+
+You are working in `postgres-foundations`. Doctrine: the first phase of
+learning is about **reality**, not SQL. Learners model entities,
+attributes, relationships, invariants, and lifecycle events on paper
+(markdown) before touching a database. See `docs/doctrine.md`,
+`curriculum/README.md`, phase 0 "reality-before-syntax".
+
+Phase 0 exit competencies from `curriculum/map.json`:
+
+- Can take a prose description of a real-world system and identify its
+  entities, attributes, and relationships.
+- Can distinguish duplication from legitimate repetition.
+- Can name invariants a database would be expected to enforce.
+- Can identify lifecycle events and order them correctly.
+
+No SQL yet.
+
+## Prior work (verify before starting)
+
+- PROMPT_06 curriculum map (phase 0 defined).
+- PROMPT_07/08 lesson and exercise authoring systems.
+- PROMPT_09 reusable domains (`ecommerce`, `scheduling`, etc.).
+- Lessons/exercises for phase 0 do not yet exist beyond the empty
+  directory structure.
+
+## Task
+
+Author the **full Phase 0 content set** using the scaffolder where
+helpful and hand-editing to finish. Every item must validate and lint.
+
+### 1. Phase 0 clusters (from `curriculum/map.json`)
+
+Confirm the clusters planned for phase 0 (expected, but verify against
+the map). Likely:
+
+- `what-data-is`
+- `entities-attributes-relationships`
+- `duplication-and-inconsistency`
+- `invariants`
+- `lifecycle-events`
+
+If the map has a different set, follow the map.
+
+### 2. Lessons
+
+For each cluster, author **2 lessons**. For each lesson:
+
+- `lesson.json` with all schema fields filled; `status: active`.
+- `body.md` following the seven-section structure from PROMPT_07 and
+  length ≥ 400 words.
+- Concrete examples drawn from `ecommerce`, `scheduling`, and one other
+  domain. Rotate which domain each lesson uses so learners see several.
+- `concepts_introduced`: only phase-0 concepts (entity, attribute,
+  relationship, cardinality, identity, duplication, invariant,
+  lifecycle event, state transition).
+- `concepts_not_yet_allowed`: SQL (`select`, `insert`), foreign_key,
+  primary_key, normalization, join, index, transaction, constraint as
+  a *SQL* construct (the word invariant is fine).
+- `learning_objectives`: 2–4 specific objectives per lesson.
+- `reflection_prompts`: at least 2 per lesson.
+
+### 3. Exercises
+
+Every lesson gets **at least one exercise at every level A, B, C, D**.
+For phase 0 exercises, the modality is paper/markdown modeling, not
+SQL. Concretely:
+
+- **Level A (recognition)**: given a prose scenario, identify the
+  entities and relationships. Output: a short markdown list.
+  Rubric: default `schema-design.rubric.json` (from PROMPT_08) but note
+  in each exercise that it is the "modeling" variant.
+- **Level B (controlled production)**: given a scenario plus partial
+  scaffolding (some entities already named), complete the model.
+  Include a `starter.md` template in place of `starter.sql`.
+- **Level C (independent production)**: given a richer scenario, produce
+  the full model (entities, attributes, relationships, invariants,
+  lifecycle events) with no scaffolding. Oral-defense prompts: "Which
+  of these invariants cannot be expressed in a table and why?"; "Which
+  lifecycle events produce new rows vs update rows?"
+- **Level D (critique and repair)**: given a flawed model (duplication,
+  missing relationships, weak invariants), diagnose and repair. At
+  least 3 concrete flaws embedded. Oral-defense prompts challenge the
+  learner to justify each repair.
+
+Because Phase 0 is paper-based, `solution.sql` is **not** required —
+however, `solution.md` IS required for every exercise and must contain
+a worked reasoning walkthrough, not just an answer. Update the
+validator expectations: in `content-schemas/` add a per-phase override
+mechanism where phase 0 exercises relax the `solution.sql` requirement
+if their `kind` is `modeling`. Document this override in
+`docs/authoring-exercises.md`.
+
+### 4. Rubrics
+
+Default rubrics from PROMPT_08 cover schema-design and critique-and-
+repair. Author a new rubric `rubrics/default/paper-modeling.rubric.json`
+with dimensions:
+
+- `entity identification` (weight 0.25)
+- `relationship cardinality` (weight 0.2)
+- `invariant clarity` (weight 0.2)
+- `lifecycle reasoning` (weight 0.15)
+- `explanation quality` (weight 0.2)
+
+Levels 0–4 for each dimension, specific enough to achieve inter-rater
+agreement. Reference this rubric from phase-0 exercises.
+
+### 5. Domain additions
+
+Phase 0 uses the domains but does not author SQL for them. If the domain
+README is missing a phase-0 mention, add it. Remember: phase-0 is paper;
+SQL is phase 1+.
+
+### 6. Content pointer table
+
+Author `lessons/phase-00-reality-before-syntax/README.md`: a table of
+all lessons in phase 0 with links. Same for
+`exercises/phase-00-reality-before-syntax/README.md`.
+
+### 7. Validation + lint
+
+- `uv run pgfound content validate` must pass with Phase 0 content in
+  place. Any schema edits you need to make to support "phase-0 paper
+  exercises" belong in schemas + validator (not ad-hoc skips).
+- `uv run pgfound content lint` must pass (minus warnings).
+
+### 8. Tests
+
+- `tests/test_phase0_corpus.py` — loads every phase-0 lesson and
+  exercise and asserts:
+  - Each cluster has ≥ 2 lessons.
+  - Each lesson has ≥ 1 exercise at each level A/B/C/D.
+  - No phase-0 lesson introduces a `concepts_not_yet_allowed` concept.
+  - Every exercise references a valid rubric.
+
+## Verification
+
+1. `uv run pgfound content validate` green.
+2. `uv run pgfound content lint` zero errors.
+3. `uv run pytest -q` green.
+4. Manually open two lessons and one exercise of each level and confirm
+   the seven-section body + prompt structure is intact.
+5. Count: should be ~10 lessons and ~40 exercises for phase 0.
+
+## Next prompt
+
+PROMPT_11 moves to Phase 1 (SQL literacy basics) — the first phase where
+learners touch the database.

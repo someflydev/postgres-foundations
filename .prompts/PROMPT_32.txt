@@ -1,0 +1,134 @@
+PROMPT 32 — Administration track: A3 auth & pooling, A4 backup/restore/vacuum/upgrades
+======================================================================================
+
+## Context
+
+`postgres-foundations`, Admin track A3 and A4. Doctrine: authentication
+and connection management are operational primitives, not
+afterthoughts; backup/restore is only real when you have done a restore
+drill; vacuum/autovacuum is how bloat is kept under control.
+
+## Prior work (verify before starting)
+
+- PROMPT_31 Admin A1 + A2 authored, admin track directory structure
+  in place.
+- Phase 10 replication-profile lab available for a replica-style
+  backup lab.
+
+## Task
+
+### 1. A3: Authentication and connection management — lessons
+
+Target **8 lessons**:
+
+1. `pg-hba-concepts` — the authentication file; ordering rules;
+   host vs local vs hostssl; how to verify the effective rule
+   for a given connection (`pg_hba_file_rules`).
+2. `auth-methods-overview` — trust, peer, md5, scram-sha-256
+   (the current default), cert-based. SCRAM over md5 and why.
+3. `rotating-credentials-and-secret-management` — patterns for
+   short-lived app credentials; how to do it without downtime.
+4. `connection-hygiene` — limits, `max_connections`, idle-in-
+   transaction timeout, statement_timeout, application_name.
+5. `pooling-intro` — why pooling exists; the three pooling modes
+   (session, transaction, statement); implications for prepared
+   statements.
+6. `pgbouncer-primer` — concepts only (deeper ops in PROMPT_37
+   extension track). How PgBouncer differs from connection-
+   multiplexing at the app layer.
+7. `ssl-and-certificates` — enabling SSL; verifying; client cert
+   auth overview.
+8. `connection-storm-survival` — what happens when the DB hits
+   `max_connections`; recovery steps.
+
+### 2. A4: Backup, restore, vacuum, upgrades — lessons
+
+Target **9 lessons**:
+
+1. `logical-vs-physical-backups` — `pg_dump` vs
+   `pg_basebackup` + WAL archive. What each protects against.
+2. `pg-dump-in-practice` — custom format, parallel, compression,
+   dumps for logical restore.
+3. `pg-basebackup-and-point-in-time-recovery` — the conceptual
+   model of PITR; `archive_command`; retention posture.
+4. `restore-drills-are-mandatory` — schedule, verification,
+   checksums, "your restore is not a restore until you have
+   done it".
+5. `autovacuum-in-30-minutes` — the worker model; thresholds;
+   what it does and does not do.
+6. `bloat-and-how-to-see-it` — reading pg_stat_all_tables,
+   extensions like pgstattuple (preview — actual use in PROMPT_35
+   or 37).
+7. `manual-vacuum-and-when-it-is-needed` — VACUUM FULL, VACUUM
+   FREEZE, and when to reach for each (and not to).
+8. `statistics-freshness` — `ANALYZE`; why stale stats produce
+   bad plans; planner's reliance.
+9. `major-version-upgrades` — `pg_upgrade` overview, the
+   compatibility matrix, downtime posture, logical replication
+   as a migration path (forward pointer to PROMPT_33).
+
+### 3. Exercises
+
+Per lesson A3 + A4: 2A + 2B + 2C + 2D. ~136 exercises.
+
+Critical drills:
+
+- Level C: introduce a `pg_hba` configuration rule in the lab
+  (via a mounted override — extend the compose to support an
+  `hba_overlay` mount) that requires SCRAM for a specific role;
+  confirm login behavior.
+- Level C: restore drill — take a pg_dump, blow away the lab,
+  pg_restore, verify row counts and critical queries.
+- Level D: an autovacuum that has stopped working because of a
+  long-running transaction holding the xmin horizon; learner
+  diagnoses via `pg_stat_activity` and proposes remediation.
+- Level D: a plan choosing a bad index scan because of a stale
+  ANALYZE after a bulk load; learner diagnoses and remediates.
+- Level D: a PgBouncer transaction-pooling setup breaking
+  session-scoped features like `SET` and prepared statements;
+  learner diagnoses without touching the PgBouncer config (pool
+  mode).
+
+### 4. Lab additions
+
+- Add an `hba_overlay` mount to `docker-compose.yml` behind a
+  `hba_overlay` profile. Document in `docs/lab.md`.
+- Add a PgBouncer service gated behind a `pooling` profile. Use
+  the `edoburu/pgbouncer` image (or similar pinned image) with
+  a minimal ini file under `docker/pgbouncer/`. This is the
+  scaffolding that the PgBouncer deep dive in PROMPT_37 uses.
+  This prompt just stands it up and uses it in a couple of A3
+  exercises.
+
+### 5. Scripts
+
+Author `scripts/restore-drill.sh` — runs a full backup, nukes the
+DB, restores, and asserts a known-good query output. Used by the
+restore-drill exercise and citable in operational runbooks.
+
+### 6. Docs
+
+- `docs/admin-track/a3-auth-and-pooling-playbook.md`.
+- `docs/admin-track/a4-backup-and-upgrades-playbook.md`.
+
+### 7. Tests
+
+- `tests/test_admin_a3_a4_corpus.py` — validate + lint; assert at
+  least one A4 exercise is tagged `restore_drill: true`
+  (new optional boolean field on exercise schema).
+- `tests/test_pgbouncer_compose.py` — the pooling profile parses
+  cleanly and references `pg`.
+
+## Verification
+
+1. Bring up `docker compose --profile pooling up -d` — `pg` and
+   `pgbouncer` healthy. Connect via pgbouncer (port 6432); run
+   a query.
+2. Run `scripts/restore-drill.sh` and confirm it exits 0.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_33 authors A5 (monitoring and performance operations) and A6
+(replication and HA operations), finishing the admin track.

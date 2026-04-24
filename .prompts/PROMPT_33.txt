@@ -1,0 +1,138 @@
+PROMPT 33 — Administration track: A5 monitoring, A6 replication and HA ops
+==========================================================================
+
+## Context
+
+`postgres-foundations`. Final admin prompt. Doctrine: monitoring is
+how you know anything; replication and HA are how you keep being able
+to know. See `docs/doctrine.md`. Deep replication internals remain a
+specialist subject; here we want pragmatic operator-level fluency.
+
+## Prior work (verify before starting)
+
+- PROMPTS 31/32 admin A1–A4 authored.
+- Lab replication profile available (pg + pg-replica).
+
+## Task
+
+### 1. A5: Monitoring and performance operations — lessons
+
+Target **8 lessons**:
+
+1. `pg-stat-statements-operationally` — top-N by total time, by
+   average time, by I/O; weekly triage rhythm.
+2. `pg-stat-activity-and-blocking` — current activity; spotting
+   blocked sessions; `pg_locks` joined with
+   `pg_blocking_pids()`; the "who is blocking whom" query.
+3. `index-usage-and-unused-indexes` — `pg_stat_user_indexes`;
+   spotting unused indexes; candidates for drop.
+4. `slow-query-triage-workflow` — a repeatable triage loop
+   combining pg_stat_statements + `EXPLAIN (ANALYZE, BUFFERS)`
+   + `pg_stat_user_tables`.
+5. `growth-and-capacity` — disk-growth monitoring; table/index
+   size queries; early warning thresholds.
+6. `wait-events-intro` — `pg_stat_activity.wait_event_type` and
+   `wait_event`; what the common ones mean.
+7. `metrics-to-export` — the canonical set of Postgres metrics
+   worth exporting to Prometheus/Datadog/whatever: checkpoints,
+   bgwriter, replication lag, xact counts, connection counts,
+   WAL generation rate.
+8. `alerting-with-context` — how to write a useful Postgres
+   alert: it should include at least one "what should I do if
+   this fires" sentence.
+
+### 2. A6: Replication and HA operations — lessons
+
+Target **9 lessons**:
+
+1. `replica-concepts-recap` — physical vs logical recap from
+   phase 10 with an operator's eye.
+2. `replica-lag-monitoring` — byte lag vs time lag;
+   `pg_wal_lsn_diff`; what counts as "concerning".
+3. `read-replica-routing` — app-side patterns; read-after-write
+   consistency pitfalls.
+4. `failover-basics` — what a failover actually is; sync vs
+   async replication; the 30-second summary of quorum
+   approaches (Patroni-flavored, referenced not taught).
+5. `promoting-a-replica` — `pg_promote()`; lifecycle; ensuring
+   the old primary is fenced.
+6. `logical-replication-lifecycle-in-ops` — creating
+   publications/subscriptions in production; initial sync
+   behavior at scale; dealing with catch-up.
+7. `logical-replication-failure-modes` — replica-identity
+   changes, schema drift, toast, large transactions.
+8. `upgrade-via-logical-replication` — near-zero-downtime major
+   version upgrade pattern at a conceptual level.
+9. `postmortem-discipline` — how to write a database-incident
+   postmortem: the invariant violated, the blast radius, the
+   detection latency, the mitigation, the durable fix.
+
+### 3. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. ~136 exercises across A5 + A6.
+
+Critical drills:
+
+- Level C: produce a weekly triage report from
+  pg_stat_statements against the lab; identify the top 5 by
+  total time and one regression candidate.
+- Level C: reproduce a blocking chain; run the
+  who-blocks-whom query; resolve by cancelling the right
+  backend; explain the reasoning.
+- Level C: compute replication lag in bytes and time against
+  the replication profile; simulate a paused subscriber and
+  observe lag growth.
+- Level D: a "replica is 0 byte lag" scenario that is still
+  wrong (replica is actually not subscribed to the relevant
+  publication because of schema drift); learner diagnoses.
+- Level D: a noisy alert rule that fires on normal checkpoint
+  spikes; learner rewrites the rule to capture the real
+  signal.
+
+### 4. Operator tools
+
+Author `scripts/monitoring/` with reusable SQL scripts:
+
+- `top-by-total-time.sql`
+- `blocking-chain.sql`
+- `unused-indexes.sql`
+- `replica-lag.sql`
+- `table-sizes.sql`
+
+These are the canonical queries referenced in multiple A5/A6
+lessons. Document each with a header comment explaining its use.
+
+Add `pgfound ops query <name>` that runs one of these scripts
+against the lab and pretty-prints the result. This gives learners
+a frictionless way to try each script.
+
+### 5. Docs
+
+- `docs/admin-track/a5-monitoring-playbook.md`.
+- `docs/admin-track/a6-replication-ha-playbook.md`.
+- `docs/postmortem-template.md` — a clean postmortem template
+  consumed by A6 and referenced by capstones.
+
+### 6. Tests
+
+- `tests/test_admin_a5_a6_corpus.py` — validate + lint.
+- `tests/test_ops_queries.py` — every SQL script under
+  `scripts/monitoring/` parses via psycopg against the lab and
+  returns a rowset or completes with expected columns.
+
+## Verification
+
+1. Bring up the replication profile; subscribe pg-replica to a
+   test publication; run `scripts/monitoring/replica-lag.sql`
+   and confirm meaningful output.
+2. Run the blocking-chain exercise: open two sessions, hold a
+   lock in one, attempt conflicting work in the other, run
+   `scripts/monitoring/blocking-chain.sql`, confirm the output
+   names both sessions.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_34 begins the Extension Mastery track with E1 (pg_stat_statements
+deep) and E2 (pg_trgm).

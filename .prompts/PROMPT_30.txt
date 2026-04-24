@@ -1,0 +1,178 @@
+PROMPT 30 — Interview, oral-defense, and capstone-reviewer LLM prompts
+======================================================================
+
+## Context
+
+`postgres-foundations`. PROMPT_29 authored training-side LLM prompts
+for coaching, critique, and remediation. This prompt authors the
+remaining training-side templates: the **interview personas**,
+**oral-defense probes**, and **capstone reviewer**. It also finalizes
+the LLM-provider-agnostic CLI contract.
+
+Doctrine reminder: interviewers in this system are **adversarial but
+fair**. Their job is to probe how well the learner actually
+understands what they claim to understand, not to trap them.
+
+## Prior work (verify before starting)
+
+- PROMPT_29 `llm-prompts/` structure, template format, CLI.
+- PROMPT_28 interview simulator scaffolding and scenarios.
+
+## Task
+
+### 1. New templates
+
+Under `llm-prompts/`:
+
+```
+interview/
+  personas/
+    senior-interviewer.md
+    mid-interviewer.md
+    adversarial-architect.md       # for architect-decision-engine-review scenario
+  stages/
+    warmup.md
+    design-probe.md
+    debugging-drill-wrap.md
+    oral-defense.md
+    capstone-defense.md
+    closing-feedback.md
+  follow-up-generator.md
+capstone-reviewer/
+  full-capstone-review.md
+  operational-runbook-review.md
+  writeup-review.md
+  extension-posture-review.md
+```
+
+Each template follows the front matter format defined in PROMPT_29.
+
+### 2. Persona templates
+
+- `personas/senior-interviewer.md` — calibrated for staff/senior-
+  backend candidates. Expects confident reasoning about tradeoffs,
+  "not yet" decisions, and operational implications. Asks crisp
+  follow-ups. Never hands out answers.
+- `personas/mid-interviewer.md` — calibrated for mid-level. Friendlier
+  tone, more scaffolding, still probing.
+- `personas/adversarial-architect.md` — for the
+  `architect-decision-engine-review` interview scenario
+  (PROMPT_28). Challenges the learner's decision-engine
+  recommendation; requires the learner to argue back with
+  evidence.
+
+Each persona file is 100–200 lines and explicitly lists:
+
+- How to open the conversation.
+- Pacing expectations.
+- When to push and when to back off.
+- Forbidden behaviors ("do not reveal the reference solution",
+  "do not score until closing feedback").
+- How to recognize and respond to common escape moves
+  ("I would have to check the docs" → ask them what they would
+  check for).
+
+### 3. Stage templates
+
+Each stage template takes the scenario, the previous stages'
+transcripts, and the learner's latest response, and emits the
+next interviewer turn plus (when appropriate) a hidden note to
+the simulator capturing observed signals.
+
+Hidden notes are delimited by an explicit marker `=== HIDDEN
+SIMULATOR NOTES ===` in the output. The simulator strips these
+before showing the learner.
+
+### 4. Capstone-reviewer templates
+
+- `capstone-reviewer/full-capstone-review.md` — the top-level
+  reviewer prompt consumed by `pgfound capstone evaluate --full`.
+  Inputs include: capstone metadata, the learner's artifacts as
+  structured references, the engine findings, and the rubric.
+  Output: a multi-section Markdown review with per-dimension
+  narrative, highlighted strengths, highlighted gaps, and a
+  bulleted remediation checklist pointing at lessons/exercises
+  by ID.
+- `capstone-reviewer/operational-runbook-review.md` —
+  operational posture deep dive.
+- `capstone-reviewer/writeup-review.md` — reviews the writeup for
+  reasoning quality. Scores the "extension posture" section
+  specifically.
+- `capstone-reviewer/extension-posture-review.md` — the
+  "when would X become the right next move" probe, written to
+  integrate smoothly with the decision engine subsystem (PROMPT_43
+  and later).
+
+### 5. Follow-up generator
+
+`interview/follow-up-generator.md` takes a stage transcript and
+emits 3 progressive follow-ups from "probe more depth" to
+"challenge directly". Consumed by the simulator when the learner
+answered and time remains in the stage budget.
+
+### 6. Simulator wiring
+
+Update `pgfound interview start`:
+
+- For each stage, render the appropriate stage template using
+  PROMPT_29's `llm render`. Continue to stub the actual LLM call,
+  but now the rendered prompt and the interviewer's canned stub
+  response are both written to the transcript in clearly labeled
+  sections.
+- After the warmup stage, render the persona template and prepend
+  it to the transcript so the full prompt context is captured.
+- At the closing-feedback stage, render
+  `interview/stages/closing-feedback.md` which consumes the
+  full transcript and emits a structured review. Again, stub the
+  LLM call but write the prompt.
+
+Add `pgfound interview dispatch <transcript-path>` as an optional
+command that prints a single concatenated prompt file (system +
+persona + all stage prompts + closing) ready to be piped into an
+external LLM CLI. This keeps the platform provider-neutral.
+
+### 7. Capstone evaluate wiring
+
+Update `pgfound capstone evaluate --full`:
+
+- After the engine produces findings, render all four
+  `capstone-reviewer/*.md` templates into
+  `tmp/reviews/capstone/<id>/<ts>/prompts/` and a single
+  concatenated `tmp/reviews/capstone/<id>/<ts>/prompt-bundle.md`.
+- Write a `README.md` in that directory telling the coach/learner
+  how to send the bundle to an LLM and where the expected
+  response structure is documented.
+
+### 8. Docs
+
+- Update `docs/interview-simulator.md` and
+  `docs/review-engine.md` with the new template flow.
+- Add `docs/llm-provider-neutrality.md` — short note on why the
+  platform does not bake in a specific provider and what shape
+  of response it expects from any LLM.
+
+### 9. Tests
+
+- `tests/test_interview_templates.py` — all stage and persona
+  templates parse and render against a fixture.
+- `tests/test_capstone_reviewer_templates.py` — all four templates
+  render against the capstone 01 reference solution fixture.
+- `tests/test_followup_generator.py` — follow-up generator
+  renders without error.
+
+## Verification
+
+1. Run `pgfound interview start` for `senior-backend-saas-rls`.
+   Inspect the transcript: it contains rendered prompts for
+   every stage.
+2. `pgfound capstone evaluate 01-multi-tenant-saas-crm --full
+   --path capstones/01-multi-tenant-saas-crm/reference` writes
+   a prompt bundle; open it and confirm it is coherent and
+   complete.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_31 moves into the Administration Track (A1–A2: roles/privileges
+and schemas/databases).

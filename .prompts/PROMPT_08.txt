@@ -1,0 +1,194 @@
+PROMPT 08 — Exercise schema, scaffolding levels, and authoring surface
+======================================================================
+
+## Context
+
+You are working in `postgres-foundations`. Doctrine: capability layers,
+flight-school training, competence defined by explanation and critique, not
+just correct output. Scaffolding levels A–D are first class: A
+(recognition), B (controlled production), C (independent production), D
+(critique and repair). See `docs/doctrine.md`, `curriculum/README.md`.
+
+## Prior work (verify before starting)
+
+- PROMPT_05 exercise schema (`content-schemas/exercise.schema.json`).
+- PROMPT_06 curriculum map and domains.
+- PROMPT_07 lesson authoring system (directory conventions, scaffolder,
+  lint).
+- `exercises/` holds only `.gitkeep`.
+
+## Task
+
+Produce the authoring surface for exercises. Lean heavily on the four
+scaffolding levels; every exercise is tagged with exactly one.
+
+### 1. Exercise directory layout
+
+Under `exercises/`:
+
+```
+exercises/
+  phase-00-reality-before-syntax/
+    <lesson-slug>/
+      level-a/<slug>/
+        exercise.json
+        prompt.md                 # what the learner sees
+        starter.sql               # optional starter snippets
+        solution.md               # reference solution + annotated
+                                  # reasoning (never shown to learner
+                                  # automatically)
+        solution.sql              # executable SQL solution (when applicable)
+      level-b/<slug>/...
+      level-c/<slug>/...
+      level-d/<slug>/...
+```
+
+The phase directory names mirror `lessons/`. Every exercise is scoped to
+exactly one lesson (the `lesson_id`) and exactly one scaffolding level.
+
+### 2. Per-level conventions
+
+Make these conventions explicit in `docs/authoring-exercises.md`:
+
+- **Level A — recognition**: multiple-choice or short-identification
+  prompts. `expected_output_shape` is `prose_explanation` or `scalar`.
+  `kind` is typically `critique` or `query`. Hints allowed. Time target
+  5–10 min. Oral defense optional.
+- **Level B — controlled production**: scaffolded production with hints,
+  starter SQL, bounded schema. `expected_output_shape` often
+  `rowset` or `schema_object`. Time 10–25 min. Hints allowed (2–4).
+- **Level C — independent production**: fresh but similar problem with
+  **no hints**. `oral_defense_prompts` required (min 2). Time 20–45 min.
+- **Level D — critique and repair**: broken schema / broken query /
+  wrong-but-passing query. Learner must diagnose and fix, *and* explain
+  what was wrong. `kind` is always `critique` or `debug`.
+  `oral_defense_prompts` required (min 3). Time 20–60 min.
+
+### 3. Prompt file conventions (`prompt.md`)
+
+Every `prompt.md` follows this structure:
+
+1. **Setup** — what lab and seed pack to use; how to enter the lab.
+2. **Given** — the facts the learner can rely on (schema, data).
+3. **Task** — exactly what the learner must produce.
+4. **Allowed concepts** — echoed from `exercise.json` `allowed_concepts`.
+5. **Not yet allowed** — echoed from `not_yet_allowed_concepts`. If the
+   learner uses one of these in their answer, the rubric must penalize.
+6. **Success criteria** — verbatim from `exercise.json`.
+7. **Oral defense** (C/D only) — the questions the learner must be able
+   to answer out loud.
+8. **Estimated time**.
+
+Document this structure in `docs/authoring-exercises.md`.
+
+### 4. Scaffolder
+
+Add to the CLI: `pgfound content scaffold exercise`.
+
+Signature:
+
+```
+pgfound content scaffold exercise \
+  --lesson phase-07/index-fundamentals/btree-composite-vs-single-column \
+  --level c \
+  --slug analyze-composite-plan \
+  --kind query \
+  --title "Analyze a composite B-tree plan"
+```
+
+Behavior:
+
+- Resolves the lesson path and verifies the lesson exists.
+- Reads the lesson's `concepts_introduced` and prior-phase lessons'
+  `concepts_introduced` to seed `allowed_concepts`.
+- Reads the lesson's `concepts_not_yet_allowed` plus later-phase
+  `concepts_introduced` to seed `not_yet_allowed_concepts`.
+- Creates `exercises/<phase>/<lesson-slug>/level-<level>/<slug>/` with
+  `exercise.json`, `prompt.md`, `starter.sql` (or omit if `kind` is
+  `modeling`), `solution.md`.
+- For levels C/D, `oral_defense_prompts` is scaffolded with
+  `__REPLACE_ME__` entries.
+
+### 5. Validator enhancements
+
+Extend `pgfound content validate`:
+
+- `exercises/**/level-<x>/` tree must match `scaffolding_level` in
+  `exercise.json`.
+- Level C and D exercises must have `oral_defense_prompts` of length
+  ≥ 2 and ≥ 3 respectively when `status == active`.
+- Level A/B exercises may have hints; Level C/D exercises must have
+  zero hints (hints belong to scaffolding, not independence).
+- `allowed_concepts` ∩ `not_yet_allowed_concepts` must be empty.
+- `not_yet_allowed_concepts` must be a superset of the parent lesson's
+  `concepts_not_yet_allowed` (carried forward from PROMPT_05 — confirm
+  still enforced).
+- For active exercises with `kind in {query, schema, lab}`, a
+  `solution.sql` file must exist.
+
+### 6. Forbidden-concept lint
+
+Add a lint-layer check (part of `pgfound content lint`): for every
+`solution.sql` present, scan for usage of any SQL construct on the
+`not_yet_allowed_concepts` list (pattern-based — e.g. if the list
+contains `window_function`, flag any use of `OVER (`).
+
+This is a best-effort lint, not a parser. Document the patterns it
+knows in `docs/authoring-exercises.md`. It should flag a warning-level
+message for authors: the author has to justify or rewrite the solution
+if the lint fires.
+
+### 7. Rubric defaults
+
+Create `rubrics/default/`:
+
+- `query-correctness.rubric.json`
+- `schema-design.rubric.json`
+- `indexing-reasoning.rubric.json`
+- `concurrency-reasoning.rubric.json`
+- `critique-and-repair.rubric.json`
+
+Each uses the rubric schema from PROMPT_05. Dimensions vary by rubric;
+weights sum to 1.0. Level descriptions 0–4 should be specific enough
+that two reviewers could independently agree on a score. Length per
+rubric: ~200 lines JSON.
+
+These default rubrics are what exercises reference by ID unless an
+author decides to provide a custom rubric.
+
+### 8. Docs
+
+- `docs/authoring-exercises.md` — the full authoring guide. Walk
+  through: picking the lesson, picking the level, scaffolding, writing
+  the prompt, writing the solution, linking a rubric, validating, and
+  activating. Length 800–1200 words.
+- Update `docs/cli.md` to include `content scaffold exercise`.
+
+### 9. Tests
+
+- `tests/test_scaffold_exercise.py` — scaffolds Level B and Level D
+  exercises against a fixture lesson; asserts validator accepts drafts
+  and rejects active-status files with unfilled oral defense prompts.
+- `tests/test_forbidden_concept_lint.py` — a fake `solution.sql` that
+  uses `OVER (...)` when `window_function` is in
+  `not_yet_allowed_concepts` produces the expected lint warning.
+- `tests/test_rubric_defaults.py` — every default rubric loads and
+  validates.
+
+## Verification
+
+1. Scaffold a Level B exercise under a fixture lesson; validator
+   accepts draft.
+2. Flip `status` to `active`; validator complains that `solution.sql`
+   is missing; add a trivial `SELECT 1;` solution → validator passes.
+3. Scaffold a Level D exercise; attempt to activate with fewer than 3
+   oral defense prompts → validator rejects.
+4. `uv run pgfound content lint` runs against the fixture and produces
+   sensible output.
+5. `uv run pytest -q` green.
+6. `uv run ruff check .` + `ruff format --check .` green.
+
+## Next prompt
+
+PROMPT_09 defines the reusable teaching domain packs (schemas, seed SQL
+snippets, naming conventions) used across phases.

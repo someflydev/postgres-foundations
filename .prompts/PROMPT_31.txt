@@ -1,0 +1,189 @@
+PROMPT 31 — Administration track: A1 roles & privileges, A2 schemas & databases
+================================================================================
+
+## Context
+
+`postgres-foundations`. Phases 0–10 are complete. Capstones and
+review infrastructure are in place. The Administration track is the
+next serious layer of knowledge: what running Postgres actually
+demands day-to-day. See `docs/doctrine.md`, `docs/architecture.md`,
+and the A1–A6 outline in the project brief.
+
+Doctrine: admin knowledge is non-negotiable for anyone who would
+recommend PostgreSQL in anger. It is downstream of core mastery, not
+upstream.
+
+This prompt authors **A1 (roles, privileges)** and **A2 (schemas,
+databases)**. Later admin prompts cover A3 (auth/pooling), A4
+(backup/restore/vacuum/upgrades), A5 (monitoring/performance ops),
+A6 (replication/HA).
+
+## Prior work (verify before starting)
+
+- Phase 10 introduced roles and RLS in the content sense.
+- Curriculum and lesson structure support admin-track content by
+  setting `capability_layer: admin_mastery`.
+
+## Task
+
+### 1. Directory layout
+
+Introduce an **admin track** parallel to the phase-numbered
+curriculum:
+
+```
+curriculum/admin/map.json
+lessons/admin/
+  a1-roles-and-privileges/
+    <lesson-slug>/
+      lesson.json
+      body.md
+  a2-schemas-and-databases/
+    ...
+exercises/admin/
+  a1-roles-and-privileges/
+    <lesson-slug>/
+      level-a/<slug>/
+      ...
+```
+
+Update the validator to recognize the admin tree. Module slugs (A1,
+A2, …) live in `curriculum/admin/map.json` with fields:
+
+```
+{
+  "modules": [
+    {
+      "id": "a1-roles-and-privileges",
+      "title": "Roles and privileges",
+      "capability_layer": "admin_mastery",
+      "prerequisites": [{"phase": 10}],
+      "goals": [...],
+      "exit_competencies": [...]
+    },
+    ...
+  ]
+}
+```
+
+Author this file for all six admin modules now (A1–A6), even though
+this prompt only fills content for A1 and A2. The map is the anchor.
+Admin lessons use the dedicated `module_id` field introduced in PROMPT_05;
+they do **not** overload `phase`. The validator should enforce that
+`lesson.json.module_id` matches the enclosing admin module directory.
+
+Before starting the admin track, treat this prompt as a stabilization gate for
+the core build: phases 0–10, capstones 01–04, the review engine, the interview
+simulator scaffolding, and the training-side LLM prompt rendering must all be
+green. If that gate is red, fix core drift before branching into admin content.
+
+### 2. A1: Roles and privileges — lessons
+
+Target **8 lessons**:
+
+1. `roles-vs-users` — in PostgreSQL they are the same object kind
+   (`CREATE ROLE`); the NOLOGIN attribute differentiates usage.
+2. `login-roles-and-group-roles` — standard pattern: `app_readwrite`
+   and `app_readonly` as group roles; per-service login roles GRANTed
+   into them; NOLOGIN on groups.
+3. `granting-on-tables-sequences-functions-schemas` —
+   the fine-grained privilege model; sequences are often forgotten;
+   function EXECUTE.
+4. `default-privileges` — `ALTER DEFAULT PRIVILEGES`; why it applies
+   only to **future** objects and how that surprises people.
+5. `membership-and-inheritance` — `SET ROLE` vs membership;
+   `INHERIT` / `NOINHERIT`; `current_user` vs `session_user`.
+6. `ownership-and-dependent-objects` — who owns what; `REASSIGN
+   OWNED`; the chain of dependent objects.
+7. `least-privilege-patterns` — real-world templates: web app role,
+   migrations role, read-only BI role, break-glass admin role.
+8. `auditing-privileges-and-reviewing-access` — querying
+   `information_schema` and `pg_catalog` for what roles can do
+   what; authoring a recurring access-review.
+
+Every lesson ≥ 700 words. Lab examples against the saas domain
+(phase-10 RLS content is a prerequisite).
+
+### 3. A2: Schemas and databases — lessons
+
+Target **7 lessons**:
+
+1. `what-a-schema-is-for` — namespacing, grant boundary, search
+   path interaction.
+2. `schemas-vs-databases` — when to use each; why the default
+   advice is "one database, many schemas".
+3. `public-schema-discipline` — locking down `public`; the post-15
+   behavior change where `public` no longer grants `CREATE` to
+   PUBLIC.
+4. `search-path-discipline` — the gotchas; how hostile an arbitrary
+   `search_path` can be; per-role search_path.
+5. `multi-tenant-via-schemas-vs-rls` — the schema-per-tenant
+   pattern, honest comparison vs RLS, when each wins and loses.
+6. `migrating-between-schemas-and-databases` — how to actually
+   move data; pg_dump patterns; logical replication patterns
+   (forward pointer to A6).
+7. `cluster-level-management-basics` — creating and dropping
+   databases; template databases; `CREATE DATABASE ... WITH` knobs
+   worth knowing (`LC_COLLATE`, `LC_CTYPE`, `ENCODING`,
+   `TEMPLATE`).
+
+### 4. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. ~120 exercises across A1+A2.
+
+Critical drills:
+
+- Level C: design and apply a least-privilege role matrix for the
+  saas domain, including an application role, a migrations role,
+  a read-only BI role, and a break-glass admin. Include an access
+  review query that the learner runs afterwards.
+- Level D: a leaked role audit — given a set of GRANTs dumped from
+  a real (fictional) cluster, identify every over-grant and
+  propose REVOKEs.
+- Level D: a `public` schema with `CREATE` open to all; learner
+  diagnoses and remediates.
+- Level D: a search_path exploit scenario: a function owned by a
+  powerful role that calls `SELECT ... FROM some_table` without
+  schema qualification; a lower-privileged role injects a shim
+  table. Learner proposes the fix (set search_path on the
+  function definition).
+
+### 5. Admin seed pack
+
+Author `seed-data/packs/admin/` with:
+
+- `roles-matrix.sql` — a demonstration role set the learner can
+  reset in the lab.
+- `access-review-queries.sql` — the canonical queries over
+  `information_schema`/`pg_catalog` used by multiple exercises.
+
+Idempotent.
+
+### 6. Docs
+
+- `docs/admin-track/README.md` — the admin track overview and
+  pointers into the per-module lessons.
+- `docs/admin-track/a1-roles-playbook.md` and
+  `docs/admin-track/a2-schemas-playbook.md` — reference pages.
+
+### 7. Tests
+
+- `tests/test_admin_a1_a2_corpus.py` — validates the admin
+  lessons/exercises and asserts A1/A2 modules are covered.
+- `tests/test_admin_map.py` — the admin map validates; A1–A6
+  modules all present; prerequisites reference valid phases.
+
+## Verification
+
+1. Apply `seed-data/packs/admin/roles-matrix.sql` in the lab;
+   switch roles via `SET ROLE` and confirm grants behave as
+   expected.
+2. Run the access-review queries; output matches the solution.
+3. `uv run pgfound content validate` + `lint` green against the
+   admin tree.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_32 authors admin modules A3 (auth/pooling, PgBouncer preview)
+and A4 (backup/restore, vacuum, major version upgrades).

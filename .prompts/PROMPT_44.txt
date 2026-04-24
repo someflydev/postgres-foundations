@@ -1,0 +1,196 @@
+PROMPT 44 — Decision-engine 4-layer prompt pack
+===============================================
+
+## Context
+
+`postgres-foundations`. The decision engine has catalogs, rules,
+scoring, and reports. This prompt authors the 4-layer **decision-
+engine prompt pack** called for in the project brief. These prompts
+are consumed by humans (and optionally LLMs) in authoring, evaluating,
+scenario-crafting, and cross-checking the engine itself.
+
+Layers:
+
+1. **Schema and catalog generation prompts** — to help extend the
+   engine's catalogs and intake schema thoughtfully.
+2. **Evaluator prompts** — to turn a filled intake into a scored
+   decision report, explain tradeoffs, generate follow-ups.
+3. **Scenario prompts** — per-industry scenario generation prompts
+   used as decision-engine regression fixtures.
+4. **Critique / validation prompts** — cross-check recommendations
+   against anti-patterns, test portability assumptions, spot
+   overcomplexity, identify missing core features.
+
+Doctrine reminder: the prompt pack makes the engine extensible and
+testable. It does **not** replace the engine.
+
+## Prior work (verify before starting)
+
+- `decision-engine/prompts/` holds only `.gitkeep`.
+- Catalogs, rules, scoring, reports are complete.
+- Template format from PROMPT_29 already established.
+
+## Task
+
+### 1. Directory layout
+
+```
+decision-engine/prompts/
+  README.md
+  layer-1-schema-catalog/
+    propose-industry-entry.md
+    propose-data-shape-entry.md
+    propose-workload-pattern-entry.md
+    propose-extension-entry.md
+    propose-index-pattern-entry.md
+    propose-topology-pattern-entry.md
+    propose-anti-pattern-entry.md
+    refine-intake-schema.md
+    propose-rule.md
+  layer-2-evaluator/
+    evaluate-intake.md
+    explain-tradeoffs.md
+    generate-followup-questions.md
+    generate-now-later-avoid.md
+  layer-3-scenarios/
+    fintech-payments-scenario.md
+    healthcare-ops-scenario.md
+    saas-multi-tenant-scenario.md
+    ecommerce-marketplace-scenario.md
+    logistics-geo-scenario.md
+    observability-iot-scenario.md
+    knowledge-ai-scenario.md
+    modernization-bridge-scenario.md
+  layer-4-critique/
+    cross-check-recommendations-against-anti-patterns.md
+    look-for-overcomplexity.md
+    test-portability-assumptions.md
+    generate-benchmark-plan.md
+    identify-missing-core-features.md
+  shared/
+    system-prompt-architect.md
+    output-formats/
+      catalog-entry.md
+      rule-entry.md
+      evaluator-output.md
+      scenario-intake.md
+      critique-output.md
+```
+
+Every prompt uses the front-matter format defined in PROMPT_29.
+
+### 2. Shared architect persona
+
+`shared/system-prompt-architect.md` establishes the decision-engine
+persona: a senior PostgreSQL architect who is conservative,
+operationally aware, allergic to hype, and refuses to recommend
+anything without citing rules/catalog entries. Unlike the trainer
+persona, the architect is speaking to peers and is comfortable with
+technical density.
+
+### 3. Layer 1: schema and catalog generation
+
+Each of these prompts produces either a draft catalog entry or a
+draft rule. Inputs include: the catalog schema, existing catalog
+entries (as context to avoid duplication), a short prompt/ask, and
+any evidence the requester wants considered.
+
+Outputs strictly follow `shared/output-formats/catalog-entry.md` or
+`rule-entry.md` — structured Markdown + embedded JSON.
+
+For `refine-intake-schema.md`: the prompt expects a proposed new
+field with rationale, real-world prevalence, and candidate values.
+Output is a JSON Schema patch.
+
+For `propose-rule.md`: the prompt takes a "real-world scenario" and
+outputs a fully-formed rule JSON ready to drop into the rules
+directory, including `why_now`, `why_not_yet`, and
+`triggers_for_next_stage`.
+
+### 4. Layer 2: evaluator prompts
+
+- `evaluate-intake.md`: the LLM is given an intake and the full
+  catalog + rule pack; it is asked to produce a decision report in
+  the same schema the engine emits. Used to cross-check the engine.
+- `explain-tradeoffs.md`: given an existing report, the LLM expands
+  the tradeoff narrative for a specific recommendation.
+- `generate-followup-questions.md`: given an intake with thin
+  evidence, the LLM produces follow-up questions that would
+  reduce uncertainty the most.
+- `generate-now-later-avoid.md`: given a report, the LLM produces
+  an executive-style "now / later / avoid" one-pager.
+
+### 5. Layer 3: scenario prompts
+
+One per industry. Each prompt asks the LLM to generate a realistic
+intake for the industry, with:
+
+- A short narrative (300–500 words) framing the company / team /
+  stage.
+- The filled intake JSON.
+- The expected decision outputs (which extensions land in
+  recommend_now, candidate_later, avoid_for_now — so the scenario
+  doubles as a regression fixture).
+
+These scenario prompts are consumed by humans authoring new
+fixtures. They are also consumed by PROMPTS 45/46 which actually
+produce the scenario content.
+
+### 6. Layer 4: critique / validation prompts
+
+- `cross-check-recommendations-against-anti-patterns.md`: given a
+  draft report, the LLM critiques each recommendation against the
+  anti-pattern catalog. Output is a list of findings — "this
+  recommendation triggers anti-pattern X because …".
+- `look-for-overcomplexity.md`: given a report, the LLM asks
+  whether the recommendation portfolio is heavier than the
+  intake's operational tolerance allows.
+- `test-portability-assumptions.md`: given a report, the LLM
+  checks each recommendation against the managed-service-
+  availability field and the intake's portability constraint.
+- `generate-benchmark-plan.md`: given a report, the LLM proposes a
+  concrete benchmark plan the team could run to validate the
+  highest-impact recommendation before committing.
+- `identify-missing-core-features.md`: given a report, the LLM
+  surfaces core features (non-extensions) that were not
+  recommended but should probably have been.
+
+### 7. CLI integration
+
+Add `pgfound decision prompt list` and
+`pgfound decision prompt render <prompt-id>` analogous to
+`pgfound llm render` from PROMPT_29. Reuse the infrastructure. No
+new surface except the catalog integration.
+
+### 8. Docs
+
+- `decision-engine/prompts/README.md` — one paragraph per layer,
+  one paragraph per prompt.
+- Update `docs/llm-usage.md` to cover the decision-engine prompt
+  pack alongside the training-side prompts.
+
+### 9. Tests
+
+- `tests/test_decision_prompts.py` — every template parses and
+  renders against a fixture context.
+- `tests/test_prompt_output_formats.py` — output-format templates
+  render against sample contexts.
+
+## Verification
+
+1. `uv run pgfound decision prompt render
+   layer-2-evaluator/evaluate-intake --context
+   tests/fixtures/evaluator-context.json` produces a filled prompt
+   that, when pasted to an LLM, would yield a report-shaped
+   response.
+2. `uv run pgfound decision prompt render
+   layer-4-critique/cross-check-recommendations-against-anti-patterns
+   --context tests/fixtures/critique-context.json` similarly
+   renders.
+3. `uv run pytest -q` green.
+4. `uv run pgfound content validate` + `lint` green.
+
+## Next prompt
+
+PROMPT_45 authors industry scenarios batch 1 (SaaS, fintech,
+healthcare, ecommerce).

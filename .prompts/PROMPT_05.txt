@@ -1,0 +1,245 @@
+PROMPT 05 — Content schema JSON specifications and validator
+============================================================
+
+## Context
+
+You are working in `postgres-foundations`, a serious PostgreSQL learning and
+planning platform. Content (lessons, exercises, rubrics, scenarios, capstones)
+is authored as structured files on disk and programmatically validated. This
+prompt sets up the **shape** of every content type so future content prompts
+have an unambiguous target. See `docs/doctrine.md`, `docs/architecture.md`,
+and `docs/adr/0002-json-first-content-model.md` for the JSON-first posture.
+
+Doctrine reminder: competence is a thing you can measure, so rubrics and
+scaffolding level markers are first-class schema fields, not vibes.
+
+## Prior work (verify before starting)
+
+- PROMPT_04 `pgfound` CLI exists; `pgfound content validate` is a stub
+  that prints a pointer to this prompt.
+- `curriculum/`, `lessons/`, `exercises/`, `scenarios/`, `capstones/`,
+  `rubrics/` exist with only `.gitkeep`.
+- Tests green.
+
+## Task
+
+Author authoritative JSON Schemas (draft 2020-12) for each content kind and
+wire them into `pgfound content validate`. Do not author content yet — only
+schemas, examples, and the validator.
+
+### 1. Schema directory
+
+Create `content-schemas/` at the repo root. Files:
+
+- `content-schemas/common.json` — shared definitions: `id_slug`, `phase`,
+  `module_id`, `capability_layer`, `scaffolding_level`, `time_target_minutes`,
+  `postgres_version_min`, `tag`, `difficulty`, `author` metadata, and
+  `reference` (an object with `kind`, `slug`, `why`).
+- `content-schemas/lesson.schema.json`
+- `content-schemas/exercise.schema.json`
+- `content-schemas/rubric.schema.json`
+- `content-schemas/scenario.schema.json`
+- `content-schemas/capstone.schema.json`
+
+Every schema uses `"$schema": "https://json-schema.org/draft/2020-12/schema"`,
+has a `$id` like `https://postgres-foundations/schema/lesson.schema.json`,
+and references `common.json` with `$ref`.
+
+### 2. Lesson schema
+
+Fields:
+
+- `id` (slug, required)
+- `title` (string, required)
+- `phase` (integer 0–10, required for phase-numbered curriculum lessons;
+  mutually exclusive with `module_id`)
+- `module_id` (slug, required for non-phase lesson trees such as
+  admin/extension modules; mutually exclusive with `phase`)
+- `capability_layer` (enum; see §5)
+- `summary` (string, 1–3 sentences)
+- `learning_objectives` (array of strings, min 2)
+- `prerequisites` (array of lesson IDs)
+- `concepts_introduced` (array of slugs)
+- `concepts_not_yet_allowed` (array of slugs — the "staged boundary")
+- `body_path` (relative markdown path, required)
+- `worked_example_path` (optional)
+- `guided_exercise_ids` (array of exercise IDs)
+- `independent_exercise_ids` (array of exercise IDs)
+- `critique_exercise_ids` (array of exercise IDs)
+- `reflection_prompts` (array of short strings)
+- `estimated_time_minutes` (int)
+- `references` (array of `reference`)
+- `tags` (array of strings)
+- `status` (`draft | active | deprecated`)
+
+### 3. Exercise schema
+
+Fields:
+
+- `id` (slug, required)
+- `title` (required)
+- `lesson_id` (the lesson this belongs to; required)
+- `scaffolding_level` (A, B, C, or D — required)
+- `kind` (`query | schema | modeling | debug | critique | lab`)
+- `allowed_concepts` (array of slugs)
+- `not_yet_allowed_concepts` (array of slugs — enforced by validator
+  cross-check against lesson `concepts_not_yet_allowed`)
+- `schema_scope` (object describing tables in play; free-form but
+  required)
+- `dataset` (object with `seed_pack_id` and `max_rows_hint`)
+- `expected_output_shape` (one of `scalar | row | rowset | schema_object |
+  prose_explanation | explain_plan | multi_session_trace`)
+- `success_criteria` (array of strings — explicit and checkable)
+- `time_target_minutes` (int)
+- `rubric_id` (optional, points to a rubric)
+- `solution_path` (markdown/SQL file with reference solution)
+- `starter_path` (optional starter SQL or markdown)
+- `hints` (array of short strings — for Level A/B only)
+- `oral_defense_prompts` (array of short strings; required when
+  `scaffolding_level` is `C` or `D`)
+- `tags` (array)
+- `status` (`draft | active | deprecated`)
+
+### 4. Rubric schema
+
+Fields:
+
+- `id` (slug)
+- `title`
+- `applies_to` (enum: `exercise | capstone | scenario | interview`)
+- `dimensions` (array of objects):
+  - `name` (e.g. "correctness", "index justification", "concurrency
+    reasoning")
+  - `weight` (number, 0–1)
+  - `levels` (object keyed by score 0..4 with human descriptions)
+- `pass_threshold` (float 0–1)
+- `notes`
+
+Weights must sum to 1.0 (validator enforces).
+
+### 5. Scenario schema
+
+Fields:
+
+- `id`, `title`, `industry` (enum from the decision-engine industries —
+  list the expected slugs here: `saas_multi_tenant`, `fintech_payments`,
+  `healthcare_ops`, `ecommerce_marketplace`, `logistics_geo`,
+  `observability_iot`, `knowledge_ai`, `modernization_bridge`)
+- `narrative_path` (markdown)
+- `context` (object with `team_size`, `scale_signals`,
+  `tenancy_model`, `portability_requirements`,
+  `operational_tolerance`)
+- `data_shapes` (array of slugs from decision-engine data shapes)
+- `workload_patterns` (array of slugs from decision-engine patterns)
+- `suggested_lessons` (array of lesson IDs)
+- `suggested_exercises` (array of exercise IDs)
+- `suggested_capstone_id` (optional)
+- `expected_decision_outputs` (object with `recommend_now`,
+  `candidate_later`, `avoid_for_now` — each an array of extension/feature
+  slugs; used by the decision-engine golden tests later)
+- `tags`
+
+### 6. Capstone schema
+
+Fields:
+
+- `id`, `title`, `industry`, `summary`
+- `phases_required` (array of phase numbers — must be complete)
+- `deliverables` (array of objects with `name`, `kind`
+  (`schema | queries | indexes | rls_policies | operational_runbook |
+  writeup`), `path`)
+- `critical_queries` (array of prose descriptions)
+- `security_posture` (object)
+- `operational_notes` (string)
+- `review_rubric_id`
+- `tags`
+
+### 7. Capability layer enum
+
+In `content-schemas/common.json`, define `capability_layer` as an enum of
+these values (these mirror the phases but name them as capability bands):
+
+`schema_literacy`, `relational_joins`, `database_truth`,
+`postgres_data_modeling`, `expressive_querying`,
+`transactions_and_correctness`, `indexing_and_plans`, `full_text_search`,
+`partitioning_operations`, `security_federation`, `admin_mastery`,
+`extension_mastery`, `capstone`.
+
+### 8. Examples
+
+Author **one minimal but valid example per kind** under
+`content-schemas/examples/`:
+
+- `examples/lesson.example.json`
+- `examples/exercise.example.json`
+- `examples/rubric.example.json`
+- `examples/scenario.example.json`
+- `examples/capstone.example.json`
+
+These exist only to exercise the validator and to be linked from
+`docs/authoring.md`. Do not put them in the real content directories —
+they are not part of the curriculum.
+
+### 9. Validator (`pgfound content validate`)
+
+Replace the stub. Behavior:
+
+- Walk the content directories in the repo.
+- Infer kind from path (`lessons/**/*.json` → lesson, etc.). YAML is
+  accepted (`.yml`/`.yaml`) and converted in-memory before validation.
+- Validate each file against its schema (draft 2020-12). Use the
+  `jsonschema` library with `RefResolver` pointing at `content-schemas/`.
+- Additional cross-file checks:
+  - Lesson metadata must carry exactly one of `phase` or `module_id`.
+  - Exercise `lesson_id` must exist.
+  - Exercise `rubric_id` must exist when set.
+  - Exercise `not_yet_allowed_concepts` must be a superset of the parent
+    lesson's `concepts_not_yet_allowed` (guardrail against accidentally
+    widening the boundary).
+  - Rubric `dimensions[*].weight` sums to 1.0 ± 1e-6.
+  - Scenario slugs reference strings from the authoritative
+    decision-engine catalogs when those exist (check existence, don't
+    require them yet — print a warning and continue if catalogs are
+    missing).
+- Output: Rich table grouped by kind. Final line is a clear pass/fail
+  with counts. Exit non-zero on any error.
+- Accept `--strict` which turns warnings into errors (used in CI later).
+- Accept `--paths <glob>` to restrict the validation to a subset.
+
+### 10. Tests
+
+- `tests/test_content_schemas.py`:
+  - Each schema loads and is draft-2020-12 valid (use
+    `jsonschema.Draft202012Validator.check_schema`).
+  - Each example validates against its schema.
+  - Intentionally bad examples — build small invalid dicts inline — fail
+    with clear messages for each required-field violation.
+- `tests/test_validate_cli.py`:
+  - Run `pgfound content validate` on a temp directory containing
+    valid + invalid examples; assert counts and exit code.
+
+### 11. Docs
+
+- `docs/authoring.md` — a short authoring guide: where each kind lives,
+  file-extension conventions, how to validate, how to run a single file,
+  what the validator's cross-checks actually enforce, and where the
+  examples are. Link from `docs/architecture.md`.
+- Update `docs/cli.md` with the real `content validate` behavior.
+
+## Verification
+
+1. `uv run pgfound content validate` exits 0 against the current tree
+   (no content files to validate yet, only the examples directory — the
+   validator must skip `content-schemas/examples/` by default; add a
+   `--include-examples` flag if you want to validate them explicitly).
+2. `uv run pgfound content validate --include-examples` validates all
+   five examples successfully.
+3. `uv run pytest -q` green.
+4. `uv run ruff check .` and `uv run ruff format --check .` green.
+5. `docs/authoring.md` exists and names every required schema field a
+   learner-author has to fill.
+
+## Next prompt
+
+PROMPT_06 authors the curriculum map, phase definitions, and capability-layer
+docs that later content prompts reference.

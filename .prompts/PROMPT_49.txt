@@ -1,0 +1,199 @@
+PROMPT 49 — Top-level README, architecture docs, contribution guide
+===================================================================
+
+## Context
+
+`postgres-foundations` now has a complete platform. This prompt
+finalizes the **public-facing** documentation: the top-level README
+(the first thing visitors see on GitHub), a consolidated architecture
+overview, and a contribution guide.
+
+Doctrine: the repo is a serious public artifact demonstrating
+systems thinking. The top-level docs should match that bar — no
+hype, no walls of emoji, no marketing copy. Be terse, specific, and
+self-respecting.
+
+## Prior work (verify before starting)
+
+- All prior prompts complete.
+- `README.md` has been a placeholder since PROMPT_01.
+- `docs/architecture.md` has been authored and extended across
+  several prompts; this prompt may touch it but should not
+  rewrite it.
+
+## Task
+
+### 1. Top-level `README.md`
+
+Rewrite. Target 800–1200 words. Sections:
+
+- **Heading + tagline** — one sentence describing what this is.
+  "A serious PostgreSQL learning and planning platform: structured
+  curriculum, hands-on Docker lab, admin + extension mastery, and
+  an explainable PostgreSQL architecture decision engine."
+- **What's inside** — bullet list naming each subsystem
+  (curriculum, lab, admin track, extension track, capstones,
+  interview simulator, decision engine, scenario packs, prompt
+  packs).
+- **Who this is for** — self-learners, coaches, architects,
+  teams doing PostgreSQL strategy.
+- **Quickstart** — 10–12 lines of shell showing: clone, `uv
+  sync`, `docker compose up -d pg`, `pgfound doctor`,
+  `pgfound content seed ecommerce --phase 1`,
+  `pgfound exercise run <id>`, `pgfound decision run <intake>`.
+- **Directory map** — compact list of top-level directories with a
+  one-line purpose.
+- **Doctrine** — three short bullet lines (core first, "not yet",
+  explainability). Link `docs/doctrine.md`.
+- **Status and roadmap** — honestly frame what is in the repo
+  today and link to the ADR directory for decision history.
+- **How to use it** — three paths:
+  - "I want to learn PostgreSQL from zero" → curriculum map.
+  - "I want to level up operationally" → admin and extension
+    tracks.
+  - "I want to plan a PostgreSQL architecture" → decision engine.
+- **License + attribution** — license statement (MIT unless
+  otherwise specified — if unclear, leave placeholder and flag to
+  the reviewer in the verification step of this prompt).
+
+No emoji. No badges unless the project actually has CI producing
+real statuses after PROMPT_50 — if badges are added, they link to
+genuine artifacts (coverage, CI, PyPI if applicable).
+
+### 2. Consolidated architecture docs
+
+Reorganize `docs/` into a coherent, stable shape:
+
+```
+docs/
+  README.md                     # index of docs, grouped by audience
+  doctrine.md
+  architecture.md
+  repo-layout.md
+  learner-workflow.md
+  authoring-lessons.md
+  authoring-exercises.md
+  authoring.md                  # general authoring meta-guide
+  lab.md
+  cli.md
+  llm-usage.md
+  concurrency-playbook.md
+  indexing-playbook-part1.md
+  indexing-playbook-part2.md
+  partitioning-playbook.md
+  search-playbook.md
+  rls-playbook.md
+  logical-replication-playbook.md
+  constraints-cookbook.md
+  observability-intro.md
+  decision-engine-usage.md
+  decision-engine-scenarios.md
+  decision-engine-known-edges.md
+  admin-track/README.md + per-module playbooks
+  extension-track/README.md + per-module docs
+  anti-patterns/<slug>.md
+  adr/NNNN-*.md
+  ci-requirements.md
+  llm-integration.md
+  llm-provider-neutrality.md
+  progress-and-remediation.md
+  postmortem-template.md
+  capstone-posture-signals.md
+```
+
+`docs/README.md` is the index with a few audience-oriented
+navigation tables (self-learner, coach, architect, contributor).
+Verify every file exists; fix any broken links (the integration
+test in PROMPT_48 should already catch these).
+
+### 3. Contribution guide
+
+`CONTRIBUTING.md` at repo root. Sections:
+
+- **How this repo thinks about contributions** — doctrine-aligned
+  PRs only; no "add feature X because it's cool"; every PR cites
+  a doctrine line or names a concrete learner/user need.
+- **Authoring content** — point at `docs/authoring-lessons.md`
+  and `docs/authoring-exercises.md`.
+- **Authoring decision-engine content** — point at the 4-layer
+  prompt pack and the catalogs/rules authoring guides.
+- **Dev setup** — `uv sync`, `pre-commit install` (if configured
+  in PROMPT_50), `make fmt`, `make lint`, `make test`.
+- **Commit and PR hygiene** — imperative subject lines; scope
+  prefixes (`feat(decision-engine):`, `fix(review):`); require a
+  passing CI; require content validate + lint green.
+- **Adding a new extension module** — a concrete checklist:
+  update `curriculum/extensions/map.json`, the extension catalog
+  entry, at least one rule, at least one scenario covering it,
+  lessons under `lessons/extensions/`, exercises under
+  `exercises/extensions/`, update the admin track cross-refs if
+  operational, add a playbook under
+  `docs/extension-track/`.
+- **Adding a new industry or scenario** — a similar checklist.
+- **Code of conduct** — short, firm statement; link out to a
+  standard code-of-conduct file if used (`CODE_OF_CONDUCT.md`).
+- **Reporting issues** — what to include.
+
+### 4. Reviewer checklists
+
+Add `docs/reviewer-checklists/`:
+
+- `lesson-review.md`
+- `exercise-review.md`
+- `capstone-review.md`
+- `rule-review.md`
+- `scenario-review.md`
+
+Each ≤ 400 words. These are used by human reviewers (and cited
+by the LLM templates).
+
+### 5. License and attribution
+
+If no license has been set, set it in this prompt:
+
+- Add `LICENSE` at repo root (MIT is the safe default — if the
+  project creator prefers Apache-2.0 or something else, note
+  that in the prompt's verification step so a human can decide).
+- Add a top-of-file attribution on authored content where it
+  matters (not on every file — mostly an optional
+  `AUTHORS.md`).
+
+### 6. README lint
+
+Add `scripts/readme-lint.sh`:
+
+- Confirms every file named in the top-level README exists.
+- Confirms every shell command block parses (a rough lint, not
+  executing).
+- Confirms no obvious broken links.
+
+Hook into `make lint`.
+
+### 7. Docs index validator
+
+Add `pgfound docs check` that walks `docs/` and:
+
+- Validates every markdown link target resolves.
+- Flags orphan files (files under `docs/` not linked from
+  anywhere) as warnings.
+
+### 8. Tests
+
+- `tests/test_readme.py` — tests the README lint.
+- `tests/test_docs_check.py` — tests `pgfound docs check` against
+  fixture content.
+
+## Verification
+
+1. `README.md` renders cleanly on GitHub (manual visual check
+   recommended — the prompt cannot run GitHub rendering, but
+   structure should be correct).
+2. `uv run pgfound docs check` reports no broken links.
+3. `scripts/readme-lint.sh` passes.
+4. `uv run pytest -q` green.
+5. `uv run pgfound content validate` + `lint` green.
+
+## Next prompt
+
+PROMPT_50 adds the CI workflow, pre-commit configuration, and
+release-readiness checks.

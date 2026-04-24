@@ -1,0 +1,159 @@
+PROMPT 11 — Phase 1: SQL literacy basics
+========================================
+
+## Context
+
+`postgres-foundations`, Phase 1. Doctrine: first SQL contact happens on
+small, real tables in the Docker lab. One-table thinking. Tiny datasets.
+Immediate visual feedback. No joins yet, no functions beyond the basics,
+no aggregates yet. See `docs/doctrine.md`, `curriculum/README.md`.
+
+Phase 1 covers: `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `INSERT`,
+`UPDATE`, `DELETE`, single-table thinking.
+
+Exit competencies from the curriculum map include: the learner can
+produce correct single-table queries against a schema they have not
+seen before; can read a one-table schema and predict what a given query
+will return; can safely `UPDATE` or `DELETE` with a `WHERE` clause and
+explain why the `WHERE` is essential.
+
+## Prior work (verify before starting)
+
+- PROMPT_09 domain packs, specifically `ecommerce/phases/phase-01.sql`,
+  `scheduling/phases/phase-01.sql`.
+- PROMPT_10 Phase 0 content active and validated.
+- Phase 1 directories empty except `.gitkeep` / `README` from PROMPT_09.
+
+## Task
+
+### 1. Phase 1 clusters
+
+From `curriculum/map.json`, phase 1's clusters should be approximately:
+
+- `one-table-thinking`
+- `select-filter-sort`
+- `insert-update-delete`
+- `reading-schemas-you-did-not-write`
+
+Follow the map exactly.
+
+### 2. Lessons (at least 8)
+
+Authoritative set:
+
+1. `lessons/phase-01-sql-literacy-basics/one-table-thinking/rows-columns-tables/` — rows, columns, tables; cardinality intuition.
+2. `lessons/phase-01-sql-literacy-basics/one-table-thinking/null-and-missing/` — the three-valued logic of `NULL`, when absence is a separate fact.
+3. `lessons/phase-01-sql-literacy-basics/select-filter-sort/first-select/` — `SELECT ... FROM`, choosing columns, expressions in the select list.
+4. `lessons/phase-01-sql-literacy-basics/select-filter-sort/where-basics/` — `WHERE`, `AND`, `OR`, parentheses, `IN`, `BETWEEN`, `IS NULL`.
+5. `lessons/phase-01-sql-literacy-basics/select-filter-sort/order-and-limit/` — `ORDER BY` ascending/descending, tie-breakers, `LIMIT`/`OFFSET` + why `OFFSET` is an operational smell at scale.
+6. `lessons/phase-01-sql-literacy-basics/insert-update-delete/inserts/` — single-row and multi-row `INSERT`, column list discipline, default values.
+7. `lessons/phase-01-sql-literacy-basics/insert-update-delete/updates-and-deletes/` — `UPDATE` with `WHERE`, `DELETE` with `WHERE`, the "forgot-the-WHERE" incident, using `RETURNING`.
+8. `lessons/phase-01-sql-literacy-basics/reading-schemas-you-did-not-write/shape-of-a-table/` — `\d`, reading columns, types, defaults, nullability, before writing any query.
+
+Every lesson uses **only** phase-1 concepts. `concepts_not_yet_allowed`
+for every phase-1 lesson must exclude: `join`, `group_by`, `aggregate`,
+`cte`, `window_function`, `transaction`, `index`, `foreign_key`,
+`primary_key as SQL construct`, `subquery` (tolerated for `IN (...)`
+literal lists only), `function definitions`, `jsonb`, `arrays`.
+
+Where domain examples appear, use `ecommerce` phase-1 tables and
+`scheduling` phase-1 tables. Rotate domains to avoid monotony.
+
+Each `body.md` length ≥ 500 words, seven sections, at least one worked
+example run in the lab (show sample output).
+
+### 3. Exercises
+
+For each lesson, author:
+
+- 2 Level A exercises (recognition: read a schema; predict rows)
+- 2 Level B exercises (controlled production: write a query with
+  scaffolding)
+- 2 Level C exercises (independent production: no hints; oral defense)
+- 1 Level D exercise (critique and repair: flawed query that returns
+  wrong rows silently)
+
+That's roughly 7 exercises × 8 lessons = **~56 exercises**.
+
+Key requirements:
+
+- Every exercise specifies its seed pack via the domain slug and phase.
+- Every `prompt.md` ends with explicit success criteria that can be
+  checked by output comparison.
+- Level D exercises must include a broken query that **returns rows
+  without erroring**. Silent wrongness is the most important failure
+  mode in this phase.
+- `solution.sql` for every query exercise must run cleanly in the lab
+  against the domain's phase-1 seed.
+
+### 4. Seed data sufficiency
+
+Review the ecommerce and scheduling phase-01.sql packs from PROMPT_09.
+They must support every phase-1 exercise. If a phase-1 exercise needs
+additional columns or rows to be answerable, **edit the domain pack's
+phase-01.sql** (it is supposed to evolve). Keep edits idempotent.
+
+Add a small third domain pack if helpful — e.g. extend
+`saas_multi_tenant/phases/phase-01.sql` to support one or two
+phase-1 exercises. Keep it small.
+
+### 5. Exercise runner
+
+In PROMPT_04/08 a `pgfound content seed` command was introduced. Add
+`pgfound exercise run <exercise-id>`:
+
+- Looks up the exercise by slug (support disambiguation by phase path
+  if two exercises share a slug).
+- Ensures the required seed pack is loaded (prompt the user if not,
+  or auto-seed if `--auto-seed` is passed).
+- Prints `prompt.md`.
+- Opens an interactive psql session inside `pg` for the learner to
+  experiment.
+- When the learner exits psql, prompts them to self-evaluate against
+  the success criteria and optionally records a timestamp + self-
+  assessment under `tmp/progress/<exercise-id>.json`. This is
+  progress-tracking foundation; it will be formalized in PROMPT_47.
+
+Include a `--check` mode that runs the learner's last-saved query
+(from a conventional path like `tmp/answers/<exercise-id>.sql`)
+against the lab and compares to the reference solution output
+row-set for correctness. This is a scaffolding for the review engine
+that lands in PROMPT_27. Keep the comparator simple: canonicalize
+rows (sort, stringify) and diff.
+
+### 6. Docs
+
+- `lessons/phase-01-sql-literacy-basics/README.md` — lesson table with
+  links.
+- `exercises/phase-01-sql-literacy-basics/README.md` — exercise table.
+- Update `docs/cli.md` with `exercise run`.
+
+### 7. Tests
+
+- `tests/test_phase1_corpus.py`:
+  - All phase-1 lessons validate and lint.
+  - Every phase-1 exercise has a runnable `solution.sql` (syntax-check
+    via `libpq-dev`-free path: just string contains a terminating `;`
+    and no obvious forbidden constructs from the `not_yet_allowed`
+    list).
+- `tests/test_exercise_run_dry_run.py`:
+  - `pgfound exercise run <id> --dry-run` prints the prompt and the
+    seed-pack plan without touching Docker.
+
+## Verification
+
+1. With lab up: `uv run pgfound content seed ecommerce --phase 1
+   --reset` green.
+2. Pick one Level C exercise; `uv run pgfound exercise run <id>`
+   prints the prompt and drops into psql. Exit; rerun with `--check`
+   pointing at a saved `tmp/answers/<id>.sql` that matches the
+   solution → "correct"; mutate the query → "incorrect, diff
+   follows".
+3. `uv run pgfound content validate` green.
+4. `uv run pgfound content lint` zero errors.
+5. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_12 authors Phase 2 (joins and aggregation), which depends on the
+domain packs being extended with one-to-many relationships.

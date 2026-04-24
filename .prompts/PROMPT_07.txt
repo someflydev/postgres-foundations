@@ -1,0 +1,175 @@
+PROMPT 07 — Lesson authoring schema, conventions, and file layout
+=================================================================
+
+## Context
+
+You are working in `postgres-foundations`, a PostgreSQL learning and planning
+platform. Doctrine: core first, capability layers, explainability as first-
+class competence, five parallel loops (lesson, lab, debug, design, review).
+See `docs/doctrine.md`, `curriculum/README.md`.
+
+This prompt converts the lesson JSON schema (authored in PROMPT_05) into a
+full **authoring system**: directory conventions, file templates, a content-
+side markdown body structure, and a small lint pass specific to lessons.
+Later content prompts will author actual lessons against these conventions.
+
+## Prior work (verify before starting)
+
+- PROMPT_05 content schemas (`content-schemas/lesson.schema.json`).
+- PROMPT_06 curriculum map (`curriculum/map.json`, phase slugs/numbers).
+- `lessons/` contains only `.gitkeep`.
+
+## Task
+
+### 1. Lesson directory layout
+
+Under `lessons/`, use this structure:
+
+```
+lessons/
+  phase-00-reality-before-syntax/
+    <cluster-slug>/
+      <lesson-slug>/
+        lesson.json                  # metadata + pointers (validates)
+        body.md                      # main teaching text
+        worked-example.md            # optional
+        figures/                     # optional PNG/SVG (avoid for now)
+```
+
+Phase directories must be named with zero-padded phase number + kebab
+slug, e.g. `phase-00-reality-before-syntax`, `phase-07-indexes-and-plans`.
+Author the directories for all 11 phases (`phase-00-...`
+through `phase-10-...`) now with `.gitkeep` files in each — use the slugs
+from `curriculum/map.json`.
+
+### 2. Lesson body conventions (`body.md`)
+
+Every lesson's `body.md` follows this structure:
+
+1. **Problem framing** — a concrete scenario from one of the reusable
+   domains, specifying what the learner can already do and the wall they
+   hit.
+2. **Minimal concept introduction** — new concept(s), named and scoped;
+   no forward references to concepts tagged `concepts_not_yet_allowed`
+   in the lesson metadata.
+3. **Worked example** — step-by-step, short, in the lab. References
+   specific seed data if relevant.
+4. **Diagnostic questions** — 3–5 short questions the learner should be
+   able to answer after reading, before touching exercises.
+5. **Common pitfalls** — enumerated with short examples.
+6. **"Explain it back"** — a paragraph-prompt asking the learner to
+   explain the concept in their own words out loud before moving on.
+7. **References and further reading** — internal links to other lessons
+   and docs.
+
+Document this structure in `docs/authoring.md` (update the file written
+in PROMPT_05 — do not overwrite it). Include a "what this structure is
+for" paragraph explaining that the five parallel loops are embedded
+here: body.md drives the *lesson loop*; exercises drive lab/debug/design
+loops; rubrics drive the review loop.
+
+### 3. Lesson templates
+
+Create `content-schemas/templates/`:
+
+- `templates/lesson.json.template` — a filled-in but clearly-templated
+  JSON file with `__REPLACE_ME__` tokens. Every field present, all
+  required fields non-placeholder. Include inline JSON Pointer-ish
+  comments in a sidecar `templates/lesson.json.template.md` since JSON
+  itself doesn't support comments.
+- `templates/lesson-body.md.template` — a markdown skeleton matching the
+  seven-section structure above, with `<!-- guidance: ... -->` HTML
+  comments explaining what belongs in each section. These are preserved
+  verbatim so lesson authors can delete them as they fill the body.
+
+### 4. `pgfound content scaffold lesson`
+
+Add a new CLI command that scaffolds a new lesson. Signature:
+
+```
+pgfound content scaffold lesson \
+  --phase 7 \
+  --cluster index-fundamentals \
+  --slug btree-composite-vs-single-column \
+  --title "B-tree: composite vs single-column indexes" \
+  --capability-layer indexing_and_plans
+```
+
+Behavior:
+
+- Resolves the phase directory from `curriculum/map.json` (error if the
+  phase number is not in the map).
+- Creates `lessons/<phase-dir>/<cluster>/<slug>/` if it does not exist.
+- Writes `lesson.json` using the template, substituting the provided
+  fields and leaving clearly-marked placeholders for any unspecified
+  required field.
+- Writes `body.md` from the body template.
+- Runs the validator on the newly created files in **draft** mode: any
+  placeholder tokens are allowed only if `status: draft` in
+  `lesson.json`.
+
+### 5. Validator enhancements
+
+Extend `pgfound content validate` (introduced in PROMPT_05):
+
+- Add a lesson-specific cross-check: `body_path` resolves relative to the
+  lesson directory and points at a file that exists.
+- If `status == "active"`, forbid `__REPLACE_ME__` placeholders in both
+  `lesson.json` and `body.md`.
+- If `status == "active"`, require at least one exercise references the
+  lesson via `exercise.lesson_id` (print a warning if none exist — the
+  curriculum is allowed to be incomplete during authoring).
+- Confirm `lesson.phase` matches the enclosing `phase-NN-...` directory.
+- Confirm `concepts_not_yet_allowed` does not include any slug that
+  `concepts_introduced` also lists.
+
+### 6. Lessons authoring lint (`pgfound content lint`)
+
+Add a new subcommand that runs heavier-weight checks not strictly blocking
+validation:
+
+- Markdown body length ≥ 400 words for active lessons.
+- Every one of the seven body sections is present (check with header
+  regex).
+- No bare URLs in body.md that do not have a markdown title.
+- No TODO/TBD/XXX tokens in active content.
+
+`lint` returns non-zero only when `--strict` is passed. Otherwise it
+prints warnings and exits 0. This separates "can we validate?" from
+"can we ship?".
+
+### 7. Docs
+
+- `docs/authoring-lessons.md` — concrete authoring guide for lessons.
+  Walk through authoring a lesson from scaffold to activation. Link to
+  the template files. Include a checklist the author runs through
+  before flipping `status` to `active`.
+- Update `docs/cli.md` with `content scaffold` and `content lint`
+  commands.
+
+### 8. Tests
+
+- `tests/test_scaffold_lesson.py` — runs `pgfound content scaffold
+  lesson` against a temp curriculum-map fixture, asserts directory and
+  files exist, asserts the validator accepts the scaffolded files in
+  draft mode, asserts it rejects them when status is flipped to active
+  without filling placeholders.
+- `tests/test_lint_lesson.py` — lint catches missing sections, short
+  bodies, and TODO tokens.
+
+## Verification
+
+1. `uv run pgfound content scaffold lesson --phase 1 \
+   --cluster select-and-filter --slug first-select \
+   --title "First SELECT" --capability-layer schema_literacy` creates the
+   expected tree with placeholders.
+2. `uv run pgfound content validate` accepts the draft.
+3. Flip status to active, leave placeholders → validator rejects.
+4. Remove placeholders and fill body → validator accepts, lint accepts.
+5. `uv run pytest -q` green.
+6. `uv run ruff check .` green.
+
+## Next prompt
+
+PROMPT_08 does the equivalent work for exercises, including the four
+scaffolding levels A–D and the "forbidden concepts" enforcement.

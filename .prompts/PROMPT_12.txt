@@ -1,0 +1,155 @@
+PROMPT 12 — Phase 2: Relational joins and aggregation
+=====================================================
+
+## Context
+
+`postgres-foundations`, Phase 2. Doctrine: introduce relational
+structure (primary keys, foreign keys, one-to-many) and build the
+learner's intuition for joins and aggregation. Keep exercises
+bounded to 3–4 tables maximum. See `docs/doctrine.md` and the phase
+2 entry of `curriculum/map.json`.
+
+Phase 2 concepts: `primary_key`, `foreign_key`, `one_to_many`,
+`inner_join`, `left_join`, `right_join`, `full_join`, `group_by`,
+`aggregate` (`count`, `sum`, `avg`, `min`, `max`), `having`,
+`distinct`, `count_distinct`.
+
+Still **not yet** allowed: CTEs, window functions, lateral joins,
+recursive queries, upserts, views, materialized views, subqueries used
+for correlated logic (only trivial `IN (SELECT ...)` tolerated if a
+lesson explicitly introduces it).
+
+## Prior work (verify before starting)
+
+- PROMPT_09 domain packs (ecommerce, scheduling, saas_multi_tenant
+  phase-01).
+- PROMPT_11 Phase 1 content active.
+- Phase 2 directories empty.
+
+## Task
+
+### 1. Extend domain packs to phase 2
+
+Author `phase-02.sql` for `ecommerce`, `scheduling`, and one more
+domain (pick the one most natural; likely `saas_multi_tenant` with an
+accounts-and-users split or `ecommerce` with line items and products).
+These SQL files **only** add the one-to-many child tables and more
+seed rows — do not yet introduce constraints/modeling nuance
+(phase 3 covers that). Keep scripts idempotent.
+
+Ecommerce example structure to land by phase 2:
+
+- `orders(id, customer_id, ordered_at, total_amount, currency)`
+- `customers(id, email, name, created_at)`
+- `order_items(id, order_id, product_id, quantity, unit_price)`
+- `products(id, sku, name, price, currency)`
+
+Scheduling example structure:
+
+- `professionals(id, name, timezone)`
+- `appointments(id, professional_id, customer_id, starts_at, ends_at,
+  status)`
+
+Include FKs as plain `REFERENCES ...` (no special constraints beyond
+`NOT NULL` and FK). Save the harder constraint modeling for phase 3.
+
+### 2. Lessons
+
+Phase 2 clusters (verify against map):
+
+- `relational-structure`
+- `joining-two-tables`
+- `aggregation-basics`
+- `joining-and-aggregating`
+
+Author at least **8 lessons** across these clusters. Sample coverage:
+
+1. `primary-key-and-identity`
+2. `foreign-key-intuition` — what the FK means to the database; what
+   happens when the FK is violated.
+3. `inner-join` — matching rows; the mental model of the Cartesian
+   product being filtered.
+4. `left-join-and-missingness` — the learner should predict which side
+   can go NULL.
+5. `count-sum-group-by` — grouping semantics, grouping columns in
+   select list, HAVING vs WHERE.
+6. `distinct-and-count-distinct`
+7. `join-then-aggregate` — the classic "orders per customer"
+   aggregation.
+8. `reading-joined-schemas` — how to quickly understand an unfamiliar
+   FK graph (`\d+` + `\d`).
+
+Every lesson uses Phase 2 concepts only. `body.md` ≥ 500 words. Run
+concrete examples in the lab and show sample output.
+
+### 3. Exercises
+
+Per lesson:
+
+- 2 Level A (recognition: predict how many rows a join produces, or
+  spot the missing GROUP BY column).
+- 2 Level B (controlled production: write a query given table names).
+- 2 Level C (independent production: oral defense required — "Why
+  did you choose LEFT JOIN here?"; "What would break if I changed
+  this to INNER JOIN?").
+- 1 Level D (critique and repair: a JOIN that silently duplicates
+  rows because of a many-to-many fan-out; a `GROUP BY` that misses a
+  non-aggregated column; an incorrect `HAVING` vs `WHERE`).
+
+Roughly 56 exercises.
+
+Level D must include at least one "silently wrong aggregation" drill
+where the query runs without error but the numbers are off due to
+join fan-out. This is the single most common real-world bug this
+phase prevents.
+
+### 4. Domain-specific critique exercises
+
+At least **three** Level D exercises should use domain scenarios drawn
+from `docs/glossary.md` and real shapes:
+
+- Ecommerce: a revenue query that double-counts due to joining orders
+  × order_items × products without careful grouping.
+- Scheduling: an "appointments per professional last week" query that
+  loses professionals with zero appointments because it uses INNER
+  JOIN instead of LEFT JOIN.
+- SaaS: a "users per account" query where soft-missing data causes
+  incorrect counts.
+
+### 5. Exercise runner upgrades
+
+Extend `pgfound exercise run --check` from PROMPT_11:
+
+- Now that exercises are outputting row sets, the comparator must
+  accept an ordered-output flag. Add `output_comparison` to the
+  exercise schema: `ordered | unordered | multiset`. Default is
+  `unordered`. Update schema + validator.
+- Multi-statement solutions: the comparator runs the last `SELECT`'s
+  result. Enforce this in `solution.sql` authoring conventions.
+
+### 6. Docs
+
+- `lessons/phase-02-...`/README.md and exercises/README.md tables.
+- Update `docs/authoring-exercises.md` to document
+  `output_comparison`.
+
+### 7. Tests
+
+- `tests/test_phase2_corpus.py`:
+  - All lessons + exercises validate and lint.
+  - Every Level D exercise across phase 2 contains at least one of
+    these patterns in its prompt: "duplicates", "incorrect count",
+    "missing rows", "wrong aggregation".
+  - Every `GROUP BY` lesson's exercises include one Level D drill
+    about non-aggregated selected columns.
+
+## Verification
+
+1. Seed ecommerce and scheduling to phase 2 in the lab and run every
+   `solution.sql` — each must return rows without error.
+2. `uv run pgfound content validate` + `lint` green.
+3. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_13 authors Phase 3 (schema design, constraints, database truth).

@@ -1,0 +1,173 @@
+PROMPT 35 — Extension track: E3 PostGIS, E4 pgvector
+====================================================
+
+## Context
+
+`postgres-foundations`. Two extensions that often get enabled too
+early or for the wrong reasons. Doctrine:
+
+- **PostGIS** is a real commitment: operational cost, managed-
+  service availability is generally good but not universal, it
+  changes the ecosystem (backup size, ST_* functions everywhere).
+  Use it when geo is a real domain with spatial predicates, not
+  because "there's a lat/lon column".
+- **pgvector** is introduced only after lexical search (core FTS,
+  pg_trgm) is understood. Vector search is a semantic retrieval
+  tool; most "search" problems are lexical or hybrid.
+
+See `docs/doctrine.md`, `docs/anti-patterns/`, and the
+`docs/search-playbook.md` framing.
+
+## Prior work (verify before starting)
+
+- Extension track scaffolding from PROMPT_34.
+- Phase 8 FTS and PROMPT_34 pg_trgm authored.
+- `docker-compose.yml` has room to add optional image variants.
+
+## Task
+
+### 1. Lab support
+
+Continue authoring extension-track lessons and exercises under
+`lessons/extensions/<module-id>/` and `exercises/extensions/<module-id>/`
+as established in PROMPT_34.
+
+Extend the lab:
+
+- Add a `postgis` profile that runs a `postgis/postgis:16-3.4` image
+  at port 5436:5432, with the same init script structure. The
+  main `pg` service stays on the plain `postgres:16` image so
+  every non-PostGIS lesson continues to work without PostGIS
+  sprawl.
+- Add a `pgvector` profile that uses the `pgvector/pgvector:pg16`
+  image at port 5437:5432 (or `ankane/pgvector` if preferred —
+  pin the exact tag and document it). The main `pg` stays plain.
+- Alternatively, for learner convenience, allow `pgvector` to be
+  enabled on the main `pg` by switching its image via an env var
+  `PGFOUND_PG_IMAGE`; document as an advanced option but default
+  to a separate container.
+
+Extend `pgfound doctor` to surface the status of these profiles.
+
+### 2. E3 PostGIS — lessons
+
+Target **10 lessons**:
+
+1. `geometry-vs-geography` — planar vs spheroidal; when each is
+   correct; SRID discipline.
+2. `srid-and-transforms` — `ST_Transform`; avoiding silent
+   incorrectness.
+3. `common-predicates` — `ST_Contains`, `ST_Intersects`,
+   `ST_DWithin`, `ST_Distance`.
+4. `spatial-indexing-with-gist` — GiST indexes on geometry and
+   geography; cost.
+5. `service-zone-queries` — a logistics scenario: points inside
+   polygons; distance-bounded fanout.
+6. `routing-preview` — PostGIS does not route; `pgrouting` exists;
+   when to go there (not this prompt — pointer only).
+7. `raster-preview` — note raster support exists; probably not
+   in scope for a learner; only reach for it when raster is the
+   explicit domain.
+8. `postgis-operational-cost` — backup size; image size; upgrades;
+   managed-service choices.
+9. `anti-pattern-geo-logic-without-postgis` — the "array of floats"
+   DIY approach; the ways it fails.
+10. `when-postgis-is-right-and-wrong` — decision framework for
+    adopting PostGIS on an existing PostgreSQL cluster.
+
+### 3. E4 pgvector — lessons
+
+Target **9 lessons**:
+
+1. `what-vectors-are-for` — semantic retrieval; when semantics
+   are central; when they are not.
+2. `storage-and-dimensionality` — `vector(n)`; the realistic n
+   for current embedding models; storage cost.
+3. `distance-metrics` — L2, cosine, inner product; picking the
+   right one for your embedding model.
+4. `exact-vs-approximate-search` — seq scan with distance vs
+   approximate index; latency/recall tradeoff.
+5. `hnsw-vs-ivfflat` — practical differences; memory footprint;
+   build time; recall tuning; why HNSW is the current default
+   advice.
+6. `hybrid-retrieval-with-fts-and-trigrams` — combining core FTS
+   and vector search; metadata filters before or after vector
+   search.
+7. `metadata-filters-plus-embeddings` — precomputing filters via
+   indexes; the pitfall of predicate pushdown into approximate
+   indexes.
+8. `cost-and-caveats` — index build time, memory, rebuilding on
+   dimension changes; managed-service availability.
+9. `when-vectors-are-the-right-answer` — a decision framework.
+   Explicit "not yet" triggers: if it is a lexical-flavored
+   problem, pgvector is probably premature.
+
+### 4. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. ~152 exercises.
+
+Critical drills:
+
+- PostGIS Level C: given a set of polygons (service zones) and a
+  set of events (points), produce hourly counts per zone using
+  `ST_Contains` with a GiST index.
+- PostGIS Level D: a "DIY Haversine in SQL" query that works for
+  small datasets but is Seq Scan at scale; learner replaces with
+  PostGIS + GiST + `ST_DWithin`.
+- pgvector Level C: build a hybrid search combining FTS and
+  HNSW-based vector retrieval over the document_search domain.
+- pgvector Level D: a vector index that is not helping because a
+  predicate filter is being applied after approximate search
+  and dropping recall; learner diagnoses.
+- pgvector Level D: a team reached for pgvector for a problem
+  that pg_trgm would have solved; learner argues for the downgrade
+  with evidence.
+
+### 5. Seed data additions
+
+PostGIS:
+
+- `seed-data/packs/logistics_geo/` (add this as a new domain pack
+  if not already present). Include polygons for a few cities'
+  service zones and events-as-points (loopback to event_heavy_ops
+  generator or a small standalone script). The polygons should be
+  checked in as GeoJSON and loaded via `ST_GeomFromGeoJSON`.
+
+pgvector:
+
+- Extend `document_search` phase-08 seeds with a precomputed
+  embedding column. Because we cannot ship a real embedding
+  model in this repo, use a deterministic fake embedding
+  generator (a hash-based vectorizer) that produces stable
+  non-random outputs. Clearly document that these are **not**
+  meaningful semantic vectors — they are placeholders to let
+  learners exercise pgvector mechanics. Real embedding models
+  are a decision-engine discussion later.
+
+### 6. Docs
+
+- `docs/extension-track/e3-postgis.md`.
+- `docs/extension-track/e4-pgvector.md`.
+- `docs/anti-patterns/geo_logic_without_postgis.md`.
+- `docs/anti-patterns/vector_before_lexical.md`.
+- Update `docs/search-playbook.md`.
+
+### 7. Tests
+
+- `tests/test_postgis_profile.py` — compose parses and the
+  postgis profile references the pinned image.
+- `tests/test_pgvector_profile.py` — analogous.
+- `tests/test_extension_e3_e4_corpus.py` — validate + lint.
+
+## Verification
+
+1. `docker compose --profile postgis up -d postgis` — query
+   PostGIS version.
+2. `docker compose --profile pgvector up -d pgvector` — create a
+   vector column, insert, perform a distance query.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_36 authors E5 TimescaleDB and E6 postgres_fdw (deep).

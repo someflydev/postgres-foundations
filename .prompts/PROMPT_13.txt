@@ -1,0 +1,160 @@
+PROMPT 13 — Phase 3: Schema design and database-enforced truth
+==============================================================
+
+## Context
+
+`postgres-foundations`, Phase 3. Doctrine: the database enforces truth;
+applications must not be the sole guardians of invariants. Normalization,
+uniqueness, check constraints, defaults, nullability, reference tables,
+`ALTER TABLE`, redesigning spreadsheet-shaped data into properly
+modeled truth. See `docs/doctrine.md`, `curriculum/README.md`.
+
+Phase 3 concepts: `primary_key` (as deliberate choice), `unique`
+constraint, `not_null`, `check` constraint, `default`, `reference_table`
+pattern, `normalization` (1NF, 2NF, 3NF), `denormalization` (when it is
+a valid design choice), `alter_table`, `data_type_choice`, `surrogate_vs_natural_key`,
+`enumerations`.
+
+Still **not yet** allowed: JSONB, arrays, ranges, CTEs, window
+functions, partitioning, indexing as performance tuning (beyond the
+automatic index from a primary or unique key), transactions as a
+subject of study (they are used, but not analyzed).
+
+## Prior work (verify before starting)
+
+- PROMPT_11/12 phases 1 and 2 active.
+- Domain packs at phase 2 for ecommerce and scheduling.
+- Phase 3 directories empty.
+
+## Task
+
+### 1. Extend domain packs to phase 3
+
+Author `phase-03.sql` for `ecommerce`, `scheduling`,
+`saas_multi_tenant`. These scripts add:
+
+- Missing NOT NULL constraints that were deliberately omitted in
+  phase 2 seeds for demo purposes.
+- UNIQUE constraints where natural (email on customers, SKU on
+  products, `(professional_id, starts_at)` on appointments — yes,
+  introduce the idea of a composite unique constraint here).
+- CHECK constraints: `quantity > 0` on `order_items`,
+  `starts_at < ends_at` on appointments, `total_amount >= 0` on
+  orders.
+- Reference tables: `countries`, `currencies`, `appointment_statuses`
+  as enum-table replacements for free-text columns from phase 2.
+- At least one `ALTER TABLE` flow demonstrated in comments: "in phase
+  2 we had X; in phase 3 we tightened to Y; here is how we would
+  migrate".
+- Idempotency still required — use `DO` blocks or `IF NOT EXISTS`
+  where possible. Alternatively, for constraints that do not support
+  `IF NOT EXISTS` in the target Postgres version, write a small
+  `DO $$ BEGIN ... EXCEPTION WHEN duplicate_object THEN NULL; END
+  $$` pattern.
+
+### 2. Lessons
+
+Phase 3 clusters:
+
+- `why-the-database-enforces-truth`
+- `picking-good-types`
+- `uniqueness-and-identity`
+- `check-constraints-and-defaults`
+- `nullable-vs-not-null`
+- `normalization-basics`
+- `refactoring-spreadsheet-data`
+
+Author **at least 10 lessons**. Required lessons (adjust cluster slugs
+to match the map):
+
+1. `why-the-database-is-the-source-of-truth` — application-level checks
+   are insufficient; two apps will disagree; constraints outlive code.
+2. `picking-good-types` — `text` vs `varchar`, `numeric` vs `float`,
+   `timestamptz` vs `timestamp`, `boolean` vs `int`; *why* Postgres
+   prefers `text`.
+3. `primary-keys-that-make-sense` — surrogate vs natural; UUIDs are
+   introduced briefly but deferred to phase 4; emphasize `bigint
+   identity` now.
+4. `uniqueness-beyond-primary-key` — single and composite UNIQUE
+   constraints; the automatic index; uniqueness under NULLs.
+5. `check-constraints` — check constraints as invariant declarations;
+   multi-column checks.
+6. `not-null-vs-nullable` — when `NULL` is a legitimate signal vs a
+   design smell; impact on queries and aggregates.
+7. `defaults-and-generated-columns` — `DEFAULT`, `GENERATED ALWAYS AS
+   IDENTITY`, stored generated columns (don't go deep yet).
+8. `reference-tables-over-free-text`
+9. `normalization-1nf-2nf-3nf` — concrete examples; why 3NF is usually
+   the target.
+10. `refactoring-spreadsheet-shape-to-relational` — a full worked
+    example starting from a denormalized table and ending with a
+    properly modeled schema.
+
+### 3. Exercises
+
+Per lesson: A/B/C/D as before. Approximately 65–70 exercises total.
+
+Focus emphases:
+
+- Level B and C exercises dominated by **ALTER TABLE** work — adding
+  constraints to existing tables, tightening types, migrating legacy
+  columns.
+- Level D exercises are the heart of this phase: given a real
+  lurking-bug schema, diagnose what invariants are missing and
+  propose the ALTER TABLE statements. Require the learner to state
+  the concrete incident that could arise without the constraint
+  ("without a CHECK on quantity, negative inventory becomes possible
+  during refund processing").
+- At least **one** Level D exercise uses a real-world-flavored
+  spreadsheet-to-relational migration scenario (with a CSV file in
+  `seed-data/packs/ecommerce/fixtures/spreadsheet-legacy.csv`).
+
+### 4. Seed-data fixtures
+
+Add `seed-data/packs/ecommerce/fixtures/spreadsheet-legacy.csv` — a
+15–30 row deliberately ugly denormalized CSV mixing customers,
+orders, and products into a single flat sheet. Document it in the
+domain README. Used by the refactoring exercise.
+
+### 5. Exercise runner upgrades
+
+Extend `pgfound exercise run --check`:
+
+- Accept `expected_output_shape: schema_object` as a check target.
+  Implementation: the comparator runs
+  `SELECT * FROM information_schema.columns WHERE table_schema =
+  ... AND table_name = ...` on both the learner schema and the
+  reference schema and asserts the result sets match. Cover
+  `information_schema.table_constraints` too so constraint presence
+  is checked.
+- This allows Level B and Level C schema exercises to be
+  auto-checked.
+
+### 6. Docs
+
+- Update `lessons/phase-03-...`/README.md and exercises/README.md.
+- Add a short `docs/constraints-cookbook.md` that authors can link
+  from lessons. Cover `UNIQUE`, `CHECK`, `NOT NULL`, `FOREIGN KEY`
+  variants (`ON DELETE`, `ON UPDATE`), deferrable constraints as a
+  future-phase pointer, and generated columns.
+
+### 7. Tests
+
+- `tests/test_phase3_corpus.py` — validate + lint; assert every Level
+  D exercise narrative includes the words "incident" / "without this
+  constraint" / "could violate"; assert ≥ 1 exercise has
+  `expected_output_shape: schema_object`.
+
+## Verification
+
+1. Seed ecommerce/scheduling/saas_multi_tenant to phase 3 cleanly.
+2. Attempt to insert a violating row against each added constraint
+   in psql; confirm Postgres rejects.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_14 consolidates seed-data sufficiency and polishes the lab
+runner/progress scaffolding for phases 0–3 before we move into
+PostgreSQL-specific data types.

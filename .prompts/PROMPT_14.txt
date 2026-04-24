@@ -1,0 +1,151 @@
+PROMPT 14 — Seed data sufficiency + lab runner polish for phases 0–3
+====================================================================
+
+## Context
+
+`postgres-foundations`. Phases 0–3 are authored (PROMPTS 10–13). Before
+moving into PostgreSQL-specific data modeling (phases 4+), this prompt
+consolidates seed data, cleans up the lab runner, and establishes the
+progress-tracking format (the evaluator-grade format lands in PROMPT_47,
+but the directory conventions live here).
+
+Doctrine: tooling should be boring and reliable; learners never worry
+about "does the seed pack I loaded match the exercise I'm doing?".
+
+## Prior work (verify before starting)
+
+- Phases 0, 1, 2, 3 active with lessons + exercises.
+- `pgfound exercise run` and `--check` work.
+- Domain packs exist to phase-03 for ecommerce/scheduling/saas.
+
+## Task
+
+### 1. Seed data doctor
+
+Add `pgfound content seed-doctor`:
+
+- Scans every exercise in the repo.
+- Collects the `dataset.seed_pack_id` values and the required phase.
+- Confirms each referenced `phase-NN.sql` file exists.
+- For each exercise's `solution.sql` that expects the seed's schema,
+  does a light check: parse the solution's table references with a
+  small regex (`FROM <schema.>?<name>` and `JOIN ...`) and confirm
+  each referenced table appears in at least one of the seed pack's
+  phase SQL files.
+- Reports a Rich table of issues. Exits non-zero on failure.
+
+This is a boring but load-bearing check — it prevents silent drift
+between exercises and seed data.
+
+### 2. Lab profile and namespacing
+
+Under the lab, multiple domains coexist in `public` currently. For
+capstone and extension phases later, we will want each domain in its
+own schema. Solidify this now:
+
+- Update each domain's phase SQL to wrap all objects in a schema
+  using the canonical teaching schema names (`ecommerce`, `scheduling`,
+  `saas`, `events`, `documents`, `legacy`). Use `CREATE SCHEMA IF NOT EXISTS`
+  at the top and prefix every CREATE/INSERT.
+- Update every phase-1/2/3 `solution.sql` and lesson body example
+  to use schema-qualified names, **or** to `SET search_path` at the
+  top.
+- Add a per-exercise field to the exercise schema:
+  `search_path` (optional, defaults to `pgfound, public`). The
+  exercise runner sets the search path before printing the prompt
+  so learners can write unqualified queries if the pack is single-
+  schema.
+
+This refactor must be done carefully — every solution still must run.
+After the refactor run every phase 1–3 solution and confirm it
+produces the same output.
+
+### 3. Progress directory convention
+
+Establish `tmp/progress/` as the canonical location for per-learner
+progress. Formalize a minimal file format now:
+
+```
+tmp/progress/
+  profile.json                       # learner name, start date
+  exercises/
+    <exercise-id>.json               # list of attempts
+  capstones/
+    <capstone-id>.json               # capstone attempts
+```
+
+An exercise attempt record:
+
+```
+{
+  "exercise_id": "phase-01/select-filter-sort/first-select/level-b/filter-by-status",
+  "attempts": [
+    {
+      "started_at": "2026-04-23T14:00:00-07:00",
+      "completed_at": "2026-04-23T14:22:00-07:00",
+      "self_assessment": "correct",         // or "partial" | "incorrect"
+      "check_result": "correct",            // from --check
+      "notes": "..."
+    }
+  ]
+}
+```
+
+Update `pgfound exercise run` to write records in this format after
+each session. Keep `tmp/` gitignored. Write a `pgfound progress
+show` stub command that reads the directory and prints a summary
+(full evaluator comes in PROMPT_47).
+
+### 4. Reset and snapshot helpers
+
+Add:
+
+- `pgfound lab reset-domain <domain>` — drops and re-creates the
+  domain's schema and re-seeds it to the most recent available phase.
+- `pgfound lab snapshot <name>` — `pg_dump` the current `pgfound` DB
+  to `tmp/snapshots/<name>.dump`.
+- `pgfound lab restore <name>` — `pg_restore` from the snapshot.
+
+These give learners a safe "undo" for their lab experiments.
+
+### 5. Exercise runner QoL
+
+Extend `pgfound exercise run`:
+
+- `--answer <path>` to supply the learner's SQL explicitly instead of
+  defaulting to `tmp/answers/<id>.sql`.
+- `--no-prompt` to skip printing the prompt (useful when a learner
+  is iterating a known problem).
+- `--save-answer` to copy whatever SQL the learner pasted via psql
+  history (`\s`) into the canonical answer path — best effort.
+
+### 6. Docs
+
+- `docs/learner-workflow.md` — a new page walking through the
+  canonical learner loop: pick an exercise → run → answer → check →
+  self-assess → move on. Cover snapshot/reset workflow.
+- Update `docs/cli.md` with the new commands.
+
+### 7. Tests
+
+- `tests/test_seed_doctor.py` — runs against a fixture tree with a
+  missing phase SQL and confirms the tool catches it.
+- `tests/test_progress_format.py` — creates and reads progress
+  records; asserts the schema is honored.
+
+## Verification
+
+1. `uv run pgfound content seed-doctor` green across the current
+   content.
+2. Re-run every phase 1/2/3 solution query after the schema-
+   qualification refactor — outputs match the pre-refactor outputs.
+3. `uv run pgfound lab snapshot test && pgfound lab reset-domain
+   ecommerce && pgfound lab restore test` round-trips cleanly.
+4. Progress records appear in `tmp/progress/exercises/<id>.json`
+   after a `pgfound exercise run --check` session.
+5. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_15 begins Phase 4 (PostgreSQL data modeling): timestamps/time
+zones, UUIDs, JSON/JSONB.

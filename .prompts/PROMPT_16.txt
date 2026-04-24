@@ -1,0 +1,147 @@
+PROMPT 16 — Phase 4b: Arrays, ranges, and multiranges
+=====================================================
+
+## Context
+
+`postgres-foundations`, Phase 4b. Doctrine: each PostgreSQL-specific
+type is introduced with good-fit examples, bad-fit examples, and
+redesign comparisons. Ranges and multiranges are the right answer to
+entire classes of problems that most developers first solve badly with
+pairs of columns or application-side interval arithmetic.
+
+This prompt covers:
+
+4. arrays
+5. ranges
+6. multiranges
+
+## Prior work (verify before starting)
+
+- PROMPT_15 phase 4a active (timestamps, UUID, JSONB).
+- Postgres 16 in the lab (multiranges available natively).
+- Phase 4b directories empty.
+
+## Task
+
+### 1. Extend domain packs
+
+Ecommerce:
+
+- `ecommerce.products.tags text[] NOT NULL DEFAULT '{}'` — a small,
+  bounded array use case: product tags. Good-fit example.
+- `ecommerce.products.price_history numrange` — ugh, wrong: resist
+  the urge to add this. Do **not** model price history as a range.
+  Instead add a `price_history` table as a deliberate contrast.
+
+Scheduling:
+
+- `scheduling.professionals.working_hours tstzrange[]` (OR
+  `tstzmultirange` if the authoring team chooses Postgres 14+
+  multirange; 16 supports both). Exercise authors will choose.
+- `scheduling.availability_slots` table as an alternative
+  representation for comparison purposes.
+
+Events (new domain phase-01 authored here if not already deep enough):
+
+- `events.event_windows(id, source_id, window tstzrange)` — append
+  heavy, range-indexed for range queries. Introduce a GiST index as
+  a pointer but do not require it yet.
+
+### 2. Lessons
+
+Target **10 lessons** for phase 4b:
+
+1. `arrays/what-arrays-are-good-for` — small bounded sets, tags,
+   denormalized membership when the cardinality is small.
+2. `arrays/what-arrays-are-bad-for` — when arrays are masking a
+   missing child table; write the migration to a proper child table.
+3. `arrays/querying-arrays` — `= ANY`, `@>`, `unnest`, `array_agg`
+   (though `array_agg` is officially an aggregate the learner has
+   already seen in phase 2).
+4. `arrays/arrays-and-indexing-preview` — GIN indexes on arrays
+   conceptually; no implementation yet.
+5. `ranges/what-a-range-is` — `int4range`, `numrange`, `daterange`,
+   `tstzrange`; inclusive/exclusive bounds; bounds matter.
+6. `ranges/range-operators` — `&&`, `@>`, `<@`, `-|-` (adjacency),
+   `lower`, `upper`.
+7. `ranges/exclusion-constraints` — non-overlapping appointments via
+   `EXCLUDE USING gist (professional_id WITH =, slot WITH &&)`. This
+   is the phase's crown-jewel lesson.
+8. `multiranges/what-multiranges-unlock` — availability calendars,
+   non-contiguous time-off, resource calendars.
+9. `multiranges/operations-on-multiranges` — union, intersection,
+   difference; practical availability queries.
+10. `ranges-vs-arrays-vs-child-tables` — a synthesis lesson:
+    which representation for which workload?
+
+### 3. Exercises
+
+Per lesson: 2A + 2B + 2C + 1D. Phase-4b exercise count ~70.
+
+Required drills:
+
+- Level C on **non-overlapping appointment scheduling** via
+  `EXCLUDE USING gist`. Learner must declare the constraint and
+  prove by attempted insert that Postgres rejects overlap.
+- Level D on "arrays masking a missing table" — a schema stores
+  user_roles as `roles text[]`; the learner must diagnose why this
+  is painful (revocation, audit, role metadata), propose a child
+  table, write the migration.
+- Level D on "naive pair of columns modeling a range" — the
+  schema has `starts_at`, `ends_at` with an app-side "overlap
+  check". Learner rewrites as `tstzrange` + exclusion constraint
+  and proves the app-side check is no longer necessary.
+- Level C multirange exercise: "give me each professional's total
+  unavailability in the next 7 days" using a multirange.
+
+### 4. Anti-patterns page
+
+Add `docs/anti-patterns/arrays_over_child_tables.md`. Reference the
+lesson chain. This page will also be cited by the decision-engine
+anti-pattern catalog later.
+
+### 5. Index pointers
+
+Lessons should **mention** GIN (for arrays/jsonb) and GiST (for
+ranges/exclusion) and forward-reference phases 7 and beyond for
+implementation. Learners should leave phase 4b knowing that these
+types imply specific index types but not yet implementing them.
+
+### 6. Exercise runner updates
+
+- Array and range comparison: normalize sort order and bound
+  notation before comparing. A range `[1,5)` equals `[1,5)` but not
+  `[1,4]` — be exact about inclusivity.
+- Add a small utility module `pgfound/review/normalize.py` with
+  normalize-for-comparison helpers. Unit-test it.
+
+### 7. Docs
+
+- Update domain READMEs to describe what each domain gains in phase
+  4b.
+- Update `docs/constraints-cookbook.md` with a new section on
+  exclusion constraints.
+
+### 8. Tests
+
+- `tests/test_phase4b_corpus.py`:
+  - All lessons + exercises validate and lint.
+  - At least one phase-4b exercise uses `EXCLUDE` and at least one
+    uses a multirange.
+- `tests/test_normalize.py`:
+  - Array and range canonicalization agrees on equivalent but
+    textually distinct inputs.
+
+## Verification
+
+1. Seed to phase 4b cleanly.
+2. Run the exclusion-constraint exercise manually: insert two
+   overlapping appointments for the same professional; Postgres
+   must raise `conflicting key value`.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_17 authors phase 5 (expressive querying: CTEs, window functions,
+lateral joins, recursive queries, upserts, views, materialized views).

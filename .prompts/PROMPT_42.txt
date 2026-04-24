@@ -1,0 +1,241 @@
+PROMPT 42 — Decision-engine rules schema and initial rule pack
+==============================================================
+
+## Context
+
+`postgres-foundations`. The decision engine now has intake schemas
+and full catalogs. This prompt authors the rule system: the schema
+for declarative rules + a substantial initial rule pack. Doctrine:
+rules are auditable, explainable, and conservative. They should
+frequently say "candidate_later" or "not_enough_evidence" rather
+than "recommend_now".
+
+## Prior work (verify before starting)
+
+- PROMPTS 39–41 catalogs and schemas in place.
+- `decision-engine/rules/` holds only `.gitkeep`.
+
+## Task
+
+### 1. Rule schema
+
+`decision-engine/schemas/rule.schema.json` — a JSON Schema for rule
+files. A rule is a JSON object:
+
+```
+{
+  "id": "rule-pg-trgm-for-fuzzy-support-ui",
+  "title": "pg_trgm recommended when support-ui typo-tolerance needed",
+  "status": "active",                 # draft | active | deprecated
+  "when": {
+    "if_all": [
+      { "data_shape_present": "full_text_docs" },
+      { "workload_pattern_present": "search_heavy" }
+    ],
+    "if_any": [
+      { "free_form_notes_contains": "typo" },
+      { "free_form_notes_contains": "fuzzy" },
+      { "free_form_notes_contains": "support" }
+    ],
+    "if_not": [
+      { "explicit_bias_against_contains": "pg_trgm" }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "pg_trgm",
+      "verdict": "recommend_now",
+      "confidence": 0.75,
+      "why_now": [
+        "Lexical fuzzy matching is the cheapest next step beyond
+         core FTS.",
+        "Shipped with contrib on every managed Postgres offering."
+      ],
+      "why_not_yet": [],
+      "triggers_for_next_stage": [
+        "If similarity scoring plateaus below 0.6 at the product
+         level, evaluate pgvector for semantic retrieval."
+      ],
+      "scoring": {
+        "domain_fit": 0.7,
+        "data_shape_fit": 0.9,
+        "workload_fit": 0.8,
+        "operational_feasibility": 0.95,
+        "growth_urgency": 0.5,
+        "portability_penalty": 0.05,
+        "complexity_penalty": 0.1
+      }
+    }
+  ]
+}
+```
+
+Predicate vocabulary (all top-level `when.if_*[]` items use this):
+
+- `industry_is: <slug>` / `industry_in: [slugs]`
+- `data_shape_present: <slug>` / `data_shape_any_of: [slugs]` /
+  `data_shape_all_of: [slugs]`
+- `workload_pattern_present: <slug>` / `workload_pattern_any_of`
+- `scale_signal_gte: { key, value }` /
+  `scale_signal_lt: { key, value }`
+- `tenancy_model_is: <slug>` / `tenancy_model_in: [slugs]`
+- `security_constraint_present: <slug>`
+- `portability_constraint_present: <slug>`
+- `operational_tolerance_is: <value>`
+- `existing_topology_is: <slug>`
+- `migration_need: <field>`
+- `free_form_notes_contains: <substring>`
+- `explicit_bias_for_contains: <slug>`
+- `explicit_bias_against_contains: <slug>`
+
+Document this vocabulary in
+`decision-engine/architecture.md` and
+`decision-engine/rules/README.md`.
+
+Rules may produce multiple recommendations. A rule that produces
+no recommendation but asks for more information uses a special
+verdict `request_more_information` with a `followup_questions`
+array.
+
+### 2. Rule files
+
+Under `decision-engine/rules/`:
+
+```
+rules/
+  README.md
+  core-features/
+    prefer-constraints.json
+    jsonb-hybrid-columns.json
+    partial-indexes-for-skew.json
+    exclusion-constraints-for-overlap.json
+    logical-replication-for-zero-downtime-migrations.json
+    rls-when-multi-tenant-and-shared-schema.json
+    partitioning-when-retention-matters.json
+    ...
+  extensions/
+    pg-stat-statements-always.json
+    pg-trgm-for-fuzzy.json
+    postgis-for-geo.json
+    pgvector-for-semantic.json
+    timescaledb-when-centrally-time-series.json
+    postgres-fdw-for-federation.json
+    citus-only-with-distribution-key.json
+    ltree-for-deep-hierarchy.json
+    pg-partman-when-partitioning-managed-manually.json
+    pgbouncer-when-high-concurrency.json
+  index-patterns/
+    btree-composite-for-hot-filter-sort.json
+    gin-jsonb-for-containment.json
+    brin-for-append-heavy-chronological.json
+    gist-for-range-overlap.json
+    hnsw-default-for-pgvector.json
+  topology/
+    read-replica-when-reporting-needs-isolation.json
+    pgbouncer-in-front-when-many-short-connections.json
+    logical-replication-pair-for-blue-green-upgrade.json
+  anti-patterns/
+    warn-jsonb-everything.json
+    warn-partition-too-early.json
+    warn-vector-before-lexical.json
+    warn-shard-without-distribution-key.json
+    warn-replica-as-performance-bandage.json
+    warn-no-pooling-high-connections.json
+    warn-geo-logic-without-postgis.json
+    warn-no-restore-drills.json
+```
+
+Author ~40–60 rules total. Each rule must:
+
+- Cite a catalog entry (its `target_slug`).
+- Use the predicate vocabulary only.
+- Produce at least one recommendation with confidence in [0.4, 0.95]
+  (nothing below 0.4 should recommend `recommend_now`).
+- Include thoughtful `why_not_yet` arrays — rules that never say "not
+  yet" are suspect.
+- Include `triggers_for_next_stage` where applicable (escalation
+  paths).
+
+For `anti-patterns/*` rules, the `then[*].kind` is
+`anti_pattern_warning` and the recommendation's `verdict` is
+`avoid_for_now`.
+
+### 3. Rule engine
+
+Under `src/pgfound/decision/`:
+
+- `rules.py`: loads every rule file; validates; builds a matcher
+  object per predicate. Predicates are pure functions over the
+  intake object.
+- `evaluator.py`: runs all rules in order; aggregates
+  recommendations by target_slug; if multiple rules point at the
+  same target, merges using a simple policy (take the highest
+  confidence; union the `why_now`/`why_not_yet` arrays, dedup'd;
+  take the max `triggers_for_next_stage`).
+- `scoring.py` (lands in PROMPT_43 — leave an obvious stub here).
+
+Extend `pgfound decision run`:
+
+- Now actually loads rules and produces populated reports with
+  recommendations.
+- Accepts `--rules <glob>` to restrict the run to a subset
+  (useful for unit testing a single rule).
+- `--explain <target_slug>` prints which rules contributed to a
+  given recommendation and why each triggered.
+
+### 4. Golden outputs
+
+For each intake fixture under `decision-engine/fixtures/intakes/`:
+
+- Run the engine with the new rule pack.
+- Save the resulting `report.json` to
+  `decision-engine/fixtures/reports/<intake-id>.report.json`.
+- Save a human-readable `report.md` sibling.
+
+These become golden outputs in PROMPT_43 tests.
+
+### 5. Linting
+
+Add `pgfound decision rules lint` that checks:
+
+- Every rule cites a valid catalog slug.
+- Every rule predicate uses known keys/operators.
+- Rules are not unreachable (unique by `id`, no contradictory
+  `if_all` conditions that are impossible to satisfy — best-
+  effort check).
+- At least one active rule exists for each extension in the
+  catalog (warn if missing).
+
+### 6. Docs
+
+- `decision-engine/rules/README.md` — authoring guide for rule
+  files, the predicate vocabulary, best practices.
+- Update `decision-engine/architecture.md` with the rule pipeline
+  explanation.
+
+### 7. Tests
+
+- `tests/test_rule_schema.py` — all rules validate.
+- `tests/test_rules_against_fixtures.py` — run engine against
+  each fixture intake and assert:
+  - at least one recommendation is produced,
+  - anti-pattern warnings fire appropriately (e.g. the healthcare
+    intake triggers `rls_when_multi_tenant_and_shared_schema`),
+  - confidence values are within allowed ranges.
+
+## Verification
+
+1. `uv run pgfound decision rules lint` reports zero errors.
+2. `uv run pgfound decision run
+   decision-engine/fixtures/intakes/logistics-geo-minimal.json`
+   (author this fixture here if missing) produces a report
+   recommending PostGIS with a strong confidence and a clear
+   "why not yet" for pgvector.
+3. `uv run pytest -q` green.
+4. `uv run pgfound content validate` + `lint` green.
+
+## Next prompt
+
+PROMPT_43 authors the scoring model, full evaluator integration,
+and report generator polish.

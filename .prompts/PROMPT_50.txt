@@ -1,0 +1,180 @@
+PROMPT 50 — CI workflow, pre-commit, and release readiness
+==========================================================
+
+## Context
+
+`postgres-foundations`. The final prompt in the initial promptset.
+This prompt establishes a minimal, honest continuous-integration
+story, wires up pre-commit, and runs a final repo-wide verification
+pass. No flashy automation. No over-reliance on cloud. CI here means
+"if someone opens a PR, the platform tests itself".
+
+Doctrine: the platform must tell the truth about whether it works.
+CI is the mechanism for that honesty.
+
+## Prior work (verify before starting)
+
+- All previous prompts complete.
+- `README.md` finalized and `make test` / `make lint` / `make fmt`
+  all work locally.
+- The integration tests from PROMPT_48 are in place and pass
+  without Docker when run with `-m 'not docker'`.
+
+## Task
+
+### 1. Pre-commit
+
+Add `.pre-commit-config.yaml` at repo root with hooks:
+
+- `ruff` check + format (pinned version).
+- `yamllint` on workflow files and compose files (light config).
+- `jsonschema-validate` equivalent via a local hook that runs
+  `pgfound content validate --strict` **scoped to staged files
+  only** (the hook receives the list of staged paths and passes
+  via `--paths`). Implement a matching `--paths` option if not
+  already present from PROMPT_05.
+- A small custom hook that runs `pgfound docs check` on staged
+  markdown files.
+- `pre-commit` hook standard: end-of-file-fixer, trailing-
+  whitespace, large-files guard.
+
+Document the install flow in `CONTRIBUTING.md` (already referenced
+there in PROMPT_49 — confirm).
+
+### 2. GitHub Actions CI
+
+Add `.github/workflows/ci.yml` with jobs:
+
+- `lint`:
+  - `uv sync`
+  - `uv run ruff check .`
+  - `uv run ruff format --check .`
+  - `uv run pgfound content validate --strict`
+  - `uv run pgfound content lint --strict`
+  - `uv run pgfound decision catalog check`
+  - `uv run pgfound decision rules lint`
+  - `uv run pgfound docs check`
+- `unit`:
+  - Python matrix: `3.12` (single entry; expand later).
+  - `uv run pytest -q -m 'not docker'`
+- `integration-core`:
+  - Spins up a service container with `postgres:16`.
+  - Waits for readiness.
+  - Exports `PGFOUND_DB_URL`.
+  - Runs `uv run pytest -q -m 'docker and not (postgis or
+    pgvector or timescale or citus or replication)'`.
+- `decision-goldens`:
+  - Runs `uv run pgfound decision golden-refresh --dry-run`
+    (implement `--dry-run` if not already) and fails if any
+    golden would change.
+
+Every job uses concurrency cancellation per branch. Cache `uv`'s
+virtualenv and `ruff` cache via `actions/cache`.
+
+Do not add postgis/pgvector/timescale/citus jobs in this prompt —
+those are heavier and belong in a nightly pipeline. Author a stub
+`.github/workflows/nightly-heavy.yml` that opens the door but
+stays off by default (`on: workflow_dispatch`) until a maintainer
+enables scheduled runs.
+
+### 3. Repo-wide verification script
+
+Add `scripts/verify-all.sh`:
+
+- Runs, in order:
+  - `ruff check` + `ruff format --check`
+  - `pgfound content validate --strict`
+  - `pgfound content lint --strict`
+  - `pgfound decision catalog check`
+  - `pgfound decision rules lint`
+  - `pgfound docs check`
+  - `pytest -q -m 'not docker'`
+- Fails on any non-zero. This is the "is the repo ready to push"
+  command a maintainer runs.
+
+Wire `make verify` → this script.
+
+### 4. Release readiness checklist
+
+`docs/release-readiness.md`:
+
+- A concrete checklist used before declaring a milestone
+  release:
+  - All `.prompts/PROMPT_*.txt` accounted for.
+  - All ADRs have a status; `Proposed` ADRs have owners and
+    expected-by dates.
+  - `verify-all.sh` green.
+  - Integration tests green locally against the `pg` profile.
+  - Extension-profile tests (PostGIS, pgvector, Timescale,
+    Citus) run green when profiles are available.
+  - The decision engine's golden reports match.
+  - `README.md` quickstart block has been run from scratch by a
+    human in the last 30 days.
+
+### 5. Final pass: self-audit
+
+Run `scripts/verify-all.sh`. Fix anything it reports.
+
+Additionally, do a final cross-subsystem audit:
+
+- Does every extension catalog entry have at least one rule?
+- Does every industry in `industries.json` have at least three
+  scenarios under `scenarios/industries/`?
+- Does every phase 0–10 have ≥ 8 active lessons and ≥ one Level
+  D exercise per lesson cluster?
+- Does every admin module (A1–A6) and extension module (E1–E7
+  plus ltree, pg_partman, PgBouncer) have an authored README
+  and at least one rule reference in the decision engine?
+- Are there any ADR proposals that should be accepted or
+  superseded after the full build?
+
+Capture any gaps in `docs/known-gaps.md` with owner notes. It is
+fine for the initial release to have a small number of honest
+known gaps; dishonesty about them is not.
+
+### 6. Version bump
+
+Bump `src/pgfound/__init__.py` version to `0.1.0`. Document in
+`CHANGELOG.md` (author this file if missing) the high-level
+notes: "Initial release of postgres-foundations: curriculum
+(phases 0–10), capstones 01–08, admin track A1–A6, extension
+track E1–E7 + ltree/pg_partman/PgBouncer, decision engine with
+catalogs/rules/scoring/report generator, LLM prompt packs."
+
+### 7. Tag preparation (not pushed)
+
+Document in `docs/release-readiness.md` the tagging command a
+maintainer would use when they decide to cut the release:
+
+```
+git tag -a v0.1.0 -m "Initial release of postgres-foundations"
+```
+
+### 8. Tests
+
+- `tests/test_ci_files.py` — GH Actions YAML parses; pre-commit
+  config references installed hooks.
+- `tests/test_verify_script.py` — `verify-all.sh` exists, is
+  executable, and would call the expected sub-commands (parse
+  the script or use a dry-run mode).
+
+## Verification
+
+1. `scripts/verify-all.sh` exits 0.
+2. `pre-commit run --all-files` exits 0.
+3. `.github/workflows/ci.yml` parses without error
+   (`actionlint` locally if installed; otherwise YAML parse is
+   sufficient).
+4. `CHANGELOG.md` present and honest.
+5. `docs/known-gaps.md` present (may be empty or contain
+   deliberate gaps).
+6. `src/pgfound/__init__.py` version is `0.1.0`.
+7. Final manual sanity: open the README, follow the Quickstart
+   end-to-end against a fresh clone (at least mentally walk
+   through it — flag any step that would realistically fail).
+
+## Next prompt
+
+None. The initial promptset ends here. Subsequent work extends the
+promptset starting at PROMPT_51.txt (strict monotonicity preserved).
+Direction-setting for future prompts should happen in ADRs.

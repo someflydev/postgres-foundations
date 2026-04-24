@@ -1,0 +1,147 @@
+PROMPT 24 — Phase 10: Roles, RLS, replication concepts, FDW
+===========================================================
+
+## Context
+
+`postgres-foundations`, Phase 10 — the last phase of core curriculum.
+Doctrine: security and operational federation are not afterthoughts.
+By the end of phase 10, the learner can reason about multi-tenant
+isolation, grant/privilege models, replication tradeoffs, and
+federation via FDW. Deep admin operations (backup, pooling, monitoring,
+upgrades) live in the Admin track (PROMPTS 31–33). See
+`docs/doctrine.md`.
+
+Phase 10 concepts: `role`, `group_role`, `login_role`, `grant`,
+`revoke`, `ownership`, `default_privileges`, `row_level_security`,
+`policy`, `forced_rls`, `physical_replication` (concepts only),
+`logical_replication` (concepts + a working pair lab),
+`replication_slot`, `publication`, `subscription`,
+`postgres_fdw`, `import_foreign_schema`.
+
+## Prior work (verify before starting)
+
+- Phases 0–9 active.
+- Saas multi-tenant domain exists at phase 4a with tenants/users.
+
+## Task
+
+### 1. Domain extensions
+
+Saas multi-tenant domain gets a phase-10 treatment:
+
+- `saas.tenants`, `saas.users`, `saas.documents(id, tenant_id,
+  title, body, ...)`, `saas.audit_events`.
+- Author `phase-10.sql` that enables `ROW LEVEL SECURITY` on
+  `saas.documents` and `saas.audit_events`.
+- Create policies:
+  - `tenant_isolation_select` on documents: USING
+    `tenant_id = current_setting('app.tenant_id')::uuid`.
+  - `tenant_isolation_modify` with the same predicate + `WITH
+    CHECK` for inserts/updates.
+- Demonstrate the `current_setting` / `SET app.tenant_id` idiom for
+  per-session scoping.
+
+Modernization_bridge domain:
+
+- Add a `legacy.*` schema populated to mimic a "legacy database"
+  with shape that does not match modern saas conventions.
+- Author `phase-10.sql` for modernization bridge that wires
+  `postgres_fdw` to expose `legacy.*` tables as foreign tables in
+  the current database. In the lab, the foreign "server" is the
+  **same** Postgres instance pointing at the legacy schema via a
+  loopback FDW server — a valid and realistic demo pattern.
+- Include a trivial `IMPORT FOREIGN SCHEMA` step and a mapped
+  query.
+
+### 2. Lab: logical replication pair
+
+Extend the Docker compose to support a second Postgres instance
+dedicated to replication labs (off by default, behind a
+`replication` profile):
+
+- Service `pg-replica` (not an actual physical replica — a second
+  independent pg that will receive logical replication). Different
+  port (5435:5432), separate volume, same postgres:16 image.
+- Pre-enable logical replication on both (`wal_level=logical`) via
+  a mounted `postgresql.auto.conf` fragment or command-line flags.
+- Author `docker/initdb-replica/00-init.sql` with the minimum role
+  setup for the subscriber.
+- Document in `docs/lab.md` how to bring the replication profile
+  up and run a publisher/subscriber lab.
+
+### 3. Lessons
+
+Target **12 lessons** for phase 10:
+
+1. `roles/login-vs-group-roles-and-membership`.
+2. `roles/grants-on-tables-schemas-sequences-functions`.
+3. `roles/default-privileges` — forward-compatible grants.
+4. `roles/ownership-and-object-hierarchy`.
+5. `rls/introduction-to-row-level-security` — why RLS exists; what
+   it protects against; when the database is the right
+   enforcement point.
+6. `rls/authoring-policies` — USING vs WITH CHECK; FORCE RLS; the
+   `current_setting` idiom; JWT-like claim propagation.
+7. `rls/rls-performance-and-indexing` — predicates that play well
+   with indexes; pitfalls.
+8. `replication/physical-replication-concepts` — streaming
+   replication, WAL, replica lag, failover at a conceptual level
+   (deep ops in PROMPT_33).
+9. `replication/logical-replication-basics` — publication/subscription
+   lifecycle; reality in Postgres 16; initial sync.
+10. `replication/logical-replication-lab` — a live lab exercising
+    the replication profile, creating a publication, subscribing
+    from `pg-replica`, observing catch-up.
+11. `fdw/postgres-fdw-introduction` — setting up a server,
+    mapping users, importing a foreign schema.
+12. `fdw/modernization-bridge-pattern` — how FDW is the smallest-
+    cost start to a larger modernization program.
+
+### 4. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. ~96 exercises.
+
+Critical drills:
+
+- Level C: enable RLS on saas.documents, write a policy, set
+  `app.tenant_id`, prove cross-tenant queries return 0 rows and
+  same-tenant queries return the expected rows.
+- Level C: configure a publication on pg and a subscription on
+  pg-replica; insert rows on pg and observe them on pg-replica.
+- Level C: run IMPORT FOREIGN SCHEMA and compose a query joining
+  local and foreign tables.
+- Level D: an RLS policy with `USING (true)` accidentally left in
+  place; learner diagnoses why the "security" is non-existent.
+- Level D: a logical replication setup that is "working" but lags
+  unbounded due to an unvacuumable catalog table. Learner
+  diagnoses.
+- Level D: an FDW query joining local and foreign that is
+  surprisingly slow because the predicate is not pushed down;
+  learner identifies and rewrites.
+
+### 5. Docs
+
+- `docs/rls-playbook.md` — policy authoring cookbook.
+- `docs/logical-replication-playbook.md` — authoring checklist +
+  operational notes (slot management, catalog bloat, upgrades).
+- Update glossary with every new term.
+
+### 6. Tests
+
+- `tests/test_phase10_corpus.py` — validate + lint.
+- `tests/test_rls_policy_sql.py` — parse every `phase-10.sql`
+  policy and assert at least one policy per RLS-enabled table.
+
+## Verification
+
+1. Seed saas phase 10; set `app.tenant_id`; run cross-tenant
+   queries and confirm isolation.
+2. Bring up the `replication` profile; run the subscription
+   creation; verify data arrives at the subscriber.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_25 begins Phase F — capstones 1 and 2 (multi-tenant SaaS and
+scheduling/availability).

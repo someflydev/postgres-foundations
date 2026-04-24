@@ -1,0 +1,181 @@
+PROMPT 48 — Cross-system integration tests and golden outputs
+=============================================================
+
+## Context
+
+`postgres-foundations`. All three subsystems — training platform,
+admin/extension track, decision engine — now have unit tests. This
+prompt authors **cross-system integration tests** that exercise end-
+to-end flows across subsystems. These are the tests that catch
+subtle breakages when schemas evolve or rules change.
+
+Doctrine: integration tests are not optional for a system this
+interlocked. The investment here pays back every time a catalog slug
+gets renamed.
+
+## Prior work (verify before starting)
+
+- All previous prompts' unit tests exist and pass.
+- `tests/fixtures/` has accumulated fixture data from many
+  prompts.
+
+## Task
+
+### 1. Test categories
+
+Organize under `tests/integration/`:
+
+```
+tests/integration/
+  conftest.py
+  test_learner_loop_end_to_end.py
+  test_capstone_end_to_end.py
+  test_interview_end_to_end.py
+  test_decision_engine_end_to_end.py
+  test_content_lint_all_active.py
+  test_content_references_all_valid.py
+  test_seed_doctor_all_domains.py
+  test_scenario_regressions_all.py
+  test_admin_extension_map_alignment.py
+```
+
+Every test file uses a clear, skippable Docker marker when it
+requires the lab; prefer mocking or fixture substitution where
+possible.
+
+### 2. Learner-loop end-to-end
+
+`test_learner_loop_end_to_end.py`:
+
+- Initialize a throwaway learner profile under a temp directory.
+- Simulate attempts at 4 exercises across Phases 1, 3, 5, 7 — two
+  passing, two failing against their check comparators.
+- Assert that `pgfound progress show` reports the expected module
+  progress.
+- Run `pgfound remediate`; assert that the remediation pack
+  references Level D exercises aligned to the failed dimensions.
+- Run `pgfound next`; assert the suggestion is sensible.
+
+### 3. Capstone end-to-end
+
+`test_capstone_end_to_end.py`:
+
+- For each of the 4 core capstones and 4 extension capstones:
+  - Run `pgfound capstone start` into a temp dir.
+  - Apply the reference solution into the sandbox lab profile.
+  - Run `pgfound capstone evaluate --full`.
+  - Assert the overall score is ≥ 0.85 (the reference solution
+    must score near-100% except for manual-review dimensions
+    flagged as such).
+- Docker-marked; skipped when Docker is unavailable but still
+  runs the non-Docker pieces (schema + validator assertions).
+
+### 4. Interview end-to-end
+
+`test_interview_end_to_end.py`:
+
+- For each of the 6 interview scenarios:
+  - Run a scripted session (stdin fed from a fixture "good
+    answers" file) against the simulator.
+  - Assert transcript is produced with all expected stages.
+  - Run `pgfound interview review` on the transcript.
+  - Assert every rubric dimension has either a score or a
+    flagged manual-review.
+
+### 5. Decision engine end-to-end
+
+`test_decision_engine_end_to_end.py`:
+
+- For every scenario under `scenarios/industries/`:
+  - Run `pgfound decision run` on the scenario's `intake.json`.
+  - Compare to `expected-report.json` (golden).
+  - Assert the scenario's `expected_decision_outputs` appear in
+    the actual report.
+- For every rule:
+  - At least one fixture intake triggers the rule. If not,
+    record the rule's slug in a `coverage-gaps.json` emitted to
+    `tmp/integration/` — fail-soft so the team can triage later.
+
+### 6. Content lint-all-active
+
+`test_content_lint_all_active.py`:
+
+- Runs `pgfound content lint --strict` across the whole repo.
+- Fails if any active lesson or exercise has a lint error.
+
+### 7. Content cross-reference integrity
+
+`test_content_references_all_valid.py`:
+
+- Every `lesson.references` pointer resolves.
+- Every `exercise.lesson_id` resolves.
+- Every `capstone.deliverables[*].path` resolves.
+- Every `scenario.suggested_lessons` / `suggested_exercises` /
+  `suggested_capstone_id` resolves.
+- Every docs cross-link (markdown links starting with `./` or
+  `../` or `/docs/`) resolves to a file.
+- Every `docs/anti-patterns/<slug>.md` referenced from the
+  catalogs exists.
+
+### 8. Seed doctor across all domains
+
+`test_seed_doctor_all_domains.py`:
+
+- Runs `pgfound content seed-doctor` across the whole repo; must
+  report zero errors.
+
+### 9. Scenario regression all
+
+`test_scenario_regressions_all.py`:
+
+- All 24 industry scenarios produce reports matching golden
+  outputs (up to timestamp masking).
+
+### 10. Admin / extension map alignment
+
+`test_admin_extension_map_alignment.py`:
+
+- `curriculum/admin/map.json` modules A1–A6 each have a lessons
+  directory populated.
+- `curriculum/extensions/map.json` modules each have corresponding
+  `lessons/extensions/<module-id>/` and
+  `exercises/extensions/<module-id>/` directories populated (or are
+  flagged as "deferred" if
+  authoring is intentionally partial — none should be).
+- Every extension in `decision-engine/catalogs/extensions.json`
+  has a matching module in the extension track
+  (`module_slug` field).
+
+### 11. Test infrastructure
+
+- `tests/conftest.py` gains a shared `lab_available` fixture.
+- Add a `@pytest.mark.docker` marker declared in
+  `pyproject.toml`'s `[tool.pytest.ini_options]`.
+- A Makefile target `make test-integration` that runs only
+  `tests/integration/`.
+- A Makefile target `make test-all` that runs unit + integration.
+
+### 12. CI hint (actual CI wiring is PROMPT_50)
+
+Document what the integration suite expects of CI:
+
+- Docker available for the docker-marked tests.
+- Postgres + PostGIS + pgvector + Timescale + Citus profiles are
+  not required in CI by default — mark those tests to require
+  specific profiles and skip in CI when the profile is not
+  available. Only the plain `pg` profile is mandatory for CI.
+
+Capture this in `docs/ci-requirements.md`.
+
+## Verification
+
+1. `make test-integration` runs green locally with the `pg`
+   profile up.
+2. Without Docker, `pytest -m 'not docker'` still runs the
+   non-Docker integration checks.
+3. `uv run pgfound content validate` + `lint` green.
+
+## Next prompt
+
+PROMPT_49 authors the top-level README, architecture docs, and
+contribution guide.

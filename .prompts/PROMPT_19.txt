@@ -1,0 +1,175 @@
+PROMPT 19 — Multi-session concurrency lab harness
+=================================================
+
+## Context
+
+`postgres-foundations`. Phase 6 authored in PROMPT_18 includes many
+exercises that require two (sometimes three) psql sessions to drive
+the same database at the same time — classic "Session A does X; now
+Session B does Y; now Session A commits; what does B see?" drills.
+
+Doing this by hand in two terminals is part of the learning, but we
+also need a deterministic harness:
+
+- for authoring exercises reliably,
+- for `--check` to verify learner answers,
+- for mock-interview / interview-simulator scenarios later.
+
+Doctrine: a learner must **also** run these drills by hand in two real
+psql terminals at least once per race family. The harness is
+supplementary, not a replacement for direct interaction.
+
+## Prior work (verify before starting)
+
+- PROMPT_18 phase 6 exercises authored, some marked
+  `multi_session_trace` with `lab_harness_profile` declared.
+- Lab container `pg` up and healthy.
+
+## Task
+
+### 1. Harness design
+
+Implement under `src/pgfound/lab/harness.py`.
+
+A **scenario** is a YAML file with the following shape:
+
+```
+name: inventory-lost-update
+sessions:
+  A: { role: pgfound, database: pgfound }
+  B: { role: pgfound, database: pgfound }
+steps:
+  - session: A
+    sql: "BEGIN;"
+  - session: A
+    sql: "SELECT quantity_on_hand FROM ecommerce.inventory WHERE product_id = 1;"
+    expect:
+      rows: [{quantity_on_hand: 10}]
+  - session: B
+    sql: "BEGIN;"
+  - session: B
+    sql: "UPDATE ecommerce.inventory SET quantity_on_hand = quantity_on_hand - 1 WHERE product_id = 1;"
+    expect:
+      rowcount: 1
+  - session: B
+    sql: "COMMIT;"
+  - session: A
+    sql: "UPDATE ecommerce.inventory SET quantity_on_hand = quantity_on_hand - 1 WHERE product_id = 1;"
+    expect:
+      rowcount: 1
+  - session: A
+    sql: "SELECT quantity_on_hand FROM ecommerce.inventory WHERE product_id = 1;"
+    expect:
+      rows: [{quantity_on_hand: 8}]   # lost update: should be 8, not 9
+  - session: A
+    sql: "COMMIT;"
+setup_sql: |
+  TRUNCATE ecommerce.inventory;
+  INSERT INTO ecommerce.inventory (product_id, quantity_on_hand) VALUES (1, 10);
+teardown_sql: |
+  TRUNCATE ecommerce.inventory;
+```
+
+Each step may declare:
+
+- `expect.rows` — exact rowset (any order unless `ordered: true`).
+- `expect.rowcount` — number of rows affected.
+- `expect.error_code` — a Postgres SQLSTATE (e.g. `40001` for
+  serialization failure, `40P01` for deadlock).
+- `expect.blocks` — if true, the session is expected to wait. The
+  harness should verify non-completion within a timeout and proceed.
+- `timeout_seconds` — per-step override.
+
+Design the harness so each session holds an **open psycopg
+connection** running in autocommit=False with explicit BEGIN/COMMIT
+in the script. Use `psycopg` (already a dep from PROMPT_09). Run
+each session's SQL in a dedicated thread so blocked sessions do not
+stall the driver loop; use a thread-safe queue.
+
+### 2. CLI
+
+Add `pgfound lab concurrency run <scenario-yaml>`:
+
+- Loads the scenario.
+- Executes `setup_sql` against a scratch connection.
+- Opens N sessions.
+- Walks `steps`, dispatching each to the named session, enforcing
+  expectations, and printing a readable timeline.
+- On any expectation mismatch, prints a diff and exits non-zero.
+- Runs `teardown_sql`.
+- Supports `--on-fail pause` which leaves sessions open in psql
+  for the learner to poke around.
+
+Also add:
+
+- `pgfound lab concurrency record <scenario-yaml>` — run the
+  scenario and emit a normalized transcript file (to aid authoring).
+- `pgfound lab concurrency list` — lists all scenario YAMLs under
+  the repo.
+
+### 3. Scenario library
+
+Create `scenarios/concurrency/` and populate with the core race-
+family scenarios used by phase-6 exercises:
+
+- `inventory-lost-update.yaml`
+- `inventory-lost-update-fixed-for-update.yaml`
+- `appointment-double-booking.yaml`
+- `appointment-double-booking-fixed-exclusion.yaml`
+- `two-doctors-write-skew.yaml`
+- `two-doctors-write-skew-fixed-serializable.yaml`
+- `bank-transfer-deadlock.yaml`
+- `bank-transfer-ordered-fix.yaml`
+- `funds-retry-on-serialization-failure.yaml`
+
+Each scenario must run green. Reference each scenario from the
+appropriate phase-6 exercise by setting
+`exercise.lab_harness_profile` to the scenario slug.
+
+### 4. Exercise `--check` integration
+
+Extend `pgfound exercise run --check` for exercises with
+`expected_output_shape: multi_session_trace`:
+
+- Instead of comparing a single rowset, the check runs the scenario
+  referenced by `lab_harness_profile` and:
+  - Before running, splices the learner's `solution.sql` content
+    into a designated `${LEARNER_SQL}` placeholder in the scenario
+    (so the learner's fix can be inserted into the run).
+- Reports the same pass/fail as any other check.
+
+Scenario files carry a `${LEARNER_SQL}` placeholder only when they
+are used as check harnesses; the standalone scenario files do not
+require it.
+
+### 5. Docs
+
+- `docs/concurrency-harness.md` — the operator's guide to the
+  harness. Walk through authoring a new scenario and using it for
+  `--check`.
+- Update `docs/cli.md`.
+
+### 6. Tests
+
+- `tests/test_harness_runs.py` — runs a tiny scenario against the
+  lab (this test is marked with a `docker` pytest marker; it is
+  skipped when Docker is not available). The scenario must exercise
+  `expect.rows`, `expect.rowcount`, and `expect.error_code`.
+- `tests/test_scenario_files_valid.py` — every scenario YAML
+  parses, references only declared sessions, and has no step that
+  targets an undeclared session.
+
+## Verification
+
+1. With the lab up and seeded to phase 6:
+   `uv run pgfound lab concurrency run scenarios/concurrency/inventory-lost-update.yaml`
+   completes green. Its "fixed" counterpart also completes green.
+2. The two-doctors write-skew pair runs green (unfixed and fixed).
+3. `uv run pytest -q -m 'not docker'` green on machines without
+   Docker; `-m 'docker'` green with Docker.
+4. `uv run pgfound content validate` + `lint` green.
+
+## Next prompt
+
+PROMPT_20 moves into phase 7a (indexing fundamentals: scans, B-tree,
+composite indexes).

@@ -1,0 +1,206 @@
+PROMPT 09 — Reusable teaching domains catalog
+=============================================
+
+## Context
+
+You are working in `postgres-foundations`, a PostgreSQL learning and planning
+platform. Doctrine: a small number of reusable domains recur across phases
+so advanced features upgrade known systems rather than starting over every
+time. Named in the brief and encoded in `curriculum/map.json`:
+
+- `ecommerce` — orders, catalog, inventory
+- `scheduling` — appointments, availability
+- `saas_multi_tenant` — tenant isolation, admin tooling
+- `event_heavy_ops` — event streams, append-heavy operational systems
+- `document_search` — documents, search, knowledge
+- `modernization_bridge` — migration and federation scenarios
+
+This prompt turns each domain into a concrete reusable pack: a canonical
+table-naming convention, a set of SQL schema snippets introducing new
+capability as phases progress, seed data generators, and a narrative note
+describing how the domain evolves.
+
+## Prior work (verify before starting)
+
+- PROMPT_03 Docker lab (we will run SQL against `pg`).
+- PROMPT_06 curriculum map with the six domains in `curriculum/map.json`.
+- PROMPT_07/08 lesson/exercise authoring surface.
+- `seed-data/` holds only `.gitkeep`.
+
+## Task
+
+### 1. Seed-data layout
+
+Under `seed-data/`:
+
+```
+seed-data/
+  packs/
+    <domain-slug>/
+      README.md                 # narrative of the domain's evolution
+      phases/
+        phase-01.sql            # schema + seed for the phase that first
+                                # uses the domain
+        phase-02.sql            # incremental SQL (idempotent)
+        ...
+      manifest.json             # declares which phases the pack covers
+      generators/               # optional python/sql generators
+```
+
+Each SQL file must be idempotent: `CREATE TABLE IF NOT EXISTS`,
+`ON CONFLICT DO NOTHING`, etc. Running every phase SQL in order leaves
+the pack in its final state; running a specific phase leaves it in that
+phase's state.
+
+### 2. Schema naming and conventions
+
+Author `docs/domain-conventions.md`:
+
+- Table names lowercase snake_case, singular domain entities with pluralized
+  names (`orders`, `appointments`).
+- Surrogate keys: `id` is `bigint generated always as identity` for
+  high-volume tables, `uuid` (from `pgcrypto`) for entities meant to be
+  globally unique (tenant IDs, external order references).
+- Timestamp fields: `created_at`, `updated_at`, both
+  `timestamptz NOT NULL DEFAULT now()`.
+- Soft-delete fields discouraged — delete means delete unless a lesson
+  explicitly requires soft-delete.
+- Schema separation: each domain gets its own schema when used in a
+  capstone or large lab (`ecommerce`, `scheduling`, `saas`, `events`,
+  `documents`, `legacy`). In
+  small phase exercises, schemas can be collapsed into `pgfound` for
+  simplicity — document when each is used.
+- Money: `numeric(12,2)` plus a `currency` column.
+- Foreign keys named `<ref>_id`.
+
+Length: 400–700 words.
+
+### 3. Domain content
+
+Author **per-domain** packs under `seed-data/packs/<slug>/` for:
+
+- `ecommerce`
+- `scheduling`
+- `saas_multi_tenant`
+- `event_heavy_ops`
+- `document_search`
+- `modernization_bridge`
+
+For each domain, produce the following deliverables in this prompt (the
+later phase-specific prompts will deepen the SQL, not broaden it):
+
+#### README.md (per domain)
+
+- **What this domain is** (3–5 sentences).
+- **Core entities** (bulleted list with one-sentence descriptions).
+- **Recurring scenarios** — 3–6 scenarios this domain is used for across
+  phases. Example for `ecommerce`: "Phase 1: retrieve recent orders;
+  Phase 2: join orders to line items; Phase 3: enforce non-negative
+  quantity; Phase 5: window function for running revenue; Phase 7:
+  index tuning for the hot order-history query; Phase 9: partitioning
+  old orders by month."
+- **Non-goals** — what this domain does NOT try to teach.
+- **Naming and schema overview** — the table list.
+
+#### phase-01.sql
+
+The very first SQL the domain needs to exist at all — minimum viable
+schema and a small seed. Must run cleanly against a fresh `pg`
+container. Keep it small: one to three tables per domain at this phase.
+
+Include at the top of every SQL file a header comment in this form:
+
+```
+-- domain: ecommerce
+-- phase: 01
+-- depends: none
+-- description: minimal schema + small seed
+```
+
+Add `phase-02.sql` for domains that get a natural phase-2 extension
+(joins and aggregates), but you do **not** need to author every phase
+SQL in this prompt. The promise here is: skeleton directory + phase-01
+populated + phase-02 populated where it makes sense. Later content
+prompts will author additional phase SQL when they need it.
+
+#### manifest.json
+
+Shape:
+
+```
+{
+  "domain": "ecommerce",
+  "phases_covered": [1, 2],
+  "planned_phases": [1, 2, 3, 5, 7, 9],
+  "depends_on_extensions": [],
+  "notes": "..."
+}
+```
+
+#### generators/ (optional)
+
+For `event_heavy_ops` and `document_search`, include a small Python
+generator under `generators/` that produces CSV rows (events with
+timestamps; documents with realistic titles/bodies). Use only stdlib +
+`random`. Seed the RNG so output is deterministic.
+
+The generators are CLI scripts invoked via `python generators/<name>.py`
+and they print CSV to stdout. Document them in the domain README.
+
+### 4. Seed loader CLI
+
+Add to `pgfound`: `pgfound content seed <domain> [--phase <phase-id>] [--reset]
+[--generate]`
+
+Behavior:
+
+- Connect to the lab via the config (`config.py` from PROMPT_04).
+  Connection string derived from env (`PGFOUND_DB_URL` if set, else the
+  compose defaults).
+- If `--reset`, drop and recreate the domain's schema before seeding.
+- If `--generate`, run any deterministic pack generators first. This is a
+  forward-compatible hook for later large-volume packs; when no generators are
+  present, it is a no-op.
+- Run the SQL files in `seed-data/packs/<domain>/phases/` up to the
+  requested phase ID (inclusive). `phase-id` accepts both plain phase numbers
+  like `1`, `2`, `3` and subphase IDs like `4a`, `4b`, `7a`, `7b`. Order them
+  in curriculum order rather than plain lexical order. If `--phase` is omitted,
+  run all available.
+- Idempotent: re-running without `--reset` should not error.
+
+This command uses `psycopg` (add it to `pyproject.toml`). For tests
+that cannot reach Postgres, expose a dry-run mode (`--dry-run`) that
+prints the SQL files it would execute and exits 0.
+
+### 5. Tests
+
+- `tests/test_domain_manifests.py` — each domain's `manifest.json`
+  validates (add a `manifest.schema.json` under `content-schemas/`).
+  Asserts every domain listed in `curriculum/map.json` has a pack.
+- `tests/test_seed_cli_dry_run.py` — dry-run over each domain prints
+  the expected SQL files in order.
+- `tests/test_generator_determinism.py` — generators produce
+  byte-identical CSV across runs (seeded RNG).
+
+### 6. Docs
+
+- `docs/domain-conventions.md` (see §2).
+- Update `docs/architecture.md` to reference the domain packs and note
+  that scenario packs and capstones both reuse these.
+- Update `docs/cli.md` with `content seed`.
+
+## Verification
+
+1. `uv run pgfound content seed ecommerce --phase 1 --dry-run` lists the
+   expected SQL file.
+2. With Docker lab up, `uv run pgfound content seed ecommerce --phase 1
+   --reset` runs cleanly; `pgfound content seed ecommerce --phase 1`
+   run again without `--reset` still exits 0.
+3. Same pattern works for at least two more domains.
+4. `uv run pytest -q` green.
+5. `uv run pgfound content validate` green.
+
+## Next prompt
+
+PROMPT_10 authors Phase 0 content (reality before syntax, paper modeling),
+using the domains established here.

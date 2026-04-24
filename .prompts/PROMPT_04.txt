@@ -1,0 +1,173 @@
+PROMPT 04 — `pgfound` platform Python package and CLI skeleton
+==============================================================
+
+## Context
+
+You are working in `postgres-foundations`, a PostgreSQL learning and planning
+platform. Doctrine: core first, extensions by signal, explainability and
+operational awareness everywhere. See `docs/doctrine.md` and
+`docs/architecture.md`.
+
+The `pgfound` Python package is the orchestration surface for the whole repo.
+It is intentionally **not** a framework: it is thin glue that composes
+filesystem content (lessons, exercises, scenarios, rules, catalogs) with the
+Docker lab and the review/decision-engine machinery. Learners do not need to
+read Python to use the platform, but Python drives the CLI that they do use.
+
+## Prior work (verify before starting)
+
+- PROMPT_01 scaffold (`src/pgfound/`, `cli.py` stub).
+- PROMPT_02 docs (`docs/architecture.md`).
+- PROMPT_03 Docker lab (`docker/docker-compose.yml`, `docker/initdb/`,
+  `docs/lab.md`).
+- `uv run pytest -q` green.
+
+Do not touch curriculum/exercise content yet — that starts in PROMPT_06 and
+beyond.
+
+## Task
+
+Design and implement the core `pgfound` package and a cohesive CLI surface.
+The CLI must use `click` sub-commands and be structured so future phases can
+add commands without restructuring. Every command must have a short help
+string and a `--help` that documents every option.
+
+### 1. Package layout
+
+Under `src/pgfound/`:
+
+```
+__init__.py                 # __version__, public symbols
+cli.py                      # click root group (re-export `main`)
+config.py                   # config loading (env + optional TOML)
+paths.py                    # repo-root discovery + canonical paths
+content/                    # content model loaders (lessons/exercises/etc)
+  __init__.py
+  loader.py                 # filesystem -> dataclass loaders
+  models.py                 # dataclasses for Lesson, Exercise, Rubric, etc.
+lab/                        # Docker lab interaction
+  __init__.py
+  compose.py                # thin wrappers over `docker compose`
+  psql.py                   # build psql command strings (no execution yet)
+review/                     # review engine scaffolding (stubs only now)
+  __init__.py
+decision/                   # decision-engine scaffolding (stubs only now)
+  __init__.py
+```
+
+`content/models.py` in this prompt contains only **placeholder dataclasses**
+for `Lesson`, `Exercise`, `Rubric`, `Scenario`, `Capstone` with `id: str`
+and `title: str` fields. Later prompts flesh them out.
+
+### 2. Config and paths
+
+`paths.py` must locate the repo root by walking up from
+`Path(__file__).resolve()` until it finds a directory containing
+`pyproject.toml` **and** a `.prompts/` directory. Expose:
+
+- `REPO_ROOT: Path`
+- `LESSONS_DIR`, `EXERCISES_DIR`, `SCENARIOS_DIR`, `CAPSTONES_DIR`,
+  `SEED_DATA_DIR`, `RUBRICS_DIR`, `CURRICULUM_DIR`,
+  `DECISION_ENGINE_DIR`, `DOCKER_DIR`, `LLM_PROMPTS_DIR`.
+- A helper `ensure_exists(path: Path)` that raises a clear error if a path
+  is missing.
+
+`config.py` loads platform config from environment variables with sensible
+defaults (Postgres connection, lab ports). Provide a `load_config()`
+function returning a frozen dataclass. Keep it small.
+
+### 3. CLI surface (click)
+
+All commands return non-zero on failure. The root group is `pgfound`. Author
+these subgroups + commands now, even though some bodies are stubs:
+
+- `pgfound version` — prints version from `pgfound.__version__`.
+- `pgfound doctor` — checks:
+  - Python version ≥ 3.12.
+  - Docker CLI available (`docker --version`).
+  - Required directories exist (`paths.py` helper).
+  - `docker compose config` parses.
+  - Prints a Rich table with ✅/❌ per check and exits non-zero if any
+    required check fails.
+- `pgfound lab up|down|nuke|psql|logs|status|sandbox-up` — wrappers over
+  the compose subcommands. `lab status` calls `docker compose ps` with
+  JSON output and renders a Rich table. `lab psql` must `os.execvp` into
+  psql (not wrap in a subprocess with pipes) so the terminal stays
+  interactive.
+- `pgfound content list [--kind lesson|exercise|scenario|capstone|rubric]`
+  — walks the appropriate directory and prints a Rich table of IDs, titles,
+  and file paths. If the content model doesn't exist yet, print "no
+  content yet" — but do not error.
+- `pgfound content show <kind> <id>` — loads a single item and pretty-prints
+  it (deferred in this prompt; it can simply print the raw file content,
+  with a clear note that the loader will be expanded later).
+- `pgfound content validate` — stub that prints "validator lands in
+  PROMPT_05" and exits 0. It must still exist as a command so downstream
+  prompts can flesh it out.
+- `pgfound review run` — stub returning exit 0 with "review engine lands
+  in PROMPT_27".
+- `pgfound decision run` — stub returning exit 0 with "decision engine
+  lands in PROMPT_43".
+- `pgfound interview start` — stub returning exit 0 with "interview
+  simulator lands in PROMPT_28".
+
+All stub commands must include a `--help` that accurately names the future
+prompt that will flesh them out — this is part of keeping the promptset
+self-documenting.
+
+### 4. Lab wrappers
+
+`pgfound/lab/compose.py` builds and runs `docker compose` commands with
+the working directory set to `DOCKER_DIR`. Expose:
+
+- `up(detach=True, profile=None)`
+- `down(volumes=False)`
+- `ps_json() -> list[dict]`
+- `logs(service=None, follow=False)`
+- `exec_psql_interactive(user, db)` (uses `os.execvp`)
+
+Do not reinvent Docker APIs — shell out via `subprocess.run`. Surface the
+exact command being run at verbose log level.
+
+`pgfound/lab/psql.py` exposes a pure helper that returns the argv list for
+a psql invocation so tests can assert it without executing.
+
+### 5. Tests
+
+- `tests/test_cli.py` — uses `click.testing.CliRunner`:
+  - `pgfound version` prints the version.
+  - `pgfound doctor` runs end-to-end in a repo-root-detected workdir;
+    docker check may be mocked — the test should not require Docker to be
+    installed (patch `shutil.which`).
+  - `pgfound content list --kind lesson` exits 0 with "no content yet"
+    against the current empty tree.
+  - Stub commands exit 0 with a message mentioning the target prompt
+    number.
+- `tests/test_paths.py` — `REPO_ROOT` is the true repo root.
+- `tests/test_lab_psql.py` — `psql.build_argv(...)` produces the expected
+  argv without executing.
+
+Keep tests hermetic. Never start Docker during pytest.
+
+### 6. Docs
+
+- `docs/cli.md` — one-page command reference generated by inspecting the
+  click app (or hand-written). One section per command. Add a note that
+  the CLI is stable but stub commands point to the prompts that finish
+  them.
+
+## Verification
+
+1. `uv sync` clean.
+2. `uv run ruff check .` and `uv run ruff format --check .` pass.
+3. `uv run pytest -q` green, including new tests.
+4. `uv run pgfound --help` lists all command groups.
+5. `uv run pgfound doctor` runs (some checks may warn on machines without
+   Docker — the command itself must not crash).
+6. `uv run pgfound content list` says "no content yet" and exits 0.
+7. `docs/cli.md` documents every command introduced in this prompt.
+
+## Next prompt
+
+PROMPT_05 authors the JSON schemas for content (lessons, exercises, rubrics,
+scenarios, capstones) and wires `pgfound content validate` to them.

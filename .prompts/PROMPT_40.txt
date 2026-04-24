@@ -1,0 +1,216 @@
+PROMPT 40 — Decision-engine catalogs: industries, data_shapes, workload_patterns
+================================================================================
+
+## Context
+
+`postgres-foundations`. PROMPT_39 set up the decision-engine
+subsystem skeleton. This prompt authors three of its catalogs:
+
+1. `industries.json`
+2. `data_shapes.json`
+3. `workload_patterns.json`
+
+Doctrine: every catalog entry must be explainable, operational, and
+non-magical. No slug without a clear definition, signals, and
+anti-pattern references.
+
+## Prior work (verify before starting)
+
+- PROMPT_39 schemas authored under `decision-engine/schemas/`.
+- `decision-engine/catalogs/` holds only `.gitkeep`.
+- Intake fixtures reference slugs from these catalogs.
+
+## Task
+
+### 1. Catalog schemas (author now in PROMPT_39's schemas dir if not
+   already complete)
+
+- `industry.schema.json`:
+
+```
+{
+  "id": { "type": "string" },                  # slug
+  "title": { "type": "string" },
+  "summary": { "type": "string" },
+  "typical_data_shapes": { "type": "array" },  # data_shape slugs
+  "typical_workload_patterns": { "type": "array" },
+  "typical_security_constraints": { "type": "array" },
+  "typical_tenancy_models": { "type": "array" },
+  "typical_scale_signals": { "type": "object" },
+  "typical_operational_concerns": { "type": "array" },
+  "failure_modes_to_watch": { "type": "array" },
+  "references": { "type": "array" }
+}
+```
+
+- `data-shape.schema.json`:
+
+```
+{
+  "id": "...",
+  "title": "...",
+  "summary": "...",
+  "core_features_that_apply": [ "slug" ],
+  "extensions_that_apply": [ "slug" ],
+  "index_patterns_that_apply": [ "slug" ],
+  "anti_patterns_to_watch": [ "slug" ]
+}
+```
+
+- `workload-pattern.schema.json`: similar shape, plus a
+  `scale_signals_threshold` object (e.g. "write_throughput >
+  5000 rows/sec").
+
+### 2. Industries catalog
+
+Author `decision-engine/catalogs/industries.json` as a JSON array (or
+object with `items`). Every entry validates.
+
+Include at least these industries from the brief:
+
+- `saas_multi_tenant`
+- `fintech_payments`
+- `healthcare_ops`
+- `ecommerce_marketplace`
+- `logistics_geo`
+- `observability_iot`
+- `knowledge_ai`
+- `modernization_bridge`
+
+For each industry, fill:
+
+- 3–5 sentences of `summary`.
+- `typical_data_shapes`: 3–7 slugs.
+- `typical_workload_patterns`: 3–7 slugs.
+- `typical_security_constraints`: e.g. `pci | hipaa | rls_required
+  | audit_required`.
+- `typical_tenancy_models`.
+- `typical_scale_signals`: ballpark ranges (e.g. "orders table
+  typically 10M–200M rows at year 2").
+- `typical_operational_concerns`: `strict_rto_rpo`, `regional_data_residency`,
+  etc.
+- `failure_modes_to_watch`: concrete scenarios ("fintech reconciliation
+  lag when replication slots fall behind").
+- `references`: internal pointers to lessons/docs.
+
+Every catalog entry is a design statement about how PostgreSQL
+applies to this industry. Be concrete. Total length across the 8
+industries: roughly 3000–5000 words of JSON-embedded prose. Consider
+storing summaries as Markdown strings rather than JSON strings if
+JSON-embedded readability is painful — but prefer JSON-native for
+machine use.
+
+### 3. Data shapes catalog
+
+Author `decision-engine/catalogs/data_shapes.json`.
+
+Include at least these slugs from the brief:
+
+- `relational_core`
+- `semi_structured_jsonb`
+- `arrays_small_sets`
+- `ranges_windows`
+- `multiranges_availability`
+- `hierarchy_paths`
+- `full_text_docs`
+- `geospatial`
+- `append_only_events`
+- `time_series_metrics`
+- `embeddings_vectors`
+- `foreign_postgres_access`
+
+For each:
+
+- Summary (2–4 sentences).
+- `core_features_that_apply`: e.g. for `full_text_docs`, list
+  `full_text_search`, `materialized_views`, `partial_indexes`.
+- `extensions_that_apply`: for `embeddings_vectors`, `pgvector`;
+  for `geospatial`, `postgis`; etc.
+- `index_patterns_that_apply`.
+- `anti_patterns_to_watch`: for `embeddings_vectors`,
+  `vector_before_lexical` is the big one.
+
+### 4. Workload patterns catalog
+
+Author `decision-engine/catalogs/workload_patterns.json`.
+
+Include these slugs from the brief:
+
+- `oltp_heavy`
+- `search_heavy`
+- `read_heavy`
+- `append_heavy`
+- `analytics_adjacent`
+- `replication_fanout`
+- `migration_bridge`
+- `geo_query_heavy`
+- `semantic_retrieval`
+- `strong_tenant_locality`
+
+For each:
+
+- Summary.
+- Typical scale signals (throughput ranges, row counts, etc.).
+- Implications for core features, extensions, index patterns,
+  topology patterns.
+- Anti-patterns to watch for — e.g. `read_heavy` flags
+  `replica_as_performance_bandage` when a replica is being used
+  to paper over bad indexes.
+
+### 5. Cross-linking integrity
+
+Every slug referenced from an industry must exist in its catalog.
+Every slug in `typical_data_shapes` must exist in
+`data_shapes.json`; etc. The validator in PROMPT_39 tolerated
+missing references with warnings — this prompt turns those into
+**errors** once the catalog is authored. Specifically, update the
+decision engine validator to:
+
+- Enforce cross-catalog existence once the catalogs are present.
+- Enforce that every data-shape `anti_patterns_to_watch` slug
+  exists in the anti-patterns catalog (which lands in PROMPT_41).
+  Until PROMPT_41 is done, downgrade that specific check to
+  warning.
+
+### 6. Catalog maintenance CLI
+
+Add `pgfound decision catalog list [--kind industry|data_shape|
+workload_pattern]` that prints the catalog in a Rich table.
+
+Add `pgfound decision catalog check` that runs integrity checks:
+unreferenced slugs, orphan references, missing required fields
+beyond schema-enforced ones, title-summary sanity (title present,
+summary ≥ 2 sentences).
+
+### 7. Docs
+
+- `decision-engine/catalogs/README.md` — an index page with one
+  paragraph per catalog describing what it is and where each one
+  is authoritative.
+- Update `docs/architecture.md` to reference these catalogs as
+  shared between the decision engine and extension track.
+
+### 8. Tests
+
+- `tests/test_catalogs_industries.py`, `test_catalogs_data_shapes.py`,
+  `test_catalogs_workload_patterns.py`:
+  - Each catalog validates.
+  - Every entry has all required fields filled.
+  - Slug cross-references resolve (with warnings for anti-
+    patterns, which arrive in PROMPT_41).
+
+## Verification
+
+1. `uv run pgfound decision catalog list --kind industry` renders
+   a readable table of 8 industries.
+2. `uv run pgfound decision catalog check` reports zero errors
+   (warnings about anti-patterns are acceptable).
+3. `uv run pgfound decision run
+   decision-engine/fixtures/intakes/fintech-payments-minimal.json`
+   still runs but now resolves the industry slug.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_41 authors the remaining catalogs: core_features, extensions,
+index_patterns, topology_patterns, anti_patterns.

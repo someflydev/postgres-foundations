@@ -1,0 +1,209 @@
+PROMPT 43 — Decision-engine scoring, evaluator integration, report generator
+============================================================================
+
+## Context
+
+`postgres-foundations`. Rules are authored (PROMPT_42). The engine
+produces recommendations. This prompt builds the **scoring model**,
+integrates it into the evaluator, and polishes the report generator
+so both machine-readable JSON and human-readable Markdown reports
+are production-quality. Doctrine: the human-readable report is the
+primary artifact. Architects read it. Engineers read it. Managers
+read it.
+
+## Prior work (verify before starting)
+
+- PROMPTS 39–42 decision engine in place and producing recommendations.
+- `scoring.py` stub exists.
+- Fixture intakes + golden reports exist.
+
+## Task
+
+### 1. Scoring model
+
+Under `src/pgfound/decision/scoring.py`:
+
+Compute a score per recommendation along the following dimensions
+(already hinted in the rule schema):
+
+- `domain_fit` — how well this recommendation fits the industry.
+- `data_shape_fit` — how well it fits the intake's data shapes.
+- `workload_fit` — how well it fits the workload patterns.
+- `operational_feasibility` — given team size + tolerance, can the
+  team actually operate this?
+- `growth_urgency` — how much the scale signals press for this
+  change now vs later.
+- `portability_penalty` — a discount for recommendations that
+  conflict with managed-service/portability constraints.
+- `complexity_penalty` — a discount reflecting operational cost.
+
+Inputs:
+
+- The rule's own `scoring` block (rule author's baseline).
+- The intake (scale signals, team_size, portability constraints).
+- The catalog entry (operational_cost, managed_service_availability).
+
+Output:
+
+- A per-dimension score in [0, 1].
+- An aggregate `recommendation_score` as a weighted sum with the
+  following default weights:
+
+```
+{
+  "domain_fit": 0.2,
+  "data_shape_fit": 0.2,
+  "workload_fit": 0.2,
+  "operational_feasibility": 0.15,
+  "growth_urgency": 0.1,
+  "portability_penalty": -0.1,
+  "complexity_penalty": -0.05
+}
+```
+
+Make the weights configurable via
+`decision-engine/scoring-weights.json` (ship the file with the
+defaults above). Document the model in
+`decision-engine/architecture.md`.
+
+Recommendation class boundaries (applied after scoring):
+
+- `recommend_now` if `recommendation_score ≥ 0.7` and the rule
+  originally said `recommend_now`.
+- If the rule said `recommend_now` but the score falls into
+  [0.4, 0.7), downgrade verdict to `candidate_later` and surface
+  "why not yet" items.
+- If the score is < 0.4, downgrade to `not_enough_evidence` and
+  emit follow-up questions.
+
+Anti-pattern warnings are not scored; they are surfaced regardless.
+
+### 2. Evaluator integration
+
+Update `pgfound decision run` so reports now include:
+
+- `score_breakdown` per recommendation (not just aggregate).
+- `overall` score per `recommendation_class` grouping.
+- Follow-up questions when confidence is low.
+- Warnings from anti-pattern rules.
+
+Add `--show-scores` to print the per-dimension scores in the
+human-readable Markdown report.
+
+### 3. Report generator: human-readable
+
+The Markdown report format:
+
+```
+# PostgreSQL Architecture Recommendation
+Intake: <intake_id>  |  Generated: <timestamp>
+Industry: <industry_title>  |  Tenancy: <...>  |  Ops tolerance: <...>
+
+## Summary
+<3–5 sentence narrative of the recommendation posture>
+
+## Recommend now
+- **PostGIS** — score 0.82 — [module e3-postgis]
+  - Why now: …
+  - Why not something else: …
+  - Triggers for next stage: …
+- ...
+
+## Candidate later
+- ...
+
+## Not enough evidence
+- …
+  - Follow-up questions: …
+
+## Avoid for now
+- <anti-pattern warnings>
+
+## Score breakdown
+| Recommendation | Domain | Data | Workload | Ops | Growth | Portability | Complexity | Total |
+| -------------- | ------ | ---- | -------- | --- | ------ | ----------- | ---------- | ----- |
+| postgis        | 0.9    | 0.9  | 0.8      | 0.7 | 0.6    | 0.05        | 0.1        | 0.82  |
+
+## Cited rules
+- rule-postgis-for-geo (contrib 0.5)
+- rule-pg-stat-statements-always (contrib 1.0)
+
+## Next steps (90-day horizon)
+1. ...
+2. ...
+
+## Notes and caveats
+- ...
+
+## Appendix: full intake
+(collapsed by default)
+```
+
+Implement the report writer; use Jinja2 templates stored under
+`src/pgfound/decision/templates/`. This keeps content generation
+hackable.
+
+### 4. Golden tests
+
+`tests/test_decision_golden.py`:
+
+- For each fixture intake, run the engine and compare the
+  generated JSON report to the recorded golden report.
+- Tolerate timestamp-like fields by masking them before diff.
+- Tolerate `engine_version` by reading from `pgfound.__version__`.
+
+Updating a golden output is an explicit choice: add
+`scripts/update-decision-goldens.sh` that regenerates all golden
+reports. Require a `--confirm` flag so no one does this by
+accident. Document the flow in `decision-engine/README.md`.
+
+### 5. Followup questions
+
+When a rule emits `request_more_information`, propagate its
+`followup_questions` into the report. Cluster related follow-ups
+together (e.g. all "geospatial" questions under a single heading).
+
+### 6. Free-form notes heuristics
+
+Expand `free_form_notes_contains` predicate matching to be case-
+insensitive and tokenized (simple whitespace + punctuation). This
+lets rules key on substrings without brittle exact matching.
+
+### 7. CLI polish
+
+- `pgfound decision run --format json` emits only JSON to stdout.
+- `pgfound decision run --format markdown` emits only the
+  Markdown report.
+- `pgfound decision run --format both` (default) emits both to
+  disk.
+- `pgfound decision diff <report-a> <report-b>` produces a human-
+  readable diff between two reports (useful for comparing
+  scenarios).
+
+### 8. Docs
+
+- `decision-engine/README.md` updated with the reader's flow
+  ("how do I interpret this report?").
+- `docs/decision-engine-usage.md` — a top-level doc walking
+  through a full flow: intake → run → interpret → iterate.
+
+### 9. Tests
+
+- `tests/test_scoring.py` — unit tests of the scoring function
+  against hand-crafted inputs.
+- `tests/test_decision_golden.py` (see §4).
+- `tests/test_report_writer.py` — the Markdown report contains
+  the expected sections.
+
+## Verification
+
+1. Run the engine against all fixture intakes; reports match
+   golden outputs (tolerating masked fields).
+2. Run `pgfound decision diff` between two different intakes and
+   confirm the diff is readable.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_44 authors the 4-layer decision-engine prompt pack.

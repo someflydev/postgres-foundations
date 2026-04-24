@@ -1,0 +1,159 @@
+PROMPT 15 — Phase 4a: Timestamps/time zones, UUID, JSON/JSONB
+=============================================================
+
+## Context
+
+`postgres-foundations`, Phase 4a. Doctrine: richer PostgreSQL data
+modeling is introduced deliberately, one capability at a time, each
+with good-fit examples, bad-fit examples, redesign comparisons, and
+explicit discussion of misuse. See `docs/doctrine.md`.
+
+This prompt handles the first half of Phase 4:
+
+1. timestamps and time zones
+2. UUID
+3. JSON vs JSONB
+
+Phase 4b (PROMPT_16) handles arrays, ranges, and multiranges.
+
+Still **not yet** allowed (from the phase-4 perspective): CTEs, window
+functions, lateral joins, recursive queries, upserts as a subject of
+study, indexing beyond the automatic B-tree.
+
+## Prior work (verify before starting)
+
+- Phases 0–3 active (PROMPTS 10–14).
+- Domain packs qualified into schemas (PROMPT_14 refactor).
+- `pgcrypto` already enabled in `docker/initdb/00-extensions.sql` (for
+  UUID generation and hashing).
+- Phase 4 directories empty.
+
+## Task
+
+### 1. Extend domain packs
+
+For this half of phase 4, ecommerce and scheduling evolve as follows.
+Author `phase-04a.sql` for each and update manifests.
+
+Ecommerce changes:
+
+- `ecommerce.orders` gains `external_reference uuid NOT NULL DEFAULT
+  gen_random_uuid() UNIQUE` to model an externally-shareable order ID.
+- `ecommerce.orders.metadata jsonb NOT NULL DEFAULT '{}'::jsonb` for
+  free-form operational metadata.
+- `ecommerce.orders.ordered_at` becomes `timestamptz` (migrate cleanly
+  if it was `timestamp`).
+- `ecommerce.customers.profile jsonb` for small profile data
+  (preferences, locale).
+
+Scheduling changes:
+
+- `scheduling.appointments.tenant_id uuid` to preview multi-tenancy.
+- `scheduling.professionals.timezone text NOT NULL` becomes a
+  check-validated column against the `pg_timezone_names` catalog.
+- `scheduling.appointments.starts_at` and `ends_at` become
+  `timestamptz`.
+
+Saas:
+
+- `saas.tenants(id uuid primary key ..., name, created_at timestamptz,
+  settings jsonb)`.
+- `saas.users(id uuid primary key, tenant_id uuid references
+  saas.tenants(id), email citext, ...)` — note: do not enable citext
+  yet; use `text` with a CHECK or case-folded unique index as a
+  discussion point in the lesson. Introduce citext only in PROMPT_22
+  (full-text chapter) or PROMPT_31 (admin).
+
+Keep scripts idempotent.
+
+### 2. Lessons
+
+Target **9 lessons** for phase 4a:
+
+1. `timestamps-and-time-zones/why-timestamptz` — `timestamp` vs
+   `timestamptz`, what Postgres actually stores, why `timestamptz` is
+   the default advice.
+2. `timestamps-and-time-zones/storing-wall-clock-vs-event-time` —
+   scheduling scenarios where a naive timestamp may be deliberate
+   (local wall clock of a region) with the explicit caveats.
+3. `timestamps-and-time-zones/arithmetic-and-ranges-preview` —
+   `interval`, `now()`, `statement_timestamp()`, window-style time
+   filters without using window functions yet.
+4. `uuid/when-uuid-is-the-right-key` — distributed generation,
+   external exposure; why not UUID for dense internal PKs without a
+   reason; `gen_random_uuid()` (pgcrypto) vs `uuid-ossp`.
+5. `uuid/uuid-v4-vs-v7-discussion` — explain v7 (time-ordered)
+   conceptually even though Postgres 16 does not yet ship v7 by
+   default; link to `pg_uuidv7` extension as a "later" pointer.
+6. `json-and-jsonb/json-vs-jsonb` — what `jsonb` is, how it is
+   stored, why to almost always prefer it.
+7. `json-and-jsonb/querying-jsonb` — `->`, `->>`, `@>`, `jsonb_path_query`,
+   reading shape without `SELECT *`.
+8. `json-and-jsonb/when-jsonb-is-wrong` — the "JSONB everything"
+   anti-pattern; when fields deserve to be columns; migration from
+   JSONB back into columns.
+9. `json-and-jsonb/modeling-hybrid-schemas` — the "hot columns,
+   cold JSONB" hybrid pattern; how to avoid rewriting history with
+   every JSON-key change.
+
+Every lesson ≥ 500 words with the seven-section body. Good-fit and
+bad-fit examples are non-negotiable for each lesson.
+
+### 3. Exercises
+
+Per lesson: 2A + 2B + 2C + 1D = ~63 exercises across phase 4a.
+
+Must include:
+
+- A Level D drill on the "timezone-naive timestamp stored as UTC"
+  trap.
+- A Level D drill on "wrote a predicate against `->>` on a column
+  that should have been extracted to a proper column"; learner must
+  (a) propose the migration and (b) write the rewritten query.
+- A Level D drill on "wrong index for JSONB containment query"
+  (preview only — they cannot yet fix it with a GIN index; mark
+  `concepts_not_yet_allowed: [gin_index]` and have them **explain**
+  why the query is slow without fixing it).
+
+### 4. Anti-pattern page
+
+Add `docs/anti-patterns/jsonb_everything.md` — a short
+reference page referenced from the `json-and-jsonb/when-jsonb-is-
+wrong` lesson. Link it from `docs/doctrine.md`. This document
+is also later referenced by the decision-engine anti-pattern
+catalog (PROMPT_41).
+
+### 5. Seed-data considerations
+
+Ensure that JSONB seed rows are deliberately messy — realistic keys
+with typos, missing keys, nested objects. Learners need to
+experience the ambiguity of JSONB firsthand.
+
+### 6. Exercise runner updates
+
+Exercise outputs may now include JSON. Update the comparator:
+
+- When `expected_output_shape: rowset` and values include
+  `jsonb`/`json`, compare by canonicalizing the JSON (sort keys,
+  normalize whitespace).
+- Add `expected_output_shape: multi_session_trace` placeholder (used
+  in PROMPT_18/19 for concurrency); accept it in the schema but
+  skip the comparator for now.
+
+### 7. Tests
+
+- `tests/test_phase4a_corpus.py`:
+  - All lessons + exercises validate and lint.
+  - At least one lesson per concept triplet (timestamp, uuid, jsonb)
+    references the corresponding anti-pattern doc when relevant.
+
+## Verification
+
+1. Seed each domain to phase 4a cleanly.
+2. Run every `solution.sql` — JSONB queries return expected rows.
+3. `uv run pgfound content validate` + `lint` green.
+4. `uv run pytest -q` green.
+
+## Next prompt
+
+PROMPT_16 authors phase 4b: arrays, ranges, multiranges.

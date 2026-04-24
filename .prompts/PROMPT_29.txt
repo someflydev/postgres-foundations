@@ -1,0 +1,229 @@
+PROMPT 29 — Training-side LLM prompts: coaching, critique, remediation
+======================================================================
+
+## Context
+
+`postgres-foundations`. The platform already has a review engine
+(PROMPT_27) and interview simulator (PROMPT_28) with *stubbed* LLM
+calls. This prompt authors the real **training-side** LLM prompt
+templates. These templates are plain Markdown files with a
+light front-matter block; they are consumed by the `pgfound` CLI
+which renders them against a context before sending to an LLM.
+
+Doctrine (from `docs/llm-usage.md`):
+
+- LLM as coach/reviewer/adversary/remediation-generator.
+- LLM NOT as first-pass answer machine, SQL bypass, schema bypass,
+  lab replacement, or concurrency lab replacement.
+- Prompts should steer the LLM away from "give me the answer"
+  behavior in contexts where self-directed struggle is the point.
+
+## Prior work (verify before starting)
+
+- `llm-prompts/` exists with only `.gitkeep`.
+- `docs/llm-usage.md` (PROMPT_02).
+- Review engine and interview simulator scaffolding (PROMPTS 27/28).
+
+## Task
+
+### 1. Directory layout
+
+Under `llm-prompts/`:
+
+```
+llm-prompts/
+  README.md
+  template-format.md            # documents the template format
+  coaching/
+    concept-check.md
+    analogy-generator.md
+    misunderstanding-probe.md
+  critique/
+    query-critique.md
+    schema-critique.md
+    index-critique.md
+    concurrency-critique.md
+  remediation/
+    remediation-pack-generator.md
+    hint-ladder-generator.md
+    failure-lab-generator.md
+  shared/
+    system-prompt-trainer.md    # the base "trainer" persona
+    output-formats/
+      structured-review.md
+      hint-ladder.md
+      remediation-pack.md
+```
+
+### 2. Template format
+
+Each prompt template is a Markdown file with YAML front matter:
+
+```
+---
+id: critique/query-critique
+title: "Critique a learner's query"
+consumed_by:
+  - pgfound exercise review
+  - pgfound interview session
+inputs:
+  exercise_id: { required: true }
+  learner_sql: { required: true }
+  reference_sql: { required: true }
+  rubric_id: { required: true }
+  findings: { required: false, kind: list }
+  allowed_concepts: { required: true, kind: list }
+  not_yet_allowed_concepts: { required: true, kind: list }
+outputs:
+  format: structured-review   # references shared/output-formats/structured-review.md
+model_hint: "Claude Opus or equivalent; long-context not required"
+variables:
+  max_feedback_items: 6
+---
+
+## System
+
+You are a rigorous, kind, technically exact PostgreSQL coach. ...
+
+## Context
+
+Exercise id: {{exercise_id}}
+Allowed concepts for this stage: {{allowed_concepts}}
+Concepts not yet introduced (flag if used): {{not_yet_allowed_concepts}}
+
+## Inputs
+
+### Learner SQL
+```sql
+{{learner_sql}}
+```
+
+### Reference SQL
+```sql
+{{reference_sql}}
+```
+
+### Findings from the engine
+{{findings}}
+
+## Instructions
+
+1. Score each rubric dimension on 0–4 with a short justification.
+2. Produce up to {{max_feedback_items}} specific, actionable
+   feedback items. Cite the relevant SQL fragment.
+3. Identify forbidden-concept usage if any.
+4. Conclude with two questions you would ask the learner at an
+   oral defense.
+
+## Output format
+
+See {{output_format_ref}}.
+```
+
+Document this structure in `llm-prompts/template-format.md`. Also
+author the shared system prompt (`shared/system-prompt-trainer.md`)
+that anchors the "trainer" persona: terse, exact, refuses to
+simply hand over answers; explains reasoning; prefers asking
+questions back over lecturing.
+
+### 3. Author every template listed in §1
+
+Each template is 120–400 lines of Markdown with filled-in
+system/context/instructions/output-format sections. Concrete
+content notes per template:
+
+- `coaching/concept-check.md` — given a concept slug (e.g.
+  `foreign_key`) and optional lesson context, generate 3 concept-
+  check questions of ascending depth. The LLM is told not to
+  reveal answers.
+- `coaching/analogy-generator.md` — requests two analogies
+  appropriate to the learner's background, with the explicit
+  caveat of naming where the analogy breaks.
+- `coaching/misunderstanding-probe.md` — given a signal of
+  confusion, probes with targeted questions.
+- `critique/query-critique.md` — the template shown above.
+- `critique/schema-critique.md` — analogous for schemas, including
+  a "missing constraint census" output section.
+- `critique/index-critique.md` — critiques a learner's index plan
+  against a workload description.
+- `critique/concurrency-critique.md` — critiques a proposed fix
+  for a race drill.
+- `remediation/remediation-pack-generator.md` — given a learner's
+  review report, generates a short remediation pack: 2–3 reread
+  lessons, 3 targeted exercises (new or existing), and one
+  explainability prompt.
+- `remediation/hint-ladder-generator.md` — given an exercise, a
+  learner's current attempt, and their self-reported stuck point,
+  produces a ladder of 4 hints from most-gentle to near-solution
+  (used only for Level A/B exercises).
+- `remediation/failure-lab-generator.md` — given a concept, emits
+  a small failure-lab spec (new exercise, likely a Level D
+  scenario) that exposes the most common mistake.
+
+### 4. CLI integration
+
+Add `pgfound llm render <template-id> --context <json-file> \
+     [--var key=value] [--out <path>]`:
+
+- Resolves the template by ID.
+- Loads the context JSON, merges in `--var` overrides.
+- Validates inputs against the template front matter.
+- Renders the final prompt text with Jinja2 (add `jinja2` to
+  pyproject).
+- Writes to `--out` or stdout.
+- Does **not** call an LLM — rendering is the contract. Actual
+  LLM dispatch is a separate future concern; we want the platform
+  to be LLM-provider-agnostic and to make it easy to pipe into
+  a script.
+
+Add `pgfound llm list` that walks `llm-prompts/` and prints a
+table of templates with their `consumed_by` and input requirements.
+
+### 5. Integration into existing flows
+
+Wire these templates into the previously-stubbed flows:
+
+- `pgfound exercise review --full` now renders
+  `critique/query-critique.md` with the review engine's findings
+  as input and saves the rendered prompt to the review output
+  directory as `prompt.md`. It does not yet send it.
+- `pgfound interview start` renders the appropriate stage
+  templates at each step and saves them into the transcript.
+- `pgfound capstone evaluate --full` renders
+  `critique/schema-critique.md`, `critique/index-critique.md`,
+  and a top-level "capstone-reviewer" prompt (authored in
+  PROMPT_30).
+
+### 6. Docs
+
+- Update `docs/llm-usage.md` to describe the template format, the
+  render flow, and how outputs integrate.
+- `docs/llm-integration.md` — short guide on piping rendered
+  prompts into an LLM CLI of the reader's choice.
+
+### 7. Tests
+
+- `tests/test_llm_templates.py` — every template front matter
+  parses and every template renders against a fixture context
+  without error.
+- `tests/test_llm_render_cli.py` — CLI smoke test.
+- `tests/test_template_completeness.py` — every template's
+  `inputs` schema is respected by at least one integration
+  callsite (i.e. one of the review/interview flows actually
+  passes all its required inputs).
+
+## Verification
+
+1. `uv run pgfound llm render critique/query-critique --context
+   tests/fixtures/critique-context.json --out tmp/preview.md`
+   produces a populated prompt.
+2. `pgfound exercise review --full` on a fixture exercise writes
+   both `review.md` (engine output) and `prompt.md` (LLM prompt)
+   into the review directory.
+3. `uv run pytest -q` green.
+4. `uv run pgfound content validate` + `lint` green.
+
+## Next prompt
+
+PROMPT_30 authors the interview and capstone-reviewer LLM prompts and
+wires them into the interview simulator.

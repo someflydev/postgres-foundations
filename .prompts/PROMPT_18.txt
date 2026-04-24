@@ -1,0 +1,144 @@
+PROMPT 18 — Phase 6: Transactions, concurrency, correctness
+===========================================================
+
+## Context
+
+`postgres-foundations`, Phase 6. Doctrine: correctness under concurrent
+access is not an advanced topic — it is **the** topic that separates
+people who write SQL from people who trust databases. This phase is
+where the learner confronts race conditions directly. See
+`docs/doctrine.md` and `curriculum/README.md`.
+
+Phase 6 concepts: `transaction`, `acid`, `begin_commit_rollback`,
+`mvcc`, `isolation_level` (`read committed`, `repeatable read`,
+`serializable`), `snapshot_isolation`, `phantom_read`,
+`write_skew`, `lost_update`, `lock`, `row_lock`, `deadlock`,
+`idempotency`, `select_for_update`, `select_for_no_key_update`,
+`savepoint`, `advisory_lock`.
+
+This prompt authors the **content** (lessons + exercises). The
+multi-session lab harness that many phase-6 exercises need lives in
+PROMPT_19 and is referenced here. Author the exercises that need
+the harness even though the harness itself is not yet built — the
+harness is structured in PROMPT_19 to match what this prompt assumes.
+
+## Prior work (verify before starting)
+
+- Phases 0–5 active.
+- Domain packs at phase 5 with meaningful volume.
+
+## Task
+
+### 1. Domain extensions
+
+Author `phase-06.sql` for ecommerce and scheduling. Minimal schema
+changes; this phase is mostly about behavior, not new types.
+
+- `ecommerce.inventory(product_id, quantity_on_hand int)` — hot row
+  for lost-update drills.
+- `ecommerce.order_reservations(id, order_id, product_id, quantity,
+  reserved_at)` — supports the reservation race drill.
+- `scheduling.appointment_holds(professional_id, hold_expires_at,
+  slot tstzrange)` — for double-booking drills with TTL holds.
+
+Include a tiny `funds_transfer(from_account, to_account, amount)`
+helper table in a `bank` mini-domain if useful. Keep it optional; its
+main purpose is the classic two-accounts deadlock drill.
+
+### 2. Lessons
+
+Target **12 lessons** for phase 6:
+
+1. `transactions/what-a-transaction-is` — ACID framed in practice.
+2. `transactions/begin-commit-rollback-and-error-handling` — the
+   behavior of a failed statement inside a transaction; the
+   `ROLLBACK` imperative.
+3. `mvcc/mvcc-in-30-minutes` — snapshots, xmin/xmax, why readers
+   don't block writers and vice versa; implications for long-running
+   transactions.
+4. `isolation/read-committed-is-the-default` — what READ COMMITTED
+   guarantees and what it does not.
+5. `isolation/repeatable-read-and-snapshot-isolation`.
+6. `isolation/serializable-and-predicate-locking` — when to reach
+   for SERIALIZABLE; retry-on-conflict pattern.
+7. `races/lost-update` — classic inventory decrement race; learner
+   reproduces the bug in two psql sessions; then fixes with either
+   optimistic retries or `SELECT ... FOR UPDATE`.
+8. `races/write-skew` — classic "two doctors on call" scenario;
+   SERIALIZABLE fixes it; REPEATABLE READ does not.
+9. `races/phantom-reads-and-range-checks`.
+10. `locks/select-for-update-vs-for-no-key-update` — practical
+    differences; when each is appropriate; foreign-key-check
+    interaction.
+11. `deadlocks/why-deadlocks-happen-and-how-to-avoid-them` —
+    consistent ordering of operations; deadlock retry loops at the
+    app level.
+12. `idempotency/making-operations-safe-to-retry` — natural
+    idempotency keys, upsert patterns, retry logic.
+
+Every body.md ≥ 700 words. Include realistic incident narratives
+("Sunday 3 AM overselling" etc.) with concrete mitigation.
+
+### 3. Exercises
+
+Per lesson: 2A + 2B + 2C + 2D. Approximately **96 exercises**.
+
+Critical drills (must exist):
+
+- Level C: "Reproduce a lost update in two psql sessions; fix it
+  with FOR UPDATE and re-run; document the outcome of each."
+  Uses the multi-session harness from PROMPT_19.
+- Level C: "Reproduce write skew in REPEATABLE READ and show that
+  SERIALIZABLE prevents it."
+- Level D: A reservation system silently allows double-booking
+  because the check-then-insert pattern has no row lock. Learner
+  fixes it and explains why the fix works under concurrent load.
+- Level D: A deadlock that arises from two functions that update the
+  same two rows in opposite orders. Learner reorders.
+
+Exercises that require two sessions carry
+`expected_output_shape: multi_session_trace`. Their `solution.md`
+contains the expected interleaving as annotated SQL blocks.
+
+### 4. Exercise schema updates
+
+Extend the exercise schema to declare:
+
+- `sessions: int` (default 1). Required > 1 for any exercise using
+  `multi_session_trace`.
+- `lab_harness_profile: string` — e.g. `"two-session"` or
+  `"three-session"`. The harness in PROMPT_19 consumes this.
+
+Update the validator. Update the scaffolder so `--sessions 2` emits
+a trace template and a `session-script-1.sql` + `session-script-2.sql`
+layout.
+
+### 5. Docs
+
+- `docs/concurrency-playbook.md` — a reference page walking through
+  the three most important race families (lost update, write skew,
+  phantom / range). For each: how to reproduce, how to fix, and
+  which isolation level / lock is the right choice.
+- Update glossary with every new term.
+
+### 6. Tests
+
+- `tests/test_phase6_corpus.py` — validate + lint; assert every
+  Level C/D exercise using `multi_session_trace` has a
+  `lab_harness_profile` set and matching `sessions > 1`.
+
+## Verification
+
+1. Seed to phase 6. Manually reproduce the lost-update drill in two
+   host psql terminals against the lab container and confirm the
+   exercise narrative matches reality.
+2. `uv run pgfound content validate` + `lint` green.
+3. `uv run pytest -q` green.
+4. Leave the multi-session harness uninvoked — PROMPT_19 will build
+   it. Mark those exercises explicitly in their `solution.md` with
+   a note: "Runs against the harness introduced in PROMPT_19."
+
+## Next prompt
+
+PROMPT_19 builds the multi-session concurrency lab harness referenced
+throughout phase 6.
