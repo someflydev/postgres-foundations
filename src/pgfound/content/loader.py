@@ -1,5 +1,6 @@
 """Filesystem content loaders."""
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Final
@@ -42,6 +43,14 @@ def list_content(kind: str) -> list[ContentItem]:
     for file_path in sorted(path for path in directory.rglob("*") if path.is_file()):
         if file_path.name.startswith(".") or file_path.suffix.lower() not in CONTENT_EXTENSIONS:
             continue
+        if kind == "lesson" and file_path.name != "lesson.json":
+            continue
+        if kind == "lesson":
+            data = json.loads(file_path.read_text(encoding="utf-8"))
+            content_id = str(data.get("id", file_path.parent.name))
+            title = str(data.get("title", content_id.replace("-", " ")))
+            items.append(ContentItem(id=content_id, title=title, path=file_path))
+            continue
         content_id = file_path.stem
         items.append(ContentItem(id=content_id, title=content_id.replace("-", " "), path=file_path))
     return items
@@ -52,6 +61,12 @@ def load_raw_content(kind: str, content_id: str) -> tuple[Path, str] | None:
     if not directory.exists():
         return None
     for file_path in sorted(path for path in directory.rglob("*") if path.is_file()):
+        if kind == "lesson" and file_path.name == "lesson.json":
+            raw = file_path.read_text(encoding="utf-8")
+            data = json.loads(raw)
+            if data.get("id") == content_id or file_path.parent.name == content_id:
+                return file_path, raw
+            continue
         if file_path.stem == content_id and file_path.suffix.lower() in CONTENT_EXTENSIONS:
             return file_path, file_path.read_text(encoding="utf-8")
     return None

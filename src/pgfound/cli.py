@@ -12,6 +12,7 @@ from rich.table import Table
 import pgfound
 from pgfound import paths
 from pgfound.content import loader
+from pgfound.content import scaffold as content_scaffold
 from pgfound.content import validate as content_validator
 from pgfound.lab import compose
 
@@ -274,6 +275,51 @@ def content_validate(path_globs: tuple[str, ...], include_examples: bool, strict
         f"FAIL: checked {report.files_checked} file(s), "
         f"{len(report.errors)} error(s), {warning_count} warning(s)"
     )
+
+
+@content.group("scaffold", help="Create draft content files from templates.")
+def content_scaffold_group() -> None:
+    """Create draft content files from templates."""
+
+
+@content_scaffold_group.command("lesson", help="Scaffold a draft lesson.")
+@click.option("--phase", required=True, type=int, help="Numeric phase from curriculum/map.json.")
+@click.option("--cluster", required=True, help="Cluster slug inside the phase.")
+@click.option("--slug", required=True, help="Lesson slug and ID.")
+@click.option("--title", required=True, help="Human-facing lesson title.")
+@click.option("--capability-layer", required=True, help="Capability layer slug.")
+def content_scaffold_lesson(
+    phase: int,
+    cluster: str,
+    slug: str,
+    title: str,
+    capability_layer: str,
+) -> None:
+    """Scaffold a draft lesson and validate the generated files."""
+    try:
+        lesson_dir = content_scaffold.scaffold_lesson(
+            phase=phase,
+            cluster=cluster,
+            slug=slug,
+            title=title,
+            capability_layer=capability_layer,
+        )
+    except ValueError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    lesson_json = lesson_dir / "lesson.json"
+    report = content_validator.validate_content(path_globs=(str(lesson_json),))
+    if not report.ok:
+        for issue in report.errors:
+            console.print(f"ERROR: {issue.kind}: {issue.path}")
+            console.print(f"  {issue.message}")
+        raise click.ClickException("scaffolded lesson failed validation")
+    relative_lesson_dir = lesson_dir
+    try:
+        relative_lesson_dir = lesson_dir.relative_to(paths.REPO_ROOT)
+    except ValueError:
+        pass
+    _success(f"created {relative_lesson_dir}")
 
 
 @main.group(help="Run review engine commands.")

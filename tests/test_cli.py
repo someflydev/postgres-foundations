@@ -39,11 +39,11 @@ def test_doctor_runs_without_real_docker() -> None:
     assert "Docker version 27.0.0" in result.output
 
 
-def test_content_list_lesson_empty_tree() -> None:
+def test_content_list_lesson_shows_scaffolded_draft() -> None:
     result = CliRunner().invoke(main, ["content", "list", "--kind", "lesson"])
 
     assert result.exit_code == 0
-    assert "no content yet" in result.output
+    assert "first-select" in result.output
 
 
 def test_stub_commands_exit_zero_with_prompt_numbers() -> None:

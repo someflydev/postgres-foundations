@@ -14,7 +14,7 @@ def _find_repo_root(start: Path) -> Path:
 REPO_ROOT = _find_repo_root(Path(__file__).resolve())
 
 CURRICULUM_DIR = REPO_ROOT / "curriculum"
-LESSONS_DIR = CURRICULUM_DIR / "lessons"
+LESSONS_DIR = REPO_ROOT / "lessons"
 EXERCISES_DIR = CURRICULUM_DIR / "exercises"
 SCENARIOS_DIR = CURRICULUM_DIR / "scenarios"
 CAPSTONES_DIR = CURRICULUM_DIR / "capstones"
