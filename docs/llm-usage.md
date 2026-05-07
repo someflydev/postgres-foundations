@@ -1,0 +1,82 @@
+# LLM Usage
+
+LLMs participate in `postgres-foundations` as structured training and planning
+assistants. They are useful when they increase review pressure, require clearer
+reasoning, or generate targeted remediation from work the learner or planner
+has already attempted. They are harmful when they replace the direct practice
+that the platform exists to create.
+
+## Roles
+
+As a coach, an LLM can ask guiding questions, identify a likely misconception,
+and suggest the next drill after seeing a learner's attempt. The coaching role
+should preserve learner agency: it should point the learner back to PostgreSQL,
+plans, errors, and evidence rather than provide a polished answer too early.
+
+As a reviewer, an LLM can compare a submission against a rubric, test whether
+the explanation matches the SQL or schema, and call out missing operational
+concerns. Review should address correctness, reasoning, portability, and the
+ability to repair weak choices.
+
+As an interviewer, an LLM can simulate oral defense. It can ask why a learner
+chose an index, what would happen under concurrency, how a migration might
+fail, or how restore practice changes confidence in a backup plan. Interview
+mode is valuable because competence includes explanation under pressure.
+
+As an adversary, an LLM can challenge assumptions. It can present edge cases,
+failure modes, workload changes, or anti-pattern checks. This role helps
+learners and planners move beyond a single happy-path answer.
+
+As a remediation generator, an LLM can produce focused follow-up exercises from
+observed mistakes. Remediation should be narrow, tied to evidence, and aimed at
+the missing capability layer rather than generic repetition.
+
+## Anti-Roles
+
+An LLM must not be the learner's first-pass answer machine. If the learner has
+not attempted the query, schema, diagnosis, or design, the LLM should ask for an
+attempt or redirect them into the lab.
+
+An LLM must not act as a SQL or schema bypass. The platform teaches direct work
+with PostgreSQL, so generated SQL is only useful when the learner can run it,
+inspect it, explain it, and revise it.
+
+An LLM must not replace direct PostgreSQL interaction. It cannot substitute for
+reading an execution plan, observing locks, checking catalog views, performing a
+restore, or watching a query fail.
+
+An LLM must not replace multi-session concurrency labs. Concurrency,
+transaction isolation, locks, deadlocks, and waiting behavior must be observed
+in real sessions.
+
+## When LLMs Help or Harm
+
+LLM involvement improves learning after evidence exists: a draft answer, a
+failed query, a schema proposal, an execution plan, a restore transcript, or a
+planning report. At that point the LLM can review concrete work, ask for a
+defense, and generate targeted remediation.
+
+LLM involvement harms learning when it collapses struggle before the learner
+has formed a model. It also harms planning when it jumps to a fashionable
+capability without workload signals. The platform should prefer prompts that
+ask "what evidence supports this" and "what would make this not yet" over
+prompts that ask for broad solution lists.
+
+## Prompt Locations
+
+Training-side prompt templates live in `llm-prompts/`. They support coaching,
+review, interview simulation, adversarial critique, and remediation against
+lessons, labs, rubrics, and capstones. These prompts should reference learner
+artifacts and rubrics rather than asking the model to invent curriculum
+standards.
+
+Planning-side prompt templates live in `decision-engine/prompts/`. They support
+structured workload intake, catalog-aware evaluation, report critique, and
+decision explanations. These prompts must stay aligned with decision-engine
+catalogs and rules so planning guidance remains explainable, operationally
+aware, and core-first.
+
+In both locations, prompt templates should make the LLM's role explicit. The
+model is there to review, question, challenge, and remediate. It is not there to
+replace the lab, the database, or the planner's responsibility to defend a
+recommendation.
