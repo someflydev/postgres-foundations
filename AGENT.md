@@ -34,6 +34,10 @@ concrete, operational, and PostgreSQL core-first.
 - Lint: `uv run ruff check .`
 - Test: `uv run pytest -q`
 - CLI smoke: `uv run pgfound`
+- Lab up: `make lab-up`
+- Lab down: `make lab-down`
+- Lab reset: `make lab-nuke`
+- Lab psql: `make lab-psql`
 
 ## Context Files
 

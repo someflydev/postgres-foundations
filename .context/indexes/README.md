@@ -17,7 +17,13 @@ Canonical docs introduced by PROMPT_02:
 - `docs/adr/0004-core-first-extension-doctrine.md`
 - `docs/adr/0005-decision-engine-is-explainable.md`
 
+Docker lab references introduced by PROMPT_03:
+
+- `docs/lab.md`
+- `docker/docker-compose.yml`
+- `docker/initdb/`
+- `docker/postgresql.conf.d/README.md`
+
 Planned index targets:
 
-- Docker lab references after PROMPT_03.
 - CLI/content schema references after later implementation prompts.
