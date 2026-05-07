@@ -1,0 +1,489 @@
+{
+  "$schema": "../content-schemas/curriculum.schema.json",
+  "phases": [
+    {
+      "number": 0,
+      "slug": "reality-before-syntax",
+      "title": "Reality before syntax",
+      "capability_layer": "schema_literacy",
+      "summary": "Learners model business facts, identifiers, relationships, and ambiguity before writing SQL.",
+      "goals": [
+        "Separate entities, attributes, events, and derived facts.",
+        "Identify ownership boundaries and unclear requirements before choosing tables.",
+        "Explain why a data model should preserve truth before it optimizes convenience."
+      ],
+      "concepts_introduced": [
+        "entity",
+        "attribute",
+        "relationship",
+        "identifier",
+        "cardinality",
+        "optional_relationship",
+        "derived_fact",
+        "business_rule"
+      ],
+      "prerequisites": [],
+      "exit_competencies": [
+        "Can turn a short domain brief into candidate entities, identifiers, and relationships without using SQL syntax.",
+        "Can spot at least three ambiguous requirements that would change a schema design.",
+        "Can critique a paper model for duplicated facts, unclear ownership, and missing lifecycle events."
+      ],
+      "clusters": [
+        { "slug": "what-data-is", "title": "What data is", "planned_lessons": 2 },
+        { "slug": "entities-and-identity", "title": "Entities and identity", "planned_lessons": 2 },
+        { "slug": "relationships-and-cardinality", "title": "Relationships and cardinality", "planned_lessons": 2 },
+        { "slug": "facts-rules-and-ambiguity", "title": "Facts, rules, and ambiguity", "planned_lessons": 2 },
+        { "slug": "paper-design-review", "title": "Paper design review", "planned_lessons": 2 }
+      ]
+    },
+    {
+      "number": 1,
+      "slug": "sql-literacy-basics",
+      "title": "SQL literacy basics",
+      "capability_layer": "schema_literacy",
+      "summary": "Learners read, filter, sort, insert, update, and delete rows in small known tables.",
+      "goals": [
+        "Use basic SQL to inspect and change rows deliberately.",
+        "Predict which rows a simple predicate will include or exclude.",
+        "Read PostgreSQL errors as feedback about names, types, and constraints."
+      ],
+      "concepts_introduced": [
+        "select",
+        "where",
+        "order_by",
+        "limit",
+        "insert",
+        "update",
+        "delete",
+        "null",
+        "data_type",
+        "psql"
+      ],
+      "prerequisites": [0],
+      "exit_competencies": [
+        "Can write a SELECT with WHERE, ORDER BY, and LIMIT and explain the row set it returns.",
+        "Can perform INSERT, UPDATE, and DELETE in a lab table and verify the changed rows.",
+        "Can diagnose common name, type, and NULL mistakes from PostgreSQL error messages."
+      ],
+      "clusters": [
+        { "slug": "reading-rows", "title": "Reading rows", "planned_lessons": 2 },
+        { "slug": "filtering-and-ordering", "title": "Filtering and ordering", "planned_lessons": 2 },
+        { "slug": "changing-rows", "title": "Changing rows", "planned_lessons": 2 },
+        { "slug": "nulls-and-types", "title": "NULLs and types", "planned_lessons": 2 },
+        { "slug": "first-debugging", "title": "First SQL debugging", "planned_lessons": 2 }
+      ]
+    },
+    {
+      "number": 2,
+      "slug": "relational-joins-and-aggregation",
+      "title": "Relational joins and aggregation",
+      "capability_layer": "relational_joins",
+      "summary": "Learners combine related tables and summarize row sets without losing track of grain.",
+      "goals": [
+        "Use primary and foreign keys to explain table relationships.",
+        "Choose INNER and OUTER joins based on the question being asked.",
+        "Group rows at the right grain and check aggregates for duplication."
+      ],
+      "concepts_introduced": [
+        "primary_key",
+        "foreign_key",
+        "one_to_many",
+        "many_to_many",
+        "join",
+        "inner_join",
+        "left_join",
+        "group_by",
+        "aggregate",
+        "having"
+      ],
+      "prerequisites": [0, 1],
+      "exit_competencies": [
+        "Can join two or more related tables and explain which relationship each join follows.",
+        "Can identify when an aggregate is wrong because the query grouped or joined at the wrong grain.",
+        "Can repair a query that drops needed rows by using the correct outer join and predicate placement."
+      ],
+      "clusters": [
+        { "slug": "keys-and-relationships", "title": "Keys and relationships", "planned_lessons": 2 },
+        { "slug": "inner-and-outer-joins", "title": "Inner and outer joins", "planned_lessons": 3 },
+        { "slug": "many-to-many-bridges", "title": "Many-to-many bridges", "planned_lessons": 2 },
+        { "slug": "aggregation-and-grain", "title": "Aggregation and grain", "planned_lessons": 3 },
+        { "slug": "join-debugging", "title": "Join debugging", "planned_lessons": 2 }
+      ]
+    },
+    {
+      "number": 3,
+      "slug": "schema-design-and-database-truth",
+      "title": "Schema design and database-enforced truth",
+      "capability_layer": "database_truth",
+      "summary": "Learners use constraints, normalization, and migrations to make PostgreSQL enforce business truth.",
+      "goals": [
+        "Choose keys and constraints that match durable business rules.",
+        "Normalize repeated facts while preserving queryable workflows.",
+        "Plan small migrations that tighten truth without losing existing data."
+      ],
+      "concepts_introduced": [
+        "unique_constraint",
+        "check_constraint",
+        "not_null",
+        "composite_key",
+        "surrogate_key",
+        "natural_key",
+        "normalization",
+        "first_normal_form",
+        "second_normal_form",
+        "third_normal_form",
+        "alter_table",
+        "migration"
+      ],
+      "prerequisites": [0, 1, 2],
+      "exit_competencies": [
+        "Can defend a primary-key choice and explain the tradeoff between surrogate and natural identifiers.",
+        "Can add NOT NULL, UNIQUE, CHECK, and FOREIGN KEY constraints to enforce named business rules.",
+        "Can critique a schema for update anomalies and repair it with a migration plan."
+      ],
+      "clusters": [
+        { "slug": "keys-as-design", "title": "Keys as design", "planned_lessons": 2 },
+        { "slug": "constraints-as-truth", "title": "Constraints as truth", "planned_lessons": 3 },
+        { "slug": "normalization-and-anomalies", "title": "Normalization and anomalies", "planned_lessons": 3 },
+        { "slug": "migration-thinking", "title": "Migration thinking", "planned_lessons": 2 },
+        { "slug": "schema-review", "title": "Schema review", "planned_lessons": 2 }
+      ]
+    },
+    {
+      "number": 4,
+      "slug": "postgresql-data-modeling",
+      "title": "PostgreSQL data modeling",
+      "capability_layer": "postgres_data_modeling",
+      "summary": "Learners choose PostgreSQL-specific data types when they make a model clearer and more enforceable.",
+      "goals": [
+        "Represent time, identity, flexible attributes, ranges, and arrays with PostgreSQL-native types.",
+        "Distinguish a useful JSONB boundary from a model that hides relational truth.",
+        "Use range and exclusion thinking for availability and scheduling problems."
+      ],
+      "concepts_introduced": [
+        "timestamp",
+        "timestamptz",
+        "uuid",
+        "json",
+        "jsonb",
+        "array",
+        "range_type",
+        "multirange",
+        "exclusion_constraint",
+        "generated_column"
+      ],
+      "prerequisites": [0, 1, 2, 3],
+      "exit_competencies": [
+        "Can choose between normalized columns, JSONB, arrays, and ranges for a concrete requirement.",
+        "Can explain time zone storage and display behavior well enough to avoid local-time bugs.",
+        "Can model availability or validity intervals and identify overlapping data that should be rejected."
+      ],
+      "clusters": [
+        { "slug": "time-and-identity", "title": "Time and identity", "planned_lessons": 4 },
+        { "slug": "jsonb-and-document-boundaries", "title": "JSONB and document boundaries", "planned_lessons": 5 },
+        { "slug": "arrays-and-sets", "title": "Arrays and sets", "planned_lessons": 3 },
+        { "slug": "ranges-and-availability", "title": "Ranges and availability", "planned_lessons": 5 },
+        { "slug": "postgres-type-review", "title": "PostgreSQL type review", "planned_lessons": 2 }
+      ]
+    },
+    {
+      "number": 5,
+      "slug": "expressive-querying",
+      "title": "Expressive querying",
+      "capability_layer": "expressive_querying",
+      "summary": "Learners shape complex answers with CTEs, subqueries, window functions, views, and set operations.",
+      "goals": [
+        "Break a complex question into readable query stages.",
+        "Use window functions without collapsing the underlying row set.",
+        "Choose views and materialized views only when the lifecycle is understood."
+      ],
+      "concepts_introduced": [
+        "cte",
+        "recursive_cte",
+        "subquery",
+        "lateral_join",
+        "window_function",
+        "partition_by",
+        "frame_clause",
+        "set_operation",
+        "view",
+        "materialized_view"
+      ],
+      "prerequisites": [0, 1, 2, 3, 4],
+      "exit_competencies": [
+        "Can use a CTE or subquery to make a complex transformation inspectable without changing semantics.",
+        "Can write ranking, running total, and peer-comparison queries with window functions.",
+        "Can critique whether a view or materialized view improves a workflow or hides ownership and refresh problems."
+      ],
+      "clusters": [
+        { "slug": "query-decomposition", "title": "Query decomposition", "planned_lessons": 3 },
+        { "slug": "window-functions", "title": "Window functions", "planned_lessons": 4 },
+        { "slug": "recursive-and-lateral", "title": "Recursive and lateral queries", "planned_lessons": 2 },
+        { "slug": "sets-and-views", "title": "Set operations and views", "planned_lessons": 2 },
+        { "slug": "expressive-query-review", "title": "Expressive query review", "planned_lessons": 1 }
+      ]
+    },
+    {
+      "number": 6,
+      "slug": "transactions-concurrency-and-correctness",
+      "title": "Transactions, concurrency, and correctness",
+      "capability_layer": "transactions_and_correctness",
+      "summary": "Learners reason about correctness when multiple sessions read and write the same data.",
+      "goals": [
+        "Use transactions to group changes into atomic units.",
+        "Observe locking, blocking, deadlocks, and isolation effects in multiple sessions.",
+        "Select the least surprising correctness mechanism for a workload."
+      ],
+      "concepts_introduced": [
+        "transaction",
+        "acid",
+        "begin_commit_rollback",
+        "mvcc",
+        "read_committed",
+        "repeatable_read",
+        "serializable",
+        "row_lock",
+        "predicate_lock",
+        "deadlock",
+        "lock_wait",
+        "upsert"
+      ],
+      "prerequisites": [0, 1, 2, 3, 4, 5],
+      "exit_competencies": [
+        "Can reproduce a lost-update style bug and repair it with an appropriate transaction or locking pattern.",
+        "Can explain what another session can see under READ COMMITTED, REPEATABLE READ, and SERIALIZABLE.",
+        "Can diagnose a lock wait or deadlock from PostgreSQL observations and name the competing statements."
+      ],
+      "clusters": [
+        { "slug": "transaction-basics", "title": "Transaction basics", "planned_lessons": 2 },
+        { "slug": "mvcc-and-isolation", "title": "MVCC and isolation", "planned_lessons": 3 },
+        { "slug": "locks-and-conflicts", "title": "Locks and conflicts", "planned_lessons": 3 },
+        { "slug": "correctness-patterns", "title": "Correctness patterns", "planned_lessons": 3 },
+        { "slug": "concurrency-review", "title": "Concurrency review", "planned_lessons": 1 }
+      ]
+    },
+    {
+      "number": 7,
+      "slug": "indexing-and-query-plans",
+      "title": "Indexing and query plans",
+      "capability_layer": "indexing_and_plans",
+      "summary": "Learners connect query shape, planner estimates, access methods, and index maintenance cost.",
+      "goals": [
+        "Read EXPLAIN output well enough to predict access paths and row flow.",
+        "Design B-tree, composite, partial, expression, GIN, GiST, and BRIN indexes for observed workloads.",
+        "Reject indexes that lack a clear query, selectivity, or maintenance justification."
+      ],
+      "concepts_introduced": [
+        "explain",
+        "analyze",
+        "sequential_scan",
+        "index_scan",
+        "bitmap_scan",
+        "b_tree_index",
+        "composite_index",
+        "partial_index",
+        "expression_index",
+        "gin_index",
+        "gist_index",
+        "brin_index",
+        "statistics",
+        "selectivity"
+      ],
+      "prerequisites": [0, 1, 2, 3, 4, 5, 6],
+      "exit_competencies": [
+        "Can explain why a query uses a sequential scan, index scan, bitmap scan, or join strategy from an EXPLAIN plan.",
+        "Can explain why a query uses a partial index instead of a full index and predict which rows will be read.",
+        "Can evaluate the write, storage, bloat, and maintenance cost of adding an index."
+      ],
+      "clusters": [
+        { "slug": "scans-and-costs", "title": "Scans and costs", "planned_lessons": 4 },
+        { "slug": "btree-and-composite-indexes", "title": "B-tree and composite indexes", "planned_lessons": 4 },
+        { "slug": "partial-and-expression-indexes", "title": "Partial and expression indexes", "planned_lessons": 3 },
+        { "slug": "specialized-access-methods", "title": "GIN, GiST, and BRIN", "planned_lessons": 4 },
+        { "slug": "plan-review", "title": "Plan review", "planned_lessons": 3 }
+      ]
+    },
+    {
+      "number": 8,
+      "slug": "postgresql-full-text-search",
+      "title": "PostgreSQL full-text search",
+      "capability_layer": "full_text_search",
+      "summary": "Learners build lexical search with PostgreSQL core before considering semantic or extension-heavy search.",
+      "goals": [
+        "Convert text into searchable vectors and queries.",
+        "Rank, filter, and inspect search results with language-aware behavior.",
+        "Compare full-text search, trigram preview, and external search without skipping workload evidence."
+      ],
+      "concepts_introduced": [
+        "tsvector",
+        "tsquery",
+        "to_tsvector",
+        "to_tsquery",
+        "plainto_tsquery",
+        "websearch_to_tsquery",
+        "lexeme",
+        "dictionary",
+        "ranking",
+        "headline",
+        "search_configuration"
+      ],
+      "prerequisites": [0, 1, 2, 3, 4, 5, 6, 7],
+      "exit_competencies": [
+        "Can build a searchable tsvector column or expression and index it with GIN.",
+        "Can explain why a document matched a tsquery by inspecting lexemes and configuration behavior.",
+        "Can tune ranking and filtering for a concrete document-search workflow without reaching first for vector search."
+      ],
+      "clusters": [
+        { "slug": "text-to-lexemes", "title": "Text to lexemes", "planned_lessons": 2 },
+        { "slug": "queries-and-ranking", "title": "Queries and ranking", "planned_lessons": 3 },
+        { "slug": "fts-indexing", "title": "Full-text indexing", "planned_lessons": 2 },
+        { "slug": "language-and-dictionaries", "title": "Language and dictionaries", "planned_lessons": 2 },
+        { "slug": "search-review", "title": "Search review", "planned_lessons": 1 }
+      ]
+    },
+    {
+      "number": 9,
+      "slug": "partitioning-and-large-table-operations",
+      "title": "Partitioning and large-table operations",
+      "capability_layer": "partitioning_operations",
+      "summary": "Learners use partitioning for demonstrated scale, retention, and maintenance needs rather than as a default.",
+      "goals": [
+        "Recognize the workload signals that make partitioning worth its operational cost.",
+        "Design range, list, and hash partitioning around query and retention behavior.",
+        "Operate partitions through attach, detach, pruning, indexes, and maintenance windows."
+      ],
+      "concepts_introduced": [
+        "partitioned_table",
+        "range_partitioning",
+        "list_partitioning",
+        "hash_partitioning",
+        "partition_key",
+        "partition_pruning",
+        "attach_partition",
+        "detach_partition",
+        "default_partition",
+        "retention_window",
+        "bulk_load"
+      ],
+      "prerequisites": [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      "exit_competencies": [
+        "Can decide that partitioning is not yet justified when volume, retention, or query patterns do not support it.",
+        "Can design a range-partitioned event table and predict which partitions a filtered query should prune.",
+        "Can plan partition maintenance steps without blocking normal writes longer than the workload allows."
+      ],
+      "clusters": [
+        { "slug": "partitioning-signals", "title": "Partitioning signals", "planned_lessons": 2 },
+        { "slug": "range-list-and-hash", "title": "Range, list, and hash partitioning", "planned_lessons": 3 },
+        { "slug": "pruning-and-indexes", "title": "Pruning and indexes", "planned_lessons": 2 },
+        { "slug": "retention-and-maintenance", "title": "Retention and maintenance", "planned_lessons": 2 },
+        { "slug": "large-table-review", "title": "Large-table review", "planned_lessons": 1 }
+      ]
+    },
+    {
+      "number": 10,
+      "slug": "roles-rls-replication-and-fdw",
+      "title": "Roles, RLS, replication concepts, and FDW",
+      "capability_layer": "security_federation",
+      "summary": "Learners reason about access boundaries, tenant isolation, data movement, and federation at a core-concepts level.",
+      "goals": [
+        "Design roles and grants around application and operator responsibilities.",
+        "Use row-level security policies to enforce tenant boundaries in the database.",
+        "Explain replication and FDW concepts well enough to choose cautious next steps."
+      ],
+      "concepts_introduced": [
+        "role",
+        "group_role",
+        "login_role",
+        "grant",
+        "revoke",
+        "row_level_security",
+        "policy",
+        "policy_qual",
+        "wal",
+        "logical_replication",
+        "physical_replication",
+        "replication_slot",
+        "fdw",
+        "foreign_server",
+        "foreign_table",
+        "import_foreign_schema"
+      ],
+      "prerequisites": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "exit_competencies": [
+        "Can create a least-privilege role model and explain which actor can perform each database action.",
+        "Can implement and test a row-level security policy that prevents cross-tenant reads and writes.",
+        "Can explain the difference between logical replication, physical replication, and FDW without treating any as a generic scaling fix."
+      ],
+      "clusters": [
+        { "slug": "roles-and-privileges", "title": "Roles and privileges", "planned_lessons": 3 },
+        { "slug": "row-level-security", "title": "Row-level security", "planned_lessons": 3 },
+        { "slug": "replication-concepts", "title": "Replication concepts", "planned_lessons": 3 },
+        { "slug": "foreign-data-wrappers", "title": "Foreign data wrappers", "planned_lessons": 2 },
+        { "slug": "security-federation-review", "title": "Security and federation review", "planned_lessons": 1 }
+      ]
+    }
+  ],
+  "domains": [
+    {
+      "slug": "ecommerce",
+      "first_used_in_phase": 1,
+      "summary": "Orders, customers, products, payments, fulfillment, and support data provide a familiar transactional workload for SQL, joins, constraints, indexing, and operational critique."
+    },
+    {
+      "slug": "scheduling",
+      "first_used_in_phase": 2,
+      "summary": "People, resources, availability, reservations, and conflicts make time, ranges, exclusion, concurrency, and critique concrete."
+    },
+    {
+      "slug": "saas_multi_tenant",
+      "first_used_in_phase": 3,
+      "summary": "Tenants, users, memberships, accounts, and scoped business records provide recurring practice for ownership, isolation, roles, RLS, and capstone-scale design."
+    },
+    {
+      "slug": "event_heavy_ops",
+      "first_used_in_phase": 5,
+      "summary": "Append-heavy operational events, telemetry, audit records, and retention windows drive expressive querying, indexing, partitioning, and operational planning."
+    },
+    {
+      "slug": "document_search",
+      "first_used_in_phase": 4,
+      "summary": "Articles, tickets, comments, metadata, corpora, and search sessions support JSONB boundaries, full-text search, ranking, and extension posture."
+    },
+    {
+      "slug": "modernization_bridge",
+      "first_used_in_phase": 10,
+      "summary": "Legacy schemas, foreign systems, replication boundaries, and migration checkpoints support FDW, logical replication concepts, and cautious modernization plans."
+    }
+  ],
+  "loops": ["lesson", "lab", "debug", "design", "review"],
+  "capstones": [
+    {
+      "id": "01-multi-tenant-saas-crm",
+      "title": "Multi-tenant SaaS CRM",
+      "primary_domains": ["saas_multi_tenant", "ecommerce"],
+      "planned_prompt": 25,
+      "summary": "Design, secure, query, and defend a tenant-scoped CRM with realistic reporting and access-control obligations."
+    },
+    {
+      "id": "02-scheduling-and-availability",
+      "title": "Scheduling and availability",
+      "primary_domains": ["scheduling"],
+      "planned_prompt": 25,
+      "summary": "Model availability, prevent conflicts, handle concurrent booking attempts, and explain the operational behavior."
+    },
+    {
+      "id": "03-event-heavy-ops",
+      "title": "Event-heavy operations",
+      "primary_domains": ["event_heavy_ops", "document_search"],
+      "planned_prompt": 26,
+      "summary": "Handle high-volume events with retention, indexing, partitioning, monitoring posture, and explicit extension justification."
+    },
+    {
+      "id": "04-modernization-bridge",
+      "title": "Modernization bridge",
+      "primary_domains": ["modernization_bridge", "saas_multi_tenant"],
+      "planned_prompt": 26,
+      "summary": "Bridge a legacy system into PostgreSQL using careful schema repair, FDW or replication concepts, and staged cutover reasoning."
+    }
+  ]
+}

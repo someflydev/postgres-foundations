@@ -14,8 +14,16 @@ from jsonschema.exceptions import ValidationError
 
 from pgfound import paths
 
-CONTENT_KINDS: Final[tuple[str, ...]] = ("lesson", "exercise", "rubric", "scenario", "capstone")
+CONTENT_KINDS: Final[tuple[str, ...]] = (
+    "curriculum",
+    "lesson",
+    "exercise",
+    "rubric",
+    "scenario",
+    "capstone",
+)
 SCHEMA_FILENAMES: Final[dict[str, str]] = {
+    "curriculum": "curriculum.schema.json",
     "lesson": "lesson.schema.json",
     "exercise": "exercise.schema.json",
     "rubric": "rubric.schema.json",
@@ -28,6 +36,9 @@ CONTENT_DIR_NAMES: Final[dict[str, str]] = {
     "rubric": "rubrics",
     "scenario": "scenarios",
     "capstone": "capstones",
+}
+ROOT_CONTENT_FILES: Final[dict[str, Path]] = {
+    "curriculum": paths.CURRICULUM_DIR / "map.json",
 }
 CONTENT_SUFFIXES: Final[set[str]] = {".json", ".yaml", ".yml"}
 EXAMPLE_SUFFIX: Final[str] = ".example"
@@ -112,6 +123,7 @@ def discover_content_files(
         return sorted(files)
 
     files = []
+    files.extend(path for path in ROOT_CONTENT_FILES.values() if path.exists())
     for directory_name in CONTENT_DIR_NAMES.values():
         directory = paths.CURRICULUM_DIR / directory_name
         if not directory.exists():
@@ -135,6 +147,8 @@ def discover_content_files(
 
 def infer_kind(file_path: Path) -> str | None:
     parts = set(file_path.parts)
+    if file_path.name == "map.json" and file_path.parent.name == "curriculum":
+        return "curriculum"
     for kind, directory_name in CONTENT_DIR_NAMES.items():
         if directory_name in parts:
             return kind
@@ -234,7 +248,9 @@ def _cross_file_errors(loaded: list[LoadedContent]) -> list[ValidationIssue]:
 
     for item in loaded:
         data = item.data
-        if item.kind == "lesson":
+        if item.kind == "curriculum":
+            errors.extend(_curriculum_errors(item))
+        elif item.kind == "lesson":
             has_phase = "phase" in data
             has_module = "module_id" in data
             if has_phase == has_module:
@@ -288,6 +304,76 @@ def _cross_file_errors(loaded: list[LoadedContent]) -> list[ValidationIssue]:
                         )
                     )
     return errors
+
+
+def _curriculum_errors(item: LoadedContent) -> list[ValidationIssue]:
+    data = item.data
+    errors: list[ValidationIssue] = []
+
+    phases = data.get("phases", [])
+    if isinstance(phases, list):
+        numbers = [phase.get("number") for phase in phases if isinstance(phase, dict)]
+        if numbers != list(range(11)):
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    f"phase numbers must be monotonic 0..10; got {numbers}",
+                )
+            )
+        slugs = [phase.get("slug") for phase in phases if isinstance(phase, dict)]
+        duplicate_slugs = _duplicates(slugs)
+        if duplicate_slugs:
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    "phase slugs must be unique: " + ", ".join(duplicate_slugs),
+                )
+            )
+
+    domains = data.get("domains", [])
+    if isinstance(domains, list):
+        duplicate_domains = _duplicates(
+            domain.get("slug") for domain in domains if isinstance(domain, dict)
+        )
+        if duplicate_domains:
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    "domain slugs must be unique: " + ", ".join(duplicate_domains),
+                )
+            )
+
+    capstones = data.get("capstones", [])
+    if isinstance(capstones, list):
+        duplicate_capstones = _duplicates(
+            capstone.get("id") for capstone in capstones if isinstance(capstone, dict)
+        )
+        if duplicate_capstones:
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    "capstone ids must be unique: " + ", ".join(duplicate_capstones),
+                )
+            )
+
+    return errors
+
+
+def _duplicates(values: Any) -> list[str]:
+    seen: set[str] = set()
+    duplicates: set[str] = set()
+    for value in values:
+        if not isinstance(value, str | int):
+            continue
+        key = str(value)
+        if key in seen:
+            duplicates.add(key)
+        seen.add(key)
+    return sorted(duplicates)
 
 
 def _catalog_warnings(loaded: list[LoadedContent]) -> list[ValidationIssue]:
