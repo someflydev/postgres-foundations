@@ -1,0 +1,24 @@
+{
+  "id": "starter-saas-roster",
+  "title": "Starter SaaS Roster",
+  "industry": "saas_multi_tenant",
+  "narrative_path": "scenarios/starter-saas-roster.md",
+  "context": {
+    "team_size": "small",
+    "scale_signals": ["hundreds_of_accounts", "low_write_volume"],
+    "tenancy_model": "shared_database",
+    "portability_requirements": "prefer_core_postgresql",
+    "operational_tolerance": "low"
+  },
+  "data_shapes": ["tenant_owned_records"],
+  "workload_patterns": ["account_dashboard_reads"],
+  "suggested_lessons": ["phase0-select-basics"],
+  "suggested_exercises": ["phase0-select-one"],
+  "suggested_capstone_id": "starter-saas-capstone",
+  "expected_decision_outputs": {
+    "recommend_now": ["row_level_security"],
+    "candidate_later": ["pg_partman"],
+    "avoid_for_now": ["custom_sharding"]
+  },
+  "tags": ["saas", "starter"]
+}

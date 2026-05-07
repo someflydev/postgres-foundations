@@ -1,0 +1,28 @@
+{
+  "id": "starter-saas-capstone",
+  "title": "Starter SaaS Capstone",
+  "industry": "saas_multi_tenant",
+  "summary": "Design a small multi-tenant SaaS schema with query and security evidence.",
+  "phases_required": [0, 1, 2],
+  "deliverables": [
+    {
+      "name": "Schema design",
+      "kind": "schema",
+      "path": "capstones/starter-saas/schema.sql"
+    },
+    {
+      "name": "Tenant access writeup",
+      "kind": "writeup",
+      "path": "capstones/starter-saas/access.md"
+    }
+  ],
+  "critical_queries": [
+    "List active accounts for one tenant without exposing another tenant's rows."
+  ],
+  "security_posture": {
+    "tenant_isolation": "required"
+  },
+  "operational_notes": "Keep the design portable and avoid premature extension choices.",
+  "review_rubric_id": "basic-query-rubric",
+  "tags": ["saas", "capstone"]
+}

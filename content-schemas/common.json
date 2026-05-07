@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/common.json",
+  "title": "PostgreSQL Foundations common content definitions",
+  "$defs": {
+    "id_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+    },
+    "phase": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "module_id": {
+      "$ref": "#/$defs/id_slug"
+    },
+    "capability_layer": {
+      "type": "string",
+      "enum": [
+        "schema_literacy",
+        "relational_joins",
+        "database_truth",
+        "postgres_data_modeling",
+        "expressive_querying",
+        "transactions_and_correctness",
+        "indexing_and_plans",
+        "full_text_search",
+        "partitioning_operations",
+        "security_federation",
+        "admin_mastery",
+        "extension_mastery",
+        "capstone"
+      ]
+    },
+    "scaffolding_level": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D"]
+    },
+    "time_target_minutes": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "postgres_version_min": {
+      "type": "string",
+      "pattern": "^\\d+(?:\\.\\d+)?$"
+    },
+    "tag": {
+      "$ref": "#/$defs/id_slug"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["intro", "standard", "advanced", "capstone"]
+    },
+    "author": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "slug", "why"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["doc", "adr", "lesson", "exercise", "scenario", "capstone", "rubric", "external"]
+        },
+        "slug": {
+          "$ref": "#/$defs/id_slug"
+        },
+        "why": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "pattern": "^(?:/|[A-Za-z]:|.*\\.\\.)"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "deprecated"]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/tag"
+      },
+      "uniqueItems": true
+    }
+  }
+}

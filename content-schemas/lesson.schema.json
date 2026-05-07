@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/lesson.schema.json",
+  "title": "PostgreSQL Foundations lesson",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "capability_layer",
+    "summary",
+    "learning_objectives",
+    "body_path",
+    "estimated_time_minutes",
+    "status"
+  ],
+  "oneOf": [
+    {
+      "required": ["phase"],
+      "not": {
+        "required": ["module_id"]
+      }
+    },
+    {
+      "required": ["module_id"],
+      "not": {
+        "required": ["phase"]
+      }
+    }
+  ],
+  "properties": {
+    "id": {
+      "$ref": "common.json#/$defs/id_slug"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase": {
+      "$ref": "common.json#/$defs/phase"
+    },
+    "module_id": {
+      "$ref": "common.json#/$defs/module_id"
+    },
+    "capability_layer": {
+      "$ref": "common.json#/$defs/capability_layer"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "learning_objectives": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "concepts_introduced": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "concepts_not_yet_allowed": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "body_path": {
+      "$ref": "common.json#/$defs/relative_path"
+    },
+    "worked_example_path": {
+      "$ref": "common.json#/$defs/relative_path"
+    },
+    "guided_exercise_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "independent_exercise_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "critique_exercise_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "reflection_prompts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 240
+      }
+    },
+    "estimated_time_minutes": {
+      "$ref": "common.json#/$defs/time_target_minutes"
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/reference"
+      }
+    },
+    "tags": {
+      "$ref": "common.json#/$defs/tags"
+    },
+    "status": {
+      "$ref": "common.json#/$defs/status"
+    }
+  }
+}

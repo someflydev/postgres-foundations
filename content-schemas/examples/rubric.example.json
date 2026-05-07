@@ -1,0 +1,31 @@
+{
+  "id": "basic-query-rubric",
+  "title": "Basic Query Rubric",
+  "applies_to": "exercise",
+  "dimensions": [
+    {
+      "name": "correctness",
+      "weight": 0.7,
+      "levels": {
+        "0": "No runnable query is submitted.",
+        "1": "Query runs but answers the wrong question.",
+        "2": "Query is partially correct with missing or extra columns.",
+        "3": "Query is correct with minor style issues.",
+        "4": "Query is correct, clear, and minimal."
+      }
+    },
+    {
+      "name": "explanation",
+      "weight": 0.3,
+      "levels": {
+        "0": "No explanation is provided.",
+        "1": "Explanation is unrelated to the query.",
+        "2": "Explanation names clauses without describing their role.",
+        "3": "Explanation correctly describes the main clauses.",
+        "4": "Explanation connects each clause to the requested result."
+      }
+    }
+  ],
+  "pass_threshold": 0.75,
+  "notes": "Use for first-pass single-table query exercises."
+}

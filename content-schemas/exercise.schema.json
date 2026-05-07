@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/exercise.schema.json",
+  "title": "PostgreSQL Foundations exercise",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "lesson_id",
+    "scaffolding_level",
+    "kind",
+    "schema_scope",
+    "dataset",
+    "expected_output_shape",
+    "success_criteria",
+    "time_target_minutes",
+    "solution_path",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "common.json#/$defs/id_slug"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lesson_id": {
+      "$ref": "common.json#/$defs/id_slug"
+    },
+    "scaffolding_level": {
+      "$ref": "common.json#/$defs/scaffolding_level"
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["query", "schema", "modeling", "debug", "critique", "lab"]
+    },
+    "allowed_concepts": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "not_yet_allowed_concepts": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "schema_scope": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seed_pack_id", "max_rows_hint"],
+      "properties": {
+        "seed_pack_id": {
+          "$ref": "common.json#/$defs/id_slug"
+        },
+        "max_rows_hint": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "expected_output_shape": {
+      "type": "string",
+      "enum": [
+        "scalar",
+        "row",
+        "rowset",
+        "schema_object",
+        "prose_explanation",
+        "explain_plan",
+        "multi_session_trace"
+      ]
+    },
+    "success_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "time_target_minutes": {
+      "$ref": "common.json#/$defs/time_target_minutes"
+    },
+    "rubric_id": {
+      "$ref": "common.json#/$defs/id_slug"
+    },
+    "solution_path": {
+      "$ref": "common.json#/$defs/relative_path"
+    },
+    "starter_path": {
+      "$ref": "common.json#/$defs/relative_path"
+    },
+    "hints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 240
+      }
+    },
+    "oral_defense_prompts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 240
+      }
+    },
+    "tags": {
+      "$ref": "common.json#/$defs/tags"
+    },
+    "status": {
+      "$ref": "common.json#/$defs/status"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "scaffolding_level": {
+            "enum": ["C", "D"]
+          }
+        },
+        "required": ["scaffolding_level"]
+      },
+      "then": {
+        "required": ["oral_defense_prompts"],
+        "not": {
+          "required": ["hints"]
+        },
+        "properties": {
+          "oral_defense_prompts": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ]
+}

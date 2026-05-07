@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/capstone.schema.json",
+  "title": "PostgreSQL Foundations capstone",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "industry",
+    "summary",
+    "phases_required",
+    "deliverables",
+    "critical_queries",
+    "security_posture",
+    "operational_notes",
+    "review_rubric_id",
+    "tags"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "common.json#/$defs/id_slug"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "industry": {
+      "type": "string",
+      "enum": [
+        "saas_multi_tenant",
+        "fintech_payments",
+        "healthcare_ops",
+        "ecommerce_marketplace",
+        "logistics_geo",
+        "observability_iot",
+        "knowledge_ai",
+        "modernization_bridge"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phases_required": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "common.json#/$defs/phase"
+      },
+      "uniqueItems": true
+    },
+    "deliverables": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "kind", "path"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "schema",
+              "queries",
+              "indexes",
+              "rls_policies",
+              "operational_runbook",
+              "writeup"
+            ]
+          },
+          "path": {
+            "$ref": "common.json#/$defs/relative_path"
+          }
+        }
+      }
+    },
+    "critical_queries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_posture": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "operational_notes": {
+      "type": "string",
+      "minLength": 1
+    },
+    "review_rubric_id": {
+      "$ref": "common.json#/$defs/id_slug"
+    },
+    "tags": {
+      "$ref": "common.json#/$defs/tags"
+    }
+  }
+}

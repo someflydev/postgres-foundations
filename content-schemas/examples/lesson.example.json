@@ -1,0 +1,29 @@
+{
+  "id": "phase0-select-basics",
+  "title": "SELECT Basics",
+  "phase": 0,
+  "capability_layer": "schema_literacy",
+  "summary": "Introduces reading rows from a single table with explicit columns.",
+  "learning_objectives": [
+    "Select named columns from a table.",
+    "Explain why explicit column lists are clearer than SELECT star."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": ["select", "projection"],
+  "concepts_not_yet_allowed": ["join", "window_function"],
+  "body_path": "lessons/phase0-select-basics.md",
+  "guided_exercise_ids": ["phase0-select-one"],
+  "independent_exercise_ids": [],
+  "critique_exercise_ids": [],
+  "reflection_prompts": ["What changed when you named only the needed columns?"],
+  "estimated_time_minutes": 20,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "postgres_select",
+      "why": "Canonical syntax reference for SELECT."
+    }
+  ],
+  "tags": ["select", "phase0"],
+  "status": "draft"
+}

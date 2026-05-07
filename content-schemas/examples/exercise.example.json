@@ -1,0 +1,28 @@
+{
+  "id": "phase0-select-one",
+  "title": "Read One Table",
+  "lesson_id": "phase0-select-basics",
+  "scaffolding_level": "A",
+  "kind": "query",
+  "allowed_concepts": ["select", "projection"],
+  "not_yet_allowed_concepts": ["join", "window_function"],
+  "schema_scope": {
+    "tables": ["public.customers"]
+  },
+  "dataset": {
+    "seed_pack_id": "intro_customers",
+    "max_rows_hint": 100
+  },
+  "expected_output_shape": "rowset",
+  "success_criteria": [
+    "Returns only the requested customer columns.",
+    "Does not use SELECT star."
+  ],
+  "time_target_minutes": 10,
+  "rubric_id": "basic-query-rubric",
+  "solution_path": "exercises/phase0-select-one.solution.sql",
+  "starter_path": "exercises/phase0-select-one.starter.sql",
+  "hints": ["Start by naming the table after FROM."],
+  "tags": ["select", "phase0"],
+  "status": "draft"
+}

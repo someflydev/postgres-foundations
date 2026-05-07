@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/scenario.schema.json",
+  "title": "PostgreSQL Foundations scenario",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "industry",
+    "narrative_path",
+    "context",
+    "data_shapes",
+    "workload_patterns",
+    "expected_decision_outputs"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "common.json#/$defs/id_slug"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "industry": {
+      "type": "string",
+      "enum": [
+        "saas_multi_tenant",
+        "fintech_payments",
+        "healthcare_ops",
+        "ecommerce_marketplace",
+        "logistics_geo",
+        "observability_iot",
+        "knowledge_ai",
+        "modernization_bridge"
+      ]
+    },
+    "narrative_path": {
+      "$ref": "common.json#/$defs/relative_path"
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "team_size",
+        "scale_signals",
+        "tenancy_model",
+        "portability_requirements",
+        "operational_tolerance"
+      ],
+      "properties": {
+        "team_size": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scale_signals": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "tenancy_model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "portability_requirements": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operational_tolerance": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "data_shapes": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "workload_patterns": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "suggested_lessons": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "suggested_exercises": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/id_slug"
+      },
+      "uniqueItems": true
+    },
+    "suggested_capstone_id": {
+      "$ref": "common.json#/$defs/id_slug"
+    },
+    "expected_decision_outputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recommend_now", "candidate_later", "avoid_for_now"],
+      "properties": {
+        "recommend_now": {
+          "type": "array",
+          "items": {
+            "$ref": "common.json#/$defs/id_slug"
+          },
+          "uniqueItems": true
+        },
+        "candidate_later": {
+          "type": "array",
+          "items": {
+            "$ref": "common.json#/$defs/id_slug"
+          },
+          "uniqueItems": true
+        },
+        "avoid_for_now": {
+          "type": "array",
+          "items": {
+            "$ref": "common.json#/$defs/id_slug"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "tags": {
+      "$ref": "common.json#/$defs/tags"
+    }
+  }
+}
