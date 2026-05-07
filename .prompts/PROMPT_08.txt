@@ -15,7 +15,8 @@ just correct output. Scaffolding levels A–D are first class: A
 - PROMPT_06 curriculum map and domains.
 - PROMPT_07 lesson authoring system (directory conventions, scaffolder,
   lint).
-- `exercises/` holds only `.gitkeep`.
+- Root `exercises/` holds only `.gitkeep`. Any legacy
+  `curriculum/exercises/` scaffold is not the authored exercise location.
 
 ## Task
 
@@ -45,6 +46,9 @@ exercises/
 
 The phase directory names mirror `lessons/`. Every exercise is scoped to
 exactly one lesson (the `lesson_id`) and exactly one scaffolding level.
+Move exercise authoring to this root `exercises/` tree now: update canonical
+paths and content discovery so authored exercise files are read from
+`exercises/`, not `curriculum/exercises/`.
 
 ### 2. Per-level conventions
 
@@ -106,6 +110,8 @@ Behavior:
 - Creates `exercises/<phase>/<lesson-slug>/level-<level>/<slug>/` with
   `exercise.json`, `prompt.md`, `starter.sql` (or omit if `kind` is
   `modeling`), `solution.md`.
+- Does not overwrite existing authored files; rerunning scaffold against an
+  existing exercise directory should fail with a clear error.
 - For levels C/D, `oral_defense_prompts` is scaffolded with
   `__REPLACE_ME__` entries.
 
@@ -162,6 +168,8 @@ author decides to provide a custom rubric.
   through: picking the lesson, picking the level, scaffolding, writing
   the prompt, writing the solution, linking a rubric, validating, and
   activating. Length 800–1200 words.
+- Update `docs/authoring.md` so exercise locations point to root
+  `exercises/**/exercise.json`, not `curriculum/exercises/**/*.json`.
 - Update `docs/cli.md` to include `content scaffold exercise`.
 
 ### 9. Tests
@@ -169,6 +177,8 @@ author decides to provide a custom rubric.
 - `tests/test_scaffold_exercise.py` — scaffolds Level B and Level D
   exercises against a fixture lesson; asserts validator accepts drafts
   and rejects active-status files with unfilled oral defense prompts.
+  Include coverage that scaffolded exercises are created under root
+  `exercises/` and that validation discovers root exercise files.
 - `tests/test_forbidden_concept_lint.py` — a fake `solution.sql` that
   uses `OVER (...)` when `window_function` is in
   `not_yet_allowed_concepts` produces the expected lint warning.
