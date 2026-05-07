@@ -1,4 +1,6 @@
-.PHONY: install fmt lint test cli
+.PHONY: install fmt lint test cli lab-up lab-down lab-nuke lab-psql lab-logs lab-sandbox-up
+
+COMPOSE := docker compose -f docker/docker-compose.yml
 
 install:
 	uv sync
@@ -14,3 +16,21 @@ test:
 
 cli:
 	uv run pgfound
+
+lab-up:
+	$(COMPOSE) up -d pg
+
+lab-down:
+	$(COMPOSE) down
+
+lab-nuke:
+	$(COMPOSE) down -v
+
+lab-psql:
+	$(COMPOSE) exec pg psql -U pgfound
+
+lab-logs:
+	$(COMPOSE) logs -f pg
+
+lab-sandbox-up:
+	$(COMPOSE) --profile sandbox up -d
