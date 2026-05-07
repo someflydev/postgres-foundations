@@ -84,7 +84,20 @@ Prints raw file content for one content item. Structured loading lands in
 
 ## `pgfound content validate`
 
-Stub command that exits 0 and reports that the validator lands in `PROMPT_05`.
+Validates authored JSON/YAML content against the schemas in `content-schemas/`
+and runs cross-file checks for lesson, exercise, rubric, scenario, and capstone
+references. The command prints a Rich table grouped by content kind, lists any
+errors or warnings, and exits non-zero on errors.
+
+By default it walks only the real content directories under `curriculum/` and
+skips `content-schemas/examples/`.
+
+Options:
+
+- `--include-examples`: also validate the five schema example files.
+- `--paths GLOB`: restrict validation to one glob or file path. May be provided
+  more than once.
+- `--strict`: treat warnings as errors.
 
 ## `pgfound review run`
 

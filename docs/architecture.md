@@ -47,6 +47,8 @@ The main artifacts live under `curriculum/`, `lessons/`, `exercises/`,
 and `tests/`. Early prompts may leave many of these directories skeletal, but
 their roles are fixed by this architecture. The local package under `src/`
 provides command-line and programmatic support as the platform grows.
+Authoring rules, required fields, examples, and validator behavior are captured
+in [Content Authoring](authoring.md).
 
 The learner flow begins with guided recognition and controlled production,
 then moves toward independent production, critique, and repair. A learner reads
