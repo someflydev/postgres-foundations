@@ -12,6 +12,7 @@ from rich.table import Table
 import pgfound
 from pgfound import paths
 from pgfound.content import loader
+from pgfound.content import validate as content_validator
 from pgfound.lab import compose
 
 console = Console()
@@ -220,10 +221,59 @@ def content_show(kind: str, content_id: str) -> None:
     console.print(raw)
 
 
-@content.command("validate", help="Validate content schemas; implemented in PROMPT_05.")
-def content_validate() -> None:
-    """Validate content schemas; implemented in PROMPT_05."""
-    _success("validator lands in PROMPT_05")
+@content.command("validate", help="Validate authored content against JSON Schemas.")
+@click.option("--strict", is_flag=True, help="Treat validation warnings as errors.")
+@click.option(
+    "--paths",
+    "path_globs",
+    multiple=True,
+    help="Restrict validation to a file glob. May be provided more than once.",
+)
+@click.option(
+    "--include-examples",
+    is_flag=True,
+    help="Also validate schema example files under content-schemas/examples/.",
+)
+def content_validate(path_globs: tuple[str, ...], include_examples: bool, strict: bool) -> None:
+    """Validate content files and schema-level cross references."""
+    report = content_validator.validate_content(
+        path_globs=path_globs,
+        include_examples=include_examples,
+        strict=strict,
+    )
+
+    table = Table(title="pgfound content validate")
+    table.add_column("Kind")
+    table.add_column("Files", justify="right")
+    table.add_column("Errors", justify="right")
+    table.add_column("Warnings", justify="right")
+    for kind in content_validator.CONTENT_KINDS:
+        errors = sum(1 for issue in report.errors if issue.kind == kind)
+        warnings = sum(1 for issue in report.warnings if issue.kind == kind)
+        table.add_row(kind, str(report.by_kind[kind]), str(errors), str(warnings))
+    console.print(table)
+
+    for issue in (*report.errors, *report.warnings):
+        relative = issue.path
+        try:
+            relative = issue.path.relative_to(paths.REPO_ROOT)
+        except ValueError:
+            pass
+        label = "ERROR" if issue.severity == "error" else "WARNING"
+        console.print(f"{label}: {issue.kind}: {relative}")
+        console.print(f"  {issue.message}")
+
+    warning_count = len(report.warnings)
+    if report.ok:
+        _success(
+            f"PASS: checked {report.files_checked} file(s), 0 error(s), {warning_count} warning(s)"
+        )
+        return
+
+    raise click.ClickException(
+        f"FAIL: checked {report.files_checked} file(s), "
+        f"{len(report.errors)} error(s), {warning_count} warning(s)"
+    )
 
 
 @main.group(help="Run review engine commands.")
