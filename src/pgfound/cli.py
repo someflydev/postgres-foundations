@@ -11,6 +11,7 @@ from rich.table import Table
 
 import pgfound
 from pgfound import paths
+from pgfound.content import lint as content_linter
 from pgfound.content import loader
 from pgfound.content import scaffold as content_scaffold
 from pgfound.content import validate as content_validator
@@ -320,6 +321,39 @@ def content_scaffold_lesson(
     except ValueError:
         pass
     _success(f"created {relative_lesson_dir}")
+
+
+@content.command("lint", help="Run lesson authoring lint checks.")
+@click.option("--strict", is_flag=True, help="Exit non-zero when lint warnings are present.")
+@click.option(
+    "--paths",
+    "path_globs",
+    multiple=True,
+    help="Restrict lint to a file glob. May be provided more than once.",
+)
+def content_lint(path_globs: tuple[str, ...], strict: bool) -> None:
+    """Run heavier lesson authoring checks."""
+    report = content_linter.lint_content(path_globs=path_globs)
+    table = Table(title="pgfound content lint")
+    table.add_column("Files", justify="right")
+    table.add_column("Warnings", justify="right")
+    table.add_row(str(report.files_checked), str(len(report.warnings)))
+    console.print(table)
+
+    for issue in report.warnings:
+        relative = issue.path
+        try:
+            relative = issue.path.relative_to(paths.REPO_ROOT)
+        except ValueError:
+            pass
+        console.print(f"WARNING: {issue.kind}: {relative}")
+        console.print(f"  {issue.message}")
+
+    if strict and report.warnings:
+        raise click.ClickException(
+            f"FAIL: checked {report.files_checked} file(s), {len(report.warnings)} warning(s)"
+        )
+    _success(f"PASS: checked {report.files_checked} file(s), {len(report.warnings)} warning(s)")
 
 
 @main.group(help="Run review engine commands.")

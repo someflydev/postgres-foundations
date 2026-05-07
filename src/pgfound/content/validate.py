@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import glob
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Final
@@ -37,11 +38,22 @@ CONTENT_DIR_NAMES: Final[dict[str, str]] = {
     "scenario": "scenarios",
     "capstone": "capstones",
 }
+CONTENT_DIRS: Final[dict[str, Path]] = {
+    "lesson": paths.LESSONS_DIR,
+    "exercise": paths.EXERCISES_DIR,
+    "rubric": paths.RUBRICS_DIR,
+    "scenario": paths.SCENARIOS_DIR,
+    "capstone": paths.CAPSTONES_DIR,
+}
 ROOT_CONTENT_FILES: Final[dict[str, Path]] = {
     "curriculum": paths.CURRICULUM_DIR / "map.json",
 }
 CONTENT_SUFFIXES: Final[set[str]] = {".json", ".yaml", ".yml"}
 EXAMPLE_SUFFIX: Final[str] = ".example"
+PLACEHOLDER_RE: Final[re.Pattern[str]] = re.compile(
+    r"__REPLACE_ME[^_]*__|__REPLACE_ME_[A-Z0-9_]+__"
+)
+PHASE_DIR_RE: Final[re.Pattern[str]] = re.compile(r"^phase-(?P<number>\d{2})-[a-z0-9-]+$")
 
 
 @dataclass(frozen=True)
@@ -124,8 +136,7 @@ def discover_content_files(
 
     files = []
     files.extend(path for path in ROOT_CONTENT_FILES.values() if path.exists())
-    for directory_name in CONTENT_DIR_NAMES.values():
-        directory = paths.CURRICULUM_DIR / directory_name
+    for directory in CONTENT_DIRS.values():
         if not directory.exists():
             continue
         files.extend(
@@ -216,7 +227,9 @@ def validate_content(
             )
         loaded.append(LoadedContent(kind=kind, path=file_path, data=data))
 
-    errors.extend(_cross_file_errors(loaded))
+    cross_errors, cross_warnings = _cross_file_checks(loaded)
+    errors.extend(cross_errors)
+    warnings.extend(cross_warnings)
     warnings.extend(_catalog_warnings(loaded))
 
     if strict and warnings:
@@ -241,10 +254,18 @@ def _content_by_id(loaded: list[LoadedContent], kind: str) -> dict[str, LoadedCo
     }
 
 
-def _cross_file_errors(loaded: list[LoadedContent]) -> list[ValidationIssue]:
+def _cross_file_checks(
+    loaded: list[LoadedContent],
+) -> tuple[list[ValidationIssue], list[ValidationIssue]]:
     errors: list[ValidationIssue] = []
+    warnings: list[ValidationIssue] = []
     lessons = _content_by_id(loaded, "lesson")
     rubrics = _content_by_id(loaded, "rubric")
+    exercises_by_lesson: dict[str, list[LoadedContent]] = {}
+    for exercise in (item for item in loaded if item.kind == "exercise"):
+        lesson_id = exercise.data.get("lesson_id")
+        if isinstance(lesson_id, str):
+            exercises_by_lesson.setdefault(lesson_id, []).append(exercise)
 
     for item in loaded:
         data = item.data
@@ -259,6 +280,16 @@ def _cross_file_errors(loaded: list[LoadedContent]) -> list[ValidationIssue]:
                         item.kind,
                         item.path,
                         "lesson must carry exactly one of phase or module_id",
+                    )
+                )
+            errors.extend(_lesson_authoring_errors(item))
+            if data.get("status") == "active" and not exercises_by_lesson.get(str(data.get("id"))):
+                warnings.append(
+                    ValidationIssue(
+                        item.kind,
+                        item.path,
+                        f"active lesson {data.get('id')!r} has no referencing exercises",
+                        "warning",
                     )
                 )
         elif item.kind == "exercise":
@@ -303,7 +334,92 @@ def _cross_file_errors(loaded: list[LoadedContent]) -> list[ValidationIssue]:
                             f"rubric dimension weights must sum to 1.0; got {total:.6f}",
                         )
                     )
+    return errors, warnings
+
+
+def _lesson_authoring_errors(item: LoadedContent) -> list[ValidationIssue]:
+    errors: list[ValidationIssue] = []
+    data = item.data
+    if _is_schema_example(item.path):
+        return errors
+
+    introduced = set(data.get("concepts_introduced", []))
+    not_yet_allowed = set(data.get("concepts_not_yet_allowed", []))
+    overlap = sorted(introduced & not_yet_allowed)
+    if overlap:
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                item.path,
+                "concepts_not_yet_allowed overlaps concepts_introduced: " + ", ".join(overlap),
+            )
+        )
+
+    if data.get("status") == "active":
+        raw_lesson = item.path.read_text(encoding="utf-8")
+        if PLACEHOLDER_RE.search(raw_lesson):
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    "active lesson.json must not contain __REPLACE_ME__ placeholders",
+                )
+            )
+
+    if item.path.name != "lesson.json":
+        return errors
+
+    body_path = data.get("body_path")
+    if isinstance(body_path, str):
+        resolved_body = item.path.parent / body_path
+        if not resolved_body.is_file():
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    f"body_path {body_path!r} does not resolve to an existing file",
+                )
+            )
+        elif data.get("status") == "active":
+            raw_body = resolved_body.read_text(encoding="utf-8")
+            if PLACEHOLDER_RE.search(raw_body):
+                errors.append(
+                    ValidationIssue(
+                        item.kind,
+                        resolved_body,
+                        "active body.md must not contain __REPLACE_ME__ placeholders",
+                    )
+                )
+
+    phase = data.get("phase")
+    phase_dir = item.path.parent.parent.parent.name
+    match = PHASE_DIR_RE.match(phase_dir)
+    if isinstance(phase, int):
+        if match is None:
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    "lesson.json must be enclosed by a phase-NN-slug directory",
+                )
+            )
+        elif int(match.group("number")) != phase:
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    f"lesson.phase {phase} does not match enclosing directory {phase_dir!r}",
+                )
+            )
     return errors
+
+
+def _is_schema_example(path: Path) -> bool:
+    try:
+        path.relative_to(schema_dir() / "examples")
+    except ValueError:
+        return False
+    return True
 
 
 def _curriculum_errors(item: LoadedContent) -> list[ValidationIssue]:

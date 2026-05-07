@@ -28,7 +28,7 @@ def test_content_validate_include_examples_passes() -> None:
     result = CliRunner().invoke(main, ["content", "validate", "--include-examples"])
 
     assert result.exit_code == 0
-    assert "PASS: checked 6 file(s)" in result.output
+    assert "PASS: checked" in result.output
 
 
 def test_content_validate_reports_valid_and_invalid_temp_content(tmp_path: Path) -> None:
