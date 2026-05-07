@@ -6,8 +6,17 @@ Current baseline:
 - CLI entry point: `pgfound = pgfound.cli:main`
 - Test suite: `tests/test_smoke.py`
 - Tooling: `uv`, `ruff`, `pytest`
-- Docs state: `docs/` and `docs/adr/` are intentionally empty except
-  `.gitkeep` until PROMPT_02.
+- Docs state: PROMPT_02 added doctrine, architecture, repo layout, LLM usage,
+  and ADR infrastructure under `docs/`.
+
+Canonical docs:
+
+- `docs/doctrine.md`
+- `docs/architecture.md`
+- `docs/repo-layout.md`
+- `docs/llm-usage.md`
+- `docs/adr/README.md`
+- `docs/adr/template.md`
 
 Expected green checks:
 

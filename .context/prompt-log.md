@@ -3,12 +3,14 @@
 Completed:
 
 - PROMPT_01: repository scaffolding, Python/uv environment, top-level layout.
+- PROMPT_02: doctrine, architecture overview, LLM usage, repo layout, and ADR
+  infrastructure.
 
 Next expected prompt:
 
-- PROMPT_02: doctrine, architecture overview, and ADR infrastructure.
+- PROMPT_03: Docker Compose lab environment under `docker/`.
 
 Notes:
 
-- Do not run PROMPT_02 unless the user explicitly asks.
-- PROMPT_02 expects `docs/` and `docs/adr/` to contain only `.gitkeep` files.
+- Do not run PROMPT_03 unless the user explicitly asks.
+- PROMPT_03 will reference `docs/architecture.md` and ADR-0003.
