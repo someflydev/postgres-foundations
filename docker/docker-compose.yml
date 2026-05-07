@@ -1,0 +1,53 @@
+name: postgres-foundations
+
+services:
+  pg:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pgfound}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pgfound}
+      POSTGRES_DB: ${POSTGRES_DB:-pgfound}
+    ports:
+      - "${POSTGRES_PORT:-55433}:5432"
+    volumes:
+      - pgfound-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    command:
+      - postgres
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - log_min_duration_statement=200
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - pg_stat_statements.track=all
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pgfound -d pgfound"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks:
+      - pgfound-net
+
+  pg-sandbox:
+    image: postgres:16
+    profiles:
+      - sandbox
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pgfound}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pgfound}
+      POSTGRES_DB: ${POSTGRES_DB:-pgfound}
+    ports:
+      - "${POSTGRES_SANDBOX_PORT:-55434}:5432"
+    volumes:
+      - /var/lib/postgresql/data
+    networks:
+      - pgfound-net
+
+networks:
+  pgfound-net:
+
+volumes:
+  pgfound-data:
