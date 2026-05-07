@@ -12,13 +12,17 @@ Completed:
   hermetic CLI tests.
 - PROMPT_05: draft 2020-12 content schemas, schema examples, real
   `pgfound content validate`, authoring docs, and validator tests.
+- PROMPT_06: canonical curriculum map in JSON and Markdown, capability-layer
+  and reusable-domain docs, shared glossary, curriculum schema, validator
+  integration, and tests.
 
 Next expected prompt:
 
-- PROMPT_06: curriculum map, phase definitions, and capability-layer docs.
+- PROMPT_07: lesson authoring schema, worked-example conventions, and file
+  layout.
 
 Notes:
 
-- Do not run PROMPT_06 unless the user explicitly asks.
-- PROMPT_06 builds on the content schemas and capability-layer enum from
-  `content-schemas/common.json`.
+- Do not run PROMPT_07 unless the user explicitly asks.
+- PROMPT_07 builds on the phase, cluster, and capability-layer definitions in
+  `curriculum/map.json`.

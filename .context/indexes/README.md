@@ -36,3 +36,12 @@ Content schema references introduced by PROMPT_05:
 - `content-schemas/examples/*.example.json`
 - `docs/authoring.md`
 - `src/pgfound/content/validate.py`
+
+Curriculum references introduced by PROMPT_06:
+
+- `curriculum/map.json`
+- `curriculum/README.md`
+- `curriculum/capability-layers.md`
+- `curriculum/domains.md`
+- `docs/glossary.md`
+- `content-schemas/curriculum.schema.json`

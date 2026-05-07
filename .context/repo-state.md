@@ -22,6 +22,10 @@ Current baseline:
   `content-schemas/examples/`, and a real `pgfound content validate` command
   with schema validation, YAML loading, cross-file checks, `--paths`,
   `--strict`, and `--include-examples`.
+- Curriculum map: PROMPT_06 added `curriculum/map.json`, human-readable
+  curriculum docs under `curriculum/`, `docs/glossary.md`,
+  `content-schemas/curriculum.schema.json`, and default validation for the
+  curriculum map.
 
 Canonical docs:
 
@@ -32,6 +36,10 @@ Canonical docs:
 - `docs/lab.md`
 - `docs/cli.md`
 - `docs/authoring.md`
+- `docs/glossary.md`
+- `curriculum/README.md`
+- `curriculum/capability-layers.md`
+- `curriculum/domains.md`
 - `docs/adr/README.md`
 - `docs/adr/template.md`
 
