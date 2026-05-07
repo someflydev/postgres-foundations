@@ -15,14 +15,16 @@ Completed:
 - PROMPT_06: canonical curriculum map in JSON and Markdown, capability-layer
   and reusable-domain docs, shared glossary, curriculum schema, validator
   integration, and tests.
+- PROMPT_07: lesson authoring directories, lesson templates, scaffold command,
+  lesson validation cross-checks, authoring lint, docs, and tests.
 
 Next expected prompt:
 
-- PROMPT_07: lesson authoring schema, worked-example conventions, and file
-  layout.
+- PROMPT_08: exercise authoring system, scaffolding levels, and forbidden
+  concepts enforcement.
 
 Notes:
 
-- Do not run PROMPT_07 unless the user explicitly asks.
-- PROMPT_07 builds on the phase, cluster, and capability-layer definitions in
+- Do not run PROMPT_08 unless the user explicitly asks.
+- PROMPT_08 builds on the phase, cluster, and capability-layer definitions in
   `curriculum/map.json`.

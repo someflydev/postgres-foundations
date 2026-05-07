@@ -99,6 +99,31 @@ Options:
   more than once.
 - `--strict`: treat warnings as errors.
 
+## `pgfound content scaffold lesson`
+
+Creates a draft lesson directory under `lessons/` from the lesson templates.
+The command resolves the phase directory from `curriculum/map.json`, writes
+`lesson.json` and `body.md`, then validates the scaffolded draft.
+
+Required options:
+
+- `--phase`: numeric phase.
+- `--cluster`: cluster slug.
+- `--slug`: lesson slug and ID.
+- `--title`: lesson title.
+- `--capability-layer`: capability layer slug.
+
+## `pgfound content lint`
+
+Runs lesson authoring lint checks: required body sections, active body length,
+bare URLs, and TODO/TBD/XXX tokens in active content.
+
+Options:
+
+- `--paths GLOB`: restrict lint to one glob or file path. May be provided more
+  than once.
+- `--strict`: exit non-zero when warnings are present.
+
 ## `pgfound review run`
 
 Stub command that exits 0 and reports that the review engine lands in

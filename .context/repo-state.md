@@ -26,6 +26,10 @@ Current baseline:
   curriculum docs under `curriculum/`, `docs/glossary.md`,
   `content-schemas/curriculum.schema.json`, and default validation for the
   curriculum map.
+- Lesson authoring: PROMPT_07 added root `lessons/` phase directories,
+  lesson templates under `content-schemas/templates/`, `pgfound content
+  scaffold lesson`, `pgfound content lint`, lesson-specific validator checks,
+  and `docs/authoring-lessons.md`.
 
 Canonical docs:
 
@@ -36,6 +40,7 @@ Canonical docs:
 - `docs/lab.md`
 - `docs/cli.md`
 - `docs/authoring.md`
+- `docs/authoring-lessons.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
 - `curriculum/capability-layers.md`
@@ -53,6 +58,7 @@ Expected green checks:
 - `uv run pgfound doctor`
 - `uv run pgfound content list`
 - `uv run pgfound content validate`
+- `uv run pgfound content lint`
 - `uv run pgfound content validate --include-examples`
 - `docker compose -f docker/docker-compose.yml config`
 

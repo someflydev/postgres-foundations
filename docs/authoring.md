@@ -8,7 +8,7 @@ default format for reviewable content.
 
 Author real content in these directories:
 
-- `curriculum/lessons/**/*.json` for lessons.
+- `lessons/**/lesson.json` for lessons.
 - `curriculum/exercises/**/*.json` for exercises.
 - `curriculum/rubrics/**/*.json` for rubrics.
 - `curriculum/scenarios/**/*.json` for scenarios.
@@ -25,6 +25,45 @@ Lesson files must fill `id`, `title`, exactly one of `phase` or `module_id`,
 `prerequisites`, `concepts_introduced`, `concepts_not_yet_allowed`,
 `worked_example_path`, exercise ID arrays, `reflection_prompts`, `references`,
 and `tags`.
+
+## Lesson Directory Layout
+
+Lessons are authored as small directories rather than a single JSON file:
+
+```text
+lessons/
+  phase-00-reality-before-syntax/
+    <cluster-slug>/
+      <lesson-slug>/
+        lesson.json
+        body.md
+        worked-example.md
+        figures/
+```
+
+Phase directories use the zero-padded phase number plus the phase slug from
+`curriculum/map.json`, for example `phase-07-indexing-and-query-plans`.
+`body_path` and `worked_example_path` in `lesson.json` resolve relative to the
+lesson directory.
+
+## Lesson Body Structure
+
+Every `body.md` uses these seven sections, in this order:
+
+1. Problem Framing
+2. Minimal Concept Introduction
+3. Worked Example
+4. Diagnostic Questions
+5. Common Pitfalls
+6. Explain It Back
+7. References and Further Reading
+
+This structure keeps the five parallel loops embedded in authoring practice:
+`body.md` drives the lesson loop; exercises drive the lab, debug, and design
+loops; rubrics drive the review loop. A lesson should frame a concrete problem,
+introduce only the concepts it owns, show a short lab-grounded example, ask
+diagnostic questions, name pitfalls, require the learner to explain the idea
+back, and point to titled references.
 
 Exercise files must fill `id`, `title`, `lesson_id`, `scaffolding_level`,
 `kind`, `schema_scope`, `expected_output_shape`, `success_criteria`,
@@ -65,8 +104,8 @@ uv run pgfound content validate --include-examples
 Validate one file or subset:
 
 ```sh
-uv run pgfound content validate --paths 'curriculum/lessons/**/*.json'
-uv run pgfound content validate --paths curriculum/lessons/phase0/select.json
+uv run pgfound content validate --paths 'lessons/**/lesson.json'
+uv run pgfound content validate --paths lessons/phase-01-sql-literacy-basics/reading-rows/first-select/lesson.json
 ```
 
 Use `--strict` when warnings should fail the command:
@@ -80,6 +119,12 @@ uv run pgfound content validate --strict
 The validator enforces schema shape and these repository-level checks:
 
 - Lessons must have exactly one of `phase` or `module_id`.
+- Lesson `body_path` must resolve relative to the lesson directory.
+- Active lesson metadata and body files must not contain `__REPLACE_ME__`
+  placeholders.
+- Active lessons warn when no exercise references their lesson ID.
+- Lesson `phase` must match the enclosing `phase-NN-...` directory.
+- Lesson `concepts_not_yet_allowed` must not overlap `concepts_introduced`.
 - Exercise `lesson_id` must reference an existing lesson in the validation set.
 - Exercise `rubric_id`, when present, must reference an existing rubric in the
   validation set.
@@ -89,3 +134,17 @@ The validator enforces schema shape and these repository-level checks:
 - Scenario `data_shapes` and `workload_patterns` are checked against
   decision-engine catalogs when those catalogs exist. Missing catalogs produce
   warnings until the decision-engine prompt creates them.
+
+## Lesson Lint
+
+`pgfound content lint` runs authoring checks that are useful before publishing
+but are not required for draft validation:
+
+```sh
+uv run pgfound content lint
+uv run pgfound content lint --strict
+```
+
+Lint checks active lesson bodies for at least 400 words, all seven required
+sections, titled links instead of bare URLs, and no TODO/TBD/XXX tokens. Without
+`--strict`, lint prints warnings and exits 0.

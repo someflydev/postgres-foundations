@@ -45,3 +45,12 @@ Curriculum references introduced by PROMPT_06:
 - `curriculum/domains.md`
 - `docs/glossary.md`
 - `content-schemas/curriculum.schema.json`
+
+Lesson authoring references introduced by PROMPT_07:
+
+- `lessons/phase-*/`
+- `content-schemas/templates/lesson.json.template`
+- `content-schemas/templates/lesson-body.md.template`
+- `docs/authoring-lessons.md`
+- `src/pgfound/content/scaffold.py`
+- `src/pgfound/content/lint.py`

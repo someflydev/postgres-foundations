@@ -36,6 +36,7 @@ concrete, operational, and PostgreSQL core-first.
 - CLI smoke: `uv run pgfound --help`
 - Content validate: `uv run pgfound content validate`
 - Content examples validate: `uv run pgfound content validate --include-examples`
+- Content lint: `uv run pgfound content lint`
 - Lab up: `make lab-up`
 - Lab down: `make lab-down`
 - Lab reset: `make lab-nuke`
