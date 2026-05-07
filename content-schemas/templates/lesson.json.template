@@ -1,0 +1,32 @@
+{
+  "id": "__LESSON_ID__",
+  "title": "__TITLE__",
+  "phase": __PHASE__,
+  "capability_layer": "__CAPABILITY_LAYER__",
+  "summary": "__REPLACE_ME_SUMMARY__",
+  "learning_objectives": [
+    "__REPLACE_ME_OBJECTIVE_1__",
+    "__REPLACE_ME_OBJECTIVE_2__"
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "worked_example_path": "worked-example.md",
+  "guided_exercise_ids": [],
+  "independent_exercise_ids": [],
+  "critique_exercise_ids": [],
+  "reflection_prompts": [
+    "__REPLACE_ME_REFLECTION_PROMPT__"
+  ],
+  "estimated_time_minutes": 30,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "postgres_docs",
+      "why": "__REPLACE_ME_REFERENCE_REASON__"
+    }
+  ],
+  "tags": [],
+  "status": "draft"
+}

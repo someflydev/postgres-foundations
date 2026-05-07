@@ -1,0 +1,21 @@
+# `lesson.json.template` Field Notes
+
+- `/id`: stable lesson slug. The scaffold command uses `--slug`.
+- `/title`: human-facing lesson title. The scaffold command uses `--title`.
+- `/phase`: numeric phase from `curriculum/map.json`.
+- `/capability_layer`: one capability layer slug from `curriculum/capability-layers.md`.
+- `/summary`: one or two concrete sentences about what the lesson teaches.
+- `/learning_objectives`: learner-visible outcomes; keep them observable.
+- `/prerequisites`: lesson IDs that should be completed first.
+- `/concepts_introduced`: concept slugs this lesson is allowed to teach.
+- `/concepts_not_yet_allowed`: concept slugs authors must not rely on yet.
+- `/body_path`: path to the teaching body, relative to this lesson directory.
+- `/worked_example_path`: optional path to a separate worked example, relative to this lesson directory.
+- `/guided_exercise_ids`: scaffolded exercise IDs for supported practice.
+- `/independent_exercise_ids`: exercise IDs for less-guided practice.
+- `/critique_exercise_ids`: exercise IDs for review and explanation practice.
+- `/reflection_prompts`: short prompts used before or after exercises.
+- `/estimated_time_minutes`: expected lesson reading and practice time.
+- `/references`: internal or external references with a reason for inclusion.
+- `/tags`: search/filter tags.
+- `/status`: keep `draft` until placeholders are removed and exercises exist.
