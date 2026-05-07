@@ -4,13 +4,19 @@ Current baseline:
 
 - Python package: `src/pgfound/`
 - CLI entry point: `pgfound = pgfound.cli:main`
-- Test suite: `tests/test_smoke.py`
+- CLI surface: `pgfound version`, `doctor`, `lab`, `content`, `review`,
+  `decision`, and `interview` command groups.
+- Test suite: `tests/test_cli.py`, `tests/test_paths.py`,
+  `tests/test_lab_psql.py`, and Docker Compose tests.
 - Tooling: `uv`, `ruff`, `pytest`
 - Docs state: PROMPT_02 added doctrine, architecture, repo layout, LLM usage,
   and ADR infrastructure under `docs/`.
 - Docker lab: PROMPT_03 added a Docker Compose PostgreSQL 16 lab under
   `docker/`, init SQL scripts, a sandbox profile, Makefile lab targets, and
   `docs/lab.md`.
+- Platform package: PROMPT_04 added config/path helpers, placeholder content
+  dataclasses/loaders, Docker Compose wrappers, psql argv building, review and
+  decision scaffolds, and `docs/cli.md`.
 
 Canonical docs:
 
@@ -19,6 +25,7 @@ Canonical docs:
 - `docs/repo-layout.md`
 - `docs/llm-usage.md`
 - `docs/lab.md`
+- `docs/cli.md`
 - `docs/adr/README.md`
 - `docs/adr/template.md`
 
@@ -28,7 +35,9 @@ Expected green checks:
 - `uv run ruff check .`
 - `uv run ruff format --check .`
 - `uv run pytest -q`
-- `uv run pgfound`
+- `uv run pgfound --help`
+- `uv run pgfound doctor`
+- `uv run pgfound content list`
 - `docker compose -f docker/docker-compose.yml config`
 
 Known local-only artifacts may exist after verification: `.venv/`,

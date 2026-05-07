@@ -33,7 +33,7 @@ concrete, operational, and PostgreSQL core-first.
 - Format: `uv run ruff format .`
 - Lint: `uv run ruff check .`
 - Test: `uv run pytest -q`
-- CLI smoke: `uv run pgfound`
+- CLI smoke: `uv run pgfound --help`
 - Lab up: `make lab-up`
 - Lab down: `make lab-down`
 - Lab reset: `make lab-nuke`

@@ -24,6 +24,11 @@ Docker lab references introduced by PROMPT_03:
 - `docker/initdb/`
 - `docker/postgresql.conf.d/README.md`
 
+CLI references introduced by PROMPT_04:
+
+- `docs/cli.md`
+- `src/pgfound/cli.py`
+
 Planned index targets:
 
-- CLI/content schema references after later implementation prompts.
+- Content schema references after later implementation prompts.
