@@ -10,12 +10,15 @@ Completed:
 - PROMPT_04: `pgfound` package layout, Click command surface, config/path
   helpers, Docker lab wrappers, content loader placeholders, CLI docs, and
   hermetic CLI tests.
+- PROMPT_05: draft 2020-12 content schemas, schema examples, real
+  `pgfound content validate`, authoring docs, and validator tests.
 
 Next expected prompt:
 
-- PROMPT_05: JSON schemas for content and `pgfound content validate`.
+- PROMPT_06: curriculum map, phase definitions, and capability-layer docs.
 
 Notes:
 
-- Do not run PROMPT_05 unless the user explicitly asks.
-- PROMPT_05 builds on the placeholder content package and `docs/cli.md`.
+- Do not run PROMPT_06 unless the user explicitly asks.
+- PROMPT_06 builds on the content schemas and capability-layer enum from
+  `content-schemas/common.json`.

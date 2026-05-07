@@ -34,6 +34,8 @@ concrete, operational, and PostgreSQL core-first.
 - Lint: `uv run ruff check .`
 - Test: `uv run pytest -q`
 - CLI smoke: `uv run pgfound --help`
+- Content validate: `uv run pgfound content validate`
+- Content examples validate: `uv run pgfound content validate --include-examples`
 - Lab up: `make lab-up`
 - Lab down: `make lab-down`
 - Lab reset: `make lab-nuke`

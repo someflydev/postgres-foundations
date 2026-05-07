@@ -17,6 +17,11 @@ Current baseline:
 - Platform package: PROMPT_04 added config/path helpers, placeholder content
   dataclasses/loaders, Docker Compose wrappers, psql argv building, review and
   decision scaffolds, and `docs/cli.md`.
+- Content validation: PROMPT_05 added draft 2020-12 JSON Schemas under
+  `content-schemas/`, one valid example per kind under
+  `content-schemas/examples/`, and a real `pgfound content validate` command
+  with schema validation, YAML loading, cross-file checks, `--paths`,
+  `--strict`, and `--include-examples`.
 
 Canonical docs:
 
@@ -26,6 +31,7 @@ Canonical docs:
 - `docs/llm-usage.md`
 - `docs/lab.md`
 - `docs/cli.md`
+- `docs/authoring.md`
 - `docs/adr/README.md`
 - `docs/adr/template.md`
 
@@ -38,6 +44,8 @@ Expected green checks:
 - `uv run pgfound --help`
 - `uv run pgfound doctor`
 - `uv run pgfound content list`
+- `uv run pgfound content validate`
+- `uv run pgfound content validate --include-examples`
 - `docker compose -f docker/docker-compose.yml config`
 
 Known local-only artifacts may exist after verification: `.venv/`,

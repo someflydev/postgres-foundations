@@ -29,6 +29,10 @@ CLI references introduced by PROMPT_04:
 - `docs/cli.md`
 - `src/pgfound/cli.py`
 
-Planned index targets:
+Content schema references introduced by PROMPT_05:
 
-- Content schema references after later implementation prompts.
+- `content-schemas/common.json`
+- `content-schemas/*.schema.json`
+- `content-schemas/examples/*.example.json`
+- `docs/authoring.md`
+- `src/pgfound/content/validate.py`
