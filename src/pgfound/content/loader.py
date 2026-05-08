@@ -45,7 +45,11 @@ def list_content(kind: str) -> list[ContentItem]:
             continue
         if kind == "lesson" and file_path.name != "lesson.json":
             continue
-        if kind == "lesson":
+        if kind == "exercise" and file_path.name != "exercise.json":
+            continue
+        if kind in {"lesson", "exercise"} or (
+            kind == "rubric" and file_path.suffix.lower() in {".json", ".yaml", ".yml"}
+        ):
             data = json.loads(file_path.read_text(encoding="utf-8"))
             content_id = str(data.get("id", file_path.parent.name))
             title = str(data.get("title", content_id.replace("-", " ")))
@@ -62,6 +66,12 @@ def load_raw_content(kind: str, content_id: str) -> tuple[Path, str] | None:
         return None
     for file_path in sorted(path for path in directory.rglob("*") if path.is_file()):
         if kind == "lesson" and file_path.name == "lesson.json":
+            raw = file_path.read_text(encoding="utf-8")
+            data = json.loads(raw)
+            if data.get("id") == content_id or file_path.parent.name == content_id:
+                return file_path, raw
+            continue
+        if kind == "exercise" and file_path.name == "exercise.json":
             raw = file_path.read_text(encoding="utf-8")
             data = json.loads(raw)
             if data.get("id") == content_id or file_path.parent.name == content_id:
