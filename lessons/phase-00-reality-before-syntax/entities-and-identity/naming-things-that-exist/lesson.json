@@ -1,0 +1,59 @@
+{
+  "id": "naming-things-that-exist",
+  "title": "Naming Things That Exist",
+  "phase": 0,
+  "capability_layer": "schema_literacy",
+  "summary": "Use a business app with tenants, users, projects, and memberships to practice Phase 0 paper modeling before SQL.",
+  "learning_objectives": [
+    "Identify entities, attributes, and relationships from prose requirements.",
+    "Separate duplicated facts from legitimate repeated values.",
+    "Name invariants and lifecycle events without using SQL syntax."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "entity",
+    "identity",
+    "attribute",
+    "relationship"
+  ],
+  "concepts_not_yet_allowed": [
+    "select",
+    "insert",
+    "foreign_key",
+    "primary_key",
+    "normalization",
+    "join",
+    "index",
+    "transaction",
+    "constraint"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "naming-things-that-exist-recognize-model",
+    "naming-things-that-exist-complete-model"
+  ],
+  "independent_exercise_ids": [
+    "naming-things-that-exist-build-model"
+  ],
+  "critique_exercise_ids": [
+    "naming-things-that-exist-repair-model"
+  ],
+  "reflection_prompts": [
+    "Which fact in this model would be most dangerous to copy into two places?",
+    "Which lifecycle event would a reviewer need before trusting the current state?"
+  ],
+  "estimated_time_minutes": 35,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "doctrine",
+      "why": "Explains why PostgreSQL Foundations starts from business reality before database syntax."
+    }
+  ],
+  "tags": [
+    "phase-0",
+    "paper-modeling",
+    "saas-multi-tenant"
+  ],
+  "status": "active"
+}

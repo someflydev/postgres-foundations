@@ -13,6 +13,8 @@ The modernization bridge domain models data moving from an older system into cle
 
 ## Recurring scenarios
 
+- Phase 0: model legacy identities, import batches, mappings, duplicated facts,
+  and migration lifecycle events on paper before SQL.
 - Phase 1: inspect imported rows and spot inconsistent source fields.
 - Phase 2: join rows to import batches and mappings.
 - Phase 3: tighten constraints after profiling legacy data.

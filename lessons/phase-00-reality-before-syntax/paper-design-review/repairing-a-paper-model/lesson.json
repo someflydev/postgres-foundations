@@ -1,0 +1,59 @@
+{
+  "id": "repairing-a-paper-model",
+  "title": "Repairing a Paper Model",
+  "phase": 0,
+  "capability_layer": "schema_literacy",
+  "summary": "Use a knowledge base with authors, documents, tags, and document-tag links to practice Phase 0 paper modeling before SQL.",
+  "learning_objectives": [
+    "Identify entities, attributes, and relationships from prose requirements.",
+    "Separate duplicated facts from legitimate repeated values.",
+    "Name invariants and lifecycle events without using SQL syntax."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "duplication",
+    "relationship",
+    "cardinality",
+    "lifecycle-event"
+  ],
+  "concepts_not_yet_allowed": [
+    "select",
+    "insert",
+    "foreign_key",
+    "primary_key",
+    "normalization",
+    "join",
+    "index",
+    "transaction",
+    "constraint"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "repairing-a-paper-model-recognize-model",
+    "repairing-a-paper-model-complete-model"
+  ],
+  "independent_exercise_ids": [
+    "repairing-a-paper-model-build-model"
+  ],
+  "critique_exercise_ids": [
+    "repairing-a-paper-model-repair-model"
+  ],
+  "reflection_prompts": [
+    "Which fact in this model would be most dangerous to copy into two places?",
+    "Which lifecycle event would a reviewer need before trusting the current state?"
+  ],
+  "estimated_time_minutes": 35,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "doctrine",
+      "why": "Explains why PostgreSQL Foundations starts from business reality before database syntax."
+    }
+  ],
+  "tags": [
+    "phase-0",
+    "paper-modeling",
+    "document-search"
+  ],
+  "status": "active"
+}

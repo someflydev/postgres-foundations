@@ -13,6 +13,8 @@ The document search domain models a small knowledge base with documents, authors
 
 ## Recurring scenarios
 
+- Phase 0: model authors, documents, tags, many-to-many tag links, publication
+  state, and archival events on paper before SQL.
 - Phase 1: filter and sort published documents.
 - Phase 2: join documents to authors and tags.
 - Phase 4: compare relational columns with JSONB metadata.

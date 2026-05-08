@@ -1,0 +1,55 @@
+{
+  "id": "optional-and-repeating-links-build-model",
+  "title": "Build the Optional and Repeating Links model",
+  "lesson_id": "optional-and-repeating-links",
+  "scaffolding_level": "C",
+  "kind": "modeling",
+  "allowed_concepts": [
+    "entity",
+    "attribute",
+    "relationship",
+    "cardinality",
+    "identity",
+    "duplication",
+    "invariant",
+    "lifecycle-event",
+    "state-transition"
+  ],
+  "not_yet_allowed_concepts": [
+    "select",
+    "insert",
+    "foreign_key",
+    "primary_key",
+    "normalization",
+    "join",
+    "index",
+    "transaction",
+    "constraint"
+  ],
+  "schema_scope": {
+    "modeling_surface": "paper_markdown"
+  },
+  "dataset": {
+    "seed_pack_id": "document_search",
+    "max_rows_hint": 0
+  },
+  "expected_output_shape": "prose_explanation",
+  "success_criteria": [
+    "Produces entities, attributes, relationships, invariants, and lifecycle events without scaffolding.",
+    "Explains cardinality for each relationship.",
+    "Answers both oral-defense prompts from the model."
+  ],
+  "time_target_minutes": 35,
+  "rubric_id": "paper-modeling",
+  "solution_path": "solution.md",
+  "tags": [
+    "phase-0",
+    "paper-modeling",
+    "document-search"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "Which of these invariants cannot be expressed in a table and why?",
+    "Which lifecycle events produce new rows vs update rows?"
+  ]
+}

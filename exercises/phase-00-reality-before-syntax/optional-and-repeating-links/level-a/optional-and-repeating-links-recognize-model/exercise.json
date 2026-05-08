@@ -1,0 +1,54 @@
+{
+  "id": "optional-and-repeating-links-recognize-model",
+  "title": "Recognize the Optional and Repeating Links model",
+  "lesson_id": "optional-and-repeating-links",
+  "scaffolding_level": "A",
+  "kind": "modeling",
+  "allowed_concepts": [
+    "entity",
+    "attribute",
+    "relationship",
+    "cardinality",
+    "identity",
+    "duplication",
+    "invariant",
+    "lifecycle-event",
+    "state-transition"
+  ],
+  "not_yet_allowed_concepts": [
+    "select",
+    "insert",
+    "foreign_key",
+    "primary_key",
+    "normalization",
+    "join",
+    "index",
+    "transaction",
+    "constraint"
+  ],
+  "schema_scope": {
+    "modeling_surface": "paper_markdown"
+  },
+  "dataset": {
+    "seed_pack_id": "document_search",
+    "max_rows_hint": 0
+  },
+  "expected_output_shape": "prose_explanation",
+  "success_criteria": [
+    "Lists candidate entities from the prose scenario.",
+    "Names at least two relationships in ordinary language.",
+    "Avoids SQL syntax and database-object terminology."
+  ],
+  "time_target_minutes": 10,
+  "rubric_id": "paper-modeling",
+  "solution_path": "solution.md",
+  "tags": [
+    "phase-0",
+    "paper-modeling",
+    "document-search"
+  ],
+  "status": "active",
+  "hints": [
+    "Read the nouns first, then decide which nouns are durable business things."
+  ]
+}

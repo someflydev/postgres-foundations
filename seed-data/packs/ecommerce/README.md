@@ -13,6 +13,8 @@ The ecommerce domain models a small store that sells catalog items and records c
 
 ## Recurring scenarios
 
+- Phase 0: model customers, products, orders, order items, statuses, and order
+  lifecycle events on paper before SQL.
 - Phase 1: retrieve recent orders and inspect product prices.
 - Phase 2: join orders to line items and products.
 - Phase 3: enforce non-negative quantities and valid statuses.

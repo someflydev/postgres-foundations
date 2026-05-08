@@ -1,0 +1,9 @@
+# Reference Solution: Build the Optional and Repeating Links model
+
+A strong answer starts by restating the business reality in plain language. For a knowledge base with authors, documents, tags, and document-tag links, name durable entities first, then attach attributes only to the thing that owns the fact. Relationships should be written as sentences, such as "a customer places many orders" or "an appointment reserves one provider and one client." Cardinality belongs in the explanation because it records the business rule behind the link.
+
+For Level C, the expected reasoning is not a single magic list. The answer should show why each entity is present, why copied facts are either legitimate repetition or risky duplication, and which lifecycle events change state. Useful invariants include identity staying stable, required relationships being present, status values following named transitions, and time or quantity facts remaining coherent. The answer should also name at least one unresolved question when the prompt leaves business policy open.
+
+A worked model would include entities such as customers, products, orders, appointments, providers, documents, tags, sources, events, tenants, users, or import batches depending on the scenario. Attributes belong under those entities: names, contact details, status, timestamps, labels, and descriptive fields. Relationships should name both ends and expected cardinality. Lifecycle events should appear in order, for example created, scheduled, confirmed, canceled, fulfilled, imported, mapped, published, archived, or linked.
+
+Review the answer against the paper-modeling rubric. Award credit for clear entity identification, relationship cardinality, invariant clarity, lifecycle reasoning, and explanation quality. Penalize answers that jump to SQL, hide uncertain policy decisions, copy the same fact into several places without justification, or treat current status as a substitute for event history.

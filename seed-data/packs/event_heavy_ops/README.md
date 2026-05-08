@@ -12,6 +12,8 @@ The event-heavy operations domain models append-only operational events from ser
 
 ## Recurring scenarios
 
+- Phase 0: model sources, events, incident links, event identity, and lifecycle
+  facts on paper before SQL.
 - Phase 1: inspect recent events by source and type.
 - Phase 2: group events by source and join to incident context.
 - Phase 5: derive rolling counts and latest event per source.

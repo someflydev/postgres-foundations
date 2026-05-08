@@ -13,6 +13,8 @@ The SaaS multi-tenant domain models a small business application with many custo
 
 ## Recurring scenarios
 
+- Phase 0: model tenants, users, projects, memberships, ownership boundaries,
+  and tenant-local identity on paper before SQL.
 - Phase 1: filter data by tenant and status.
 - Phase 2: join users, tenants, and projects without crossing boundaries.
 - Phase 3: enforce tenant-scoped uniqueness.

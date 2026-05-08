@@ -13,6 +13,8 @@ The scheduling domain models appointments between providers and clients. It give
 
 ## Recurring scenarios
 
+- Phase 0: model providers, clients, appointments, availability, overlap rules,
+  and cancellation events on paper before SQL.
 - Phase 1: inspect upcoming appointments.
 - Phase 2: join appointments to providers and clients.
 - Phase 3: reject invalid appointment status and impossible durations.

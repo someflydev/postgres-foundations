@@ -1,0 +1,55 @@
+{
+  "id": "ambiguity-changes-the-model-complete-model",
+  "title": "Complete the Ambiguity Changes the Model model",
+  "lesson_id": "ambiguity-changes-the-model",
+  "scaffolding_level": "B",
+  "kind": "modeling",
+  "allowed_concepts": [
+    "entity",
+    "attribute",
+    "relationship",
+    "cardinality",
+    "identity",
+    "duplication",
+    "invariant",
+    "lifecycle-event",
+    "state-transition"
+  ],
+  "not_yet_allowed_concepts": [
+    "select",
+    "insert",
+    "foreign_key",
+    "primary_key",
+    "normalization",
+    "join",
+    "index",
+    "transaction",
+    "constraint"
+  ],
+  "schema_scope": {
+    "modeling_surface": "paper_markdown"
+  },
+  "dataset": {
+    "seed_pack_id": "event_heavy_ops",
+    "max_rows_hint": 0
+  },
+  "expected_output_shape": "prose_explanation",
+  "success_criteria": [
+    "Completes every starter.md section with concrete domain facts.",
+    "Adds at least two invariants and two lifecycle events.",
+    "Marks any ambiguous policy as an open question."
+  ],
+  "time_target_minutes": 20,
+  "rubric_id": "paper-modeling",
+  "solution_path": "solution.md",
+  "tags": [
+    "phase-0",
+    "paper-modeling",
+    "event-heavy-ops"
+  ],
+  "status": "active",
+  "starter_path": "starter.md",
+  "hints": [
+    "Use starter.md as a checklist, not as a final answer."
+  ]
+}

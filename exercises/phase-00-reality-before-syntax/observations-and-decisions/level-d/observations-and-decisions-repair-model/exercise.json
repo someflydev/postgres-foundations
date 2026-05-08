@@ -1,0 +1,56 @@
+{
+  "id": "observations-and-decisions-repair-model",
+  "title": "Repair the Observations and Decisions model",
+  "lesson_id": "observations-and-decisions",
+  "scaffolding_level": "D",
+  "kind": "modeling",
+  "allowed_concepts": [
+    "entity",
+    "attribute",
+    "relationship",
+    "cardinality",
+    "identity",
+    "duplication",
+    "invariant",
+    "lifecycle-event",
+    "state-transition"
+  ],
+  "not_yet_allowed_concepts": [
+    "select",
+    "insert",
+    "foreign_key",
+    "primary_key",
+    "normalization",
+    "join",
+    "index",
+    "transaction",
+    "constraint"
+  ],
+  "schema_scope": {
+    "modeling_surface": "paper_markdown"
+  },
+  "dataset": {
+    "seed_pack_id": "scheduling",
+    "max_rows_hint": 0
+  },
+  "expected_output_shape": "prose_explanation",
+  "success_criteria": [
+    "Identifies at least three concrete flaws in the flawed model.",
+    "Repairs the model while preserving the stated business facts.",
+    "Justifies each repair during oral defense."
+  ],
+  "time_target_minutes": 45,
+  "rubric_id": "paper-modeling",
+  "solution_path": "solution.md",
+  "tags": [
+    "phase-0",
+    "paper-modeling",
+    "scheduling"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "Justify the repair for each duplicated fact.",
+    "Which missing relationship caused the largest loss of meaning?",
+    "Which lifecycle event or invariant prevents the repaired model from drifting again?"
+  ]
+}
