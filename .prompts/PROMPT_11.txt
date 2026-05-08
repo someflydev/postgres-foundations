@@ -22,33 +22,38 @@ explain why the `WHERE` is essential.
 - PROMPT_09 domain packs, specifically `ecommerce/phases/phase-01.sql`,
   `scheduling/phases/phase-01.sql`.
 - PROMPT_10 Phase 0 content active and validated.
-- Phase 1 directories empty except `.gitkeep` / `README` from PROMPT_09.
+- A draft scaffold for `first-select` may already exist from earlier
+  authoring-system work. If so, replace it with real active content at
+  the map-aligned path below rather than preserving placeholder text.
 
 ## Task
 
 ### 1. Phase 1 clusters
 
-From `curriculum/map.json`, phase 1's clusters should be approximately:
+From `curriculum/map.json`, phase 1's clusters are:
 
-- `one-table-thinking`
-- `select-filter-sort`
-- `insert-update-delete`
-- `reading-schemas-you-did-not-write`
+- `reading-rows`
+- `filtering-and-ordering`
+- `changing-rows`
+- `nulls-and-types`
+- `first-debugging`
 
 Follow the map exactly.
 
-### 2. Lessons (at least 8)
+### 2. Lessons (10)
 
-Authoritative set:
+Authoritative set, aligned to the current phase-1 clusters:
 
-1. `lessons/phase-01-sql-literacy-basics/one-table-thinking/rows-columns-tables/` — rows, columns, tables; cardinality intuition.
-2. `lessons/phase-01-sql-literacy-basics/one-table-thinking/null-and-missing/` — the three-valued logic of `NULL`, when absence is a separate fact.
-3. `lessons/phase-01-sql-literacy-basics/select-filter-sort/first-select/` — `SELECT ... FROM`, choosing columns, expressions in the select list.
-4. `lessons/phase-01-sql-literacy-basics/select-filter-sort/where-basics/` — `WHERE`, `AND`, `OR`, parentheses, `IN`, `BETWEEN`, `IS NULL`.
-5. `lessons/phase-01-sql-literacy-basics/select-filter-sort/order-and-limit/` — `ORDER BY` ascending/descending, tie-breakers, `LIMIT`/`OFFSET` + why `OFFSET` is an operational smell at scale.
-6. `lessons/phase-01-sql-literacy-basics/insert-update-delete/inserts/` — single-row and multi-row `INSERT`, column list discipline, default values.
-7. `lessons/phase-01-sql-literacy-basics/insert-update-delete/updates-and-deletes/` — `UPDATE` with `WHERE`, `DELETE` with `WHERE`, the "forgot-the-WHERE" incident, using `RETURNING`.
-8. `lessons/phase-01-sql-literacy-basics/reading-schemas-you-did-not-write/shape-of-a-table/` — `\d`, reading columns, types, defaults, nullability, before writing any query.
+1. `lessons/phase-01-sql-literacy-basics/reading-rows/rows-columns-tables/` — rows, columns, tables; cardinality intuition.
+2. `lessons/phase-01-sql-literacy-basics/reading-rows/first-select/` — `SELECT ... FROM`, choosing columns, expressions in the select list.
+3. `lessons/phase-01-sql-literacy-basics/filtering-and-ordering/where-basics/` — `WHERE`, `AND`, `OR`, parentheses, `IN`, `BETWEEN`, `IS NULL`.
+4. `lessons/phase-01-sql-literacy-basics/filtering-and-ordering/order-and-limit/` — `ORDER BY` ascending/descending, tie-breakers, `LIMIT`/`OFFSET` + why `OFFSET` is an operational smell at scale.
+5. `lessons/phase-01-sql-literacy-basics/changing-rows/inserts/` — single-row and multi-row `INSERT`, column list discipline, default values.
+6. `lessons/phase-01-sql-literacy-basics/changing-rows/updates-and-deletes/` — `UPDATE` with `WHERE`, `DELETE` with `WHERE`, the "forgot-the-WHERE" incident, using `RETURNING`.
+7. `lessons/phase-01-sql-literacy-basics/nulls-and-types/null-and-missing/` — the three-valued logic of `NULL`, when absence is a separate fact.
+8. `lessons/phase-01-sql-literacy-basics/nulls-and-types/types-defaults-and-comparisons/` — reading data types, defaults, literal values, and simple comparisons without type tricks.
+9. `lessons/phase-01-sql-literacy-basics/first-debugging/shape-of-a-table/` — `\d`, reading columns, types, defaults, nullability, before writing any query.
+10. `lessons/phase-01-sql-literacy-basics/first-debugging/silent-wrong-rows/` — debugging one-table queries that run successfully but return the wrong rows.
 
 Every lesson uses **only** phase-1 concepts. `concepts_not_yet_allowed`
 for every phase-1 lesson must exclude: `join`, `group_by`, `aggregate`,
@@ -73,7 +78,7 @@ For each lesson, author:
 - 1 Level D exercise (critique and repair: flawed query that returns
   wrong rows silently)
 
-That's roughly 7 exercises × 8 lessons = **~56 exercises**.
+That's roughly 7 exercises × 10 lessons = **~70 exercises**.
 
 Key requirements:
 
