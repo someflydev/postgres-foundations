@@ -54,6 +54,7 @@ PLACEHOLDER_RE: Final[re.Pattern[str]] = re.compile(
     r"__REPLACE_ME[^_]*__|__REPLACE_ME_[A-Z0-9_]+__"
 )
 PHASE_DIR_RE: Final[re.Pattern[str]] = re.compile(r"^phase-(?P<number>\d{2})-[a-z0-9-]+$")
+EXERCISE_LEVEL_DIR_RE: Final[re.Pattern[str]] = re.compile(r"^level-(?P<level>[a-d])$")
 
 
 @dataclass(frozen=True)
@@ -293,6 +294,12 @@ def _cross_file_checks(
                     )
                 )
         elif item.kind == "exercise":
+            errors.extend(
+                _exercise_authoring_errors(
+                    item,
+                    parent=lessons.get(str(data.get("lesson_id"))),
+                )
+            )
             lesson_id = data.get("lesson_id")
             parent = lessons.get(str(lesson_id))
             if parent is None:
@@ -335,6 +342,150 @@ def _cross_file_checks(
                         )
                     )
     return errors, warnings
+
+
+def _exercise_authoring_errors(
+    item: LoadedContent,
+    *,
+    parent: LoadedContent | None,
+) -> list[ValidationIssue]:
+    errors: list[ValidationIssue] = []
+    data = item.data
+    if _is_schema_example(item.path):
+        return errors
+
+    allowed = set(data.get("allowed_concepts", []))
+    not_yet_allowed = set(data.get("not_yet_allowed_concepts", []))
+    overlap = sorted(allowed & not_yet_allowed)
+    if overlap:
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                item.path,
+                "allowed_concepts overlaps not_yet_allowed_concepts: " + ", ".join(overlap),
+            )
+        )
+
+    if item.path.name != "exercise.json":
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                item.path,
+                "authored exercise metadata must be exercise.json",
+            )
+        )
+        return errors
+
+    expected_level = data.get("scaffolding_level")
+    level_dir = item.path.parent.parent.name
+    level_match = EXERCISE_LEVEL_DIR_RE.match(level_dir)
+    if not level_match:
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                item.path,
+                "exercise.json must be enclosed by a level-a, level-b, "
+                "level-c, or level-d directory",
+            )
+        )
+    elif isinstance(expected_level, str) and level_match.group("level").upper() != expected_level:
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                item.path,
+                f"scaffolding_level {expected_level!r} does not match enclosing {level_dir!r}",
+            )
+        )
+
+    level = data.get("scaffolding_level")
+    hints = data.get("hints", [])
+    oral_defense = data.get("oral_defense_prompts", [])
+    status = data.get("status")
+    if level in {"C", "D"} and hints:
+        errors.append(
+            ValidationIssue(item.kind, item.path, "Level C and D exercises must not include hints")
+        )
+    if status == "active":
+        if level == "C" and len(oral_defense) < 2:
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    "active Level C exercises require at least 2 oral_defense_prompts",
+                )
+            )
+        if level == "D" and len(oral_defense) < 3:
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    "active Level D exercises require at least 3 oral_defense_prompts",
+                )
+            )
+        if level in {"C", "D"} and any(
+            isinstance(prompt, str) and PLACEHOLDER_RE.search(prompt) for prompt in oral_defense
+        ):
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    "active oral_defense_prompts must not contain __REPLACE_ME__ placeholders",
+                )
+            )
+        if (
+            data.get("kind") in {"query", "schema", "lab"}
+            and not (item.path.parent / "solution.sql").is_file()
+        ):
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    "active query, schema, and lab exercises require solution.sql",
+                )
+            )
+
+    if level == "D" and data.get("kind") not in {"critique", "debug"}:
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                item.path,
+                "Level D exercises must use critique or debug kind",
+            )
+        )
+
+    if parent is not None:
+        lesson_slug = item.path.parent.parent.parent.name
+        expected_lesson_dir = _lesson_dir_slug(parent.path)
+        if expected_lesson_dir and lesson_slug != expected_lesson_dir:
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    "exercise path lesson slug "
+                    f"{lesson_slug!r} does not match parent lesson directory "
+                    f"{expected_lesson_dir!r}",
+                )
+            )
+
+    prompt_path = item.path.parent / "prompt.md"
+    solution_path = item.path.parent / data.get("solution_path", "")
+    if not prompt_path.is_file():
+        errors.append(ValidationIssue(item.kind, item.path, "prompt.md is missing"))
+    if isinstance(data.get("solution_path"), str) and not solution_path.is_file():
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                item.path,
+                f"solution_path {data.get('solution_path')!r} does not resolve to an existing file",
+            )
+        )
+    return errors
+
+
+def _lesson_dir_slug(path: Path) -> str | None:
+    if path.name == "lesson.json":
+        return path.parent.name
+    return None
 
 
 def _lesson_authoring_errors(item: LoadedContent) -> list[ValidationIssue]:

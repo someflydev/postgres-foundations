@@ -21,6 +21,17 @@ SECTION_TITLES: Final[tuple[str, ...]] = (
 BARE_URL_RE: Final[re.Pattern[str]] = re.compile(r"(?<!\]\()https?://[^\s)]+")
 TODO_RE: Final[re.Pattern[str]] = re.compile(r"\b(TODO|TBD|XXX)\b", re.IGNORECASE)
 WORD_RE: Final[re.Pattern[str]] = re.compile(r"\b[\w'-]+\b")
+FORBIDDEN_SQL_PATTERNS: Final[dict[str, tuple[re.Pattern[str], ...]]] = {
+    "window_function": (re.compile(r"\bOVER\s*\(", re.IGNORECASE),),
+    "cte": (re.compile(r"\bWITH\s+[a-z_][a-z0-9_]*\s+AS\s*\(", re.IGNORECASE),),
+    "recursive_cte": (re.compile(r"\bWITH\s+RECURSIVE\b", re.IGNORECASE),),
+    "lateral_join": (re.compile(r"\bLATERAL\b", re.IGNORECASE),),
+    "materialized_view": (re.compile(r"\bCREATE\s+MATERIALIZED\s+VIEW\b", re.IGNORECASE),),
+    "view": (re.compile(r"\bCREATE\s+(?:OR\s+REPLACE\s+)?VIEW\b", re.IGNORECASE),),
+    "upsert": (re.compile(r"\bON\s+CONFLICT\b", re.IGNORECASE),),
+    "jsonb": (re.compile(r"\bjsonb\b|::\s*jsonb", re.IGNORECASE),),
+    "array": (re.compile(r"\bARRAY\s*\[|\bunnest\s*\(", re.IGNORECASE),),
+}
 
 
 @dataclass(frozen=True)
@@ -45,24 +56,30 @@ def lint_content(*, path_globs: tuple[str, ...] = ()) -> LintReport:
     files = [
         path
         for path in validate.discover_content_files(path_globs=path_globs)
-        if path.name == "lesson.json"
+        if path.name in {"lesson.json", "exercise.json"}
     ]
     warnings: list[LintIssue] = []
 
-    for lesson_path in files:
+    for content_path in files:
+        kind = validate.infer_kind(content_path)
+        if kind == "exercise":
+            warnings.extend(_exercise_warnings(content_path))
+            continue
+        if kind != "lesson":
+            continue
         try:
-            lesson = validate.load_content_file(lesson_path)
+            lesson = validate.load_content_file(content_path)
         except (OSError, ValueError) as exc:
-            warnings.append(LintIssue("lesson", lesson_path, f"could not load lesson: {exc}"))
+            warnings.append(LintIssue("lesson", content_path, f"could not load lesson: {exc}"))
             continue
 
         body_path_value = lesson.get("body_path")
         if not isinstance(body_path_value, str):
             continue
-        body_path = lesson_path.parent / body_path_value
+        body_path = content_path.parent / body_path_value
         if not body_path.is_file():
             warnings.append(
-                LintIssue("lesson", lesson_path, f"body_path {body_path_value!r} missing")
+                LintIssue("lesson", content_path, f"body_path {body_path_value!r} missing")
             )
             continue
 
@@ -70,6 +87,34 @@ def lint_content(*, path_globs: tuple[str, ...] = ()) -> LintReport:
         warnings.extend(_body_warnings(body_path, body, active=lesson.get("status") == "active"))
 
     return LintReport(files_checked=len(files), warnings=tuple(warnings))
+
+
+def _exercise_warnings(exercise_path: Path) -> list[LintIssue]:
+    warnings: list[LintIssue] = []
+    try:
+        exercise = validate.load_content_file(exercise_path)
+    except (OSError, ValueError) as exc:
+        return [LintIssue("exercise", exercise_path, f"could not load exercise: {exc}")]
+
+    solution_path = exercise_path.parent / "solution.sql"
+    if not solution_path.is_file():
+        return warnings
+
+    solution_sql = solution_path.read_text(encoding="utf-8")
+    for concept in exercise.get("not_yet_allowed_concepts", []):
+        if not isinstance(concept, str):
+            continue
+        for pattern in FORBIDDEN_SQL_PATTERNS.get(concept, ()):
+            if pattern.search(solution_sql):
+                warnings.append(
+                    LintIssue(
+                        "exercise",
+                        solution_path,
+                        f"solution.sql appears to use not-yet-allowed concept {concept!r}",
+                    )
+                )
+                break
+    return warnings
 
 
 def _body_warnings(body_path: Path, body: str, *, active: bool) -> list[LintIssue]:
