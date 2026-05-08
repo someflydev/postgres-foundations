@@ -37,6 +37,8 @@ concrete, operational, and PostgreSQL core-first.
 - Content validate: `uv run pgfound content validate`
 - Content examples validate: `uv run pgfound content validate --include-examples`
 - Content lint: `uv run pgfound content lint`
+- Seed dry-run: `uv run pgfound content seed ecommerce --phase 1 --dry-run`
+- Seed lab data: `uv run pgfound content seed ecommerce --phase 1 --reset`
 - Lab up: `make lab-up`
 - Lab down: `make lab-down`
 - Lab reset: `make lab-nuke`

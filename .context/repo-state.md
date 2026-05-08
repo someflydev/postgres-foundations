@@ -34,6 +34,11 @@ Current baseline:
   `pgfound content scaffold exercise`, exercise level validation,
   forbidden-concept SQL lint, default rubrics under `rubrics/default/`, and
   `docs/authoring-exercises.md`.
+- Reusable domains: PROMPT_09 added seed packs under `seed-data/packs/` for
+  ecommerce, scheduling, SaaS multi-tenancy, event-heavy operations, document
+  search, and modernization bridge; `pgfound content seed`; domain manifest
+  validation; deterministic CSV generator tests; and
+  `docs/domain-conventions.md`.
 
 Canonical docs:
 
@@ -46,6 +51,7 @@ Canonical docs:
 - `docs/authoring.md`
 - `docs/authoring-lessons.md`
 - `docs/authoring-exercises.md`
+- `docs/domain-conventions.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
 - `curriculum/capability-layers.md`

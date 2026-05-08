@@ -19,14 +19,14 @@ Completed:
   lesson validation cross-checks, authoring lint, docs, and tests.
 - PROMPT_08: exercise authoring directories, scaffold command, level-specific
   validation, forbidden-concept SQL lint, default rubrics, docs, and tests.
+- PROMPT_09: reusable teaching domain packs, domain conventions, seed loader
+  CLI, manifest validation, dry-run tests, and deterministic generators.
 
 Next expected prompt:
 
-- PROMPT_09: reusable teaching domain packs for schemas, seed SQL snippets,
-  and naming conventions.
+- PROMPT_10: Phase 0 content for reality-before-syntax and paper modeling.
 
 Notes:
 
-- Do not run PROMPT_09 unless the user explicitly asks.
-- PROMPT_09 builds on the phase, cluster, and capability-layer definitions in
-  `curriculum/map.json`.
+- Do not run PROMPT_10 unless the user explicitly asks.
+- PROMPT_10 builds on the reusable domains established in `seed-data/packs/`.

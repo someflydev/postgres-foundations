@@ -63,3 +63,14 @@ Exercise authoring references introduced by PROMPT_08:
 - `src/pgfound/content/scaffold.py`
 - `src/pgfound/content/validate.py`
 - `src/pgfound/content/lint.py`
+
+Reusable domain references introduced by PROMPT_09:
+
+- `seed-data/packs/*/manifest.json`
+- `seed-data/packs/*/README.md`
+- `seed-data/packs/*/phases/phase-*.sql`
+- `seed-data/packs/*/generators/*.py`
+- `docs/domain-conventions.md`
+- `content-schemas/manifest.schema.json`
+- `src/pgfound/content/seed.py`
+- `docs/cli.md`
