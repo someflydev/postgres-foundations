@@ -30,6 +30,10 @@ Current baseline:
   lesson templates under `content-schemas/templates/`, `pgfound content
   scaffold lesson`, `pgfound content lint`, lesson-specific validator checks,
   and `docs/authoring-lessons.md`.
+- Exercise authoring: PROMPT_08 added root `exercises/` authoring directories,
+  `pgfound content scaffold exercise`, exercise level validation,
+  forbidden-concept SQL lint, default rubrics under `rubrics/default/`, and
+  `docs/authoring-exercises.md`.
 
 Canonical docs:
 
@@ -41,6 +45,7 @@ Canonical docs:
 - `docs/cli.md`
 - `docs/authoring.md`
 - `docs/authoring-lessons.md`
+- `docs/authoring-exercises.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
 - `curriculum/capability-layers.md`

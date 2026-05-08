@@ -54,3 +54,12 @@ Lesson authoring references introduced by PROMPT_07:
 - `docs/authoring-lessons.md`
 - `src/pgfound/content/scaffold.py`
 - `src/pgfound/content/lint.py`
+
+Exercise authoring references introduced by PROMPT_08:
+
+- `exercises/phase-*/`
+- `rubrics/default/*.rubric.json`
+- `docs/authoring-exercises.md`
+- `src/pgfound/content/scaffold.py`
+- `src/pgfound/content/validate.py`
+- `src/pgfound/content/lint.py`

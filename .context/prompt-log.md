@@ -17,14 +17,16 @@ Completed:
   integration, and tests.
 - PROMPT_07: lesson authoring directories, lesson templates, scaffold command,
   lesson validation cross-checks, authoring lint, docs, and tests.
+- PROMPT_08: exercise authoring directories, scaffold command, level-specific
+  validation, forbidden-concept SQL lint, default rubrics, docs, and tests.
 
 Next expected prompt:
 
-- PROMPT_08: exercise authoring system, scaffolding levels, and forbidden
-  concepts enforcement.
+- PROMPT_09: reusable teaching domain packs for schemas, seed SQL snippets,
+  and naming conventions.
 
 Notes:
 
-- Do not run PROMPT_08 unless the user explicitly asks.
-- PROMPT_08 builds on the phase, cluster, and capability-layer definitions in
+- Do not run PROMPT_09 unless the user explicitly asks.
+- PROMPT_09 builds on the phase, cluster, and capability-layer definitions in
   `curriculum/map.json`.
