@@ -4,8 +4,8 @@ Current baseline:
 
 - Python package: `src/pgfound/`
 - CLI entry point: `pgfound = pgfound.cli:main`
-- CLI surface: `pgfound version`, `doctor`, `lab`, `content`, `review`,
-  `decision`, and `interview` command groups.
+- CLI surface: `pgfound version`, `doctor`, `lab`, `content`, `exercise`,
+  `review`, `decision`, and `interview` command groups.
 - Test suite: `tests/test_cli.py`, `tests/test_paths.py`,
   `tests/test_lab_psql.py`, and Docker Compose tests.
 - Tooling: `uv`, `ruff`, `pytest`
@@ -44,6 +44,11 @@ Current baseline:
   lesson/exercise pointer READMEs, the default paper-modeling rubric, domain
   README Phase 0 notes, validator phase overrides for paper exercises, and
   phase-corpus tests.
+- Phase 1 corpus and runner: PROMPT_11 added the full SQL literacy basics
+  content set: 10 active lessons, 70 active SQL exercises, Phase 1
+  lesson/exercise pointer READMEs, `pgfound exercise run`, dry-run and
+  answer-check modes, progress scaffolding under `tmp/progress/`, and Phase 1
+  corpus/runner tests.
 
 Canonical docs:
 
@@ -76,6 +81,7 @@ Expected green checks:
 - `uv run pgfound content validate`
 - `uv run pgfound content lint`
 - `uv run pgfound content validate --include-examples`
+- `uv run pgfound exercise run first-select-write-query --dry-run`
 - `docker compose -f docker/docker-compose.yml config`
 
 Known local-only artifacts may exist after verification: `.venv/`,

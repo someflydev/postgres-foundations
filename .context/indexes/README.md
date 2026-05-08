@@ -83,3 +83,12 @@ Phase 0 paper-modeling references introduced by PROMPT_10:
 - `content-schemas/phase-exercise-overrides.schema.json`
 - `docs/authoring-exercises.md`
 - `tests/test_phase0_corpus.py`
+
+Phase 1 SQL literacy references introduced by PROMPT_11:
+
+- `lessons/phase-01-sql-literacy-basics/README.md`
+- `exercises/phase-01-sql-literacy-basics/README.md`
+- `src/pgfound/exercise.py`
+- `docs/cli.md`
+- `tests/test_phase1_corpus.py`
+- `tests/test_exercise_run_dry_run.py`

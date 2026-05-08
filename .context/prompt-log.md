@@ -25,12 +25,17 @@ Completed:
   active lessons, 40 active modeling exercises, paper-modeling rubric,
   per-phase validator overrides, authoring docs, domain README notes, pointer
   tables, and corpus tests.
+- PROMPT_11: full Phase 1 SQL literacy basics corpus, 10 active lessons, 70
+  active SQL exercises, Phase 1 pointer tables, `pgfound exercise run`, dry-run
+  and answer-check support, and Phase 1 corpus/runner tests.
 
 Next expected prompt:
 
-- PROMPT_11: Phase 1 SQL literacy basics.
+- PROMPT_12: Phase 2 relational joins and aggregation.
 
 Notes:
 
-- Do not run PROMPT_11 unless the user explicitly asks.
-- PROMPT_11 is the first phase where learners touch SQL and the database.
+- Do not run PROMPT_12 unless the user explicitly asks.
+- PROMPT_12 should verify its cluster list against `curriculum/map.json`
+  before authoring because the prompt text's sample cluster names do not match
+  the current map exactly.
