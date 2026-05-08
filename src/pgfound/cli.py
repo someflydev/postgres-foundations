@@ -323,6 +323,61 @@ def content_scaffold_lesson(
     _success(f"created {relative_lesson_dir}")
 
 
+@content_scaffold_group.command("exercise", help="Scaffold a draft exercise.")
+@click.option(
+    "--lesson",
+    required=True,
+    help="Lesson path under lessons/, for example phase-01-sql-literacy-basics/cluster/slug.",
+)
+@click.option("--level", required=True, type=click.Choice(["a", "b", "c", "d", "A", "B", "C", "D"]))
+@click.option("--slug", required=True, help="Exercise slug and ID.")
+@click.option(
+    "--kind",
+    required=True,
+    type=click.Choice(["query", "schema", "modeling", "debug", "critique", "lab"]),
+)
+@click.option("--title", required=True, help="Human-facing exercise title.")
+def content_scaffold_exercise(
+    lesson: str,
+    level: str,
+    slug: str,
+    kind: str,
+    title: str,
+) -> None:
+    """Scaffold a draft exercise and validate the generated file."""
+    try:
+        exercise_dir = content_scaffold.scaffold_exercise(
+            lesson=lesson,
+            level=level,
+            slug=slug,
+            kind=kind,
+            title=title,
+        )
+    except ValueError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    exercise_json = exercise_dir / "exercise.json"
+    lesson_json = paths.LESSONS_DIR / lesson / "lesson.json"
+    report = content_validator.validate_content(
+        path_globs=(
+            str(lesson_json),
+            str(exercise_json),
+            str(paths.RUBRICS_DIR / "default" / "*.rubric.json"),
+        ),
+    )
+    if not report.ok:
+        for issue in report.errors:
+            console.print(f"ERROR: {issue.kind}: {issue.path}")
+            console.print(f"  {issue.message}")
+        raise click.ClickException("scaffolded exercise failed validation")
+    relative_exercise_dir = exercise_dir
+    try:
+        relative_exercise_dir = exercise_dir.relative_to(paths.REPO_ROOT)
+    except ValueError:
+        pass
+    _success(f"created {relative_exercise_dir}")
+
+
 @content.command("lint", help="Run lesson authoring lint checks.")
 @click.option("--strict", is_flag=True, help="Exit non-zero when lint warnings are present.")
 @click.option(
