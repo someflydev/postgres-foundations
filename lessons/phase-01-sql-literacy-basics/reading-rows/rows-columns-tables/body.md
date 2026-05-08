@@ -1,8 +1,8 @@
-# First SELECT
+# Rows, Columns, Tables
 
 ## Problem Framing
 
-Phase 1 SQL starts with one table at a time. The learner is not trying to model the whole application, optimize a workload, or combine related tables. The immediate job is to look at a small table, name its columns, predict its rows, and then write a statement whose output can be checked by sight. In this lesson the working table is `scheduling.providers` from the `scheduling` phase-1 seed pack. That table is intentionally small, so every mistake can be discussed as a concrete row rather than as an abstract rule. The habit is simple: inspect the shape, state the question in ordinary language, write the smallest SQL statement that answers it, and compare the output with the question.
+Phase 1 SQL starts with one table at a time. The learner is not trying to model the whole application, optimize a workload, or combine related tables. The immediate job is to look at a small table, name its columns, predict its rows, and then write a statement whose output can be checked by sight. In this lesson the working table is `ecommerce.products` from the `ecommerce` phase-1 seed pack. That table is intentionally small, so every mistake can be discussed as a concrete row rather than as an abstract rule. The habit is simple: inspect the shape, state the question in ordinary language, write the smallest SQL statement that answers it, and compare the output with the question.
 
 ## Minimal Concept Introduction
 
@@ -10,19 +10,20 @@ A table is a named collection of rows with the same column shape. A row is one r
 
 ## Worked Example
 
-Run the seed first with `uv run pgfound content seed scheduling --phase 1 --reset`, then open `psql` with `make lab-psql`. A small worked example for this lesson is:
+Run the seed first with `uv run pgfound content seed ecommerce --phase 1 --reset`, then open `psql` with `make lab-psql`. A small worked example for this lesson is:
 
 ```sql
-SELECT display_name, specialty FROM scheduling.providers WHERE specialty = 'nutrition';
+SELECT sku, name, stock_on_hand FROM ecommerce.products WHERE stock_on_hand >= 25 ORDER BY sku;
 ```
 
 Sample output from the phase-1 seed is:
 
 ```text
- display_name |     specialty
---------------+-------------------
- Dr. Rivera   | physical therapy
-(1 row)
+     sku      |       name        | stock_on_hand
+--------------+-------------------+---------------
+ BK-SQL-001   | SQL Field Guide   |            25
+ MUG-PG-001   | Postgres Mug      |            40
+(2 rows)
 ```
 
 The exact values come from the phase-1 seed pack. The useful check is not memorizing the output; it is proving that every returned row matches the selected columns, the filter if present, and the requested order.
@@ -37,7 +38,7 @@ The first pitfall is reading a successful query as a correct query. PostgreSQL c
 
 ## Explain It Back
 
-A good explanation names the table, the intended rows, and the columns returned or changed. For a read query, say: this statement reads `scheduling.providers`, keeps rows that meet the predicate, sorts them by the named column, and returns only the selected columns. For a change query, say: this statement changes only rows matching the `WHERE` clause, and `RETURNING` shows the affected rows so the result is auditable. If the explanation cannot point to concrete rows in the seed data, the SQL is probably ahead of the reasoning.
+A good explanation names the table, the intended rows, and the columns returned or changed. For a read query, say: this statement reads `ecommerce.products`, keeps rows that meet the predicate, sorts them by the named column, and returns only the selected columns. For a change query, say: this statement changes only rows matching the `WHERE` clause, and `RETURNING` shows the affected rows so the result is auditable. If the explanation cannot point to concrete rows in the seed data, the SQL is probably ahead of the reasoning.
 
 ## References and Further Reading
 

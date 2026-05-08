@@ -1,19 +1,19 @@
 {
-  "id": "first-select",
-  "title": "First SELECT",
+  "id": "shape-of-a-table",
+  "title": "Shape of a Table",
   "phase": 1,
   "capability_layer": "schema_literacy",
-  "summary": "A SELECT statement asks PostgreSQL to return a set of rows. In this lesson the learner chooses columns and simple expressions from one table.",
+  "summary": "Before writing a query, inspect the table shape. The psql describe command gives columns, types, defaults, and nullability.",
   "learning_objectives": [
-    "Read scheduling.providers as a one-table row set.",
-    "Write or explain SQL using only Phase 1 concepts for first select."
+    "Read ecommerce.products as a one-table row set.",
+    "Write or explain SQL using only Phase 1 concepts for shape of a table."
   ],
   "prerequisites": [],
   "concepts_introduced": [
-    "select",
-    "select_list",
-    "from",
-    "expression"
+    "psql",
+    "describe_table",
+    "nullability",
+    "default_value"
   ],
   "concepts_not_yet_allowed": [
     "join",
@@ -32,17 +32,17 @@
   ],
   "body_path": "body.md",
   "guided_exercise_ids": [
-    "first-select-recognize-one",
-    "first-select-predict-output",
-    "first-select-complete-filter",
-    "first-select-complete-order"
+    "shape-of-a-table-recognize-one",
+    "shape-of-a-table-predict-output",
+    "shape-of-a-table-complete-filter",
+    "shape-of-a-table-complete-order"
   ],
   "independent_exercise_ids": [
-    "first-select-write-query",
-    "first-select-defend-query"
+    "shape-of-a-table-write-query",
+    "shape-of-a-table-defend-query"
   ],
   "critique_exercise_ids": [
-    "first-select-repair-silent-wrong"
+    "shape-of-a-table-repair-silent-wrong"
   ],
   "reflection_prompts": [
     "Which row did your query include or exclude, and why?"
@@ -57,8 +57,8 @@
   ],
   "tags": [
     "phase-1",
-    "reading-rows",
-    "scheduling"
+    "first-debugging",
+    "ecommerce"
   ],
   "status": "active"
 }

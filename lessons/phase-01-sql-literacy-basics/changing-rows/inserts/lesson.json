@@ -1,19 +1,19 @@
 {
-  "id": "first-select",
-  "title": "First SELECT",
+  "id": "inserts",
+  "title": "INSERT Rows",
   "phase": 1,
   "capability_layer": "schema_literacy",
-  "summary": "A SELECT statement asks PostgreSQL to return a set of rows. In this lesson the learner chooses columns and simple expressions from one table.",
+  "summary": "INSERT adds new rows. Column-list discipline and defaults keep the row shape clear before larger schema design topics appear.",
   "learning_objectives": [
-    "Read scheduling.providers as a one-table row set.",
-    "Write or explain SQL using only Phase 1 concepts for first select."
+    "Read ecommerce.products as a one-table row set.",
+    "Write or explain SQL using only Phase 1 concepts for insert rows."
   ],
   "prerequisites": [],
   "concepts_introduced": [
-    "select",
-    "select_list",
-    "from",
-    "expression"
+    "insert",
+    "column_list",
+    "default_value",
+    "multi_row_insert"
   ],
   "concepts_not_yet_allowed": [
     "join",
@@ -32,17 +32,17 @@
   ],
   "body_path": "body.md",
   "guided_exercise_ids": [
-    "first-select-recognize-one",
-    "first-select-predict-output",
-    "first-select-complete-filter",
-    "first-select-complete-order"
+    "inserts-recognize-one",
+    "inserts-predict-output",
+    "inserts-complete-filter",
+    "inserts-complete-order"
   ],
   "independent_exercise_ids": [
-    "first-select-write-query",
-    "first-select-defend-query"
+    "inserts-write-query",
+    "inserts-defend-query"
   ],
   "critique_exercise_ids": [
-    "first-select-repair-silent-wrong"
+    "inserts-repair-silent-wrong"
   ],
   "reflection_prompts": [
     "Which row did your query include or exclude, and why?"
@@ -57,8 +57,8 @@
   ],
   "tags": [
     "phase-1",
-    "reading-rows",
-    "scheduling"
+    "changing-rows",
+    "ecommerce"
   ],
   "status": "active"
 }

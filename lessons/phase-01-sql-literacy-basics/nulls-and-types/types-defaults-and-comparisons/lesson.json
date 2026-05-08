@@ -1,19 +1,19 @@
 {
-  "id": "first-select",
-  "title": "First SELECT",
+  "id": "types-defaults-and-comparisons",
+  "title": "Types, Defaults, and Comparisons",
   "phase": 1,
   "capability_layer": "schema_literacy",
-  "summary": "A SELECT statement asks PostgreSQL to return a set of rows. In this lesson the learner chooses columns and simple expressions from one table.",
+  "summary": "Types guide how PostgreSQL compares values and applies defaults. The lesson avoids tricks and keeps comparisons readable.",
   "learning_objectives": [
-    "Read scheduling.providers as a one-table row set.",
-    "Write or explain SQL using only Phase 1 concepts for first select."
+    "Read scheduling.appointments as a one-table row set.",
+    "Write or explain SQL using only Phase 1 concepts for types, defaults, and comparisons."
   ],
   "prerequisites": [],
   "concepts_introduced": [
-    "select",
-    "select_list",
-    "from",
-    "expression"
+    "data_type",
+    "default_value",
+    "literal_value",
+    "comparison"
   ],
   "concepts_not_yet_allowed": [
     "join",
@@ -32,17 +32,17 @@
   ],
   "body_path": "body.md",
   "guided_exercise_ids": [
-    "first-select-recognize-one",
-    "first-select-predict-output",
-    "first-select-complete-filter",
-    "first-select-complete-order"
+    "types-defaults-and-comparisons-recognize-one",
+    "types-defaults-and-comparisons-predict-output",
+    "types-defaults-and-comparisons-complete-filter",
+    "types-defaults-and-comparisons-complete-order"
   ],
   "independent_exercise_ids": [
-    "first-select-write-query",
-    "first-select-defend-query"
+    "types-defaults-and-comparisons-write-query",
+    "types-defaults-and-comparisons-defend-query"
   ],
   "critique_exercise_ids": [
-    "first-select-repair-silent-wrong"
+    "types-defaults-and-comparisons-repair-silent-wrong"
   ],
   "reflection_prompts": [
     "Which row did your query include or exclude, and why?"
@@ -57,7 +57,7 @@
   ],
   "tags": [
     "phase-1",
-    "reading-rows",
+    "nulls-and-types",
     "scheduling"
   ],
   "status": "active"

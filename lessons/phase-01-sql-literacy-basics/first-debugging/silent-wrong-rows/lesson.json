@@ -1,19 +1,18 @@
 {
-  "id": "first-select",
-  "title": "First SELECT",
+  "id": "silent-wrong-rows",
+  "title": "Silent Wrong Rows",
   "phase": 1,
   "capability_layer": "schema_literacy",
-  "summary": "A SELECT statement asks PostgreSQL to return a set of rows. In this lesson the learner chooses columns and simple expressions from one table.",
+  "summary": "Some queries run without error and still answer the wrong question. The lesson teaches row-count and sample-row checks on one table.",
   "learning_objectives": [
-    "Read scheduling.providers as a one-table row set.",
-    "Write or explain SQL using only Phase 1 concepts for first select."
+    "Read scheduling.appointments as a one-table row set.",
+    "Write or explain SQL using only Phase 1 concepts for silent wrong rows."
   ],
   "prerequisites": [],
   "concepts_introduced": [
-    "select",
-    "select_list",
-    "from",
-    "expression"
+    "debugging",
+    "predicate_review",
+    "wrong_rowset"
   ],
   "concepts_not_yet_allowed": [
     "join",
@@ -32,17 +31,17 @@
   ],
   "body_path": "body.md",
   "guided_exercise_ids": [
-    "first-select-recognize-one",
-    "first-select-predict-output",
-    "first-select-complete-filter",
-    "first-select-complete-order"
+    "silent-wrong-rows-recognize-one",
+    "silent-wrong-rows-predict-output",
+    "silent-wrong-rows-complete-filter",
+    "silent-wrong-rows-complete-order"
   ],
   "independent_exercise_ids": [
-    "first-select-write-query",
-    "first-select-defend-query"
+    "silent-wrong-rows-write-query",
+    "silent-wrong-rows-defend-query"
   ],
   "critique_exercise_ids": [
-    "first-select-repair-silent-wrong"
+    "silent-wrong-rows-repair-silent-wrong"
   ],
   "reflection_prompts": [
     "Which row did your query include or exclude, and why?"
@@ -57,7 +56,7 @@
   ],
   "tags": [
     "phase-1",
-    "reading-rows",
+    "first-debugging",
     "scheduling"
   ],
   "status": "active"

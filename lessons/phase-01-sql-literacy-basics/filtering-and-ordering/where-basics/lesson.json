@@ -1,19 +1,22 @@
 {
-  "id": "first-select",
-  "title": "First SELECT",
+  "id": "where-basics",
+  "title": "WHERE Basics",
   "phase": 1,
   "capability_layer": "schema_literacy",
-  "summary": "A SELECT statement asks PostgreSQL to return a set of rows. In this lesson the learner chooses columns and simple expressions from one table.",
+  "summary": "WHERE changes which rows qualify. The lesson keeps every example on one table so predicate meaning is visible in the output.",
   "learning_objectives": [
-    "Read scheduling.providers as a one-table row set.",
-    "Write or explain SQL using only Phase 1 concepts for first select."
+    "Read ecommerce.orders as a one-table row set.",
+    "Write or explain SQL using only Phase 1 concepts for where basics."
   ],
   "prerequisites": [],
   "concepts_introduced": [
-    "select",
-    "select_list",
-    "from",
-    "expression"
+    "where",
+    "and",
+    "or",
+    "parentheses",
+    "in",
+    "between",
+    "is_null"
   ],
   "concepts_not_yet_allowed": [
     "join",
@@ -32,17 +35,17 @@
   ],
   "body_path": "body.md",
   "guided_exercise_ids": [
-    "first-select-recognize-one",
-    "first-select-predict-output",
-    "first-select-complete-filter",
-    "first-select-complete-order"
+    "where-basics-recognize-one",
+    "where-basics-predict-output",
+    "where-basics-complete-filter",
+    "where-basics-complete-order"
   ],
   "independent_exercise_ids": [
-    "first-select-write-query",
-    "first-select-defend-query"
+    "where-basics-write-query",
+    "where-basics-defend-query"
   ],
   "critique_exercise_ids": [
-    "first-select-repair-silent-wrong"
+    "where-basics-repair-silent-wrong"
   ],
   "reflection_prompts": [
     "Which row did your query include or exclude, and why?"
@@ -57,8 +60,8 @@
   ],
   "tags": [
     "phase-1",
-    "reading-rows",
-    "scheduling"
+    "filtering-and-ordering",
+    "ecommerce"
   ],
   "status": "active"
 }

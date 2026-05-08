@@ -1,19 +1,19 @@
 {
-  "id": "first-select",
-  "title": "First SELECT",
+  "id": "updates-and-deletes",
+  "title": "UPDATE and DELETE Rows",
   "phase": 1,
   "capability_layer": "schema_literacy",
-  "summary": "A SELECT statement asks PostgreSQL to return a set of rows. In this lesson the learner chooses columns and simple expressions from one table.",
+  "summary": "UPDATE and DELETE are powerful because they change existing facts. The WHERE clause is treated as the safety boundary.",
   "learning_objectives": [
-    "Read scheduling.providers as a one-table row set.",
-    "Write or explain SQL using only Phase 1 concepts for first select."
+    "Read scheduling.appointments as a one-table row set.",
+    "Write or explain SQL using only Phase 1 concepts for update and delete rows."
   ],
   "prerequisites": [],
   "concepts_introduced": [
-    "select",
-    "select_list",
-    "from",
-    "expression"
+    "update",
+    "delete",
+    "returning",
+    "where"
   ],
   "concepts_not_yet_allowed": [
     "join",
@@ -32,17 +32,17 @@
   ],
   "body_path": "body.md",
   "guided_exercise_ids": [
-    "first-select-recognize-one",
-    "first-select-predict-output",
-    "first-select-complete-filter",
-    "first-select-complete-order"
+    "updates-and-deletes-recognize-one",
+    "updates-and-deletes-predict-output",
+    "updates-and-deletes-complete-filter",
+    "updates-and-deletes-complete-order"
   ],
   "independent_exercise_ids": [
-    "first-select-write-query",
-    "first-select-defend-query"
+    "updates-and-deletes-write-query",
+    "updates-and-deletes-defend-query"
   ],
   "critique_exercise_ids": [
-    "first-select-repair-silent-wrong"
+    "updates-and-deletes-repair-silent-wrong"
   ],
   "reflection_prompts": [
     "Which row did your query include or exclude, and why?"
@@ -57,7 +57,7 @@
   ],
   "tags": [
     "phase-1",
-    "reading-rows",
+    "changing-rows",
     "scheduling"
   ],
   "status": "active"

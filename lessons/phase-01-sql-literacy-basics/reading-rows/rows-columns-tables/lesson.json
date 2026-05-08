@@ -1,19 +1,19 @@
 {
-  "id": "first-select",
-  "title": "First SELECT",
+  "id": "rows-columns-tables",
+  "title": "Rows, Columns, Tables",
   "phase": 1,
   "capability_layer": "schema_literacy",
-  "summary": "A SELECT statement asks PostgreSQL to return a set of rows. In this lesson the learner chooses columns and simple expressions from one table.",
+  "summary": "Rows are facts at one grain. Columns name the attributes available for each row. Tables collect rows of the same kind, so a learner can reason about shape before syntax.",
   "learning_objectives": [
-    "Read scheduling.providers as a one-table row set.",
-    "Write or explain SQL using only Phase 1 concepts for first select."
+    "Read ecommerce.products as a one-table row set.",
+    "Write or explain SQL using only Phase 1 concepts for rows, columns, tables."
   ],
   "prerequisites": [],
   "concepts_introduced": [
-    "select",
-    "select_list",
-    "from",
-    "expression"
+    "row",
+    "column",
+    "table",
+    "cardinality"
   ],
   "concepts_not_yet_allowed": [
     "join",
@@ -32,17 +32,17 @@
   ],
   "body_path": "body.md",
   "guided_exercise_ids": [
-    "first-select-recognize-one",
-    "first-select-predict-output",
-    "first-select-complete-filter",
-    "first-select-complete-order"
+    "rows-columns-tables-recognize-one",
+    "rows-columns-tables-predict-output",
+    "rows-columns-tables-complete-filter",
+    "rows-columns-tables-complete-order"
   ],
   "independent_exercise_ids": [
-    "first-select-write-query",
-    "first-select-defend-query"
+    "rows-columns-tables-write-query",
+    "rows-columns-tables-defend-query"
   ],
   "critique_exercise_ids": [
-    "first-select-repair-silent-wrong"
+    "rows-columns-tables-repair-silent-wrong"
   ],
   "reflection_prompts": [
     "Which row did your query include or exclude, and why?"
@@ -58,7 +58,7 @@
   "tags": [
     "phase-1",
     "reading-rows",
-    "scheduling"
+    "ecommerce"
   ],
   "status": "active"
 }

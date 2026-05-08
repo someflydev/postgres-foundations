@@ -1,19 +1,19 @@
 {
-  "id": "first-select",
-  "title": "First SELECT",
+  "id": "order-and-limit",
+  "title": "ORDER BY and LIMIT",
   "phase": 1,
   "capability_layer": "schema_literacy",
-  "summary": "A SELECT statement asks PostgreSQL to return a set of rows. In this lesson the learner chooses columns and simple expressions from one table.",
+  "summary": "ORDER BY makes row order explicit. LIMIT narrows a display, and OFFSET is introduced as convenient for tiny labs but costly at scale.",
   "learning_objectives": [
-    "Read scheduling.providers as a one-table row set.",
-    "Write or explain SQL using only Phase 1 concepts for first select."
+    "Read scheduling.appointments as a one-table row set.",
+    "Write or explain SQL using only Phase 1 concepts for order by and limit."
   ],
   "prerequisites": [],
   "concepts_introduced": [
-    "select",
-    "select_list",
-    "from",
-    "expression"
+    "order_by",
+    "limit",
+    "offset",
+    "tie_breaker"
   ],
   "concepts_not_yet_allowed": [
     "join",
@@ -32,17 +32,17 @@
   ],
   "body_path": "body.md",
   "guided_exercise_ids": [
-    "first-select-recognize-one",
-    "first-select-predict-output",
-    "first-select-complete-filter",
-    "first-select-complete-order"
+    "order-and-limit-recognize-one",
+    "order-and-limit-predict-output",
+    "order-and-limit-complete-filter",
+    "order-and-limit-complete-order"
   ],
   "independent_exercise_ids": [
-    "first-select-write-query",
-    "first-select-defend-query"
+    "order-and-limit-write-query",
+    "order-and-limit-defend-query"
   ],
   "critique_exercise_ids": [
-    "first-select-repair-silent-wrong"
+    "order-and-limit-repair-silent-wrong"
   ],
   "reflection_prompts": [
     "Which row did your query include or exclude, and why?"
@@ -57,7 +57,7 @@
   ],
   "tags": [
     "phase-1",
-    "reading-rows",
+    "filtering-and-ordering",
     "scheduling"
   ],
   "status": "active"
