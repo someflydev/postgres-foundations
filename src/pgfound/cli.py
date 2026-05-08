@@ -14,6 +14,7 @@ from pgfound import paths
 from pgfound.content import lint as content_linter
 from pgfound.content import loader
 from pgfound.content import scaffold as content_scaffold
+from pgfound.content import seed as content_seed
 from pgfound.content import validate as content_validator
 from pgfound.lab import compose
 
@@ -409,6 +410,40 @@ def content_lint(path_globs: tuple[str, ...], strict: bool) -> None:
             f"FAIL: checked {report.files_checked} file(s), {len(report.warnings)} warning(s)"
         )
     _success(f"PASS: checked {report.files_checked} file(s), {len(report.warnings)} warning(s)")
+
+
+@content.command("seed", help="Load reusable domain seed data into the lab.")
+@click.argument("domain")
+@click.option("--phase", "phase_id", help="Run SQL up to this phase ID, for example 1 or 7b.")
+@click.option("--reset", is_flag=True, help="Drop and recreate the domain schema before seeding.")
+@click.option("--generate", is_flag=True, help="Run deterministic pack generators before seeding.")
+@click.option("--dry-run", is_flag=True, help="Print the SQL files that would execute.")
+def content_seed_command(
+    domain: str, phase_id: str | None, reset: bool, generate: bool, dry_run: bool
+) -> None:
+    """Load a reusable teaching domain seed pack."""
+    try:
+        plan = content_seed.plan_seed(domain=domain, phase=phase_id)
+    except ValueError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    if dry_run:
+        if reset:
+            console.print(f"RESET: {content_seed.reset_schema_sql(domain)}")
+        if generate:
+            for generator in plan.generators:
+                console.print(f"GENERATE: {generator.relative_to(paths.REPO_ROOT)}")
+        for sql_file in plan.sql_files:
+            console.print(sql_file.relative_to(paths.REPO_ROOT))
+        _success(f"DRY RUN: {len(plan.sql_files)} SQL file(s)")
+        return
+
+    try:
+        content_seed.execute_seed(plan, reset=reset, generate=generate)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    _success(f"seeded {domain}: {len(plan.sql_files)} SQL file(s)")
 
 
 @main.group(help="Run review engine commands.")

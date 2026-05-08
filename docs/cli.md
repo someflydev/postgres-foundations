@@ -151,6 +151,31 @@ Options:
   than once.
 - `--strict`: exit non-zero when warnings are present.
 
+## `pgfound content seed DOMAIN`
+
+Loads a reusable domain seed pack from `seed-data/packs/` into the PostgreSQL
+lab. The command connects with `PGFOUND_DB_URL` when set; otherwise it uses the
+compose defaults from `pgfound.config`. SQL files are executed in curriculum
+phase order and are written to be idempotent.
+
+Example:
+
+```sh
+uv run pgfound content seed ecommerce --phase 1 --dry-run
+uv run pgfound content seed ecommerce --phase 1 --reset
+```
+
+Options:
+
+- `--phase PHASE`: run SQL up to a phase ID such as `1`, `2`, `4a`, or `7b`.
+  If omitted, all available phase SQL for the domain runs.
+- `--reset`: drop and recreate the domain schema before loading the selected
+  SQL files.
+- `--generate`: run any deterministic pack generators before seeding. Packs
+  without generators treat this as a no-op.
+- `--dry-run`: print the SQL files that would run and exit without connecting
+  to PostgreSQL.
+
 ## `pgfound review run`
 
 Stub command that exits 0 and reports that the review engine lands in
