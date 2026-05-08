@@ -74,3 +74,12 @@ Reusable domain references introduced by PROMPT_09:
 - `content-schemas/manifest.schema.json`
 - `src/pgfound/content/seed.py`
 - `docs/cli.md`
+
+Phase 0 paper-modeling references introduced by PROMPT_10:
+
+- `lessons/phase-00-reality-before-syntax/README.md`
+- `exercises/phase-00-reality-before-syntax/README.md`
+- `rubrics/default/paper-modeling.rubric.json`
+- `content-schemas/phase-exercise-overrides.schema.json`
+- `docs/authoring-exercises.md`
+- `tests/test_phase0_corpus.py`

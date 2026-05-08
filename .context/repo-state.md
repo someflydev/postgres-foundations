@@ -39,6 +39,11 @@ Current baseline:
   search, and modernization bridge; `pgfound content seed`; domain manifest
   validation; deterministic CSV generator tests; and
   `docs/domain-conventions.md`.
+- Phase 0 corpus: PROMPT_10 added the full reality-before-syntax paper
+  modeling content set: 10 active lessons, 40 modeling exercises, Phase 0
+  lesson/exercise pointer READMEs, the default paper-modeling rubric, domain
+  README Phase 0 notes, validator phase overrides for paper exercises, and
+  phase-corpus tests.
 
 Canonical docs:
 

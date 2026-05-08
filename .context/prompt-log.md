@@ -21,12 +21,16 @@ Completed:
   validation, forbidden-concept SQL lint, default rubrics, docs, and tests.
 - PROMPT_09: reusable teaching domain packs, domain conventions, seed loader
   CLI, manifest validation, dry-run tests, and deterministic generators.
+- PROMPT_10: full Phase 0 reality-before-syntax paper modeling corpus, 10
+  active lessons, 40 active modeling exercises, paper-modeling rubric,
+  per-phase validator overrides, authoring docs, domain README notes, pointer
+  tables, and corpus tests.
 
 Next expected prompt:
 
-- PROMPT_10: Phase 0 content for reality-before-syntax and paper modeling.
+- PROMPT_11: Phase 1 SQL literacy basics.
 
 Notes:
 
-- Do not run PROMPT_10 unless the user explicitly asks.
-- PROMPT_10 builds on the reusable domains established in `seed-data/packs/`.
+- Do not run PROMPT_11 unless the user explicitly asks.
+- PROMPT_11 is the first phase where learners touch SQL and the database.
