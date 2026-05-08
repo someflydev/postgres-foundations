@@ -1,0 +1,69 @@
+{
+  "id": "silent-wrong-rows-complete-order",
+  "title": "Silent Wrong Rows: Complete Order",
+  "lesson_id": "silent-wrong-rows",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "select",
+    "where",
+    "order_by",
+    "limit",
+    "insert",
+    "update",
+    "delete",
+    "null",
+    "data_type",
+    "psql",
+    "returning",
+    "and",
+    "or",
+    "in",
+    "between",
+    "is_null"
+  ],
+  "not_yet_allowed_concepts": [
+    "join",
+    "group_by",
+    "aggregate",
+    "cte",
+    "window_function",
+    "transaction",
+    "index",
+    "foreign_key",
+    "primary_key",
+    "subquery",
+    "function_definitions",
+    "jsonb",
+    "array"
+  ],
+  "schema_scope": {
+    "tables": [
+      "scheduling.appointments"
+    ],
+    "phase": "1"
+  },
+  "dataset": {
+    "seed_pack_id": "scheduling",
+    "max_rows_hint": 10
+  },
+  "expected_output_shape": "rowset",
+  "success_criteria": [
+    "Runs cleanly against the phase-1 seed pack.",
+    "Returned rows and columns match the reference output.",
+    "Uses only scheduling.appointments."
+  ],
+  "time_target_minutes": 12,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "tags": [
+    "phase-1",
+    "scheduling",
+    "b"
+  ],
+  "status": "active",
+  "hints": [
+    "Start from scheduling.appointments.",
+    "Keep the query to one SELECT statement."
+  ]
+}

@@ -60,5 +60,12 @@ VALUES
         '2026-02-11 17:00:00+00',
         '2026-02-11 17:30:00+00',
         'scheduled'
+    ),
+    (
+        (SELECT id FROM scheduling.providers WHERE display_name = 'Dr. Rivera'),
+        (SELECT id FROM scheduling.clients WHERE email = 'nora@example.com'),
+        '2026-02-12 19:00:00+00',
+        '2026-02-12 19:30:00+00',
+        'cancelled'
     )
 ON CONFLICT (provider_id, starts_at) DO NOTHING;
