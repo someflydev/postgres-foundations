@@ -95,12 +95,23 @@ file. `starter.sql` should contain only scaffolding that the learner is allowed
 to see; omit it for modeling-only exercises when SQL starter text would confuse
 the task.
 
+Phase 0 is a paper-modeling phase. Active Phase 0 exercises with
+`kind: modeling` use markdown prompts, `solution.md`, and, when needed,
+`starter.md` instead of SQL starter or solution files. The validator implements
+this as a per-phase exercise override: Phase 0 marks modeling exercises as
+having optional `solution.sql`, while later executable exercise kinds still
+require a SQL solution. The same override allows Level D Phase 0 critique and
+repair work to remain `kind: modeling`, because the artifact being repaired is a
+paper model rather than SQL. The override shape is documented by
+`content-schemas/phase-exercise-overrides.schema.json`.
+
 ## Rubrics
 
 Default rubrics live in `rubrics/default/`:
 
 - `query-correctness`
 - `schema-design`
+- `paper-modeling`
 - `indexing-reasoning`
 - `concurrency-reasoning`
 - `critique-and-repair`

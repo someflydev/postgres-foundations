@@ -55,6 +55,12 @@ PLACEHOLDER_RE: Final[re.Pattern[str]] = re.compile(
 )
 PHASE_DIR_RE: Final[re.Pattern[str]] = re.compile(r"^phase-(?P<number>\d{2})-[a-z0-9-]+$")
 EXERCISE_LEVEL_DIR_RE: Final[re.Pattern[str]] = re.compile(r"^level-(?P<level>[a-d])$")
+PHASE_EXERCISE_OVERRIDES: Final[dict[int, dict[str, set[str]]]] = {
+    0: {
+        "solution_sql_optional_kinds": {"modeling"},
+        "level_d_kinds": {"critique", "debug", "modeling"},
+    },
+}
 
 
 @dataclass(frozen=True)
@@ -433,23 +439,23 @@ def _exercise_authoring_errors(
                 )
             )
         if (
-            data.get("kind") in {"query", "schema", "lab"}
+            _requires_solution_sql(item, data, parent)
             and not (item.path.parent / "solution.sql").is_file()
         ):
             errors.append(
                 ValidationIssue(
                     item.kind,
                     item.path,
-                    "active query, schema, and lab exercises require solution.sql",
+                    "active executable exercises require solution.sql",
                 )
             )
 
-    if level == "D" and data.get("kind") not in {"critique", "debug"}:
+    if level == "D" and data.get("kind") not in _level_d_kinds(item, parent):
         errors.append(
             ValidationIssue(
                 item.kind,
                 item.path,
-                "Level D exercises must use critique or debug kind",
+                "Level D exercises must use an allowed critique-and-repair kind",
             )
         )
 
@@ -480,6 +486,40 @@ def _exercise_authoring_errors(
             )
         )
     return errors
+
+
+def _requires_solution_sql(
+    item: LoadedContent,
+    data: dict[str, Any],
+    parent: LoadedContent | None,
+) -> bool:
+    kind = data.get("kind")
+    phase = parent.data.get("phase") if parent is not None else _phase_from_path(item.path)
+    if isinstance(phase, int):
+        optional_kinds = PHASE_EXERCISE_OVERRIDES.get(phase, {}).get(
+            "solution_sql_optional_kinds",
+            set(),
+        )
+        if isinstance(kind, str) and kind in optional_kinds:
+            return False
+    return kind in {"query", "schema", "lab"}
+
+
+def _level_d_kinds(item: LoadedContent, parent: LoadedContent | None) -> set[str]:
+    phase = parent.data.get("phase") if parent is not None else _phase_from_path(item.path)
+    if isinstance(phase, int):
+        override = PHASE_EXERCISE_OVERRIDES.get(phase, {}).get("level_d_kinds")
+        if override:
+            return override
+    return {"critique", "debug"}
+
+
+def _phase_from_path(path: Path) -> int | None:
+    for part in path.parts:
+        match = PHASE_DIR_RE.match(part)
+        if match:
+            return int(match.group("number"))
+    return None
 
 
 def _lesson_dir_slug(path: Path) -> str | None:

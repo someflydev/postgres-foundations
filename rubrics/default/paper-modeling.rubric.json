@@ -1,0 +1,64 @@
+{
+  "id": "paper-modeling",
+  "title": "Paper Modeling",
+  "applies_to": "exercise",
+  "dimensions": [
+    {
+      "name": "entity identification",
+      "weight": 0.25,
+      "levels": {
+        "0": "Does not identify durable business entities.",
+        "1": "Names a few nouns but confuses screens, reports, or attributes with entities.",
+        "2": "Identifies the main entities but omits one important domain subject.",
+        "3": "Identifies the relevant entities and distinguishes them from attributes and events.",
+        "4": "Identifies entities precisely and names open identity questions that affect the model."
+      }
+    },
+    {
+      "name": "relationship cardinality",
+      "weight": 0.2,
+      "levels": {
+        "0": "Does not name relationships between entities.",
+        "1": "Names relationships without direction or expected counts.",
+        "2": "Gets the main relationships right but misses one cardinality or optionality detail.",
+        "3": "Names relationships with clear one-to-one, one-to-many, or many-to-many cardinality.",
+        "4": "Explains relationship cardinality and the business rule that could change it."
+      }
+    },
+    {
+      "name": "invariant clarity",
+      "weight": 0.2,
+      "levels": {
+        "0": "Does not name rules the data must preserve.",
+        "1": "Names vague rules that cannot guide review.",
+        "2": "Names plausible invariants but leaves one important rule ambiguous.",
+        "3": "States clear invariants tied to the model's entities, attributes, and relationships.",
+        "4": "States invariants and distinguishes enforceable facts from policy or workflow judgment."
+      }
+    },
+    {
+      "name": "lifecycle reasoning",
+      "weight": 0.15,
+      "levels": {
+        "0": "Does not identify lifecycle events or state transitions.",
+        "1": "Lists states without explaining what events create or change them.",
+        "2": "Identifies the main lifecycle events but orders or scopes one incorrectly.",
+        "3": "Orders lifecycle events and explains which facts change at each step.",
+        "4": "Orders lifecycle events and flags history that must be retained separately from current state."
+      }
+    },
+    {
+      "name": "explanation quality",
+      "weight": 0.2,
+      "levels": {
+        "0": "Provides no usable reasoning for the model.",
+        "1": "Explains choices with unsupported assertions or database syntax.",
+        "2": "Explains the main choices but leaves important tradeoffs implicit.",
+        "3": "Explains the model in ordinary domain language and justifies key choices.",
+        "4": "Explains the model clearly enough that another reviewer can reproduce the same judgment."
+      }
+    }
+  ],
+  "pass_threshold": 0.75,
+  "notes": "Use this rubric for Phase 0 paper/markdown modeling exercises before SQL syntax is introduced."
+}

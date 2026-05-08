@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/phase-exercise-overrides.schema.json",
+  "title": "PostgreSQL Foundations phase exercise overrides",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["phase", "solution_sql_optional_kinds"],
+  "properties": {
+    "phase": {
+      "$ref": "common.json#/$defs/phase"
+    },
+    "solution_sql_optional_kinds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["query", "schema", "modeling", "debug", "critique", "lab"]
+      },
+      "uniqueItems": true
+    },
+    "level_d_kinds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["query", "schema", "modeling", "debug", "critique", "lab"]
+      },
+      "uniqueItems": true
+    },
+    "why": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
