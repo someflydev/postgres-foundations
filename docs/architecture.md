@@ -50,6 +50,15 @@ provides command-line and programmatic support as the platform grows.
 Authoring rules, required fields, examples, and validator behavior are captured
 in [Content Authoring](authoring.md).
 
+Reusable scenario domains live under `seed-data/packs/`. These packs define the
+small canonical schemas, seed rows, manifests, and deterministic generators for
+domains such as ecommerce, scheduling, SaaS multi-tenancy, event-heavy
+operations, document search, and modernization. Lessons can use the early
+phase SQL directly, while scenarios and capstones reuse the same domain shapes
+when they add constraints, query tuning, concurrency, operations, or planning
+requirements. Naming rules for these packs are documented in
+[Domain Conventions](domain-conventions.md).
+
 The learner flow begins with guided recognition and controlled production,
 then moves toward independent production, critique, and repair. A learner reads
 a lesson, works in the Docker lab, runs SQL, inspects errors and plans, submits

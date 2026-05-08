@@ -1,0 +1,7 @@
+{
+  "domain": "document_search",
+  "phases_covered": [1, 2],
+  "planned_phases": [1, 2, 4, 5, 7, 10],
+  "depends_on_extensions": [],
+  "notes": "Documents, authors, and tags support text filtering, JSON boundaries, full-text search, ranking, and capstone knowledge workflows."
+}
