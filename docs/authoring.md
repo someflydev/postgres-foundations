@@ -9,10 +9,10 @@ default format for reviewable content.
 Author real content in these directories:
 
 - `lessons/**/lesson.json` for lessons.
-- `curriculum/exercises/**/*.json` for exercises.
-- `curriculum/rubrics/**/*.json` for rubrics.
-- `curriculum/scenarios/**/*.json` for scenarios.
-- `curriculum/capstones/**/*.json` for capstones.
+- `exercises/**/exercise.json` for exercises.
+- `rubrics/**/*.json` for rubrics.
+- `scenarios/**/*.json` for scenarios.
+- `capstones/**/*.json` for capstones.
 
 Schema examples live in `content-schemas/examples/`. They are validator fixtures
 and authoring references, not curriculum.
@@ -72,6 +72,10 @@ Exercise files must fill `id`, `title`, `lesson_id`, `scaffolding_level`,
 `starter_path`, `hints`, `oral_defense_prompts`, and `tags`. Level C and D
 exercises must include `oral_defense_prompts`.
 
+Exercises are authored as directories under root `exercises/`; see
+`docs/authoring-exercises.md` for the level conventions, `prompt.md` structure,
+scaffold command, solution files, and forbidden-concept lint.
+
 Rubric files must fill `id`, `title`, `applies_to`, `dimensions`, and
 `pass_threshold`. Each dimension must have `name`, `weight`, and `levels` with
 scores `0`, `1`, `2`, `3`, and `4`. `notes` is optional.
@@ -128,6 +132,11 @@ The validator enforces schema shape and these repository-level checks:
 - Exercise `lesson_id` must reference an existing lesson in the validation set.
 - Exercise `rubric_id`, when present, must reference an existing rubric in the
   validation set.
+- Exercise `exercise.json` must live under a matching `level-a` through
+  `level-d` directory.
+- Level C and D exercises must not include hints, and active Level C/D
+  exercises must meet oral-defense minimums.
+- Active `query`, `schema`, and `lab` exercises must include `solution.sql`.
 - Exercise `not_yet_allowed_concepts` must include every concept listed in the
   parent lesson's `concepts_not_yet_allowed`.
 - Rubric dimension weights must sum to `1.0` within `0.000001`.

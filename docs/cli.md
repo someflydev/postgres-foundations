@@ -89,8 +89,9 @@ and runs cross-file checks for lesson, exercise, rubric, scenario, and capstone
 references. The command prints a Rich table grouped by content kind, lists any
 errors or warnings, and exits non-zero on errors.
 
-By default it walks only the real content directories under `curriculum/` and
-skips `content-schemas/examples/`.
+By default it walks the real content directories: `lessons/`, `exercises/`,
+`rubrics/`, `scenarios/`, `capstones/`, plus `curriculum/map.json`. It skips
+`content-schemas/examples/`.
 
 Options:
 
@@ -113,10 +114,36 @@ Required options:
 - `--title`: lesson title.
 - `--capability-layer`: capability layer slug.
 
+## `pgfound content scaffold exercise`
+
+Creates a draft exercise directory under root `exercises/` and validates the
+generated metadata with its parent lesson.
+
+Example:
+
+```sh
+uv run pgfound content scaffold exercise \
+  --lesson phase-07/index-fundamentals/btree-composite-vs-single-column \
+  --level c \
+  --slug analyze-composite-plan \
+  --kind query \
+  --title "Analyze a composite B-tree plan"
+```
+
+Required options:
+
+- `--lesson`: path to the lesson directory under `lessons/`.
+- `--level`: scaffolding level `a`, `b`, `c`, or `d`.
+- `--slug`: exercise slug and ID.
+- `--kind`: one of `query`, `schema`, `modeling`, `debug`, `critique`, or `lab`.
+- `--title`: exercise title.
+
 ## `pgfound content lint`
 
 Runs lesson authoring lint checks: required body sections, active body length,
-bare URLs, and TODO/TBD/XXX tokens in active content.
+bare URLs, and TODO/TBD/XXX tokens in active content. It also scans exercise
+`solution.sql` files for known SQL constructs that appear in
+`not_yet_allowed_concepts`, such as `OVER (...)` for `window_function`.
 
 Options:
 
