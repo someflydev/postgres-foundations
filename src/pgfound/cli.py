@@ -10,6 +10,7 @@ from rich.console import Console
 from rich.table import Table
 
 import pgfound
+from pgfound import exercise as exercise_runner
 from pgfound import paths
 from pgfound.content import lint as content_linter
 from pgfound.content import loader
@@ -444,6 +445,72 @@ def content_seed_command(
         raise click.ClickException(str(exc)) from exc
 
     _success(f"seeded {domain}: {len(plan.sql_files)} SQL file(s)")
+
+
+@main.group(help="Run learner exercises.")
+def exercise() -> None:
+    """Run learner exercises."""
+
+
+@exercise.command("run", help="Print an exercise prompt and open the lab psql session.")
+@click.argument("exercise_id")
+@click.option("--auto-seed", is_flag=True, help="Reset and load the exercise seed pack first.")
+@click.option("--dry-run", is_flag=True, help="Print the prompt and seed plan without Docker.")
+@click.option(
+    "--check", is_flag=True, help="Compare tmp/answers/<exercise-id>.sql to solution.sql."
+)
+def exercise_run(exercise_id: str, auto_seed: bool, dry_run: bool, check: bool) -> None:
+    """Run or check one exercise."""
+    try:
+        record = exercise_runner.find_exercise(exercise_id)
+    except ValueError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    prompt = record.prompt_path.read_text(encoding="utf-8")
+    seed_lines = exercise_runner.seed_plan_lines(record)
+    console.print(f"Exercise: {record.id}")
+    console.print(f"Seed pack: {record.seed_domain} phase 1")
+    for line in seed_lines:
+        console.print(f"SEED: {line}")
+    console.print("")
+    console.print(prompt)
+
+    if dry_run:
+        _success(f"DRY RUN: would use {len(seed_lines)} seed SQL file(s)")
+        return
+
+    if auto_seed:
+        try:
+            exercise_runner.auto_seed(record)
+        except Exception as exc:
+            raise click.ClickException(str(exc)) from exc
+        _success(f"seeded {record.seed_domain} phase 1")
+
+    if check:
+        try:
+            correct, diff = exercise_runner.check_answer(record)
+        except Exception as exc:
+            raise click.ClickException(str(exc)) from exc
+        if correct:
+            _success("correct")
+            return
+        console.print("incorrect, diff follows")
+        console.print(diff)
+        raise click.ClickException("answer did not match reference output")
+
+    if not auto_seed and not click.confirm("Open psql without auto-seeding first?", default=True):
+        _success("stopped before psql")
+        return
+
+    try:
+        exercise_runner.run_psql()
+    except subprocess.CalledProcessError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    if click.confirm("Record a self-assessment for this exercise?", default=False):
+        assessment = click.prompt("Self-assessment", default="not recorded")
+        progress_path = exercise_runner.save_self_assessment(record, assessment)
+        _success(f"recorded {progress_path.relative_to(paths.REPO_ROOT)}")
 
 
 @main.group(help="Run review engine commands.")

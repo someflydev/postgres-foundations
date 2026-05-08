@@ -176,6 +176,28 @@ Options:
 - `--dry-run`: print the SQL files that would run and exit without connecting
   to PostgreSQL.
 
+## `pgfound exercise run EXERCISE_ID`
+
+Prints an exercise prompt, shows the phase-1 seed pack plan, and opens an
+interactive `psql` session inside the lab container. Exercise IDs can be passed
+as bare slugs when unique, or as a path under `exercises/` when disambiguation is
+needed.
+
+Example:
+
+```sh
+uv run pgfound exercise run first-select-write-query --dry-run
+uv run pgfound exercise run first-select-write-query --auto-seed
+uv run pgfound exercise run first-select-write-query --check
+```
+
+Options:
+
+- `--auto-seed`: reset and load the exercise seed pack before opening `psql`.
+- `--dry-run`: print the prompt and seed plan without touching Docker.
+- `--check`: compare `tmp/answers/<exercise-id>.sql` with the reference
+  `solution.sql` by canonicalized row output.
+
 ## `pgfound review run`
 
 Stub command that exits 0 and reports that the review engine lands in
