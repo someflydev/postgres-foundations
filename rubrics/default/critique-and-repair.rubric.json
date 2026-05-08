@@ -1,0 +1,96 @@
+{
+  "id": "critique-and-repair",
+  "title": "Critique and Repair",
+  "applies_to": "exercise",
+  "dimensions": [
+    {
+      "name": "Diagnosis",
+      "weight": 0.2,
+      "levels": {
+        "0": "Does not identify the defect.",
+        "1": "Identifies a symptom but not the underlying defect.",
+        "2": "Identifies the defect with one important missing condition.",
+        "3": "Identifies the defect and explains why it is wrong for the prompt.",
+        "4": "Identifies the defect and explains why a wrong answer might still appear to pass."
+      }
+    },
+    {
+      "name": "Repair",
+      "weight": 0.2,
+      "levels": {
+        "0": "Repair is absent or introduces a new correctness problem.",
+        "1": "Repair addresses only a narrow symptom.",
+        "2": "Repair mostly works but has a material edge-case gap.",
+        "3": "Repair fixes the defect while preserving the intended behavior.",
+        "4": "Repair fixes the defect and improves reviewability without unrelated changes."
+      }
+    },
+    {
+      "name": "Evidence",
+      "weight": 0.13,
+      "levels": {
+        "0": "Provides no evidence that the defect or repair is real.",
+        "1": "Provides weak evidence that does not isolate the defect.",
+        "2": "Provides partial evidence with one missing counterexample.",
+        "3": "Provides evidence that demonstrates both the defect and the fixed behavior.",
+        "4": "Provides evidence including a regression case that would catch the original defect."
+      }
+    },
+    {
+      "name": "Explanation",
+      "weight": 0.13,
+      "levels": {
+        "0": "Cannot explain the defect or repair.",
+        "1": "Explains the repair mechanically but not the reason.",
+        "2": "Explains the main reason with minor gaps.",
+        "3": "Explains what was wrong, why it mattered, and why the repair works.",
+        "4": "Explains the repair and critiques an alternative that would be insufficient."
+      }
+    },
+    {
+      "name": "Failure isolation",
+      "weight": 0.1,
+      "levels": {
+        "0": "Cannot isolate the failing part of the artifact.",
+        "1": "Blames broad areas without narrowing the cause.",
+        "2": "Narrows the cause but leaves one competing explanation unresolved.",
+        "3": "Isolates the exact predicate, constraint, join, or assumption that fails.",
+        "4": "Isolates the failure and shows why nearby code or schema is not the cause."
+      }
+    },
+    {
+      "name": "Regression protection",
+      "weight": 0.08,
+      "levels": {
+        "0": "Provides no way to catch the defect again.",
+        "1": "Suggests a vague check that would not fail on the original defect.",
+        "2": "Provides a partial regression case.",
+        "3": "Provides a concrete case that fails before the repair and passes after it.",
+        "4": "Provides a minimal regression case plus one boundary case."
+      }
+    },
+    {
+      "name": "Scope control",
+      "weight": 0.08,
+      "levels": {
+        "0": "Rewrites unrelated parts and obscures whether the defect was fixed.",
+        "1": "Makes broad changes that create review risk.",
+        "2": "Mostly limits scope but includes one unnecessary change.",
+        "3": "Changes only what is needed to repair the defect.",
+        "4": "Keeps scope tight and explains why no wider rewrite is needed."
+      }
+    },
+    {
+      "name": "Reviewer communication",
+      "weight": 0.08,
+      "levels": {
+        "0": "Gives no useful explanation to a reviewer.",
+        "1": "States the fix without the before-and-after behavior.",
+        "2": "Explains the fix with one missing assumption.",
+        "3": "Communicates defect, repair, evidence, and residual assumptions clearly.",
+        "4": "Communicates clearly enough that a second reviewer can reproduce the judgment."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}

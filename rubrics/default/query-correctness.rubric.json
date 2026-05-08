@@ -1,0 +1,96 @@
+{
+  "id": "query-correctness",
+  "title": "Query Correctness",
+  "applies_to": "exercise",
+  "dimensions": [
+    {
+      "name": "Result semantics",
+      "weight": 0.24,
+      "levels": {
+        "0": "Does not answer the requested question or returns an unusable result.",
+        "1": "Returns some relevant rows but misses key predicates, joins, grouping, or columns.",
+        "2": "Mostly answers the question but has a material edge-case or grain error.",
+        "3": "Answers the question with correct rows, columns, and grain for the stated data.",
+        "4": "Answers correctly and explicitly accounts for boundary cases in the prompt."
+      }
+    },
+    {
+      "name": "SQL clarity",
+      "weight": 0.12,
+      "levels": {
+        "0": "SQL is unreadable or cannot be reviewed.",
+        "1": "SQL is difficult to follow and relies on unexplained tricks or ambiguous aliases.",
+        "2": "SQL is understandable but has avoidable clutter or weak naming.",
+        "3": "SQL is clear, consistently aliased, and organized around the question.",
+        "4": "SQL is concise, reviewable, and makes intermediate intent obvious."
+      }
+    },
+    {
+      "name": "Concept boundary",
+      "weight": 0.12,
+      "levels": {
+        "0": "Uses concepts explicitly marked not yet allowed.",
+        "1": "Leans on not-yet-taught constructs without explanation or need.",
+        "2": "Stays mostly within bounds but includes one questionable construct.",
+        "3": "Uses only allowed concepts and no unnecessary PostgreSQL features.",
+        "4": "Uses the smallest suitable concept set and can justify each construct."
+      }
+    },
+    {
+      "name": "Explanation",
+      "weight": 0.14,
+      "levels": {
+        "0": "Cannot explain what the query returns.",
+        "1": "Explains fragments but not the row set or grain.",
+        "2": "Explains the general idea with minor gaps.",
+        "3": "Explains predicates, joins, grouping, and output shape accurately.",
+        "4": "Explains the solution and can compare it to a plausible wrong query."
+      }
+    },
+    {
+      "name": "Boundary cases",
+      "weight": 0.1,
+      "levels": {
+        "0": "Ignores boundary cases named in the prompt.",
+        "1": "Handles only the happy path and gives no way to detect boundary failures.",
+        "2": "Handles common data but misses one named null, duplicate, or empty-set case.",
+        "3": "Handles the prompt's boundary cases without changing the intended row set.",
+        "4": "Handles boundary cases and explains which test data would prove the behavior."
+      }
+    },
+    {
+      "name": "Data verification",
+      "weight": 0.1,
+      "levels": {
+        "0": "Provides no evidence that the result was checked.",
+        "1": "Checks output visually without tying it back to the requested facts.",
+        "2": "Checks a sample row or count but leaves one important result property unverified.",
+        "3": "Verifies row count, representative values, and exclusion of irrelevant rows.",
+        "4": "Verifies the answer with a minimal independent check or counterexample."
+      }
+    },
+    {
+      "name": "Operational fit",
+      "weight": 0.08,
+      "levels": {
+        "0": "Writes a query that is needlessly expensive for the stated task.",
+        "1": "Uses avoidable broad scans, sorting, or repeated work without acknowledging cost.",
+        "2": "Has acceptable cost for the lab but one obvious avoidable inefficiency.",
+        "3": "Uses a straightforward query shape suitable for the stated data size and task.",
+        "4": "Keeps the query simple and names when a different shape would be needed at scale."
+      }
+    },
+    {
+      "name": "Lab hygiene",
+      "weight": 0.1,
+      "levels": {
+        "0": "Cannot be run cleanly in the lab.",
+        "1": "Requires hidden setup or manual cleanup not stated in the answer.",
+        "2": "Runs with minor assumptions that should be made explicit.",
+        "3": "Runs cleanly against the stated schema and seed pack.",
+        "4": "Runs cleanly and includes only deterministic, reviewable SQL."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}

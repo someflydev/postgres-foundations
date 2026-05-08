@@ -1,0 +1,96 @@
+{
+  "id": "indexing-reasoning",
+  "title": "Indexing Reasoning",
+  "applies_to": "exercise",
+  "dimensions": [
+    {
+      "name": "Workload fit",
+      "weight": 0.2,
+      "levels": {
+        "0": "Recommends indexes unrelated to the stated workload.",
+        "1": "Recognizes a predicate or sort but misses the main access pattern.",
+        "2": "Matches part of the workload with incomplete column order or coverage.",
+        "3": "Chooses indexes that fit predicates, joins, sorts, and expected selectivity.",
+        "4": "Chooses indexes and states when the workload does not yet justify more."
+      }
+    },
+    {
+      "name": "Plan evidence",
+      "weight": 0.16,
+      "levels": {
+        "0": "Does not use plan evidence or misreads the plan.",
+        "1": "Names plan nodes without connecting them to the recommendation.",
+        "2": "Uses some plan evidence but misses an important cost or row-count signal.",
+        "3": "Uses row estimates, access methods, filters, and sorts to support the answer.",
+        "4": "Compares before and after evidence and explains remaining uncertainty."
+      }
+    },
+    {
+      "name": "Write cost",
+      "weight": 0.12,
+      "levels": {
+        "0": "Ignores write and maintenance cost entirely.",
+        "1": "Mentions cost generically without applying it to the workload.",
+        "2": "Identifies likely cost but does not weigh it against read benefit.",
+        "3": "Weighs read benefit against write, storage, and maintenance cost.",
+        "4": "Includes a concrete rollback or monitoring condition for the index."
+      }
+    },
+    {
+      "name": "Explanation",
+      "weight": 0.14,
+      "levels": {
+        "0": "Cannot explain why the index should or should not exist.",
+        "1": "Explains only that indexes make queries faster.",
+        "2": "Explains the recommendation with a few gaps.",
+        "3": "Explains column order, selectivity, and planner behavior accurately.",
+        "4": "Explains the tradeoff and critiques a plausible but weaker index."
+      }
+    },
+    {
+      "name": "Column order",
+      "weight": 0.1,
+      "levels": {
+        "0": "Chooses column order unrelated to predicates or sorting.",
+        "1": "Puts columns in an order that helps only a secondary access pattern.",
+        "2": "Gets leading columns mostly right but misses an equality, range, or sort detail.",
+        "3": "Orders columns to match equality predicates, range predicates, and ordering needs.",
+        "4": "Explains why alternate column orders are weaker for the stated workload."
+      }
+    },
+    {
+      "name": "Selectivity reasoning",
+      "weight": 0.1,
+      "levels": {
+        "0": "Does not consider selectivity.",
+        "1": "Assumes every predicate benefits equally from an index.",
+        "2": "Recognizes selectivity but applies it incompletely.",
+        "3": "Uses selectivity to decide whether the index is likely to help.",
+        "4": "Connects selectivity to row estimates, data distribution, and monitoring needs."
+      }
+    },
+    {
+      "name": "Index minimalism",
+      "weight": 0.08,
+      "levels": {
+        "0": "Adds indexes indiscriminately.",
+        "1": "Adds overlapping indexes without explaining why both are needed.",
+        "2": "Avoids most duplication but leaves one redundant or premature index.",
+        "3": "Recommends the smallest index set that supports the demonstrated workload.",
+        "4": "Explicitly rejects premature indexes and states the signal that would change the decision."
+      }
+    },
+    {
+      "name": "Measurement discipline",
+      "weight": 0.1,
+      "levels": {
+        "0": "Makes a recommendation without measurement or a plan to measure.",
+        "1": "Mentions EXPLAIN but provides no before-and-after comparison.",
+        "2": "Provides partial measurement with missing timing, row, or buffer context.",
+        "3": "Compares relevant before-and-after plan evidence for the target query.",
+        "4": "Compares evidence and explains variance, cache effects, or remaining uncertainty."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}

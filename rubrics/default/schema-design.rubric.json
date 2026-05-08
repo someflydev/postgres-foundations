@@ -1,0 +1,96 @@
+{
+  "id": "schema-design",
+  "title": "Schema Design",
+  "applies_to": "exercise",
+  "dimensions": [
+    {
+      "name": "Business truth",
+      "weight": 0.2,
+      "levels": {
+        "0": "Schema contradicts or ignores the stated business facts.",
+        "1": "Captures a few facts but loses important identifiers or relationships.",
+        "2": "Captures the main facts with one significant ambiguity or duplicated truth.",
+        "3": "Represents entities, identifiers, relationships, and lifecycle facts accurately.",
+        "4": "Represents the facts and names open requirement questions that affect design."
+      }
+    },
+    {
+      "name": "Constraints",
+      "weight": 0.16,
+      "levels": {
+        "0": "Omits constraints needed to protect required truth.",
+        "1": "Uses keys or constraints inconsistently.",
+        "2": "Includes basic keys but misses one important integrity rule.",
+        "3": "Uses primary keys, foreign keys, nullability, and checks appropriately.",
+        "4": "Uses constraints deliberately and explains the operational effect of each."
+      }
+    },
+    {
+      "name": "PostgreSQL fit",
+      "weight": 0.13,
+      "levels": {
+        "0": "Uses PostgreSQL types or features in ways that break the model.",
+        "1": "Uses generic or mismatched types with likely correctness problems.",
+        "2": "Mostly reasonable types with one questionable tradeoff.",
+        "3": "Chooses PostgreSQL types that match the facts and expected operations.",
+        "4": "Chooses types with a clear explanation of portability and operational tradeoffs."
+      }
+    },
+    {
+      "name": "Reviewability",
+      "weight": 0.13,
+      "levels": {
+        "0": "DDL is incomplete or cannot be applied.",
+        "1": "DDL is hard to inspect and has unexplained naming or ordering problems.",
+        "2": "DDL is usable but has minor naming or organization issues.",
+        "3": "DDL is organized, named consistently, and easy to review.",
+        "4": "DDL includes clear names and notes that make future migration review easier."
+      }
+    },
+    {
+      "name": "Normalization",
+      "weight": 0.12,
+      "levels": {
+        "0": "Stores repeated or derived facts in ways that create immediate contradictions.",
+        "1": "Leaves obvious update anomalies across multiple columns or tables.",
+        "2": "Mostly separates facts but has one duplicated truth or unclear ownership boundary.",
+        "3": "Separates durable facts at an appropriate grain for the prompt.",
+        "4": "Separates facts and explains why any intentional duplication is operationally safe."
+      }
+    },
+    {
+      "name": "Migration safety",
+      "weight": 0.08,
+      "levels": {
+        "0": "DDL would destroy existing data without warning.",
+        "1": "Requires a risky rewrite or lock without acknowledging it.",
+        "2": "Can be applied in the lab but lacks a realistic migration sequence.",
+        "3": "Can be introduced with a clear order of create, backfill, validate, and enforce.",
+        "4": "Includes rollback or verification thinking appropriate to the change."
+      }
+    },
+    {
+      "name": "Queryability",
+      "weight": 0.09,
+      "levels": {
+        "0": "Schema makes the required workflow impossible or impractical to query.",
+        "1": "Schema hides important facts in unstructured fields without need.",
+        "2": "Supports the main workflow but makes one common query unnecessarily awkward.",
+        "3": "Supports expected reads and writes without sacrificing correctness.",
+        "4": "Supports expected workflows and names indexes or constraints to revisit later."
+      }
+    },
+    {
+      "name": "Ambiguity handling",
+      "weight": 0.09,
+      "levels": {
+        "0": "Treats ambiguous requirements as settled facts.",
+        "1": "Mentions ambiguity but makes unsupported schema choices.",
+        "2": "Identifies at least one ambiguity with limited design impact.",
+        "3": "Names the ambiguities that would change keys, nullability, or relationships.",
+        "4": "Presents a defensible design plus the concrete questions needed to refine it."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}

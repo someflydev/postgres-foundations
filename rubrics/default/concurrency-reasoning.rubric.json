@@ -1,0 +1,96 @@
+{
+  "id": "concurrency-reasoning",
+  "title": "Concurrency Reasoning",
+  "applies_to": "exercise",
+  "dimensions": [
+    {
+      "name": "Correctness risk",
+      "weight": 0.2,
+      "levels": {
+        "0": "Does not identify the concurrency or transaction risk.",
+        "1": "Identifies a vague race condition without the conflicting operations.",
+        "2": "Identifies the main risk but misses one important visibility or ordering detail.",
+        "3": "Identifies the risk and names the reads, writes, and invariant involved.",
+        "4": "Identifies the risk and distinguishes it from similar non-risks."
+      }
+    },
+    {
+      "name": "PostgreSQL behavior",
+      "weight": 0.15,
+      "levels": {
+        "0": "Describes PostgreSQL isolation, locking, or MVCC incorrectly.",
+        "1": "Uses correct terms but applies them to the wrong session behavior.",
+        "2": "Mostly describes behavior with one material gap.",
+        "3": "Explains observed visibility, blocking, locks, or errors accurately.",
+        "4": "Explains the behavior across at least two plausible isolation or locking choices."
+      }
+    },
+    {
+      "name": "Repair choice",
+      "weight": 0.15,
+      "levels": {
+        "0": "Proposes a repair that does not preserve the invariant.",
+        "1": "Proposes an overly broad or underspecified repair.",
+        "2": "Proposes a plausible repair with weak tradeoff reasoning.",
+        "3": "Chooses a repair that preserves correctness with reasonable operational cost.",
+        "4": "Chooses a repair and states when a stronger or weaker option would be better."
+      }
+    },
+    {
+      "name": "Reproduction",
+      "weight": 0.12,
+      "levels": {
+        "0": "Cannot reproduce or observe the issue.",
+        "1": "Provides incomplete session steps.",
+        "2": "Provides steps that show part of the issue.",
+        "3": "Provides clear multi-session steps and expected observations.",
+        "4": "Provides steps that also verify the repair."
+      }
+    },
+    {
+      "name": "Session ordering",
+      "weight": 0.1,
+      "levels": {
+        "0": "Does not distinguish the actions of separate sessions.",
+        "1": "Lists statements but not their interleaving.",
+        "2": "Shows a plausible interleaving with one missing observation.",
+        "3": "Shows the exact interleaving needed to create or avoid the behavior.",
+        "4": "Shows the interleaving and identifies which ordering would make the issue disappear."
+      }
+    },
+    {
+      "name": "Invariant preservation",
+      "weight": 0.1,
+      "levels": {
+        "0": "Does not name the invariant being protected.",
+        "1": "Names an invariant but the repair does not enforce it.",
+        "2": "Mostly preserves the invariant with one unresolved edge case.",
+        "3": "Preserves the invariant under the concurrent operations in scope.",
+        "4": "Preserves the invariant and states which wider workload assumptions remain."
+      }
+    },
+    {
+      "name": "Operational cost",
+      "weight": 0.08,
+      "levels": {
+        "0": "Chooses a mechanism with unacceptable blocking or retry behavior for the prompt.",
+        "1": "Ignores blocking, deadlocks, retries, or throughput impact.",
+        "2": "Mentions cost but does not weigh it against correctness benefit.",
+        "3": "Chooses a correctness mechanism with reasonable operational cost.",
+        "4": "Explains monitoring, retry, timeout, or escalation behavior for the chosen mechanism."
+      }
+    },
+    {
+      "name": "Error interpretation",
+      "weight": 0.1,
+      "levels": {
+        "0": "Misinterprets PostgreSQL errors or lock observations.",
+        "1": "Reports an error message without connecting it to cause.",
+        "2": "Interprets the main error with one missing detail.",
+        "3": "Connects errors, waits, or serialization failures to the competing statements.",
+        "4": "Uses the observation to distinguish deadlock, blocking, and serialization outcomes."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}
