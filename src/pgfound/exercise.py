@@ -6,13 +6,12 @@ import difflib
 import json
 import subprocess
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import psycopg
 
-from pgfound import paths
+from pgfound import paths, progress
 from pgfound.content import seed as content_seed
 from pgfound.lab.psql import build_argv
 
@@ -46,7 +45,7 @@ class ExerciseRecord:
 
     @property
     def progress_path(self) -> Path:
-        return paths.REPO_ROOT / "tmp" / "progress" / f"{self.id}.json"
+        return progress.exercise_progress_path(self.id)
 
     @property
     def seed_domain(self) -> str:
@@ -65,6 +64,10 @@ class ExerciseRecord:
     @property
     def expected_output_shape(self) -> str:
         return str(self.data.get("expected_output_shape", "rowset"))
+
+    @property
+    def search_path(self) -> str:
+        return str(self.data.get("search_path", "pgfound, public"))
 
 
 def find_exercise(identifier: str) -> ExerciseRecord:
@@ -105,49 +108,56 @@ def auto_seed(record: ExerciseRecord) -> None:
     content_seed.execute_seed(plan, reset=True, generate=False)
 
 
-def run_psql() -> None:
+def run_psql(search_path: str | None = None) -> None:
     """Open interactive psql and return after the learner exits."""
-    subprocess.run(build_argv(), cwd=paths.DOCKER_DIR, check=True)
+    subprocess.run(build_argv(search_path=search_path), cwd=paths.DOCKER_DIR, check=True)
 
 
-def save_self_assessment(record: ExerciseRecord, assessment: str) -> Path:
-    """Persist a lightweight progress record."""
-    record.progress_path.parent.mkdir(parents=True, exist_ok=True)
-    payload = {
-        "exercise_id": record.id,
-        "recorded_at": datetime.now(timezone.utc).isoformat(),
-        "self_assessment": assessment,
-    }
-    record.progress_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    return record.progress_path
+def save_attempt(
+    record: ExerciseRecord,
+    *,
+    started_at: str,
+    self_assessment: str = "not_recorded",
+    check_result: str = "not_run",
+    notes: str = "",
+) -> Path:
+    """Persist a canonical exercise progress attempt."""
+    return progress.append_exercise_attempt(
+        record.id,
+        started_at=started_at,
+        self_assessment=self_assessment,
+        check_result=check_result,
+        notes=notes,
+    )
 
 
-def check_answer(record: ExerciseRecord) -> tuple[bool, str]:
+def check_answer(record: ExerciseRecord, answer_path: Path | None = None) -> tuple[bool, str]:
     """Compare a saved learner answer to the reference solution row set."""
-    if not record.answer_path.is_file():
-        msg = f"answer file not found: {record.answer_path.relative_to(paths.REPO_ROOT)}"
+    resolved_answer_path = answer_path or record.answer_path
+    if not resolved_answer_path.is_file():
+        msg = f"answer file not found: {_relative_path(resolved_answer_path)}"
         raise FileNotFoundError(msg)
 
     if record.expected_output_shape == "schema_object":
         expected = _schema_object_shape(record, record.solution_path.read_text(encoding="utf-8"))
-        actual = _schema_object_shape(record, record.answer_path.read_text(encoding="utf-8"))
+        actual = _schema_object_shape(record, resolved_answer_path.read_text(encoding="utf-8"))
         if expected == actual:
             return True, ""
         diff = difflib.unified_diff(
             expected,
             actual,
             fromfile="solution schema",
-            tofile=str(record.answer_path.relative_to(paths.REPO_ROOT)),
+            tofile=_relative_path(resolved_answer_path),
             lineterm="",
         )
         return False, "\n".join(diff)
 
     expected = _normalize_rows(
-        _run_sql(record.solution_path.read_text(encoding="utf-8")),
+        _run_sql(record.solution_path.read_text(encoding="utf-8"), search_path=record.search_path),
         comparison=record.output_comparison,
     )
     actual = _normalize_rows(
-        _run_sql(record.answer_path.read_text(encoding="utf-8")),
+        _run_sql(resolved_answer_path.read_text(encoding="utf-8"), search_path=record.search_path),
         comparison=record.output_comparison,
     )
     if expected == actual:
@@ -157,20 +167,37 @@ def check_answer(record: ExerciseRecord) -> tuple[bool, str]:
         expected,
         actual,
         fromfile="solution",
-        tofile=str(record.answer_path.relative_to(paths.REPO_ROOT)),
+        tofile=_relative_path(resolved_answer_path),
         lineterm="",
     )
     return False, "\n".join(diff)
+
+
+def save_answer_from_history(record: ExerciseRecord) -> Path:
+    """Best-effort copy of the last SQL statement from ~/.psql_history."""
+    history_path = Path.home() / ".psql_history"
+    if not history_path.is_file():
+        msg = f"psql history not found: {history_path}"
+        raise FileNotFoundError(msg)
+    statement = _last_history_statement(history_path.read_text(encoding="utf-8"))
+    if not statement:
+        msg = f"no SQL statement found in {history_path}"
+        raise ValueError(msg)
+    record.answer_path.parent.mkdir(parents=True, exist_ok=True)
+    record.answer_path.write_text(statement.rstrip() + "\n", encoding="utf-8")
+    return record.answer_path
 
 
 def _load_exercise(path: Path) -> ExerciseRecord:
     return ExerciseRecord(data=json.loads(path.read_text(encoding="utf-8")), path=path)
 
 
-def _run_sql(sql: str) -> list[str]:
+def _run_sql(sql: str, *, search_path: str | None = None) -> list[str]:
     last_rows: list[str] = []
     with psycopg.connect(content_seed.database_url(), autocommit=False) as connection:
         with connection.cursor() as cursor:
+            if search_path:
+                cursor.execute(f"SET search_path TO {search_path}")
             cursor.execute(sql)
             while True:
                 if cursor.description is not None:
@@ -189,6 +216,8 @@ def _schema_object_shape(record: ExerciseRecord, sql: str) -> list[str]:
     tables = _schema_scope_tables(record)
     with psycopg.connect(content_seed.database_url(), autocommit=False) as connection:
         with connection.cursor() as cursor:
+            if record.search_path:
+                cursor.execute(f"SET search_path TO {record.search_path}")
             cursor.execute(sql)
             while cursor.nextset():
                 pass
@@ -279,3 +308,20 @@ def _stringify(value: object) -> str | None:
     if value is None:
         return None
     return str(value)
+
+
+def _last_history_statement(history: str) -> str:
+    lines = [line for line in history.splitlines() if line.strip() and not line.startswith("\\")]
+    collected: list[str] = []
+    for line in reversed(lines):
+        collected.insert(0, line)
+        if line.rstrip().endswith(";"):
+            break
+    return "\n".join(collected).strip()
+
+
+def _relative_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(paths.REPO_ROOT))
+    except ValueError:
+        return str(path)

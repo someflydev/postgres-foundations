@@ -3,6 +3,7 @@
 import shutil
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import click
@@ -12,10 +13,12 @@ from rich.table import Table
 import pgfound
 from pgfound import exercise as exercise_runner
 from pgfound import paths
+from pgfound import progress as progress_store
 from pgfound.content import lint as content_linter
 from pgfound.content import loader
 from pgfound.content import scaffold as content_scaffold
 from pgfound.content import seed as content_seed
+from pgfound.content import seed_doctor as content_seed_doctor
 from pgfound.content import validate as content_validator
 from pgfound.lab import compose
 
@@ -181,6 +184,76 @@ def lab_status() -> None:
             str(row.get("Publishers", row.get("Ports", ""))),
         )
     console.print(table)
+
+
+@lab.command("reset-domain", help="Drop, recreate, and reseed one domain schema.")
+@click.argument("domain")
+def lab_reset_domain(domain: str) -> None:
+    """Reset one teaching domain to its latest available seed phase."""
+    try:
+        plan = content_seed.plan_seed(domain=domain)
+        content_seed.execute_seed(plan, reset=True, generate=True)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    _success(f"reset {domain}: {len(plan.sql_files)} SQL file(s)")
+
+
+@lab.command("snapshot", help="Create a pg_dump snapshot under tmp/snapshots.")
+@click.argument("name")
+def lab_snapshot(name: str) -> None:
+    """Dump the current pgfound database to tmp/snapshots/<name>.dump."""
+    snapshot_path = _snapshot_path(name)
+    snapshot_path.parent.mkdir(parents=True, exist_ok=True)
+    cmd = [
+        "docker",
+        "compose",
+        "exec",
+        "-T",
+        "pg",
+        "pg_dump",
+        "-U",
+        "pgfound",
+        "-d",
+        "pgfound",
+        "-Fc",
+    ]
+    try:
+        with snapshot_path.open("wb") as dump_file:
+            subprocess.run(cmd, cwd=paths.DOCKER_DIR, check=True, stdout=dump_file)
+    except subprocess.CalledProcessError as exc:
+        raise click.ClickException(str(exc)) from exc
+    _success(f"snapshot written: {snapshot_path.relative_to(paths.REPO_ROOT)}")
+
+
+@lab.command("restore", help="Restore a pg_dump snapshot from tmp/snapshots.")
+@click.argument("name")
+def lab_restore(name: str) -> None:
+    """Restore tmp/snapshots/<name>.dump into the pgfound database."""
+    snapshot_path = _snapshot_path(name)
+    if not snapshot_path.is_file():
+        relative_path = snapshot_path.relative_to(paths.REPO_ROOT)
+        raise click.ClickException(f"snapshot not found: {relative_path}")
+    cmd = [
+        "docker",
+        "compose",
+        "exec",
+        "-T",
+        "pg",
+        "pg_restore",
+        "--clean",
+        "--if-exists",
+        "--no-owner",
+        "-U",
+        "pgfound",
+        "-d",
+        "pgfound",
+    ]
+    try:
+        with snapshot_path.open("rb") as dump_file:
+            subprocess.run(cmd, cwd=paths.DOCKER_DIR, check=True, stdin=dump_file)
+    except subprocess.CalledProcessError as exc:
+        raise click.ClickException(str(exc)) from exc
+    _success(f"restored snapshot: {snapshot_path.relative_to(paths.REPO_ROOT)}")
 
 
 @main.group(help="Inspect and validate platform content.")
@@ -447,6 +520,30 @@ def content_seed_command(
     _success(f"seeded {domain}: {len(plan.sql_files)} SQL file(s)")
 
 
+@content.command("seed-doctor", help="Check exercise seed references and solution table use.")
+def content_seed_doctor_command() -> None:
+    """Run seed-data sufficiency checks across authored exercises."""
+    report = content_seed_doctor.run_seed_doctor()
+    table = Table(title="pgfound content seed-doctor")
+    table.add_column("Exercise")
+    table.add_column("Seed Pack")
+    table.add_column("Phase")
+    table.add_column("Issue")
+    if report.issues:
+        for issue in report.issues:
+            table.add_row(issue.exercise_id, issue.seed_pack_id, issue.phase, issue.message)
+    else:
+        table.add_row("all", "-", "-", "no issues")
+    console.print(table)
+
+    if report.ok:
+        _success(f"PASS: checked {report.exercises_checked} exercise(s)")
+        return
+    raise click.ClickException(
+        f"FAIL: checked {report.exercises_checked} exercise(s), {len(report.issues)} issue(s)"
+    )
+
+
 @main.group(help="Run learner exercises.")
 def exercise() -> None:
     """Run learner exercises."""
@@ -459,21 +556,44 @@ def exercise() -> None:
 @click.option(
     "--check", is_flag=True, help="Compare tmp/answers/<exercise-id>.sql to solution.sql."
 )
-def exercise_run(exercise_id: str, auto_seed: bool, dry_run: bool, check: bool) -> None:
+@click.option(
+    "--answer",
+    "answer_path",
+    type=click.Path(path_type=Path),
+    help="SQL answer path to check instead of tmp/answers/<exercise-id>.sql.",
+)
+@click.option("--no-prompt", is_flag=True, help="Skip printing the exercise prompt.")
+@click.option(
+    "--save-answer",
+    is_flag=True,
+    help="Best-effort copy of the last psql history statement to the canonical answer path.",
+)
+def exercise_run(
+    exercise_id: str,
+    auto_seed: bool,
+    dry_run: bool,
+    check: bool,
+    answer_path: Path | None,
+    no_prompt: bool,
+    save_answer: bool,
+) -> None:
     """Run or check one exercise."""
+    started_at = datetime.now(timezone.utc).isoformat()
     try:
         record = exercise_runner.find_exercise(exercise_id)
     except ValueError as exc:
         raise click.ClickException(str(exc)) from exc
 
-    prompt = record.prompt_path.read_text(encoding="utf-8")
     seed_lines = exercise_runner.seed_plan_lines(record)
     console.print(f"Exercise: {record.id}")
     console.print(f"Seed pack: {record.seed_domain} phase {record.seed_phase}")
+    console.print(f"Search path: {record.search_path}")
     for line in seed_lines:
         console.print(f"SEED: {line}")
-    console.print("")
-    console.print(prompt)
+    if not no_prompt:
+        prompt = record.prompt_path.read_text(encoding="utf-8")
+        console.print("")
+        console.print(prompt)
 
     if dry_run:
         _success(f"DRY RUN: would use {len(seed_lines)} seed SQL file(s)")
@@ -488,11 +608,18 @@ def exercise_run(exercise_id: str, auto_seed: bool, dry_run: bool, check: bool) 
 
     if check:
         try:
-            correct, diff = exercise_runner.check_answer(record)
+            correct, diff = exercise_runner.check_answer(record, answer_path=answer_path)
         except Exception as exc:
             raise click.ClickException(str(exc)) from exc
+        check_result = "correct" if correct else "incorrect"
+        progress_path = exercise_runner.save_attempt(
+            record,
+            started_at=started_at,
+            check_result=check_result,
+        )
         if correct:
             _success("correct")
+            _success(f"recorded {progress_path.relative_to(paths.REPO_ROOT)}")
             return
         console.print("incorrect, diff follows")
         console.print(diff)
@@ -503,14 +630,52 @@ def exercise_run(exercise_id: str, auto_seed: bool, dry_run: bool, check: bool) 
         return
 
     try:
-        exercise_runner.run_psql()
+        exercise_runner.run_psql(search_path=record.search_path)
     except subprocess.CalledProcessError as exc:
         raise click.ClickException(str(exc)) from exc
 
+    if save_answer:
+        try:
+            saved_path = exercise_runner.save_answer_from_history(record)
+        except Exception as exc:
+            console.print(f"WARNING: could not save answer from psql history: {exc}")
+        else:
+            _success(f"saved answer {saved_path.relative_to(paths.REPO_ROOT)}")
+
+    assessment = "not_recorded"
     if click.confirm("Record a self-assessment for this exercise?", default=False):
         assessment = click.prompt("Self-assessment", default="not recorded")
-        progress_path = exercise_runner.save_self_assessment(record, assessment)
-        _success(f"recorded {progress_path.relative_to(paths.REPO_ROOT)}")
+    progress_path = exercise_runner.save_attempt(
+        record,
+        started_at=started_at,
+        self_assessment=assessment,
+    )
+    _success(f"recorded {progress_path.relative_to(paths.REPO_ROOT)}")
+
+
+@main.group(help="Show learner progress.")
+def progress() -> None:
+    """Show learner progress."""
+
+
+@progress.command("show", help="Print a minimal tmp/progress summary.")
+def progress_show() -> None:
+    """Print a minimal learner progress summary."""
+    summary = progress_store.summarize()
+    table = Table(title="pgfound progress")
+    table.add_column("Area")
+    table.add_column("Files", justify="right")
+    table.add_column("Attempts", justify="right")
+    table.add_row("profile", "1" if summary.profile_exists else "0", "-")
+    table.add_row("exercises", str(summary.exercise_files), str(summary.exercise_attempts))
+    table.add_row("capstones", str(summary.capstone_files), str(summary.capstone_attempts))
+    console.print(table)
+
+
+def _snapshot_path(name: str) -> Path:
+    if "/" in name or "\\" in name or name in {"", ".", ".."}:
+        raise click.ClickException("snapshot name must be a simple file stem")
+    return paths.REPO_ROOT / "tmp" / "snapshots" / f"{name}.dump"
 
 
 @main.group(help="Run review engine commands.")
