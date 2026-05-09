@@ -62,6 +62,10 @@ class ExerciseRecord:
     def output_comparison(self) -> str:
         return str(self.data.get("output_comparison", "unordered"))
 
+    @property
+    def expected_output_shape(self) -> str:
+        return str(self.data.get("expected_output_shape", "rowset"))
+
 
 def find_exercise(identifier: str) -> ExerciseRecord:
     """Find an exercise by ID or by a path ending at an exercise directory."""
@@ -124,6 +128,20 @@ def check_answer(record: ExerciseRecord) -> tuple[bool, str]:
         msg = f"answer file not found: {record.answer_path.relative_to(paths.REPO_ROOT)}"
         raise FileNotFoundError(msg)
 
+    if record.expected_output_shape == "schema_object":
+        expected = _schema_object_shape(record, record.solution_path.read_text(encoding="utf-8"))
+        actual = _schema_object_shape(record, record.answer_path.read_text(encoding="utf-8"))
+        if expected == actual:
+            return True, ""
+        diff = difflib.unified_diff(
+            expected,
+            actual,
+            fromfile="solution schema",
+            tofile=str(record.answer_path.relative_to(paths.REPO_ROOT)),
+            lineterm="",
+        )
+        return False, "\n".join(diff)
+
     expected = _normalize_rows(
         _run_sql(record.solution_path.read_text(encoding="utf-8")),
         comparison=record.output_comparison,
@@ -164,6 +182,89 @@ def _run_sql(sql: str) -> list[str]:
                     break
         connection.rollback()
     return last_rows
+
+
+def _schema_object_shape(record: ExerciseRecord, sql: str) -> list[str]:
+    """Run schema SQL in a rolled-back transaction and capture catalog shape."""
+    tables = _schema_scope_tables(record)
+    with psycopg.connect(content_seed.database_url(), autocommit=False) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            while cursor.nextset():
+                pass
+            rows = _catalog_rows(cursor, tables)
+        connection.rollback()
+    return rows
+
+
+def _schema_scope_tables(record: ExerciseRecord) -> list[tuple[str, str]]:
+    """Return fully qualified tables from an exercise schema_scope."""
+    schema_scope = record.data.get("schema_scope", {})
+    raw_tables = schema_scope.get("tables", []) if isinstance(schema_scope, dict) else []
+    tables: list[tuple[str, str]] = []
+    for raw_table in raw_tables:
+        if not isinstance(raw_table, str) or "." not in raw_table:
+            continue
+        schema_name, table_name = raw_table.split(".", 1)
+        tables.append((schema_name, table_name))
+    if not tables:
+        msg = "schema_object checks require schema_scope.tables with schema-qualified names"
+        raise ValueError(msg)
+    return tables
+
+
+def _catalog_rows(cursor: psycopg.Cursor[Any], tables: list[tuple[str, str]]) -> list[str]:
+    rows: list[str] = []
+    for schema_name, table_name in tables:
+        cursor.execute(
+            """
+            SELECT
+                'column' AS object_kind,
+                table_schema,
+                table_name,
+                column_name,
+                ordinal_position::text,
+                is_nullable,
+                data_type,
+                COALESCE(column_default, '')
+            FROM information_schema.columns
+            WHERE table_schema = %s
+              AND table_name = %s
+            ORDER BY ordinal_position
+            """,
+            (schema_name, table_name),
+        )
+        rows.extend(json.dumps([_stringify(value) for value in row]) for row in cursor.fetchall())
+
+        cursor.execute(
+            """
+            SELECT
+                'constraint' AS object_kind,
+                tc.table_schema,
+                tc.table_name,
+                tc.constraint_name,
+                tc.constraint_type,
+                COALESCE(kcu.column_name, ''),
+                COALESCE(kcu.ordinal_position::text, '')
+            FROM information_schema.table_constraints AS tc
+            LEFT JOIN information_schema.key_column_usage AS kcu
+              ON kcu.constraint_schema = tc.constraint_schema
+             AND kcu.constraint_name = tc.constraint_name
+             AND kcu.table_schema = tc.table_schema
+             AND kcu.table_name = tc.table_name
+            WHERE tc.table_schema = %s
+              AND tc.table_name = %s
+              AND tc.constraint_name !~ '_not_null$'
+            ORDER BY
+                tc.constraint_type,
+                tc.constraint_name,
+                kcu.ordinal_position NULLS LAST,
+                kcu.column_name
+            """,
+            (schema_name, table_name),
+        )
+        rows.extend(json.dumps([_stringify(value) for value in row]) for row in cursor.fetchall())
+    return sorted(rows)
 
 
 def _normalize_rows(rows: list[str], *, comparison: str) -> list[str]:
