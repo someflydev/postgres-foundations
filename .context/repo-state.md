@@ -49,6 +49,11 @@ Current baseline:
   lesson/exercise pointer READMEs, `pgfound exercise run`, dry-run and
   answer-check modes, progress scaffolding under `tmp/progress/`, and Phase 1
   corpus/runner tests.
+- Phase 2 corpus and row-set checking: PROMPT_12 added the relational joins
+  and aggregation content set: 8 active lessons, 56 active SQL exercises,
+  Phase 2 lesson/exercise pointer READMEs, seed extensions for ecommerce,
+  scheduling, and SaaS multi-tenancy, `output_comparison` modes for exercise
+  checking, and Phase 2 corpus tests.
 
 Canonical docs:
 
