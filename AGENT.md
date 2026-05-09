@@ -37,14 +37,19 @@ concrete, operational, and PostgreSQL core-first.
 - Content validate: `uv run pgfound content validate`
 - Content examples validate: `uv run pgfound content validate --include-examples`
 - Content lint: `uv run pgfound content lint`
+- Seed doctor: `uv run pgfound content seed-doctor`
 - Seed dry-run: `uv run pgfound content seed ecommerce --phase 1 --dry-run`
-- Seed lab data: `uv run pgfound content seed ecommerce --phase 1 --reset`
+- Seed lab data: `uv run pgfound content seed ecommerce --phase 3 --reset`
 - Exercise dry-run: `uv run pgfound exercise run first-select-write-query --dry-run`
 - Exercise check: `uv run pgfound exercise run first-select-write-query --check`
+- Progress summary: `uv run pgfound progress show`
 - Lab up: `make lab-up`
 - Lab down: `make lab-down`
 - Lab reset: `make lab-nuke`
 - Lab psql: `make lab-psql`
+- Lab reset domain: `uv run pgfound lab reset-domain ecommerce`
+- Lab snapshot: `uv run pgfound lab snapshot <name>`
+- Lab restore: `uv run pgfound lab restore <name>`
 
 ## Context Files
 

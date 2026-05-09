@@ -35,12 +35,15 @@ Completed:
   lessons, 68 schema/critique exercises, Phase 3 seed constraints for
   ecommerce/scheduling/SaaS, spreadsheet legacy fixture, schema-object answer
   checking, constraints cookbook, and Phase 3 corpus tests.
+- PROMPT_14: seed doctor, per-exercise search_path metadata, canonical
+  tmp/progress exercise attempts, lab reset/snapshot/restore helpers, exercise
+  runner QoL flags, learner workflow docs, and seed/progress tests.
 
 Next expected prompt:
 
-- PROMPT_14: seed-data sufficiency and lab runner/progress polish for phases
-  0-3.
+- PROMPT_15: Phase 4 PostgreSQL data modeling: timestamps/time zones, UUIDs,
+  JSON/JSONB.
 
 Notes:
 
-- Do not run PROMPT_14 unless the user explicitly asks.
+- Do not run PROMPT_15 unless the user explicitly asks.

@@ -68,6 +68,21 @@ Options:
 
 Runs `docker compose ps --format json` and renders service status as a Rich table.
 
+## `pgfound lab reset-domain DOMAIN`
+
+Drops and recreates one teaching domain schema, then reseeds that domain to the
+latest available phase.
+
+## `pgfound lab snapshot NAME`
+
+Writes a custom-format `pg_dump` of the `pgfound` database to
+`tmp/snapshots/<name>.dump`.
+
+## `pgfound lab restore NAME`
+
+Restores `tmp/snapshots/<name>.dump` into the `pgfound` database with
+`pg_restore --clean --if-exists --no-owner`.
+
 ## `pgfound content list`
 
 Lists content IDs, placeholder titles, and file paths.
@@ -176,9 +191,16 @@ Options:
 - `--dry-run`: print the SQL files that would run and exit without connecting
   to PostgreSQL.
 
+## `pgfound content seed-doctor`
+
+Scans every exercise, confirms its referenced seed phase SQL exists, and checks
+that tables referenced from executable `solution.sql` files appear in the seed
+pack SQL. Issues are rendered as a Rich table and the command exits non-zero on
+drift.
+
 ## `pgfound exercise run EXERCISE_ID`
 
-Prints an exercise prompt, shows the phase-1 seed pack plan, and opens an
+Prints an exercise prompt, shows the seed pack plan and search path, and opens an
 interactive `psql` session inside the lab container. Exercise IDs can be passed
 as bare slugs when unique, or as a path under `exercises/` when disambiguation is
 needed.
@@ -197,6 +219,15 @@ Options:
 - `--dry-run`: print the prompt and seed plan without touching Docker.
 - `--check`: compare `tmp/answers/<exercise-id>.sql` with the reference
   `solution.sql` by canonicalized row output.
+- `--answer PATH`: check this SQL file instead of the default answer path.
+- `--no-prompt`: skip printing the prompt.
+- `--save-answer`: best-effort copy of the last statement from `~/.psql_history`
+  into the canonical answer path after the psql session.
+
+## `pgfound progress show`
+
+Reads `tmp/progress/` and prints a minimal summary of profile, exercise, and
+capstone attempt records. The evaluator-grade progress engine lands later.
 
 ## `pgfound review run`
 

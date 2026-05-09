@@ -5,7 +5,7 @@ Current baseline:
 - Python package: `src/pgfound/`
 - CLI entry point: `pgfound = pgfound.cli:main`
 - CLI surface: `pgfound version`, `doctor`, `lab`, `content`, `exercise`,
-  `review`, `decision`, and `interview` command groups.
+  `progress`, `review`, `decision`, and `interview` command groups.
 - Test suite: `tests/test_cli.py`, `tests/test_paths.py`,
   `tests/test_lab_psql.py`, and Docker Compose tests.
 - Tooling: `uv`, `ruff`, `pytest`
@@ -61,6 +61,11 @@ Current baseline:
   multi-tenancy, a legacy ecommerce spreadsheet fixture, `schema_object`
   exercise checking via `information_schema`, `docs/constraints-cookbook.md`,
   and Phase 3 corpus tests.
+- Seed and runner polish: PROMPT_14 added `pgfound content seed-doctor`,
+  per-exercise `search_path`, canonical `tmp/progress/exercises/*.json`
+  attempt records, `pgfound progress show`, exercise runner `--answer`,
+  `--no-prompt`, and `--save-answer`, plus `pgfound lab reset-domain`,
+  `snapshot`, and `restore`.
 
 Canonical docs:
 
@@ -75,6 +80,7 @@ Canonical docs:
 - `docs/authoring-exercises.md`
 - `docs/domain-conventions.md`
 - `docs/constraints-cookbook.md`
+- `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
 - `curriculum/capability-layers.md`
@@ -97,7 +103,9 @@ Expected green checks:
 - `uv run pgfound content seed scheduling --phase 3 --reset`
 - `uv run pgfound content seed saas_multi_tenant --phase 3 --reset`
 - `uv run pgfound content validate --include-examples`
+- `uv run pgfound content seed-doctor`
 - `uv run pgfound exercise run first-select-write-query --dry-run`
+- `uv run pgfound progress show`
 - `docker compose -f docker/docker-compose.yml config`
 
 Known local-only artifacts may exist after verification: `.venv/`,
