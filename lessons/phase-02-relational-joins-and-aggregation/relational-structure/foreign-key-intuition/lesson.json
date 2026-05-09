@@ -1,0 +1,62 @@
+{
+  "id": "foreign-key-intuition",
+  "title": "Foreign Key Intuition",
+  "phase": 2,
+  "capability_layer": "relational_joins",
+  "summary": "Read a foreign key as a database-checked relationship between child and parent rows.",
+  "learning_objectives": [
+    "Explain foreign key intuition using Phase 2 table relationships.",
+    "Write or repair SQL that preserves the requested row-set grain."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "foreign_key",
+    "one_to_many"
+  ],
+  "concepts_not_yet_allowed": [
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "upsert",
+    "view",
+    "materialized_view",
+    "subquery",
+    "function_definitions",
+    "jsonb",
+    "array",
+    "transaction",
+    "index"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "foreign-key-intuition-level-a-1",
+    "foreign-key-intuition-level-a-2",
+    "foreign-key-intuition-level-b-1",
+    "foreign-key-intuition-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "foreign-key-intuition-level-c-1",
+    "foreign-key-intuition-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "foreign-key-intuition-repair-wrong-aggregation"
+  ],
+  "reflection_prompts": [
+    "What does one output row represent, and which table controls that grain?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "postgres_docs_select",
+      "why": "Reference syntax for joins, GROUP BY, HAVING, DISTINCT, and aggregate functions."
+    }
+  ],
+  "tags": [
+    "phase-2",
+    "relational-structure",
+    "ecommerce"
+  ],
+  "status": "active"
+}

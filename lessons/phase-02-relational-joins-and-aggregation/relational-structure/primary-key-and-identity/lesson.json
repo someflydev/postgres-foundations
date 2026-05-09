@@ -1,0 +1,62 @@
+{
+  "id": "primary-key-and-identity",
+  "title": "Primary Key and Identity",
+  "phase": 2,
+  "capability_layer": "relational_joins",
+  "summary": "Use primary keys to identify rows before joining related tables.",
+  "learning_objectives": [
+    "Explain primary key and identity using Phase 2 table relationships.",
+    "Write or repair SQL that preserves the requested row-set grain."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "primary_key",
+    "one_to_many"
+  ],
+  "concepts_not_yet_allowed": [
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "upsert",
+    "view",
+    "materialized_view",
+    "subquery",
+    "function_definitions",
+    "jsonb",
+    "array",
+    "transaction",
+    "index"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "primary-key-and-identity-level-a-1",
+    "primary-key-and-identity-level-a-2",
+    "primary-key-and-identity-level-b-1",
+    "primary-key-and-identity-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "primary-key-and-identity-level-c-1",
+    "primary-key-and-identity-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "primary-key-and-identity-repair-wrong-aggregation"
+  ],
+  "reflection_prompts": [
+    "What does one output row represent, and which table controls that grain?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "postgres_docs_select",
+      "why": "Reference syntax for joins, GROUP BY, HAVING, DISTINCT, and aggregate functions."
+    }
+  ],
+  "tags": [
+    "phase-2",
+    "relational-structure",
+    "ecommerce"
+  ],
+  "status": "active"
+}

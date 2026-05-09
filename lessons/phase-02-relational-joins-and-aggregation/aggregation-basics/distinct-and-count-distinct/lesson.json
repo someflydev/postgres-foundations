@@ -1,0 +1,64 @@
+{
+  "id": "distinct-and-count-distinct",
+  "title": "DISTINCT and COUNT DISTINCT",
+  "phase": 2,
+  "capability_layer": "relational_joins",
+  "summary": "Use DISTINCT to collapse repeated values and COUNT DISTINCT to count unique values within a group.",
+  "learning_objectives": [
+    "Explain distinct and count distinct using Phase 2 table relationships.",
+    "Write or repair SQL that preserves the requested row-set grain."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "distinct",
+    "count_distinct",
+    "aggregate",
+    "group_by"
+  ],
+  "concepts_not_yet_allowed": [
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "upsert",
+    "view",
+    "materialized_view",
+    "subquery",
+    "function_definitions",
+    "jsonb",
+    "array",
+    "transaction",
+    "index"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "distinct-and-count-distinct-level-a-1",
+    "distinct-and-count-distinct-level-a-2",
+    "distinct-and-count-distinct-level-b-1",
+    "distinct-and-count-distinct-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "distinct-and-count-distinct-level-c-1",
+    "distinct-and-count-distinct-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "distinct-and-count-distinct-repair-wrong-aggregation"
+  ],
+  "reflection_prompts": [
+    "What does one output row represent, and which table controls that grain?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "postgres_docs_select",
+      "why": "Reference syntax for joins, GROUP BY, HAVING, DISTINCT, and aggregate functions."
+    }
+  ],
+  "tags": [
+    "phase-2",
+    "aggregation-basics",
+    "saas_multi_tenant"
+  ],
+  "status": "active"
+}

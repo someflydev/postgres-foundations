@@ -1,0 +1,65 @@
+{
+  "id": "count-sum-group-by",
+  "title": "Count, Sum, and GROUP BY",
+  "phase": 2,
+  "capability_layer": "relational_joins",
+  "summary": "Group rows at a declared grain and calculate counts and sums.",
+  "learning_objectives": [
+    "Explain count, sum, and group by using Phase 2 table relationships.",
+    "Write or repair SQL that preserves the requested row-set grain."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "group_by",
+    "aggregate",
+    "count",
+    "sum",
+    "having"
+  ],
+  "concepts_not_yet_allowed": [
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "upsert",
+    "view",
+    "materialized_view",
+    "subquery",
+    "function_definitions",
+    "jsonb",
+    "array",
+    "transaction",
+    "index"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "count-sum-group-by-level-a-1",
+    "count-sum-group-by-level-a-2",
+    "count-sum-group-by-level-b-1",
+    "count-sum-group-by-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "count-sum-group-by-level-c-1",
+    "count-sum-group-by-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "count-sum-group-by-repair-wrong-aggregation"
+  ],
+  "reflection_prompts": [
+    "What does one output row represent, and which table controls that grain?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "postgres_docs_select",
+      "why": "Reference syntax for joins, GROUP BY, HAVING, DISTINCT, and aggregate functions."
+    }
+  ],
+  "tags": [
+    "phase-2",
+    "aggregation-basics",
+    "ecommerce"
+  ],
+  "status": "active"
+}

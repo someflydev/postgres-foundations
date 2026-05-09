@@ -1,0 +1,63 @@
+{
+  "id": "left-join-and-missingness",
+  "title": "Left Join and Missingness",
+  "phase": 2,
+  "capability_layer": "relational_joins",
+  "summary": "Use outer joins to keep rows from one side when matching rows may be missing.",
+  "learning_objectives": [
+    "Explain left join and missingness using Phase 2 table relationships.",
+    "Write or repair SQL that preserves the requested row-set grain."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "left_join",
+    "right_join",
+    "full_join"
+  ],
+  "concepts_not_yet_allowed": [
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "upsert",
+    "view",
+    "materialized_view",
+    "subquery",
+    "function_definitions",
+    "jsonb",
+    "array",
+    "transaction",
+    "index"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "left-join-and-missingness-level-a-1",
+    "left-join-and-missingness-level-a-2",
+    "left-join-and-missingness-level-b-1",
+    "left-join-and-missingness-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "left-join-and-missingness-level-c-1",
+    "left-join-and-missingness-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "left-join-and-missingness-repair-wrong-aggregation"
+  ],
+  "reflection_prompts": [
+    "What does one output row represent, and which table controls that grain?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "postgres_docs_select",
+      "why": "Reference syntax for joins, GROUP BY, HAVING, DISTINCT, and aggregate functions."
+    }
+  ],
+  "tags": [
+    "phase-2",
+    "joining-two-tables",
+    "scheduling"
+  ],
+  "status": "active"
+}
