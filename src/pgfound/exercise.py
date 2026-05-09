@@ -53,6 +53,15 @@ class ExerciseRecord:
         dataset = self.data.get("dataset", {})
         return str(dataset["seed_pack_id"])
 
+    @property
+    def seed_phase(self) -> str:
+        schema_scope = self.data.get("schema_scope", {})
+        return str(schema_scope.get("phase", "1"))
+
+    @property
+    def output_comparison(self) -> str:
+        return str(self.data.get("output_comparison", "unordered"))
+
 
 def find_exercise(identifier: str) -> ExerciseRecord:
     """Find an exercise by ID or by a path ending at an exercise directory."""
@@ -82,13 +91,13 @@ def find_exercise(identifier: str) -> ExerciseRecord:
 
 def seed_plan_lines(record: ExerciseRecord) -> list[str]:
     """Return printable seed plan lines for an exercise."""
-    plan = content_seed.plan_seed(domain=record.seed_domain, phase="1")
+    plan = content_seed.plan_seed(domain=record.seed_domain, phase=record.seed_phase)
     return [str(path.relative_to(paths.REPO_ROOT)) for path in plan.sql_files]
 
 
 def auto_seed(record: ExerciseRecord) -> None:
-    """Load the phase-1 seed pack for an exercise."""
-    plan = content_seed.plan_seed(domain=record.seed_domain, phase="1")
+    """Load the requested seed pack phase for an exercise."""
+    plan = content_seed.plan_seed(domain=record.seed_domain, phase=record.seed_phase)
     content_seed.execute_seed(plan, reset=True, generate=False)
 
 
@@ -115,8 +124,14 @@ def check_answer(record: ExerciseRecord) -> tuple[bool, str]:
         msg = f"answer file not found: {record.answer_path.relative_to(paths.REPO_ROOT)}"
         raise FileNotFoundError(msg)
 
-    expected = _run_sql(record.solution_path.read_text(encoding="utf-8"))
-    actual = _run_sql(record.answer_path.read_text(encoding="utf-8"))
+    expected = _normalize_rows(
+        _run_sql(record.solution_path.read_text(encoding="utf-8")),
+        comparison=record.output_comparison,
+    )
+    actual = _normalize_rows(
+        _run_sql(record.answer_path.read_text(encoding="utf-8")),
+        comparison=record.output_comparison,
+    )
     if expected == actual:
         return True, ""
 
@@ -135,17 +150,28 @@ def _load_exercise(path: Path) -> ExerciseRecord:
 
 
 def _run_sql(sql: str) -> list[str]:
-    rows: list[str] = []
+    last_rows: list[str] = []
     with psycopg.connect(content_seed.database_url(), autocommit=False) as connection:
         with connection.cursor() as cursor:
             cursor.execute(sql)
-            if cursor.description is None:
-                connection.rollback()
-                return []
-            for row in cursor.fetchall():
-                rows.append(json.dumps([_stringify(value) for value in row], sort_keys=True))
+            while True:
+                if cursor.description is not None:
+                    last_rows = [
+                        json.dumps([_stringify(value) for value in row], sort_keys=True)
+                        for row in cursor.fetchall()
+                    ]
+                if not cursor.nextset():
+                    break
         connection.rollback()
-    return sorted(rows)
+    return last_rows
+
+
+def _normalize_rows(rows: list[str], *, comparison: str) -> list[str]:
+    if comparison == "ordered":
+        return rows
+    if comparison == "multiset":
+        return sorted(rows)
+    return sorted(set(rows))
 
 
 def _stringify(value: object) -> str | None:

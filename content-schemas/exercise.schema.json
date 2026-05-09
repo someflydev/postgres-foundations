@@ -80,6 +80,11 @@
         "multi_session_trace"
       ]
     },
+    "output_comparison": {
+      "type": "string",
+      "enum": ["ordered", "unordered", "multiset"],
+      "default": "unordered"
+    },
     "success_criteria": {
       "type": "array",
       "minItems": 1,

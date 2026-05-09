@@ -469,7 +469,7 @@ def exercise_run(exercise_id: str, auto_seed: bool, dry_run: bool, check: bool) 
     prompt = record.prompt_path.read_text(encoding="utf-8")
     seed_lines = exercise_runner.seed_plan_lines(record)
     console.print(f"Exercise: {record.id}")
-    console.print(f"Seed pack: {record.seed_domain} phase 1")
+    console.print(f"Seed pack: {record.seed_domain} phase {record.seed_phase}")
     for line in seed_lines:
         console.print(f"SEED: {line}")
     console.print("")
@@ -484,7 +484,7 @@ def exercise_run(exercise_id: str, auto_seed: bool, dry_run: bool, check: bool) 
             exercise_runner.auto_seed(record)
         except Exception as exc:
             raise click.ClickException(str(exc)) from exc
-        _success(f"seeded {record.seed_domain} phase 1")
+        _success(f"seeded {record.seed_domain} phase {record.seed_phase}")
 
     if check:
         try:

@@ -95,6 +95,19 @@ file. `starter.sql` should contain only scaffolding that the learner is allowed
 to see; omit it for modeling-only exercises when SQL starter text would confuse
 the task.
 
+For executable row-set exercises, set `output_comparison` when row order or
+duplicate rows matter:
+
+- `unordered` is the default. It compares returned rows as an unordered set and
+  ignores duplicate multiplicity.
+- `multiset` ignores row order but preserves duplicate multiplicity.
+- `ordered` requires the same rows in the same order, so the reference solution
+  should include an `ORDER BY` when deterministic ordering is intended.
+
+Multi-statement `solution.sql` files are allowed for setup or inspection, but
+the checker compares only the last statement that returns rows. Author the last
+`SELECT` as the learner-visible answer shape.
+
 Phase 0 is a paper-modeling phase. Active Phase 0 exercises with
 `kind: modeling` use markdown prompts, `solution.md`, and, when needed,
 `starter.md` instead of SQL starter or solution files. The validator implements
