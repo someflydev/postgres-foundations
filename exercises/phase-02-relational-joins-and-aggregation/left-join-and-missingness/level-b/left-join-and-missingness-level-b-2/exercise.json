@@ -1,0 +1,86 @@
+{
+  "id": "left-join-and-missingness-level-b-2",
+  "title": "Left Join And Missingness Level B 2",
+  "lesson_id": "left-join-and-missingness",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "select",
+    "where",
+    "order_by",
+    "limit",
+    "null",
+    "data_type",
+    "psql",
+    "primary_key",
+    "foreign_key",
+    "one_to_many",
+    "inner_join",
+    "left_join",
+    "right_join",
+    "full_join",
+    "group_by",
+    "aggregate",
+    "count",
+    "sum",
+    "avg",
+    "min",
+    "max",
+    "having",
+    "distinct",
+    "count_distinct",
+    "and",
+    "or",
+    "in",
+    "between",
+    "is_null"
+  ],
+  "not_yet_allowed_concepts": [
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "upsert",
+    "view",
+    "materialized_view",
+    "subquery",
+    "function_definitions",
+    "jsonb",
+    "array",
+    "transaction",
+    "index"
+  ],
+  "schema_scope": {
+    "tables": [
+      "scheduling.providers",
+      "scheduling.appointments"
+    ],
+    "phase": "2"
+  },
+  "dataset": {
+    "seed_pack_id": "scheduling",
+    "max_rows_hint": 30
+  },
+  "expected_output_shape": "rowset",
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "Runs cleanly against the phase-2 seed pack.",
+    "Returned rows and columns match the reference output.",
+    "Uses only Phase 2 concepts."
+  ],
+  "time_target_minutes": 15,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "tags": [
+    "phase-2",
+    "joining-two-tables",
+    "scheduling",
+    "b"
+  ],
+  "status": "active",
+  "starter_path": "starter.sql",
+  "hints": [
+    "Name the output grain before writing SELECT.",
+    "Use the key columns shown by \\d to choose the ON clause."
+  ]
+}

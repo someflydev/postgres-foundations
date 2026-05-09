@@ -1,0 +1,1 @@
+SELECT o.order_number, sum(oi.quantity * oi.unit_price) AS merchandise_total FROM ecommerce.orders o INNER JOIN ecommerce.order_items oi ON oi.order_id = o.id GROUP BY o.order_number ORDER BY o.order_number;

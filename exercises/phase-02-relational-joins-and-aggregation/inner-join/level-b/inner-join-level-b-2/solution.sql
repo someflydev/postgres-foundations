@@ -1,0 +1,1 @@
+SELECT o.order_number, p.sku, oi.quantity FROM ecommerce.order_items oi INNER JOIN ecommerce.orders o ON o.id = oi.order_id INNER JOIN ecommerce.products p ON p.id = oi.product_id ORDER BY o.order_number, p.sku;

@@ -1,0 +1,86 @@
+{
+  "id": "foreign-key-intuition-level-c-2",
+  "title": "Foreign Key Intuition Level C 2",
+  "lesson_id": "foreign-key-intuition",
+  "scaffolding_level": "C",
+  "kind": "query",
+  "allowed_concepts": [
+    "select",
+    "where",
+    "order_by",
+    "limit",
+    "null",
+    "data_type",
+    "psql",
+    "primary_key",
+    "foreign_key",
+    "one_to_many",
+    "inner_join",
+    "left_join",
+    "right_join",
+    "full_join",
+    "group_by",
+    "aggregate",
+    "count",
+    "sum",
+    "avg",
+    "min",
+    "max",
+    "having",
+    "distinct",
+    "count_distinct",
+    "and",
+    "or",
+    "in",
+    "between",
+    "is_null"
+  ],
+  "not_yet_allowed_concepts": [
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "upsert",
+    "view",
+    "materialized_view",
+    "subquery",
+    "function_definitions",
+    "jsonb",
+    "array",
+    "transaction",
+    "index"
+  ],
+  "schema_scope": {
+    "tables": [
+      "ecommerce.customers",
+      "ecommerce.orders"
+    ],
+    "phase": "2"
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 30
+  },
+  "expected_output_shape": "rowset",
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "Runs cleanly against the phase-2 seed pack.",
+    "Returned rows and columns match the reference output.",
+    "Uses only Phase 2 concepts."
+  ],
+  "time_target_minutes": 25,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "tags": [
+    "phase-2",
+    "relational-structure",
+    "ecommerce",
+    "c"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "Why did you choose this join type?",
+    "What row set would change if the join or grouping changed?",
+    "How did you verify the output grain?"
+  ]
+}

@@ -1,0 +1,1 @@
+SELECT c.email, count(DISTINCT o.id) AS orders, sum(oi.quantity * oi.unit_price) AS item_revenue FROM ecommerce.customers c LEFT JOIN ecommerce.orders o ON o.customer_id = c.id LEFT JOIN ecommerce.order_items oi ON oi.order_id = o.id GROUP BY c.email ORDER BY c.email;
