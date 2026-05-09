@@ -88,13 +88,20 @@
         "primary_key",
         "foreign_key",
         "one_to_many",
-        "many_to_many",
-        "join",
         "inner_join",
         "left_join",
+        "right_join",
+        "full_join",
         "group_by",
         "aggregate",
-        "having"
+        "count",
+        "sum",
+        "avg",
+        "min",
+        "max",
+        "having",
+        "distinct",
+        "count_distinct"
       ],
       "prerequisites": [0, 1],
       "exit_competencies": [
@@ -103,11 +110,10 @@
         "Can repair a query that drops needed rows by using the correct outer join and predicate placement."
       ],
       "clusters": [
-        { "slug": "keys-and-relationships", "title": "Keys and relationships", "planned_lessons": 2 },
-        { "slug": "inner-and-outer-joins", "title": "Inner and outer joins", "planned_lessons": 3 },
-        { "slug": "many-to-many-bridges", "title": "Many-to-many bridges", "planned_lessons": 2 },
-        { "slug": "aggregation-and-grain", "title": "Aggregation and grain", "planned_lessons": 3 },
-        { "slug": "join-debugging", "title": "Join debugging", "planned_lessons": 2 }
+        { "slug": "relational-structure", "title": "Relational structure", "planned_lessons": 2 },
+        { "slug": "joining-two-tables", "title": "Joining two tables", "planned_lessons": 2 },
+        { "slug": "aggregation-basics", "title": "Aggregation basics", "planned_lessons": 2 },
+        { "slug": "joining-and-aggregating", "title": "Joining and aggregating", "planned_lessons": 2 }
       ]
     },
     {
