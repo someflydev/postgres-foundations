@@ -17,7 +17,8 @@ The SaaS multi-tenant domain models a small business application with many custo
   and tenant-local identity on paper before SQL.
 - Phase 1: filter data by tenant and status.
 - Phase 2: join users, tenants, and projects without crossing boundaries.
-- Phase 3: enforce tenant-scoped uniqueness.
+- Phase 3: enforce tenant-scoped uniqueness, membership access-level boundaries,
+  and reference-backed billing country and currency facts.
 - Phase 6: reason about updates that must stay tenant-local.
 - Phase 8: design operational admin queries without bypassing isolation.
 - Phase 10: use tenant-aware capstone review criteria.

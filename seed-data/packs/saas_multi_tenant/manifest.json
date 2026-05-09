@@ -1,6 +1,6 @@
 {
   "domain": "saas_multi_tenant",
-  "phases_covered": [1, 2],
+  "phases_covered": [1, 2, 3],
   "planned_phases": [1, 2, 3, 6, 8, 10],
   "depends_on_extensions": ["pgcrypto"],
   "notes": "Tenant, user, and project data support isolation, role design, admin reporting, and later operational capstone work."

@@ -17,7 +17,8 @@ The ecommerce domain models a small store that sells catalog items and records c
   lifecycle events on paper before SQL.
 - Phase 1: retrieve recent orders and inspect product prices.
 - Phase 2: join orders to line items and products.
-- Phase 3: enforce non-negative quantities and valid statuses.
+- Phase 3: enforce non-negative quantities, non-negative totals, natural-key
+  uniqueness, and reference-backed country and currency values.
 - Phase 5: compute running revenue with window functions.
 - Phase 7: tune the hot order-history query.
 - Phase 9: partition old orders by month.
@@ -29,3 +30,11 @@ This pack does not model payments, tax law, shipment carriers, refunds, or fraud
 ## Naming and schema overview
 
 Large labs use the `ecommerce` schema. Small phase exercises may collapse these tables into `pgfound` when the lesson needs fewer moving parts. Tables: `customers`, `products`, `orders`, and `order_items`.
+
+## Fixtures
+
+- `fixtures/spreadsheet-legacy.csv`: a deliberately denormalized import sheet
+  that mixes customers, orders, products, currencies, shipping status, and line
+  items. Phase 3 uses it to practice refactoring spreadsheet-shaped data into
+  customers, products, orders, and order_items while naming the constraints that
+  prevent duplicate, conflicting, or impossible facts.

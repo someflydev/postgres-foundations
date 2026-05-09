@@ -1,0 +1,17 @@
+order_number,order_date,customer_email,customer_name,customer_country,product_sku,product_name,quantity,unit_price,currency,shipping_status,notes
+EC-2001,2026-03-01,ada@example.com,Ada Lovelace,US,BK-SQL-001,SQL Field Guide,1,29.00,USD,shipped,customer name repeats from customers table
+EC-2001,2026-03-01,ada@example.com,Ada Lovelace,US,MUG-PG-001,Postgres Mug,1,14.50,USD,shipped,order facts repeat on every line
+EC-2002,2026-03-02,grace@example.com,Grace Hopper,US,BK-SQL-001,SQL Field Guide,2,29.00,USD,paid,product facts repeat
+EC-2003,2026-03-02,lin@example.com,Lin Moreno,CA,STK-PG-001,Postgres Sticker Pack,3,5.00,CAD,paid,mixed currencies in same file
+EC-2003,2026-03-02,lin@example.com,Lin Moreno,CA,CAP-PG-001,Postgres Cap,1,22.00,CAD,paid,
+EC-2004,2026-03-03,no-orders@example.com,No Orders,US,MUG-PG-001,Postgres Mug,0,14.50,USD,draft,zero quantity needs review
+EC-2005,2026-03-04,casey@example.com,Casey Nguyen,US,NOTEBOOK-001,SQL Notebook,2,8.00,USD,paid,new product appears inline
+EC-2005,2026-03-04,casey@example.com,Casey Nguyen,US,PEN-PG-001,Postgres Pen,4,3.00,USD,paid,new product appears inline
+EC-2006,2026-03-05,ada@example.com,Ada L.,US,STK-PG-001,Postgres Sticker Pack,5,5.00,USD,paid,customer name conflicts with earlier row
+EC-2007,2026-03-06,maria@example.com,Maria Silva,CA,BK-SQL-001,SQL Field Guide,1,31.00,CAD,paid,same sku has different price
+EC-2008,2026-03-07,omar@example.com,Omar Singh,US,CAP-PG-001,Postgres Cap,-1,22.00,USD,refund,negative quantity is an incident seed
+EC-2009,2026-03-08,grace@example.com,Grace Hopper,US,MUG-PG-001,Postgres Mug,1,14.50,USD,cancelled,
+EC-2010,2026-03-09,taylor@example.com,Taylor Park,GB,BK-SQL-001,SQL Field Guide,1,29.00,USD,paid,country not in early ecommerce reference data
+EC-2011,2026-03-10,lee@example.com,Lee Morgan,US,STK-PG-001,Sticker Pack,10,4.50,USD,paid,product name conflicts with canonical name
+EC-2012,2026-03-11,nora@example.com,Nora Patel,US,MUG-PG-001,Postgres Mug,1,14.50,USD,paid,
+EC-2012,2026-03-11,nora@example.com,Nora Patel,US,BK-SQL-001,SQL Field Guide,1,29.00,USD,paid,
