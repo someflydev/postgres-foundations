@@ -84,5 +84,6 @@
   "oral_defense_prompts": [
     "Which existing row would fail if you added the constraint too early?",
     "Why does this rule belong in PostgreSQL instead of only in application code?"
-  ]
+  ],
+  "search_path": "ecommerce, pgfound, public"
 }

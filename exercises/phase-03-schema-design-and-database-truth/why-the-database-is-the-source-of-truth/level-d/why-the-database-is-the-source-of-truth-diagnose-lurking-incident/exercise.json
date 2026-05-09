@@ -84,5 +84,6 @@
     "What incident could happen without this constraint?",
     "Which exact bad row would PostgreSQL reject after your repair?",
     "What migration order avoids breaking existing valid rows?"
-  ]
+  ],
+  "search_path": "ecommerce, pgfound, public"
 }

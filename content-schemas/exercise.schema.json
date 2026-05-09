@@ -68,6 +68,11 @@
         }
       }
     },
+    "search_path": {
+      "type": "string",
+      "minLength": 1,
+      "default": "pgfound, public"
+    },
     "expected_output_shape": {
       "type": "string",
       "enum": [

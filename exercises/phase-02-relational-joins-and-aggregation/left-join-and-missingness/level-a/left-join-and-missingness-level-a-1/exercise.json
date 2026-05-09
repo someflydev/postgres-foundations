@@ -77,5 +77,6 @@
     "scheduling",
     "a"
   ],
-  "status": "active"
+  "status": "active",
+  "search_path": "scheduling, pgfound, public"
 }

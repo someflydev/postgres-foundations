@@ -51,5 +51,6 @@
   "oral_defense_prompts": [
     "Which of these invariants cannot be expressed in a table and why?",
     "Which lifecycle events produce new rows vs update rows?"
-  ]
+  ],
+  "search_path": "scheduling, pgfound, public"
 }

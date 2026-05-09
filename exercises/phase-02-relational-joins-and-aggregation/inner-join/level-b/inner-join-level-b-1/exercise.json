@@ -52,13 +52,13 @@
   ],
   "schema_scope": {
     "tables": [
-      "ecommerce.orders",
-      "ecommerce.customers"
+      "scheduling.appointments",
+      "scheduling.providers"
     ],
     "phase": "2"
   },
   "dataset": {
-    "seed_pack_id": "ecommerce",
+    "seed_pack_id": "scheduling",
     "max_rows_hint": 30
   },
   "expected_output_shape": "rowset",
@@ -74,7 +74,7 @@
   "tags": [
     "phase-2",
     "joining-two-tables",
-    "ecommerce",
+    "scheduling",
     "b"
   ],
   "status": "active",
@@ -82,5 +82,6 @@
   "hints": [
     "Name the output grain before writing SELECT.",
     "Use the key columns shown by \\d to choose the ON clause."
-  ]
+  ],
+  "search_path": "scheduling, pgfound, public"
 }

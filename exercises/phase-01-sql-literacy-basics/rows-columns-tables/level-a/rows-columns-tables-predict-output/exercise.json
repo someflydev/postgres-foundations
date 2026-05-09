@@ -65,5 +65,6 @@
   "hints": [
     "Start from ecommerce.products.",
     "Keep the query to one SELECT statement."
-  ]
+  ],
+  "search_path": "ecommerce, pgfound, public"
 }

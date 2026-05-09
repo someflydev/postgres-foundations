@@ -13,6 +13,7 @@
     "seed_pack_id": "intro_customers",
     "max_rows_hint": 100
   },
+  "search_path": "intro_customers, pgfound, public",
   "expected_output_shape": "rowset",
   "success_criteria": [
     "Returns only the requested customer columns.",

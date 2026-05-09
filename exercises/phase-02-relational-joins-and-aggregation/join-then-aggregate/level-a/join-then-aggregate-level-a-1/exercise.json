@@ -78,5 +78,6 @@
     "ecommerce",
     "a"
   ],
-  "status": "active"
+  "status": "active",
+  "search_path": "ecommerce, pgfound, public"
 }

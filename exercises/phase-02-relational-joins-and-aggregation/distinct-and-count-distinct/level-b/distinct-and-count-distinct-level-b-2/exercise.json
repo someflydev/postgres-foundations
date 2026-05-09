@@ -52,13 +52,13 @@
   ],
   "schema_scope": {
     "tables": [
-      "saas.tenants",
-      "saas.users"
+      "ecommerce.order_items",
+      "ecommerce.products"
     ],
     "phase": "2"
   },
   "dataset": {
-    "seed_pack_id": "saas_multi_tenant",
+    "seed_pack_id": "ecommerce",
     "max_rows_hint": 30
   },
   "expected_output_shape": "rowset",
@@ -75,6 +75,7 @@
     "phase-2",
     "aggregation-basics",
     "saas_multi_tenant",
+    "ecommerce",
     "b"
   ],
   "status": "active",
@@ -82,5 +83,6 @@
   "hints": [
     "Name the output grain before writing SELECT.",
     "Use the key columns shown by \\d to choose the ON clause."
-  ]
+  ],
+  "search_path": "ecommerce, pgfound, public"
 }

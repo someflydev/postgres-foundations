@@ -82,5 +82,6 @@
   "hints": [
     "Name the output grain before writing SELECT.",
     "Use the key columns shown by \\d to choose the ON clause."
-  ]
+  ],
+  "search_path": "ecommerce, pgfound, public"
 }

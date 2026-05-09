@@ -85,5 +85,6 @@
   "status": "active",
   "hints": [
     "Look for the statement that rejects the bad row."
-  ]
+  ],
+  "search_path": "ecommerce, pgfound, public"
 }

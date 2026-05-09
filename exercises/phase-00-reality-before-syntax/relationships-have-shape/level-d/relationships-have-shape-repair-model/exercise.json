@@ -52,5 +52,6 @@
     "Justify the repair for each duplicated fact.",
     "Which missing relationship caused the largest loss of meaning?",
     "Which lifecycle event or invariant prevents the repaired model from drifting again?"
-  ]
+  ],
+  "search_path": "scheduling, pgfound, public"
 }

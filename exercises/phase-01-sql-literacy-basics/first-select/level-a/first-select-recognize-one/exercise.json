@@ -65,5 +65,6 @@
   "hints": [
     "Start from scheduling.providers.",
     "Keep the query to one SELECT statement."
-  ]
+  ],
+  "search_path": "scheduling, pgfound, public"
 }

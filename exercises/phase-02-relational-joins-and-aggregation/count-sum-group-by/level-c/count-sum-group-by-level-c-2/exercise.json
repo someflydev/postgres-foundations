@@ -52,13 +52,12 @@
   ],
   "schema_scope": {
     "tables": [
-      "ecommerce.orders",
-      "ecommerce.order_items"
+      "scheduling.appointments"
     ],
     "phase": "2"
   },
   "dataset": {
-    "seed_pack_id": "ecommerce",
+    "seed_pack_id": "scheduling",
     "max_rows_hint": 30
   },
   "expected_output_shape": "rowset",
@@ -74,7 +73,7 @@
   "tags": [
     "phase-2",
     "aggregation-basics",
-    "ecommerce",
+    "scheduling",
     "c"
   ],
   "status": "active",
@@ -82,5 +81,6 @@
     "Why did you choose this join type?",
     "What row set would change if the join or grouping changed?",
     "How did you verify the output grain?"
-  ]
+  ],
+  "search_path": "scheduling, pgfound, public"
 }

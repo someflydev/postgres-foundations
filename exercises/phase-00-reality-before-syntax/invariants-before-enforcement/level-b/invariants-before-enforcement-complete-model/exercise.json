@@ -51,5 +51,6 @@
   "starter_path": "starter.md",
   "hints": [
     "Use starter.md as a checklist, not as a final answer."
-  ]
+  ],
+  "search_path": "ecommerce, pgfound, public"
 }

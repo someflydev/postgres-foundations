@@ -85,5 +85,6 @@
   "hints": [
     "Inspect the existing columns before tightening the rule.",
     "Backfill or default before adding NOT NULL."
-  ]
+  ],
+  "search_path": "ecommerce, pgfound, public"
 }

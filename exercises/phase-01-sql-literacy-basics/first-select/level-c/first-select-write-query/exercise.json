@@ -66,5 +66,6 @@
     "Which exact rows should qualify?",
     "Which clause excludes the wrong rows?",
     "How did you verify the output against the seed data?"
-  ]
+  ],
+  "search_path": "scheduling, pgfound, public"
 }

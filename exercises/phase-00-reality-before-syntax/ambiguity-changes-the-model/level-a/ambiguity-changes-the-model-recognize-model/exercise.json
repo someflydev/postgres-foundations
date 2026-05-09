@@ -50,5 +50,6 @@
   "status": "active",
   "hints": [
     "Read the nouns first, then decide which nouns are durable business things."
-  ]
+  ],
+  "search_path": "events, pgfound, public"
 }
