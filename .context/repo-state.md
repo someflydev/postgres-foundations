@@ -54,6 +54,13 @@ Current baseline:
   Phase 2 lesson/exercise pointer READMEs, seed extensions for ecommerce,
   scheduling, and SaaS multi-tenancy, `output_comparison` modes for exercise
   checking, and Phase 2 corpus tests.
+- Phase 3 corpus and schema-object checking: PROMPT_13 added the schema design
+  and database-enforced truth content set: 12 active lessons, 68 schema and
+  critique exercises, Phase 3 lesson/exercise pointer READMEs, constraint and
+  reference-table seed extensions for ecommerce, scheduling, and SaaS
+  multi-tenancy, a legacy ecommerce spreadsheet fixture, `schema_object`
+  exercise checking via `information_schema`, `docs/constraints-cookbook.md`,
+  and Phase 3 corpus tests.
 
 Canonical docs:
 
@@ -67,6 +74,7 @@ Canonical docs:
 - `docs/authoring-lessons.md`
 - `docs/authoring-exercises.md`
 - `docs/domain-conventions.md`
+- `docs/constraints-cookbook.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
 - `curriculum/capability-layers.md`
@@ -85,6 +93,9 @@ Expected green checks:
 - `uv run pgfound content list`
 - `uv run pgfound content validate`
 - `uv run pgfound content lint`
+- `uv run pgfound content seed ecommerce --phase 3 --reset`
+- `uv run pgfound content seed scheduling --phase 3 --reset`
+- `uv run pgfound content seed saas_multi_tenant --phase 3 --reset`
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound exercise run first-select-write-query --dry-run`
 - `docker compose -f docker/docker-compose.yml config`

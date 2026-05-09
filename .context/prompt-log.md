@@ -31,11 +31,16 @@ Completed:
 - PROMPT_12: full Phase 2 relational joins and aggregation corpus, 8 active
   lessons, 56 active SQL exercises, Phase 2 seed extensions, row-set output
   comparison modes, pointer tables, and Phase 2 corpus tests.
+- PROMPT_13: full Phase 3 schema design and database-truth corpus, 12 active
+  lessons, 68 schema/critique exercises, Phase 3 seed constraints for
+  ecommerce/scheduling/SaaS, spreadsheet legacy fixture, schema-object answer
+  checking, constraints cookbook, and Phase 3 corpus tests.
 
 Next expected prompt:
 
-- PROMPT_13: Phase 3 schema design, constraints, and database truth.
+- PROMPT_14: seed-data sufficiency and lab runner/progress polish for phases
+  0-3.
 
 Notes:
 
-- Do not run PROMPT_13 unless the user explicitly asks.
+- Do not run PROMPT_14 unless the user explicitly asks.

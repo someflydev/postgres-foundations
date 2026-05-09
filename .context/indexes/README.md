@@ -92,3 +92,25 @@ Phase 1 SQL literacy references introduced by PROMPT_11:
 - `docs/cli.md`
 - `tests/test_phase1_corpus.py`
 - `tests/test_exercise_run_dry_run.py`
+
+Phase 2 relational joins references introduced by PROMPT_12:
+
+- `lessons/phase-02-relational-joins-and-aggregation/README.md`
+- `exercises/phase-02-relational-joins-and-aggregation/README.md`
+- `seed-data/packs/ecommerce/phases/phase-02.sql`
+- `seed-data/packs/scheduling/phases/phase-02.sql`
+- `seed-data/packs/saas_multi_tenant/phases/phase-02.sql`
+- `src/pgfound/exercise.py`
+- `tests/test_phase2_corpus.py`
+
+Phase 3 database-truth references introduced by PROMPT_13:
+
+- `lessons/phase-03-schema-design-and-database-truth/README.md`
+- `exercises/phase-03-schema-design-and-database-truth/README.md`
+- `seed-data/packs/ecommerce/phases/phase-03.sql`
+- `seed-data/packs/ecommerce/fixtures/spreadsheet-legacy.csv`
+- `seed-data/packs/scheduling/phases/phase-03.sql`
+- `seed-data/packs/saas_multi_tenant/phases/phase-03.sql`
+- `docs/constraints-cookbook.md`
+- `src/pgfound/exercise.py`
+- `tests/test_phase3_corpus.py`
