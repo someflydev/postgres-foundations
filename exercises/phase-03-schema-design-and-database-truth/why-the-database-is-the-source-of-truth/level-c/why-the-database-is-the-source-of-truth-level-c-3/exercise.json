@@ -1,0 +1,87 @@
+{
+  "id": "why-the-database-is-the-source-of-truth-level-c-3",
+  "title": "Why the Database Is the Source of Truth C3",
+  "lesson_id": "why-the-database-is-the-source-of-truth",
+  "scaffolding_level": "C",
+  "kind": "schema",
+  "allowed_concepts": [
+    "select",
+    "where",
+    "order_by",
+    "limit",
+    "null",
+    "data_type",
+    "psql",
+    "primary_key",
+    "foreign_key",
+    "one_to_many",
+    "inner_join",
+    "left_join",
+    "group_by",
+    "aggregate",
+    "count",
+    "sum",
+    "and",
+    "or",
+    "unique_constraint",
+    "check_constraint",
+    "not_null",
+    "default",
+    "reference_table",
+    "normalization",
+    "first_normal_form",
+    "second_normal_form",
+    "third_normal_form",
+    "alter_table",
+    "migration",
+    "surrogate_key",
+    "natural_key",
+    "generated_identity"
+  ],
+  "not_yet_allowed_concepts": [
+    "jsonb",
+    "array",
+    "range_type",
+    "cte",
+    "window_function",
+    "partitioning",
+    "index",
+    "transaction",
+    "lateral_join",
+    "recursive_cte",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "schema_scope": {
+    "tables": [
+      "ecommerce.why_the_database_is_the_source_of_truth_c_3"
+    ],
+    "phase": "3"
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 80
+  },
+  "expected_output_shape": "schema_object",
+  "success_criteria": [
+    "Names the invariant before choosing syntax.",
+    "Uses PostgreSQL core constraints available in Phase 3.",
+    "Explains the incident prevented by the final schema rule."
+  ],
+  "time_target_minutes": 20,
+  "rubric_id": "schema-design",
+  "solution_path": "solution.sql",
+  "tags": [
+    "phase-3",
+    "keys-as-design",
+    "why-the-database-is-the-source-of-truth",
+    "c"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "Which existing row would fail if you added the constraint too early?",
+    "Why does this rule belong in PostgreSQL instead of only in application code?"
+  ]
+}

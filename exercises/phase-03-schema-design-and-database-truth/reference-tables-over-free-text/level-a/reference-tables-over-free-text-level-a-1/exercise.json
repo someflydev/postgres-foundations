@@ -1,0 +1,87 @@
+{
+  "id": "reference-tables-over-free-text-level-a-1",
+  "title": "Reference Tables Over Free Text A1",
+  "lesson_id": "reference-tables-over-free-text",
+  "scaffolding_level": "A",
+  "kind": "schema",
+  "allowed_concepts": [
+    "select",
+    "where",
+    "order_by",
+    "limit",
+    "null",
+    "data_type",
+    "psql",
+    "primary_key",
+    "foreign_key",
+    "one_to_many",
+    "inner_join",
+    "left_join",
+    "group_by",
+    "aggregate",
+    "count",
+    "sum",
+    "and",
+    "or",
+    "unique_constraint",
+    "check_constraint",
+    "not_null",
+    "default",
+    "reference_table",
+    "normalization",
+    "first_normal_form",
+    "second_normal_form",
+    "third_normal_form",
+    "alter_table",
+    "migration",
+    "surrogate_key",
+    "natural_key",
+    "generated_identity"
+  ],
+  "not_yet_allowed_concepts": [
+    "jsonb",
+    "array",
+    "range_type",
+    "cte",
+    "window_function",
+    "partitioning",
+    "index",
+    "transaction",
+    "lateral_join",
+    "recursive_cte",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "schema_scope": {
+    "tables": [
+      "ecommerce.reference_tables_over_free_text_a_1_statuses",
+      "ecommerce.reference_tables_over_free_text_a_1"
+    ],
+    "phase": "3"
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 80
+  },
+  "expected_output_shape": "rowset",
+  "success_criteria": [
+    "Names the invariant before choosing syntax.",
+    "Uses PostgreSQL core constraints available in Phase 3.",
+    "Explains the incident prevented by the final schema rule."
+  ],
+  "time_target_minutes": 12,
+  "rubric_id": "schema-design",
+  "solution_path": "solution.sql",
+  "tags": [
+    "phase-3",
+    "normalization-and-anomalies",
+    "reference-tables-over-free-text",
+    "a"
+  ],
+  "status": "active",
+  "hints": [
+    "Look for the statement that rejects the bad row."
+  ]
+}

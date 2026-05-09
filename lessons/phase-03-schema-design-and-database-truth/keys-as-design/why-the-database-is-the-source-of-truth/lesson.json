@@ -1,0 +1,64 @@
+{
+  "id": "why-the-database-is-the-source-of-truth",
+  "title": "Why the Database Is the Source of Truth",
+  "phase": 3,
+  "capability_layer": "database_truth",
+  "summary": "Use why the database is the source of truth to make PostgreSQL enforce durable schema truth.",
+  "learning_objectives": [
+    "Explain the design tradeoff behind why the database is the source of truth.",
+    "Write or critique ALTER TABLE statements that enforce named invariants."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "unique_constraint",
+    "check_constraint",
+    "not_null",
+    "foreign_key"
+  ],
+  "concepts_not_yet_allowed": [
+    "jsonb",
+    "array",
+    "range_type",
+    "cte",
+    "window_function",
+    "partitioning",
+    "index",
+    "transaction",
+    "lateral_join",
+    "recursive_cte",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "why-the-database-is-the-source-of-truth-level-a-1",
+    "why-the-database-is-the-source-of-truth-level-b-2",
+    "why-the-database-is-the-source-of-truth-level-b-5"
+  ],
+  "independent_exercise_ids": [
+    "why-the-database-is-the-source-of-truth-level-c-3",
+    "why-the-database-is-the-source-of-truth-level-c-6"
+  ],
+  "critique_exercise_ids": [
+    "why-the-database-is-the-source-of-truth-diagnose-lurking-incident"
+  ],
+  "reflection_prompts": [
+    "Which bad row does this schema rule make impossible?"
+  ],
+  "estimated_time_minutes": 50,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "constraints-cookbook",
+      "why": "Local syntax guide for Phase 3 constraints."
+    }
+  ],
+  "tags": [
+    "phase-3",
+    "keys-as-design",
+    "database-truth"
+  ],
+  "status": "active"
+}

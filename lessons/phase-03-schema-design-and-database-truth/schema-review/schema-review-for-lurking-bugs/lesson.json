@@ -1,0 +1,62 @@
+{
+  "id": "schema-review-for-lurking-bugs",
+  "title": "Schema Review for Lurking Bugs",
+  "phase": 3,
+  "capability_layer": "database_truth",
+  "summary": "Use schema review for lurking bugs to make PostgreSQL enforce durable schema truth.",
+  "learning_objectives": [
+    "Explain the design tradeoff behind schema review for lurking bugs.",
+    "Write or critique ALTER TABLE statements that enforce named invariants."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "schema_review",
+    "invariant",
+    "constraint"
+  ],
+  "concepts_not_yet_allowed": [
+    "jsonb",
+    "array",
+    "range_type",
+    "cte",
+    "window_function",
+    "partitioning",
+    "index",
+    "transaction",
+    "lateral_join",
+    "recursive_cte",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "schema-review-for-lurking-bugs-level-a-1",
+    "schema-review-for-lurking-bugs-level-b-2",
+    "schema-review-for-lurking-bugs-level-b-5"
+  ],
+  "independent_exercise_ids": [
+    "schema-review-for-lurking-bugs-level-c-3"
+  ],
+  "critique_exercise_ids": [
+    "schema-review-for-lurking-bugs-diagnose-lurking-incident"
+  ],
+  "reflection_prompts": [
+    "Which bad row does this schema rule make impossible?"
+  ],
+  "estimated_time_minutes": 50,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "constraints-cookbook",
+      "why": "Local syntax guide for Phase 3 constraints."
+    }
+  ],
+  "tags": [
+    "phase-3",
+    "schema-review",
+    "database-truth"
+  ],
+  "status": "active"
+}

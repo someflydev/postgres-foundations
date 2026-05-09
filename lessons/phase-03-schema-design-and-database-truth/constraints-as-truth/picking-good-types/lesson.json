@@ -1,0 +1,65 @@
+{
+  "id": "picking-good-types",
+  "title": "Picking Good Types",
+  "phase": 3,
+  "capability_layer": "database_truth",
+  "summary": "Use picking good types to make PostgreSQL enforce durable schema truth.",
+  "learning_objectives": [
+    "Explain the design tradeoff behind picking good types.",
+    "Write or critique ALTER TABLE statements that enforce named invariants."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "data_type",
+    "text",
+    "numeric",
+    "timestamptz",
+    "boolean"
+  ],
+  "concepts_not_yet_allowed": [
+    "jsonb",
+    "array",
+    "range_type",
+    "cte",
+    "window_function",
+    "partitioning",
+    "index",
+    "transaction",
+    "lateral_join",
+    "recursive_cte",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "picking-good-types-level-a-1",
+    "picking-good-types-level-b-2",
+    "picking-good-types-level-b-5"
+  ],
+  "independent_exercise_ids": [
+    "picking-good-types-level-c-3",
+    "picking-good-types-level-c-6"
+  ],
+  "critique_exercise_ids": [
+    "picking-good-types-diagnose-lurking-incident"
+  ],
+  "reflection_prompts": [
+    "Which bad row does this schema rule make impossible?"
+  ],
+  "estimated_time_minutes": 50,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "constraints-cookbook",
+      "why": "Local syntax guide for Phase 3 constraints."
+    }
+  ],
+  "tags": [
+    "phase-3",
+    "constraints-as-truth",
+    "database-truth"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,2 @@
+-- Split the denormalized source into keyed tables.
+-- Add primary keys, unique business identifiers, foreign keys, and row-local checks.
