@@ -84,3 +84,6 @@ reports permission issues reading init scripts, check that files under
 ```sh
 make lab-logs
 ```
+
+
+Phase 8 full-text search labs also install `unaccent` at database initialization. If you add it to an existing lab volume, reset with `make lab-nuke` or run `CREATE EXTENSION IF NOT EXISTS unaccent;` manually before using the multi-language and unaccent exercises.

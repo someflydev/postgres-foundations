@@ -8,7 +8,8 @@
     5,
     6,
     "7a",
-    "7b"
+    "7b",
+    8
   ],
   "planned_phases": [
     1,
@@ -19,6 +20,7 @@
     6,
     "7a",
     "7b",
+    8,
     9
   ],
   "depends_on_extensions": [
