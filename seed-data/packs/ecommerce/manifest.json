@@ -1,7 +1,7 @@
 {
   "domain": "ecommerce",
-  "phases_covered": [1, 2, 3],
-  "planned_phases": [1, 2, 3, 5, 7, 9],
-  "depends_on_extensions": [],
+  "phases_covered": [1, 2, 3, 4],
+  "planned_phases": [1, 2, 3, 4, 5, 7, 9],
+  "depends_on_extensions": ["pgcrypto"],
   "notes": "Orders, catalog, and inventory examples begin as simple row-reading tables and later support joins, constraints, analytics, indexes, and partitioning."
 }

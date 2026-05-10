@@ -1,6 +1,6 @@
 {
   "domain": "scheduling",
-  "phases_covered": [1, 2, 3],
+  "phases_covered": [1, 2, 3, 4],
   "planned_phases": [1, 2, 3, 4, 6, 8],
   "depends_on_extensions": [],
   "notes": "Appointments and provider availability start as timestamp rows, then support joins, constraints, range types, and concurrency lessons."
