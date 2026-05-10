@@ -44,6 +44,8 @@ concrete, operational, and PostgreSQL core-first.
 - Exercise dry-run: `uv run pgfound exercise run first-select-write-query --dry-run`
 - Exercise check: `uv run pgfound exercise run first-select-write-query --check`
 - Exercise timing check: `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
+- Concurrency scenario list: `uv run pgfound lab concurrency list`
+- Concurrency scenario run: `uv run pgfound lab concurrency run scenarios/concurrency/inventory-lost-update.yaml`
 - Progress summary: `uv run pgfound progress show`
 - Lab up: `make lab-up`
 - Lab down: `make lab-down`

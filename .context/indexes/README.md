@@ -173,3 +173,13 @@ Phase 6 transactions/concurrency references introduced by PROMPT_18:
 - `src/pgfound/content/scaffold.py`
 - `src/pgfound/content/validate.py`
 - `tests/test_phase6_corpus.py`
+
+Multi-session harness references introduced by PROMPT_19:
+
+- `src/pgfound/lab/harness.py`
+- `scenarios/concurrency/`
+- `docs/concurrency-harness.md`
+- `docs/cli.md`
+- `src/pgfound/exercise.py`
+- `tests/test_harness_runs.py`
+- `tests/test_scenario_files_valid.py`

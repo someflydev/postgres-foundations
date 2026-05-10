@@ -91,6 +91,10 @@ Current baseline:
   multi-session exercise metadata (`sessions`, `lab_harness_profile`),
   scaffold support for `--sessions`, `docs/concurrency-playbook.md`, glossary
   additions, and Phase 6 corpus tests.
+- Multi-session concurrency harness: PROMPT_19 added
+  `src/pgfound/lab/harness.py`, `pgfound lab concurrency list|run|record`,
+  scenario YAML files under `scenarios/concurrency/`, exercise `--check`
+  integration for `multi_session_trace`, and `docs/concurrency-harness.md`.
 
 Canonical docs:
 
@@ -109,6 +113,7 @@ Canonical docs:
 - `docs/anti-patterns/arrays_over_child_tables.md`
 - `docs/expressive-sql-style.md`
 - `docs/concurrency-playbook.md`
+- `docs/concurrency-harness.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
@@ -144,6 +149,8 @@ Expected green checks:
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound content seed-doctor`
 - `uv run pgfound exercise run first-select-write-query --dry-run`
+- `uv run pgfound lab concurrency run scenarios/concurrency/inventory-lost-update.yaml`
+- `uv run pytest -q -m 'not docker'`
 - `uv run pgfound progress show`
 - `docker compose -f docker/docker-compose.yml config`
 

@@ -59,11 +59,14 @@ Completed:
   active exercises, Phase 6 ecommerce/scheduling seed extensions, a small
   `bank` transfer mini-domain, multi-session exercise metadata and scaffolding,
   concurrency playbook docs, glossary additions, and Phase 6 corpus tests.
+- PROMPT_19: Multi-session concurrency lab harness, `pgfound lab concurrency`
+  commands, scenario library, `multi_session_trace` check integration, harness
+  docs, and scenario validation tests.
 
 Next expected prompt:
 
-- PROMPT_19: Multi-session concurrency lab harness.
+- PROMPT_20: Phase 7a indexing fundamentals.
 
 Notes:
 
-- Do not run PROMPT_19 unless the user explicitly asks.
+- Do not run PROMPT_20 unless the user explicitly asks.
