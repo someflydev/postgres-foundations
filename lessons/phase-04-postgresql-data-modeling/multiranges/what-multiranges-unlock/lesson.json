@@ -1,0 +1,61 @@
+{
+  "id": "what-multiranges-unlock",
+  "title": "What Multiranges Unlock",
+  "phase": 4,
+  "capability_layer": "postgres_data_modeling",
+  "summary": "non-contiguous availability, time off, and resource calendars in one PostgreSQL value",
+  "learning_objectives": [
+    "Explain the good-fit and bad-fit PostgreSQL modeling tradeoffs.",
+    "Write or critique Phase 4b SQL while staying inside the not-yet boundary."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "range_type",
+    "multirange",
+    "tstzmultirange"
+  ],
+  "concepts_not_yet_allowed": [
+    "gin_index",
+    "gist_index",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "partitioning",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "what-multiranges-unlock-level-a-1",
+    "what-multiranges-unlock-level-a-2",
+    "what-multiranges-unlock-level-b-1",
+    "what-multiranges-unlock-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "what-multiranges-unlock-level-c-1",
+    "what-multiranges-unlock-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "what-multiranges-unlock-diagnose-phase4b-incident"
+  ],
+  "reflection_prompts": [
+    "Which query or invalid row does this representation make easier to reason about?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "doctrine",
+      "why": "Core-first and not-yet boundaries for PostgreSQL feature choices."
+    }
+  ],
+  "tags": [
+    "phase-4b",
+    "multiranges",
+    "postgres-data-modeling"
+  ],
+  "status": "active"
+}

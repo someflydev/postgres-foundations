@@ -1,0 +1,63 @@
+{
+  "id": "range-operators",
+  "title": "Range Operators",
+  "phase": 4,
+  "capability_layer": "postgres_data_modeling",
+  "summary": "overlap, containment, adjacency, lower, and upper operations for range values",
+  "learning_objectives": [
+    "Explain the good-fit and bad-fit PostgreSQL modeling tradeoffs.",
+    "Write or critique Phase 4b SQL while staying inside the not-yet boundary."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "range_type",
+    "range_overlap",
+    "range_containment",
+    "range_adjacency"
+  ],
+  "concepts_not_yet_allowed": [
+    "multirange",
+    "gin_index",
+    "gist_index",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "partitioning",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "range-operators-level-a-1",
+    "range-operators-level-a-2",
+    "range-operators-level-b-1",
+    "range-operators-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "range-operators-level-c-1",
+    "range-operators-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "range-operators-diagnose-phase4b-incident"
+  ],
+  "reflection_prompts": [
+    "Which query or invalid row does this representation make easier to reason about?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "doctrine",
+      "why": "Core-first and not-yet boundaries for PostgreSQL feature choices."
+    }
+  ],
+  "tags": [
+    "phase-4b",
+    "ranges",
+    "postgres-data-modeling"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,68 @@
+{
+  "id": "arrays-and-indexing-preview",
+  "title": "Arrays and Indexing Preview",
+  "phase": 4,
+  "capability_layer": "postgres_data_modeling",
+  "summary": "why array containment points toward GIN indexes while implementation waits for the indexing phase",
+  "learning_objectives": [
+    "Explain the good-fit and bad-fit PostgreSQL modeling tradeoffs.",
+    "Write or critique Phase 4b SQL while staying inside the not-yet boundary."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "array",
+    "gin_index_preview",
+    "array_containment"
+  ],
+  "concepts_not_yet_allowed": [
+    "range_type",
+    "multirange",
+    "gin_index",
+    "gist_index",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "partitioning",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "arrays-and-indexing-preview-level-a-1",
+    "arrays-and-indexing-preview-level-a-2",
+    "arrays-and-indexing-preview-level-b-1",
+    "arrays-and-indexing-preview-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "arrays-and-indexing-preview-level-c-1",
+    "arrays-and-indexing-preview-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "arrays-and-indexing-preview-diagnose-phase4b-incident"
+  ],
+  "reflection_prompts": [
+    "Which query or invalid row does this representation make easier to reason about?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "doctrine",
+      "why": "Core-first and not-yet boundaries for PostgreSQL feature choices."
+    },
+    {
+      "kind": "doc",
+      "slug": "arrays-over-child-tables",
+      "why": "Anti-pattern reference for array and child-table boundaries."
+    }
+  ],
+  "tags": [
+    "phase-4b",
+    "arrays",
+    "postgres-data-modeling"
+  ],
+  "status": "active"
+}

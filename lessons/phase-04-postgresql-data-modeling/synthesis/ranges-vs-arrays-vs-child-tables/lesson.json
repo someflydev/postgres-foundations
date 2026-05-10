@@ -1,0 +1,67 @@
+{
+  "id": "ranges-vs-arrays-vs-child-tables",
+  "title": "Ranges vs Arrays vs Child Tables",
+  "phase": 4,
+  "capability_layer": "postgres_data_modeling",
+  "summary": "choosing the representation that matches the workload instead of collecting PostgreSQL types",
+  "learning_objectives": [
+    "Explain the good-fit and bad-fit PostgreSQL modeling tradeoffs.",
+    "Write or critique Phase 4b SQL while staying inside the not-yet boundary."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "array",
+    "range_type",
+    "multirange",
+    "child_table_migration"
+  ],
+  "concepts_not_yet_allowed": [
+    "gin_index",
+    "gist_index",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "partitioning",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "ranges-vs-arrays-vs-child-tables-level-a-1",
+    "ranges-vs-arrays-vs-child-tables-level-a-2",
+    "ranges-vs-arrays-vs-child-tables-level-b-1",
+    "ranges-vs-arrays-vs-child-tables-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "ranges-vs-arrays-vs-child-tables-level-c-1",
+    "ranges-vs-arrays-vs-child-tables-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "ranges-vs-arrays-vs-child-tables-diagnose-phase4b-incident"
+  ],
+  "reflection_prompts": [
+    "Which query or invalid row does this representation make easier to reason about?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "doctrine",
+      "why": "Core-first and not-yet boundaries for PostgreSQL feature choices."
+    },
+    {
+      "kind": "doc",
+      "slug": "arrays-over-child-tables",
+      "why": "Anti-pattern reference for array and child-table boundaries."
+    }
+  ],
+  "tags": [
+    "phase-4b",
+    "synthesis",
+    "postgres-data-modeling"
+  ],
+  "status": "active"
+}
