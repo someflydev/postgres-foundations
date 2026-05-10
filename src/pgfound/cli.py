@@ -21,6 +21,7 @@ from pgfound.content import seed as content_seed
 from pgfound.content import seed_doctor as content_seed_doctor
 from pgfound.content import validate as content_validator
 from pgfound.lab import compose
+from pgfound.lab import harness as concurrency_harness
 
 console = Console()
 
@@ -184,6 +185,64 @@ def lab_status() -> None:
             str(row.get("Publishers", row.get("Ports", ""))),
         )
     console.print(table)
+
+
+@lab.group("concurrency", help="Run deterministic multi-session lab scenarios.")
+def lab_concurrency() -> None:
+    """Run deterministic multi-session lab scenarios."""
+
+
+@lab_concurrency.command("list", help="List concurrency scenario YAML files.")
+def lab_concurrency_list() -> None:
+    """List concurrency scenario YAML files."""
+    table = Table(title="pgfound concurrency scenarios")
+    table.add_column("Scenario")
+    table.add_column("Path")
+    for scenario_path in concurrency_harness.scenario_paths():
+        table.add_row(scenario_path.stem, str(scenario_path.relative_to(paths.REPO_ROOT)))
+    console.print(table)
+
+
+@lab_concurrency.command("run", help="Run one concurrency scenario YAML file.")
+@click.argument("scenario_yaml", type=click.Path(path_type=Path))
+@click.option(
+    "--on-fail",
+    type=click.Choice(["close", "pause"]),
+    default="close",
+    show_default=True,
+    help=(
+        "Failure handling mode. pause currently prints diagnostics before closing harness sessions."
+    ),
+)
+def lab_concurrency_run(scenario_yaml: Path, on_fail: str) -> None:
+    """Run one concurrency scenario YAML file."""
+    try:
+        scenario_path = concurrency_harness.find_scenario(scenario_yaml)
+        report = concurrency_harness.run_scenario_path(
+            scenario_path,
+            pause_on_failure=on_fail == "pause",
+        )
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    _print_harness_report(report)
+    if report.ok:
+        _success("concurrency scenario passed")
+        return
+    raise click.ClickException("concurrency scenario failed")
+
+
+@lab_concurrency.command("record", help="Run a scenario and emit a normalized transcript.")
+@click.argument("scenario_yaml", type=click.Path(path_type=Path))
+def lab_concurrency_record(scenario_yaml: Path) -> None:
+    """Run one scenario and print a normalized JSON transcript."""
+    try:
+        scenario_path = concurrency_harness.find_scenario(scenario_yaml)
+        report = concurrency_harness.run_scenario_path(scenario_path)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    console.print(concurrency_harness.normalized_transcript(report), end="")
+    if not report.ok:
+        raise click.ClickException("concurrency scenario failed")
 
 
 @lab.command("reset-domain", help="Drop, recreate, and reseed one domain schema.")
@@ -701,6 +760,22 @@ def _snapshot_path(name: str) -> Path:
     if "/" in name or "\\" in name or name in {"", ".", ".."}:
         raise click.ClickException("snapshot name must be a simple file stem")
     return paths.REPO_ROOT / "tmp" / "snapshots" / f"{name}.dump"
+
+
+def _print_harness_report(report: concurrency_harness.HarnessReport) -> None:
+    table = Table(title=f"concurrency: {report.scenario_name}")
+    table.add_column("#", justify="right")
+    table.add_column("Session")
+    table.add_column("Status")
+    table.add_column("SQL")
+    for entry in report.transcript:
+        sql = " ".join(entry.sql.strip().split())
+        if len(sql) > 76:
+            sql = sql[:73] + "..."
+        table.add_row(str(entry.index), entry.session, entry.status, sql)
+    console.print(table)
+    if report.diff:
+        console.print(report.diff)
 
 
 @main.group(help="Run review engine commands.")

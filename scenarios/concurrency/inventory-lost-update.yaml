@@ -1,0 +1,39 @@
+name: inventory-lost-update
+sessions:
+  A: {role: pgfound, database: pgfound}
+  B: {role: pgfound, database: pgfound}
+setup_sql: |
+  CREATE SCHEMA IF NOT EXISTS pgfound_harness;
+  DROP TABLE IF EXISTS pgfound_harness.inventory;
+  CREATE TABLE pgfound_harness.inventory (
+      product_id integer PRIMARY KEY,
+      quantity_on_hand integer NOT NULL
+  );
+  INSERT INTO pgfound_harness.inventory VALUES (1, 10);
+steps:
+  - session: A
+    sql: "BEGIN;"
+  - session: A
+    sql: "SELECT quantity_on_hand FROM pgfound_harness.inventory WHERE product_id = 1;"
+    expect:
+      rows: [{quantity_on_hand: 10}]
+  - session: B
+    sql: "BEGIN;"
+  - session: B
+    sql: "UPDATE pgfound_harness.inventory SET quantity_on_hand = quantity_on_hand - 1 WHERE product_id = 1;"
+    expect:
+      rowcount: 1
+  - session: B
+    sql: "COMMIT;"
+  - session: A
+    sql: "UPDATE pgfound_harness.inventory SET quantity_on_hand = 9 WHERE product_id = 1;"
+    expect:
+      rowcount: 1
+  - session: A
+    sql: "SELECT quantity_on_hand FROM pgfound_harness.inventory WHERE product_id = 1;"
+    expect:
+      rows: [{quantity_on_hand: 9}]
+  - session: A
+    sql: "COMMIT;"
+teardown_sql: |
+  DROP TABLE IF EXISTS pgfound_harness.inventory;

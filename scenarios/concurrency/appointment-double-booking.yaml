@@ -1,0 +1,44 @@
+name: appointment-double-booking
+sessions:
+  A: {role: pgfound, database: pgfound}
+  B: {role: pgfound, database: pgfound}
+setup_sql: |
+  CREATE SCHEMA IF NOT EXISTS pgfound_harness;
+  DROP TABLE IF EXISTS pgfound_harness.appointment_holds;
+  CREATE TABLE pgfound_harness.appointment_holds (
+      id bigint generated always as identity PRIMARY KEY,
+      professional_id integer NOT NULL,
+      slot_start timestamptz NOT NULL,
+      slot_end timestamptz NOT NULL
+  );
+steps:
+  - session: A
+    sql: "BEGIN;"
+  - session: B
+    sql: "BEGIN;"
+  - session: A
+    sql: "SELECT count(*)::int AS overlapping FROM pgfound_harness.appointment_holds WHERE professional_id = 1 AND slot_start < '2026-05-10 15:30+00' AND slot_end > '2026-05-10 15:00+00';"
+    expect:
+      rows: [{overlapping: 0}]
+  - session: B
+    sql: "SELECT count(*)::int AS overlapping FROM pgfound_harness.appointment_holds WHERE professional_id = 1 AND slot_start < '2026-05-10 15:30+00' AND slot_end > '2026-05-10 15:00+00';"
+    expect:
+      rows: [{overlapping: 0}]
+  - session: A
+    sql: "INSERT INTO pgfound_harness.appointment_holds (professional_id, slot_start, slot_end) VALUES (1, '2026-05-10 15:00+00', '2026-05-10 15:30+00');"
+    expect:
+      rowcount: 1
+  - session: B
+    sql: "INSERT INTO pgfound_harness.appointment_holds (professional_id, slot_start, slot_end) VALUES (1, '2026-05-10 15:00+00', '2026-05-10 15:30+00');"
+    expect:
+      rowcount: 1
+  - session: A
+    sql: "COMMIT;"
+  - session: B
+    sql: "COMMIT;"
+  - session: A
+    sql: "SELECT count(*)::int AS holds FROM pgfound_harness.appointment_holds;"
+    expect:
+      rows: [{holds: 2}]
+teardown_sql: |
+  DROP TABLE IF EXISTS pgfound_harness.appointment_holds;

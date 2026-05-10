@@ -68,6 +68,27 @@ Options:
 
 Runs `docker compose ps --format json` and renders service status as a Rich table.
 
+## `pgfound lab concurrency list`
+
+Lists concurrency scenario YAML files under `scenarios/concurrency/`.
+
+## `pgfound lab concurrency run SCENARIO_YAML`
+
+Runs one deterministic multi-session scenario against the lab database. The
+command executes setup SQL, opens the declared sessions, walks the ordered
+steps, verifies row, rowcount, error-code, and blocking expectations, and exits
+non-zero on mismatch.
+
+Options:
+
+- `--on-fail [close|pause]`: with `pause`, hold the harness connections open
+  after a mismatch until Enter is pressed, so the operator can inspect from
+  another `psql`.
+
+## `pgfound lab concurrency record SCENARIO_YAML`
+
+Runs a scenario and prints a normalized JSON transcript for authoring review.
+
 ## `pgfound lab reset-domain DOMAIN`
 
 Drops and recreates one teaching domain schema, then reseeds that domain to the
@@ -220,7 +241,10 @@ Options:
 - `--auto-seed`: reset and load the exercise seed pack before opening `psql`.
 - `--dry-run`: print the prompt and seed plan without touching Docker.
 - `--check`: compare `tmp/answers/<exercise-id>.sql` with the reference
-  `solution.sql` by canonicalized row output.
+  `solution.sql` by canonicalized row output. For `multi_session_trace`
+  exercises, this runs the scenario named by `lab_harness_profile` and splices
+  the learner SQL into `${LEARNER_SQL}` when the scenario declares that
+  placeholder.
 - `--answer PATH`: check this SQL file instead of the default answer path.
 - `--no-prompt`: skip printing the prompt.
 - `--save-answer`: best-effort copy of the last statement from `~/.psql_history`

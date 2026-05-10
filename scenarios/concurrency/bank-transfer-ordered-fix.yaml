@@ -1,0 +1,52 @@
+name: bank-transfer-ordered-fix
+sessions:
+  A: {role: pgfound, database: pgfound}
+  B: {role: pgfound, database: pgfound}
+setup_sql: |
+  CREATE SCHEMA IF NOT EXISTS pgfound_harness;
+  DROP TABLE IF EXISTS pgfound_harness.accounts;
+  CREATE TABLE pgfound_harness.accounts (
+      id integer PRIMARY KEY,
+      balance numeric(12,2) NOT NULL
+  );
+  INSERT INTO pgfound_harness.accounts VALUES (1, 100.00), (2, 100.00);
+steps:
+  - session: A
+    sql: "BEGIN;"
+  - session: B
+    sql: "BEGIN;"
+  - session: A
+    sql: "SELECT id FROM pgfound_harness.accounts WHERE id IN (1, 2) ORDER BY id FOR UPDATE;"
+    expect:
+      rows: [{id: 1}, {id: 2}]
+  - session: B
+    sql: "SELECT id FROM pgfound_harness.accounts WHERE id IN (1, 2) ORDER BY id FOR UPDATE;"
+    expect:
+      blocks: true
+  - session: A
+    sql: "UPDATE pgfound_harness.accounts SET balance = balance - 10 WHERE id = 1;"
+    expect:
+      rowcount: 1
+  - session: A
+    sql: "UPDATE pgfound_harness.accounts SET balance = balance + 10 WHERE id = 2;"
+    expect:
+      rowcount: 1
+  - session: A
+    sql: "COMMIT;"
+  - session: B
+    sql: "UPDATE pgfound_harness.accounts SET balance = balance - 5 WHERE id = 2;"
+    expect:
+      rowcount: 1
+  - session: B
+    sql: "UPDATE pgfound_harness.accounts SET balance = balance + 5 WHERE id = 1;"
+    expect:
+      rowcount: 1
+  - session: B
+    sql: "COMMIT;"
+  - session: A
+    sql: "SELECT id, balance::text AS balance FROM pgfound_harness.accounts ORDER BY id;"
+    expect:
+      ordered: true
+      rows: [{id: 1, balance: "95.00"}, {id: 2, balance: "105.00"}]
+teardown_sql: |
+  DROP TABLE IF EXISTS pgfound_harness.accounts;

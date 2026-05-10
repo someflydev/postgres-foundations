@@ -153,7 +153,9 @@ def discover_content_files(
         files.extend(
             path
             for path in directory.rglob("*")
-            if path.is_file() and path.suffix.lower() in CONTENT_SUFFIXES
+            if path.is_file()
+            and path.suffix.lower() in CONTENT_SUFFIXES
+            and "concurrency" not in path.relative_to(directory).parts
         )
 
     if include_examples:

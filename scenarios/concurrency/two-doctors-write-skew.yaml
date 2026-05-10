@@ -1,0 +1,43 @@
+name: two-doctors-write-skew
+sessions:
+  A: {role: pgfound, database: pgfound}
+  B: {role: pgfound, database: pgfound}
+setup_sql: |
+  CREATE SCHEMA IF NOT EXISTS pgfound_harness;
+  DROP TABLE IF EXISTS pgfound_harness.doctor_shift;
+  CREATE TABLE pgfound_harness.doctor_shift (
+      doctor_id integer PRIMARY KEY,
+      on_call boolean NOT NULL
+  );
+  INSERT INTO pgfound_harness.doctor_shift VALUES (1, true), (2, true);
+steps:
+  - session: A
+    sql: "BEGIN ISOLATION LEVEL REPEATABLE READ;"
+  - session: B
+    sql: "BEGIN ISOLATION LEVEL REPEATABLE READ;"
+  - session: A
+    sql: "SELECT count(*)::int AS on_call FROM pgfound_harness.doctor_shift WHERE on_call;"
+    expect:
+      rows: [{on_call: 2}]
+  - session: B
+    sql: "SELECT count(*)::int AS on_call FROM pgfound_harness.doctor_shift WHERE on_call;"
+    expect:
+      rows: [{on_call: 2}]
+  - session: A
+    sql: "UPDATE pgfound_harness.doctor_shift SET on_call = false WHERE doctor_id = 1;"
+    expect:
+      rowcount: 1
+  - session: B
+    sql: "UPDATE pgfound_harness.doctor_shift SET on_call = false WHERE doctor_id = 2;"
+    expect:
+      rowcount: 1
+  - session: A
+    sql: "COMMIT;"
+  - session: B
+    sql: "COMMIT;"
+  - session: A
+    sql: "SELECT count(*)::int AS on_call FROM pgfound_harness.doctor_shift WHERE on_call;"
+    expect:
+      rows: [{on_call: 0}]
+teardown_sql: |
+  DROP TABLE IF EXISTS pgfound_harness.doctor_shift;
