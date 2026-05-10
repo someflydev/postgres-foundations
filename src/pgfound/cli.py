@@ -21,6 +21,7 @@ from pgfound.content import seed as content_seed
 from pgfound.content import seed_doctor as content_seed_doctor
 from pgfound.content import validate as content_validator
 from pgfound.lab import compose
+from pgfound.lab import explain as lab_explain
 from pgfound.lab import harness as concurrency_harness
 
 console = Console()
@@ -185,6 +186,42 @@ def lab_status() -> None:
             str(row.get("Publishers", row.get("Ports", ""))),
         )
     console.print(table)
+
+
+@lab.command("explain", help="Run EXPLAIN ANALYZE and print a simplified plan tree.")
+@click.argument("sql_file_or_inline", required=False)
+@click.option("--baseline", help="Save the current plan under tmp/plans/<label>.json.")
+@click.option("--compare", "compare_label", help="Compare with a saved plan label.")
+def lab_explain_command(
+    sql_file_or_inline: str | None,
+    baseline: str | None,
+    compare_label: str | None,
+) -> None:
+    """Run or compare JSON EXPLAIN plans for the lab database."""
+    try:
+        sql = lab_explain.read_sql(sql_file_or_inline)
+        if sql is None:
+            if not baseline or not compare_label:
+                raise click.ClickException(
+                    "provide SQL, or provide both --baseline and --compare to diff saved plans"
+                )
+            before = lab_explain.load_plan(baseline)
+            after = lab_explain.load_plan(compare_label)
+            lab_explain.render_diff(console, before, after)
+            return
+
+        current = lab_explain.explain_sql(sql)
+        lab_explain.render_plan(console, current, sql=sql)
+        if compare_label:
+            before = lab_explain.load_plan(compare_label)
+            lab_explain.render_diff(console, before, current)
+        if baseline:
+            path = lab_explain.save_plan(baseline, current)
+            _success(f"saved plan: {path.relative_to(paths.REPO_ROOT)}")
+    except click.ClickException:
+        raise
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
 
 
 @lab.group("concurrency", help="Run deterministic multi-session lab scenarios.")
