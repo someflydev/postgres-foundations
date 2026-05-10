@@ -1,0 +1,65 @@
+{
+  "id": "when-partial-indexes-win",
+  "title": "When Partial Indexes Win",
+  "phase": 7,
+  "capability_layer": "indexing_and_plans",
+  "summary": "Choose and verify when partial indexes win from workload evidence rather than index catalogs.",
+  "learning_objectives": [
+    "Identify when when partial indexes win matches a concrete PostgreSQL query pattern.",
+    "Use EXPLAIN ANALYZE BUFFERS to compare estimates, actual rows, access paths, and buffer work.",
+    "Explain the read benefit, write cost, storage cost, and planner-statistics dependency of the design."
+  ],
+  "prerequisites": [
+    "write-amplification-and-bloat"
+  ],
+  "concepts_introduced": [
+    "explain_analyze",
+    "partial_index",
+    "statistics"
+  ],
+  "concepts_not_yet_allowed": [
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "when-partial-indexes-win-level-a-1",
+    "when-partial-indexes-win-level-a-2",
+    "when-partial-indexes-win-level-b-1",
+    "when-partial-indexes-win-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "when-partial-indexes-win-level-c-1",
+    "when-partial-indexes-win-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "when-partial-indexes-win-level-d-1",
+    "when-partial-indexes-win-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which query predicate or operator made this index the right candidate?",
+    "What maintenance signal would make you drop or redesign it?"
+  ],
+  "estimated_time_minutes": 50,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "indexing-playbook-part2",
+      "why": "Phase 7b advanced index playbook."
+    },
+    {
+      "kind": "doc",
+      "slug": "indexing-playbook-part1",
+      "why": "Phase 7a access-path foundation."
+    }
+  ],
+  "tags": [
+    "phase-7",
+    "indexing-and-plans",
+    "partial-indexes"
+  ],
+  "status": "active"
+}
