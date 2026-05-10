@@ -1,0 +1,66 @@
+{
+  "id": "when-to-leave-core-fts-level-b-2",
+  "title": "When To Leave Core Fts Level B2",
+  "lesson_id": "when-to-leave-core-fts",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "select",
+    "where",
+    "order_by",
+    "explain",
+    "gin_index",
+    "tsvector",
+    "tsquery",
+    "plainto_tsquery",
+    "websearch_to_tsquery",
+    "ts_rank",
+    "ts_rank_cd",
+    "ts_headline",
+    "unaccent",
+    "full_text_search"
+  ],
+  "not_yet_allowed_concepts": [
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "schema_scope": {
+    "phase": 8,
+    "tables": [
+      "documents.docs",
+      "documents.categories",
+      "documents.doc_categories",
+      "ecommerce.products"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "document_search",
+    "max_rows_hint": 5000
+  },
+  "search_path": "documents, ecommerce, public",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "Uses the Phase 8 document_search or ecommerce corpus.",
+    "Applies the lesson concept without reaching for deferred search systems.",
+    "Explains correctness, ranking, or plan evidence in concrete PostgreSQL terms."
+  ],
+  "time_target_minutes": 30,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-8",
+    "full-text-search",
+    "when-to-leave-core-fts",
+    "b"
+  ],
+  "status": "active",
+  "hints": [
+    "Inspect the generated search_vec before ranking.",
+    "Use websearch_to_tsquery for user-like input."
+  ]
+}

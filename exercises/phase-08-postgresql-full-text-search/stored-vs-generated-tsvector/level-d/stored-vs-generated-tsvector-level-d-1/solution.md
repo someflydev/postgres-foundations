@@ -1,0 +1,1 @@
+Find rows whose stored vector differs from a freshly computed vector, run a backfill UPDATE to recompute historical rows, and add a regression query to compare the trigger output. Generated columns avoid this stale-row class when the expression can be immutable.

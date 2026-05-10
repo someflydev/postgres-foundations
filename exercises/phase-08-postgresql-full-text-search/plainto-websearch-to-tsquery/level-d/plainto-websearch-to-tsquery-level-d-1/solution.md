@@ -1,0 +1,1 @@
+A hyphenated term can be parsed differently from the stored lexemes. Inspect `to_tsvector` and `websearch_to_tsquery`, then recommend normalizing the input, searching both hyphenated and separated forms, or adjusting the text search configuration when the business vocabulary requires it. Do not replace this with pgvector; this is lexical behavior.

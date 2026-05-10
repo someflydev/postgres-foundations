@@ -1,0 +1,1 @@
+A strong answer names the broken assumption in `when-to-leave-core-fts`, inspects lexemes or plan evidence, and recommends a PostgreSQL-core repair first. pg_trgm is only a preview for typo tolerance; pgvector is a later-phase pointer for semantic similarity.
