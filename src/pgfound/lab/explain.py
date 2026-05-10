@@ -71,7 +71,8 @@ def save_plan(label: str, plan: dict[str, Any]) -> Path:
 
 def load_plan(label: str) -> dict[str, Any]:
     """Load a saved plan by label."""
-    path = plan_path(label)
+    candidate = Path(label)
+    path = candidate if candidate.is_file() else plan_path(label)
     if not path.is_file():
         relative = path.relative_to(paths.REPO_ROOT)
         msg = f"plan baseline not found: {relative}"

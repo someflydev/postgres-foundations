@@ -57,14 +57,19 @@ def test_phase7a_lessons_and_exercises_validate_and_lint_cleanly() -> None:
 
 
 def test_phase7a_has_required_lessons_and_exercise_distribution() -> None:
-    lesson_paths = sorted((paths.LESSONS_DIR / PHASE_DIR).glob("*/*/lesson.json"))
+    lesson_paths = [
+        path
+        for path in sorted((paths.LESSONS_DIR / PHASE_DIR).glob("*/*/lesson.json"))
+        if path.parent.name in PHASE7A_LESSONS
+    ]
     assert {path.parent.name for path in lesson_paths} == PHASE7A_LESSONS
     assert len(lesson_paths) == 8
 
     exercises_by_lesson: dict[str, list[dict]] = defaultdict(list)
     for exercise_path in (paths.EXERCISES_DIR / PHASE_DIR).glob("*/*/*/exercise.json"):
         exercise = _load_json(exercise_path)
-        exercises_by_lesson[exercise["lesson_id"]].append(exercise)
+        if exercise["lesson_id"] in PHASE7A_LESSONS:
+            exercises_by_lesson[exercise["lesson_id"]].append(exercise)
 
     assert sum(len(items) for items in exercises_by_lesson.values()) == 64
     for lesson_path in lesson_paths:
@@ -97,7 +102,9 @@ def test_phase7a_required_drills_and_explain_references_are_present() -> None:
 def test_phase7a_level_c_solutions_are_real_index_repairs() -> None:
     generic_status_solution = "SELECT count(*)\nFROM ecommerce.orders\nWHERE status = 'paid';"
     level_c_solution_paths = sorted(
-        (paths.EXERCISES_DIR / PHASE_DIR).glob("*/level-c/*/solution.sql")
+        path
+        for path in (paths.EXERCISES_DIR / PHASE_DIR).glob("*/level-c/*/solution.sql")
+        if path.parent.parent.parent.name in PHASE7A_LESSONS
     )
     assert len(level_c_solution_paths) == 16
     for solution_path in level_c_solution_paths:

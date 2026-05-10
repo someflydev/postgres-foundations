@@ -1,0 +1,16 @@
+{
+  "Execution Time": 2.1,
+  "Plan": {
+    "Actual Rows": 50,
+    "Actual Total Time": 1.8,
+    "Index Cond": "(status = 'pending'::text)",
+    "Index Name": "orders_pending_recent_idx",
+    "Node Type": "Index Scan",
+    "Plan Rows": 50,
+    "Relation Name": "orders",
+    "Shared Hit Blocks": 12,
+    "Shared Read Blocks": 8,
+    "Startup Cost": 0.42,
+    "Total Cost": 120.0
+  }
+}

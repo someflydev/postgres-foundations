@@ -1,0 +1,14 @@
+{
+  "Execution Time": 24.5,
+  "Plan": {
+    "Actual Rows": 4500,
+    "Actual Total Time": 23.8,
+    "Node Type": "Seq Scan",
+    "Plan Rows": 120,
+    "Relation Name": "orders",
+    "Shared Hit Blocks": 100,
+    "Shared Read Blocks": 400,
+    "Startup Cost": 0.0,
+    "Total Cost": 18000.0
+  }
+}
