@@ -39,9 +39,10 @@ concrete, operational, and PostgreSQL core-first.
 - Content lint: `uv run pgfound content lint`
 - Seed doctor: `uv run pgfound content seed-doctor`
 - Seed dry-run: `uv run pgfound content seed ecommerce --phase 1 --dry-run`
-- Seed lab data: `uv run pgfound content seed ecommerce --phase 4b --reset`
+- Seed lab data: `uv run pgfound content seed ecommerce --phase 5 --reset`
 - Exercise dry-run: `uv run pgfound exercise run first-select-write-query --dry-run`
 - Exercise check: `uv run pgfound exercise run first-select-write-query --check`
+- Exercise timing check: `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
 - Progress summary: `uv run pgfound progress show`
 - Lab up: `make lab-up`
 - Lab down: `make lab-down`

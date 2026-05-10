@@ -78,6 +78,12 @@ Current baseline:
   `docs/anti-patterns/arrays_over_child_tables.md`, exclusion-constraint
   cookbook guidance, array/range comparison normalization, and Phase 4b corpus
   tests.
+- Phase 5 expressive querying: PROMPT_17 added CTE, recursive CTE, window
+  function, lateral join, upsert, EXISTS/NOT EXISTS, view, materialized view,
+  and synthesis content: 12 active lessons, 96 active exercises, Phase 5 seed
+  extensions for ecommerce, scheduling, SaaS multi-tenancy, and event-heavy
+  ops, `docs/expressive-sql-style.md`, glossary additions, ordered-output
+  authoring guidance, exercise-runner `--timing`, and Phase 5 corpus tests.
 
 Canonical docs:
 
@@ -94,6 +100,7 @@ Canonical docs:
 - `docs/constraints-cookbook.md`
 - `docs/anti-patterns/jsonb_everything.md`
 - `docs/anti-patterns/arrays_over_child_tables.md`
+- `docs/expressive-sql-style.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
@@ -119,6 +126,11 @@ Expected green checks:
 - `uv run pgfound content seed ecommerce --phase 4b --reset`
 - `uv run pgfound content seed scheduling --phase 4b --reset`
 - `uv run pgfound content seed event_heavy_ops --phase 4b --reset`
+- `uv run pgfound content seed ecommerce --phase 5 --reset`
+- `uv run pgfound content seed scheduling --phase 5 --reset`
+- `uv run pgfound content seed saas_multi_tenant --phase 5 --reset`
+- `uv run pgfound content seed event_heavy_ops --phase 5 --reset`
+- `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound content seed-doctor`
 - `uv run pgfound exercise run first-select-write-query --dry-run`

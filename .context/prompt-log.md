@@ -47,11 +47,17 @@ Completed:
   extensions for ecommerce/scheduling/event-heavy ops, arrays-over-child-tables
   anti-pattern docs, exclusion constraints cookbook coverage, array/range
   comparison normalization, and Phase 4b corpus tests.
+- PROMPT_17: Phase 5 expressive querying corpus for CTEs, recursive CTEs,
+  window functions, lateral joins, upserts, EXISTS/NOT EXISTS, views,
+  materialized views, and synthesis; 12 active lessons, 96 active exercises,
+  Phase 5 seed extensions for ecommerce/scheduling/SaaS/event-heavy ops,
+  expressive SQL style guidance, glossary additions, ordered-output authoring
+  guidance, exercise-runner `--timing`, and Phase 5 corpus tests.
 
 Next expected prompt:
 
-- PROMPT_17: Phase 5 expressive querying.
+- PROMPT_18: Phase 6 transactions, concurrency, and correctness.
 
 Notes:
 
-- Do not run PROMPT_17 unless the user explicitly asks.
+- Do not run PROMPT_18 unless the user explicitly asks.

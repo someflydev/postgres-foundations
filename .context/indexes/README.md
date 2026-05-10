@@ -132,3 +132,30 @@ Phase 4a PostgreSQL data modeling references introduced by PROMPT_15:
 - `docs/anti-patterns/jsonb_everything.md`
 - `src/pgfound/exercise.py`
 - `tests/test_phase4a_corpus.py`
+
+Phase 4b PostgreSQL data modeling references introduced by PROMPT_16:
+
+- `lessons/phase-04-postgresql-data-modeling/`
+- `exercises/phase-04-postgresql-data-modeling/`
+- `seed-data/packs/ecommerce/phases/phase-04b.sql`
+- `seed-data/packs/scheduling/phases/phase-04b.sql`
+- `seed-data/packs/event_heavy_ops/phases/phase-04b.sql`
+- `docs/anti-patterns/arrays_over_child_tables.md`
+- `docs/constraints-cookbook.md`
+- `src/pgfound/exercise.py`
+- `tests/test_phase4b_corpus.py`
+
+Phase 5 expressive querying references introduced by PROMPT_17:
+
+- `lessons/phase-05-expressive-querying/`
+- `exercises/phase-05-expressive-querying/`
+- `seed-data/packs/ecommerce/phases/phase-05.sql`
+- `seed-data/packs/scheduling/phases/phase-05.sql`
+- `seed-data/packs/saas_multi_tenant/phases/phase-05.sql`
+- `seed-data/packs/event_heavy_ops/phases/phase-05.sql`
+- `docs/expressive-sql-style.md`
+- `docs/glossary.md`
+- `docs/authoring-exercises.md`
+- `src/pgfound/exercise.py`
+- `src/pgfound/content/seed_doctor.py`
+- `tests/test_phase5_corpus.py`

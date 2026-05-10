@@ -275,3 +275,12 @@ functionality installed into a database when workload evidence justifies it.
 First taught: phase 8, `postgresql-full-text-search`. An extension distributed
 with PostgreSQL's contributed modules, still requiring explicit enablement and
 operational judgment.
+
+## Expressive Querying Terms
+
+- **CTE**: A common table expression introduced with `WITH`; it names a temporary query result for one statement and can improve staged readability. In PostgreSQL 12 and later, simple CTEs may be inlined unless marked `MATERIALIZED`; `NOT MATERIALIZED` asks PostgreSQL to consider inlining.
+- **Window function**: A function evaluated across a window of related rows while keeping the original row detail, using `OVER (...)`.
+- **PARTITION BY**: The clause inside a window definition that divides rows into independent groups before the window function is evaluated.
+- **LATERAL**: A join modifier that lets a right-hand subquery refer to columns from rows already produced on the left side of the join.
+- **EXCLUDED**: The special row alias available inside `INSERT ... ON CONFLICT DO UPDATE`, representing the row that would have been inserted.
+- **Materialized view**: A stored query result refreshed on demand with `REFRESH MATERIALIZED VIEW`; it can make repeated expensive reads cheaper but introduces staleness.
