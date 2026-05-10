@@ -21,12 +21,24 @@ CREATE_TABLE_RE = re.compile(
     r"(?:(?P<schema>[a-zA-Z_][a-zA-Z0-9_]*)\.)?(?P<table>[a-zA-Z_][a-zA-Z0-9_]*)",
     re.IGNORECASE,
 )
+CREATE_VIEW_RE = re.compile(
+    r"\bCREATE\s+(?:OR\s+REPLACE\s+)?(?:MATERIALIZED\s+)?VIEW\s+"
+    r"(?:IF\s+NOT\s+EXISTS\s+)?(?:(?P<schema>[a-zA-Z_][a-zA-Z0-9_]*)\.)?"
+    r"(?P<table>[a-zA-Z_][a-zA-Z0-9_]*)",
+    re.IGNORECASE,
+)
+CTE_RE = re.compile(
+    r"(?:\bWITH\s+(?:RECURSIVE\s+)?|,\s*)"
+    r"(?P<table>[a-zA-Z_][a-zA-Z0-9_]*)\s+AS\s+(?:MATERIALIZED\s+|NOT\s+MATERIALIZED\s+)?\(",
+    re.IGNORECASE,
+)
 SEED_TABLE_RE = re.compile(
     r"\b(?:CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?|INSERT\s+INTO|ALTER\s+TABLE|UPDATE)\s+"
     r"(?:(?P<schema>[a-zA-Z_][a-zA-Z0-9_]*)\.)?(?P<table>[a-zA-Z_][a-zA-Z0-9_]*)",
     re.IGNORECASE,
 )
-SYSTEM_SCHEMAS = {"information_schema", "pg_catalog"}
+SYSTEM_SCHEMAS = {"information_schema", "pg_catalog", "pgfound"}
+NON_TABLE_REFS = {"lateral", "unnest"}
 
 
 @dataclass(frozen=True)
@@ -82,17 +94,27 @@ def run_seed_doctor(
             continue
 
         pack_phase_dir = packs_root / seed_pack_id / "phases"
-        phase_path = pack_phase_dir / f"phase-{int(phase):02d}.sql" if phase.isdigit() else None
-        if phase_path is None or not phase_path.is_file():
+        try:
+            phase_path = pack_phase_dir / _phase_file_name(phase)
+        except ValueError:
             issues.append(
                 _issue(
                     exercise_id,
                     exercise_path,
                     seed_pack_id,
                     phase,
-                    f"missing referenced phase SQL: phases/phase-{int(phase):02d}.sql"
-                    if phase.isdigit()
-                    else f"invalid phase: {phase}",
+                    f"invalid phase: {phase}",
+                )
+            )
+            continue
+        if not phase_path.is_file():
+            issues.append(
+                _issue(
+                    exercise_id,
+                    exercise_path,
+                    seed_pack_id,
+                    phase,
+                    f"missing referenced phase SQL: phases/{phase_path.name}",
                 )
             )
             continue
@@ -102,6 +124,8 @@ def run_seed_doctor(
         if solution_path.name != "solution.sql" or not solution_path.is_file():
             continue
         for table_ref in sorted(_solution_table_refs(solution_path)):
+            if _is_external_schema_ref(table_ref, seed_pack_id):
+                continue
             if table_ref not in seed_tables:
                 issues.append(
                     _issue(
@@ -114,6 +138,13 @@ def run_seed_doctor(
                 )
 
     return SeedDoctorReport(exercises_checked=checked, issues=tuple(issues))
+
+
+def _is_external_schema_ref(table_ref: str, seed_pack_id: str) -> bool:
+    if "." not in table_ref:
+        return False
+    schema_name, _ = table_ref.split(".", 1)
+    return schema_name != seed.SCHEMA_BY_DOMAIN.get(seed_pack_id)
 
 
 def _issue(
@@ -149,6 +180,14 @@ def _phase_files(pack_phase_dir: Path, phase: str) -> tuple[Path, ...]:
     return tuple(sorted(files, key=lambda path: seed.phase_sort_key(seed._phase_from_path(path))))
 
 
+def _phase_file_name(phase: str) -> str:
+    match = re.fullmatch(r"(?P<number>\d+)(?P<suffix>[a-z]?)", phase)
+    if match is None:
+        msg = f"invalid phase id: {phase}"
+        raise ValueError(msg)
+    return f"phase-{int(match.group('number')):02d}{match.group('suffix')}.sql"
+
+
 def _seed_tables(pack_phase_dir: Path, phase: str) -> set[str]:
     tables: set[str] = set()
     for sql_file in _phase_files(pack_phase_dir, phase):
@@ -167,11 +206,16 @@ def _solution_table_refs(solution_path: Path) -> set[str]:
         _format_table_ref(match.group("schema"), match.group("table"))
         for match in CREATE_TABLE_RE.finditer(sql)
     }
+    created.update(
+        _format_table_ref(match.group("schema"), match.group("table"))
+        for match in CREATE_VIEW_RE.finditer(sql)
+    )
+    created.update(match.group("table") for match in CTE_RE.finditer(sql))
     refs: set[str] = set()
     for match in TABLE_REF_RE.finditer(sql):
         schema = match.group("schema")
         table = match.group("table")
-        if schema in SYSTEM_SCHEMAS:
+        if schema in SYSTEM_SCHEMAS or table.lower() in NON_TABLE_REFS:
             continue
         table_ref = _format_table_ref(schema, table)
         if table_ref in created or table in created:

@@ -5,6 +5,7 @@ from __future__ import annotations
 import difflib
 import json
 import subprocess
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -132,10 +133,20 @@ def save_attempt(
     )
 
 
-def check_answer(record: ExerciseRecord, answer_path: Path | None = None) -> tuple[bool, str]:
+def check_answer(
+    record: ExerciseRecord, answer_path: Path | None = None, *, timing: bool = False
+) -> tuple[bool, str]:
     """Compare a saved learner answer to the reference solution row set."""
+    correct, diff, _ = check_answer_with_timing(record, answer_path=answer_path, timing=timing)
+    return correct, diff
+
+
+def check_answer_with_timing(
+    record: ExerciseRecord, answer_path: Path | None = None, *, timing: bool = False
+) -> tuple[bool, str, dict[str, float]]:
+    """Compare a saved learner answer and optionally report execution timings."""
     if record.expected_output_shape == "multi_session_trace":
-        return True, "multi_session_trace comparison is reserved for the concurrency phase."
+        return True, "multi_session_trace comparison is reserved for the concurrency phase.", {}
 
     resolved_answer_path = answer_path or record.answer_path
     if not resolved_answer_path.is_file():
@@ -143,10 +154,17 @@ def check_answer(record: ExerciseRecord, answer_path: Path | None = None) -> tup
         raise FileNotFoundError(msg)
 
     if record.expected_output_shape == "schema_object":
-        expected = _schema_object_shape(record, record.solution_path.read_text(encoding="utf-8"))
-        actual = _schema_object_shape(record, resolved_answer_path.read_text(encoding="utf-8"))
+        expected_sql = record.solution_path.read_text(encoding="utf-8")
+        actual_sql = resolved_answer_path.read_text(encoding="utf-8")
+        expected, expected_seconds = _time_call(
+            lambda: _schema_object_shape(record, expected_sql), enabled=timing
+        )
+        actual, actual_seconds = _time_call(
+            lambda: _schema_object_shape(record, actual_sql), enabled=timing
+        )
+        timings = _timing_payload(expected_seconds, actual_seconds)
         if expected == actual:
-            return True, ""
+            return True, "", timings
         diff = difflib.unified_diff(
             expected,
             actual,
@@ -154,18 +172,25 @@ def check_answer(record: ExerciseRecord, answer_path: Path | None = None) -> tup
             tofile=_relative_path(resolved_answer_path),
             lineterm="",
         )
-        return False, "\n".join(diff)
+        return False, "\n".join(diff), timings
 
-    expected = _normalize_rows(
-        _run_sql(record.solution_path.read_text(encoding="utf-8"), search_path=record.search_path),
-        comparison=record.output_comparison,
+    expected_rows, expected_seconds = _time_call(
+        lambda: _run_sql(
+            record.solution_path.read_text(encoding="utf-8"), search_path=record.search_path
+        ),
+        enabled=timing,
     )
-    actual = _normalize_rows(
-        _run_sql(resolved_answer_path.read_text(encoding="utf-8"), search_path=record.search_path),
-        comparison=record.output_comparison,
+    actual_rows, actual_seconds = _time_call(
+        lambda: _run_sql(
+            resolved_answer_path.read_text(encoding="utf-8"), search_path=record.search_path
+        ),
+        enabled=timing,
     )
+    expected = _normalize_rows(expected_rows, comparison=record.output_comparison)
+    actual = _normalize_rows(actual_rows, comparison=record.output_comparison)
+    timings = _timing_payload(expected_seconds, actual_seconds)
     if expected == actual:
-        return True, ""
+        return True, "", timings
 
     diff = difflib.unified_diff(
         expected,
@@ -174,7 +199,21 @@ def check_answer(record: ExerciseRecord, answer_path: Path | None = None) -> tup
         tofile=_relative_path(resolved_answer_path),
         lineterm="",
     )
-    return False, "\n".join(diff)
+    return False, "\n".join(diff), timings
+
+
+def _time_call[T](callback: Any, *, enabled: bool) -> tuple[T, float]:
+    started = time.perf_counter()
+    result = callback()
+    if not enabled:
+        return result, 0.0
+    return result, time.perf_counter() - started
+
+
+def _timing_payload(expected_seconds: float, actual_seconds: float) -> dict[str, float]:
+    if expected_seconds == 0.0 and actual_seconds == 0.0:
+        return {}
+    return {"solution_seconds": expected_seconds, "answer_seconds": actual_seconds}
 
 
 def save_answer_from_history(record: ExerciseRecord) -> Path:

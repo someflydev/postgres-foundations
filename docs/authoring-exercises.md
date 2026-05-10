@@ -102,7 +102,14 @@ duplicate rows matter:
   ignores duplicate multiplicity.
 - `multiset` ignores row order but preserves duplicate multiplicity.
 - `ordered` requires the same rows in the same order, so the reference solution
-  should include an `ORDER BY` when deterministic ordering is intended.
+  should include an `ORDER BY` when deterministic ordering is intended. Use it
+  for window-function drills, top-N reports, running totals, and any answer
+  where ordering is part of the skill being assessed.
+
+Learners can run `pgfound exercise run <exercise-id> --check --timing` to see
+the reference-query and answer-query execution times. Treat this as a soft
+signal for discussion, not a grading threshold; performance as a primary topic
+arrives in the indexing and query-plan phase.
 
 Multi-statement `solution.sql` files are allowed for setup or inspection, but
 the checker compares only the last statement that returns rows. Author the last

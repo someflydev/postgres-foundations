@@ -568,6 +568,11 @@ def exercise() -> None:
     is_flag=True,
     help="Best-effort copy of the last psql history statement to the canonical answer path.",
 )
+@click.option(
+    "--timing",
+    is_flag=True,
+    help="With --check, report solution and answer execution time.",
+)
 def exercise_run(
     exercise_id: str,
     auto_seed: bool,
@@ -576,6 +581,7 @@ def exercise_run(
     answer_path: Path | None,
     no_prompt: bool,
     save_answer: bool,
+    timing: bool,
 ) -> None:
     """Run or check one exercise."""
     started_at = datetime.now(timezone.utc).isoformat()
@@ -608,7 +614,11 @@ def exercise_run(
 
     if check:
         try:
-            correct, diff = exercise_runner.check_answer(record, answer_path=answer_path)
+            correct, diff, timings = exercise_runner.check_answer_with_timing(
+                record,
+                answer_path=answer_path,
+                timing=timing,
+            )
         except Exception as exc:
             raise click.ClickException(str(exc)) from exc
         check_result = "correct" if correct else "incorrect"
@@ -617,6 +627,12 @@ def exercise_run(
             started_at=started_at,
             check_result=check_result,
         )
+        if timings:
+            console.print(
+                "Timing: "
+                f"solution {timings['solution_seconds']:.4f}s, "
+                f"answer {timings['answer_seconds']:.4f}s"
+            )
         if correct:
             _success("correct")
             _success(f"recorded {progress_path.relative_to(paths.REPO_ROOT)}")
