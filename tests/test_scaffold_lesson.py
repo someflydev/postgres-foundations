@@ -108,3 +108,74 @@ def test_scaffold_lesson_does_not_overwrite_existing_files(tmp_path: Path, monke
     assert second.exit_code != 0
     assert "already contains authored files" in second.output
     assert lesson_json.read_text(encoding="utf-8") == original
+
+
+def test_scaffold_exercise_sessions_creates_trace_layout(tmp_path: Path, monkeypatch) -> None:
+    curriculum_dir = tmp_path / "curriculum"
+    lessons_dir = tmp_path / "lessons"
+    exercises_dir = tmp_path / "exercises"
+    _write_curriculum_map(curriculum_dir / "map.json")
+    monkeypatch.setattr(paths, "CURRICULUM_DIR", curriculum_dir)
+    monkeypatch.setattr(paths, "LESSONS_DIR", lessons_dir)
+    monkeypatch.setattr(paths, "EXERCISES_DIR", exercises_dir)
+
+    lesson_dir = lessons_dir / "phase-01-sql-literacy-basics" / "transactions" / "lost-update"
+    lesson_dir.mkdir(parents=True)
+    (lesson_dir / "body.md").write_text(
+        "## Problem Framing\n\nDraft.\n",
+        encoding="utf-8",
+    )
+    (lesson_dir / "lesson.json").write_text(
+        json.dumps(
+            {
+                "id": "lost-update",
+                "title": "Lost Update",
+                "phase": 1,
+                "capability_layer": "schema_literacy",
+                "summary": "Draft.",
+                "learning_objectives": ["Explain the risk.", "Repair the risk."],
+                "concepts_introduced": ["transaction"],
+                "concepts_not_yet_allowed": ["index"],
+                "body_path": "body.md",
+                "estimated_time_minutes": 20,
+                "status": "draft",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    result = CliRunner().invoke(
+        main,
+        [
+            "content",
+            "scaffold",
+            "exercise",
+            "--lesson",
+            "phase-01-sql-literacy-basics/transactions/lost-update",
+            "--level",
+            "c",
+            "--slug",
+            "trace-lost-update",
+            "--kind",
+            "lab",
+            "--title",
+            "Trace lost update",
+            "--sessions",
+            "2",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    exercise_dir = (
+        exercises_dir
+        / "phase-01-sql-literacy-basics"
+        / "lost-update"
+        / "level-c"
+        / "trace-lost-update"
+    )
+    exercise = json.loads((exercise_dir / "exercise.json").read_text(encoding="utf-8"))
+    assert exercise["expected_output_shape"] == "multi_session_trace"
+    assert exercise["sessions"] == 2
+    assert exercise["lab_harness_profile"] == "two-session"
+    assert (exercise_dir / "session-script-1.sql").is_file()
+    assert (exercise_dir / "session-script-2.sql").is_file()

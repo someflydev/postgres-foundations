@@ -60,6 +60,10 @@ PHASE_EXERCISE_OVERRIDES: Final[dict[int, dict[str, set[str]]]] = {
         "solution_sql_optional_kinds": {"modeling"},
         "level_d_kinds": {"critique", "debug", "modeling"},
     },
+    6: {
+        "solution_sql_optional_kinds": {"critique", "debug", "lab"},
+        "level_d_kinds": {"critique", "debug", "lab"},
+    },
 }
 
 

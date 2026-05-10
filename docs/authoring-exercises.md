@@ -50,6 +50,13 @@ defect. `kind` must be `critique` or `debug`. Hints are not allowed. Active
 Level D exercises require at least three oral defense prompts. Time target is
 20-60 minutes.
 
+Phase-specific overrides may allow other Level D kinds. Phase 6 concurrency
+labs use `kind: lab` for multi-session traces. Any exercise with
+`expected_output_shape: multi_session_trace` must set `sessions` above 1 and a
+`lab_harness_profile`. Before the concurrency harness exists, this may be a
+profile shape such as `two-session`; after scenarios are authored, it should be
+the scenario slug consumed by the harness.
+
 ## Scaffold
 
 Start from the lesson path under `lessons/`:
@@ -63,11 +70,25 @@ uv run pgfound content scaffold exercise \
   --title "Analyze a composite B-tree plan"
 ```
 
+For a concurrency exercise that needs two psql sessions:
+
+```sh
+uv run pgfound content scaffold exercise \
+  --lesson phase-06-transactions-concurrency-and-correctness/races/lost-update \
+  --level c \
+  --slug reproduce-lost-update \
+  --kind lab \
+  --title "Reproduce a lost update" \
+  --sessions 2
+```
+
 The scaffolder verifies the lesson exists, then creates
 `exercises/<phase>/<lesson-slug>/level-<level>/<slug>/`. It seeds
 `allowed_concepts` from the parent lesson and prior lesson concepts, and seeds
 `not_yet_allowed_concepts` from the parent lesson boundary plus later curriculum
-concepts. It refuses to overwrite existing authored files.
+concepts. When `--sessions` is greater than 1, it emits a multi-session trace
+metadata shape and `session-script-N.sql` files. It refuses to overwrite
+existing authored files.
 
 ## Write `prompt.md`
 

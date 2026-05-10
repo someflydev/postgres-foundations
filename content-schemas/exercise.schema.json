@@ -85,6 +85,15 @@
         "multi_session_trace"
       ]
     },
+    "sessions": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    },
+    "lab_harness_profile": {
+      "type": "string",
+      "minLength": 1
+    },
     "output_comparison": {
       "type": "string",
       "enum": ["ordered", "unordered", "multiset"],
@@ -134,6 +143,24 @@
     }
   },
   "allOf": [
+    {
+      "if": {
+        "properties": {
+          "expected_output_shape": {
+            "const": "multi_session_trace"
+          }
+        },
+        "required": ["expected_output_shape"]
+      },
+      "then": {
+        "required": ["sessions", "lab_harness_profile"],
+        "properties": {
+          "sessions": {
+            "minimum": 2
+          }
+        }
+      }
+    },
     {
       "if": {
         "properties": {

@@ -65,6 +65,7 @@ def scaffold_exercise(
     slug: str,
     kind: str,
     title: str,
+    sessions: int = 1,
     lessons_root: Path | None = None,
     exercises_root: Path | None = None,
     curriculum_map_path: Path | None = None,
@@ -73,6 +74,9 @@ def scaffold_exercise(
     normalized_level = level.upper()
     if normalized_level not in {"A", "B", "C", "D"}:
         msg = "exercise level must be one of: a, b, c, d"
+        raise ValueError(msg)
+    if sessions < 1:
+        msg = "exercise sessions must be at least 1"
         raise ValueError(msg)
 
     lesson_root = lessons_root or paths.LESSONS_DIR
@@ -121,6 +125,7 @@ def scaffold_exercise(
         lesson_id=str(lesson_data["id"]),
         level=normalized_level,
         kind=kind,
+        sessions=sessions,
         allowed_concepts=allowed_concepts,
         not_yet_allowed_concepts=not_yet_allowed,
     )
@@ -131,10 +136,16 @@ def scaffold_exercise(
     (exercise_dir / "prompt.md").write_text(_prompt_md(exercise), encoding="utf-8")
     if kind != "modeling":
         (exercise_dir / "starter.sql").write_text("-- Optional starter SQL.\n", encoding="utf-8")
-    (exercise_dir / "solution.md").write_text(
-        "# Reference Solution\n\n__REPLACE_ME__\n",
-        encoding="utf-8",
-    )
+    if sessions > 1:
+        for index in range(1, sessions + 1):
+            (exercise_dir / f"session-script-{index}.sql").write_text(
+                f"-- Session {index} script for the multi-session trace.\n",
+                encoding="utf-8",
+            )
+        solution_text = _multi_session_solution_md(sessions)
+    else:
+        solution_text = "# Reference Solution\n\n__REPLACE_ME__\n"
+    (exercise_dir / "solution.md").write_text(solution_text, encoding="utf-8")
     return exercise_dir
 
 
@@ -145,6 +156,7 @@ def _exercise_json(
     lesson_id: str,
     level: str,
     kind: str,
+    sessions: int,
     allowed_concepts: list[str],
     not_yet_allowed_concepts: list[str],
 ) -> dict[str, Any]:
@@ -171,6 +183,7 @@ def _exercise_json(
         "schema_scope": {"schemas": ["public"]},
         "dataset": {"seed_pack_id": "default_lab", "max_rows_hint": 0},
         "expected_output_shape": expected_shape,
+        "sessions": sessions,
         "success_criteria": ["__REPLACE_ME_SUCCESS_CRITERION__"],
         "time_target_minutes": time_target,
         "rubric_id": _default_rubric_id(kind),
@@ -180,6 +193,9 @@ def _exercise_json(
     }
     if kind != "modeling":
         exercise["starter_path"] = "starter.sql"
+    if sessions > 1:
+        exercise["expected_output_shape"] = "multi_session_trace"
+        exercise["lab_harness_profile"] = "two-session" if sessions == 2 else f"{sessions}-session"
     if level in {"A", "B"}:
         exercise["hints"] = ["__REPLACE_ME_HINT__"]
     if level in {"C", "D"}:
@@ -240,6 +256,21 @@ __REPLACE_ME__
 
 {exercise["time_target_minutes"]} minutes.
 """
+
+
+def _multi_session_solution_md(sessions: int) -> str:
+    blocks = "\n".join(
+        f"```sql\n-- session {index}\n__REPLACE_ME_SESSION_{index}__\n```"
+        for index in range(1, sessions + 1)
+    )
+    return (
+        "# Reference Solution\n\n"
+        "Runs against the harness introduced in PROMPT_19.\n\n"
+        "## Expected Interleaving\n\n"
+        f"{blocks}\n\n"
+        "## Outcome\n\n"
+        "__REPLACE_ME_OUTCOME__\n"
+    )
 
 
 def _exercise_allowed_concepts(*, lesson_data: dict[str, Any], lessons_root: Path) -> list[str]:

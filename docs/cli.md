@@ -152,6 +152,8 @@ Required options:
 - `--slug`: exercise slug and ID.
 - `--kind`: one of `query`, `schema`, `modeling`, `debug`, `critique`, or `lab`.
 - `--title`: exercise title.
+- `--sessions`: number of psql sessions for a multi-session exercise. Defaults
+  to `1`; values above `1` emit a trace template and session script files.
 
 ## `pgfound content lint`
 

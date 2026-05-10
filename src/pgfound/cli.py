@@ -412,12 +412,20 @@ def content_scaffold_lesson(
     type=click.Choice(["query", "schema", "modeling", "debug", "critique", "lab"]),
 )
 @click.option("--title", required=True, help="Human-facing exercise title.")
+@click.option(
+    "--sessions",
+    default=1,
+    show_default=True,
+    type=click.IntRange(min=1),
+    help="Number of psql sessions needed by a multi-session exercise.",
+)
 def content_scaffold_exercise(
     lesson: str,
     level: str,
     slug: str,
     kind: str,
     title: str,
+    sessions: int,
 ) -> None:
     """Scaffold a draft exercise and validate the generated file."""
     try:
@@ -427,6 +435,7 @@ def content_scaffold_exercise(
             slug=slug,
             kind=kind,
             title=title,
+            sessions=sessions,
         )
     except ValueError as exc:
         raise click.ClickException(str(exc)) from exc
