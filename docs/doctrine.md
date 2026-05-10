@@ -134,10 +134,11 @@ these obligations whenever it recommends a feature or topology.
 
 ## Rejected Anti-Patterns
 
-The doctrine actively rejects JSONB-everything designs that avoid modeling
-clear relational structure. JSONB is useful when shape is genuinely variable or
-when document-style access is the right fit; it is not a substitute for
-constraints, joins, and understandable ownership.
+The doctrine actively rejects
+[JSONB-everything](anti-patterns/jsonb_everything.md) designs that avoid
+modeling clear relational structure. JSONB is useful when shape is genuinely
+variable or when document-style access is the right fit; it is not a substitute
+for constraints, joins, and understandable ownership.
 
 It rejects partition-too-early designs that add maintenance and routing
 complexity before data volume, retention, or query patterns justify it.

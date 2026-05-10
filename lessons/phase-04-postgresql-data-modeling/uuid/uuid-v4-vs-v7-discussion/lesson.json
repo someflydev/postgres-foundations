@@ -1,0 +1,69 @@
+{
+  "id": "uuid-v4-vs-v7-discussion",
+  "title": "UUID v4 vs v7 Discussion",
+  "phase": 4,
+  "capability_layer": "postgres_data_modeling",
+  "summary": "random UUIDs, time-ordered UUIDs, and why extension adoption waits for workload evidence",
+  "learning_objectives": [
+    "Explain the modeling tradeoffs around UUID version choice.",
+    "Write or critique PostgreSQL statements that use UUID version choice without hiding relational truth."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "uuid",
+    "uuid_v4",
+    "uuid_v7",
+    "extension_later"
+  ],
+  "concepts_not_yet_allowed": [
+    "array",
+    "range_type",
+    "multirange",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "partitioning",
+    "gin_index",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "uuid-v4-vs-v7-discussion-level-a-1",
+    "uuid-v4-vs-v7-discussion-level-a-2",
+    "uuid-v4-vs-v7-discussion-level-b-1",
+    "uuid-v4-vs-v7-discussion-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "uuid-v4-vs-v7-discussion-level-c-1",
+    "uuid-v4-vs-v7-discussion-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "uuid-v4-vs-v7-discussion-diagnose-phase4a-incident"
+  ],
+  "reflection_prompts": [
+    "Which bad row or misleading query does the UUID version choice design prevent?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "doctrine",
+      "why": "Core-first and not-yet boundaries for PostgreSQL feature choices."
+    },
+    {
+      "kind": "external",
+      "slug": "pg-uuidv7",
+      "why": "Later pointer for time-ordered UUID generation outside the Phase 4a dependency set."
+    }
+  ],
+  "tags": [
+    "phase-4",
+    "uuid",
+    "postgres-data-modeling"
+  ],
+  "status": "active"
+}

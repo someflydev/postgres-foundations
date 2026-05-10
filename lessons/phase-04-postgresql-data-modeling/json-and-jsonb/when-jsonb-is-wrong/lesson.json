@@ -1,0 +1,68 @@
+{
+  "id": "when-jsonb-is-wrong",
+  "title": "When JSONB Is Wrong",
+  "phase": 4,
+  "capability_layer": "postgres_data_modeling",
+  "summary": "the JSONB-everything anti-pattern and how to migrate hot facts back into columns",
+  "learning_objectives": [
+    "Explain the modeling tradeoffs around JSONB misuse.",
+    "Write or critique PostgreSQL statements that use JSONB misuse without hiding relational truth."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "jsonb",
+    "jsonb_everything",
+    "migration"
+  ],
+  "concepts_not_yet_allowed": [
+    "array",
+    "range_type",
+    "multirange",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "partitioning",
+    "gin_index",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "when-jsonb-is-wrong-level-a-1",
+    "when-jsonb-is-wrong-level-a-2",
+    "when-jsonb-is-wrong-level-b-1",
+    "when-jsonb-is-wrong-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "when-jsonb-is-wrong-level-c-1",
+    "when-jsonb-is-wrong-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "when-jsonb-is-wrong-diagnose-phase4a-incident"
+  ],
+  "reflection_prompts": [
+    "Which bad row or misleading query does the JSONB misuse design prevent?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "doctrine",
+      "why": "Core-first and not-yet boundaries for PostgreSQL feature choices."
+    },
+    {
+      "kind": "doc",
+      "slug": "jsonb-everything",
+      "why": "Anti-pattern reference for JSONB modeling boundaries."
+    }
+  ],
+  "tags": [
+    "phase-4",
+    "json-and-jsonb",
+    "postgres-data-modeling"
+  ],
+  "status": "active"
+}

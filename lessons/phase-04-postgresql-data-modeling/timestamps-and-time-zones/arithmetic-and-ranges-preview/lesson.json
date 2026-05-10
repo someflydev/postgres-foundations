@@ -1,0 +1,64 @@
+{
+  "id": "arithmetic-and-ranges-preview",
+  "title": "Arithmetic and Ranges Preview",
+  "phase": 4,
+  "capability_layer": "postgres_data_modeling",
+  "summary": "interval arithmetic, now, statement timestamps, and simple time filters before range types arrive",
+  "learning_objectives": [
+    "Explain the modeling tradeoffs around time arithmetic.",
+    "Write or critique PostgreSQL statements that use time arithmetic without hiding relational truth."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "interval",
+    "now",
+    "statement_timestamp",
+    "time_filter"
+  ],
+  "concepts_not_yet_allowed": [
+    "array",
+    "range_type",
+    "multirange",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "partitioning",
+    "gin_index",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "arithmetic-and-ranges-preview-level-a-1",
+    "arithmetic-and-ranges-preview-level-a-2",
+    "arithmetic-and-ranges-preview-level-b-1",
+    "arithmetic-and-ranges-preview-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "arithmetic-and-ranges-preview-level-c-1",
+    "arithmetic-and-ranges-preview-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "arithmetic-and-ranges-preview-diagnose-phase4a-incident"
+  ],
+  "reflection_prompts": [
+    "Which bad row or misleading query does the time arithmetic design prevent?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "doctrine",
+      "why": "Core-first and not-yet boundaries for PostgreSQL feature choices."
+    }
+  ],
+  "tags": [
+    "phase-4",
+    "timestamps-and-time-zones",
+    "postgres-data-modeling"
+  ],
+  "status": "active"
+}

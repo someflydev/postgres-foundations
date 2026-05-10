@@ -1,0 +1,64 @@
+{
+  "id": "why-timestamptz",
+  "title": "Why Timestamptz",
+  "phase": 4,
+  "capability_layer": "postgres_data_modeling",
+  "summary": "timestamp vs timestamptz, what PostgreSQL stores, and why event time should usually be modeled as timestamptz",
+  "learning_objectives": [
+    "Explain the modeling tradeoffs around timestamptz.",
+    "Write or critique PostgreSQL statements that use timestamptz without hiding relational truth."
+  ],
+  "prerequisites": [],
+  "concepts_introduced": [
+    "timestamp",
+    "timestamptz",
+    "time_zone",
+    "event_time"
+  ],
+  "concepts_not_yet_allowed": [
+    "array",
+    "range_type",
+    "multirange",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "partitioning",
+    "gin_index",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "why-timestamptz-level-a-1",
+    "why-timestamptz-level-a-2",
+    "why-timestamptz-level-b-1",
+    "why-timestamptz-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "why-timestamptz-level-c-1",
+    "why-timestamptz-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "why-timestamptz-diagnose-phase4a-incident"
+  ],
+  "reflection_prompts": [
+    "Which bad row or misleading query does the timestamptz design prevent?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "doctrine",
+      "why": "Core-first and not-yet boundaries for PostgreSQL feature choices."
+    }
+  ],
+  "tags": [
+    "phase-4",
+    "timestamps-and-time-zones",
+    "postgres-data-modeling"
+  ],
+  "status": "active"
+}
