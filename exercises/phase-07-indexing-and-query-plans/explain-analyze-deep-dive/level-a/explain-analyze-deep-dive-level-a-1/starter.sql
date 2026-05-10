@@ -1,0 +1,2 @@
+-- explain-analyze-deep-dive-level-a-1
+-- Run the baseline query with EXPLAIN (ANALYZE, BUFFERS), then make one measured change.

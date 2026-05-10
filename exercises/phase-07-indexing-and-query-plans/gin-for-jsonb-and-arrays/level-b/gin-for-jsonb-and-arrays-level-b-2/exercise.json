@@ -1,0 +1,76 @@
+{
+  "id": "gin-for-jsonb-and-arrays-level-b-2",
+  "title": "GIN for JSONB and Arrays Level B2",
+  "lesson_id": "gin-for-jsonb-and-arrays",
+  "scaffolding_level": "B",
+  "kind": "lab",
+  "allowed_concepts": [
+    "aggregate",
+    "analyze",
+    "array",
+    "bitmap_scan",
+    "bloat",
+    "brin_index",
+    "explain",
+    "explain_analyze",
+    "expression_index",
+    "gin_index",
+    "gist_index",
+    "index_scan",
+    "join",
+    "jsonb",
+    "partial_index",
+    "range",
+    "select",
+    "selectivity",
+    "seq_scan",
+    "statistics",
+    "vacuum",
+    "write_amplification"
+  ],
+  "not_yet_allowed_concepts": [
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "schema_scope": {
+    "phase": "7b",
+    "tables": [
+      "ecommerce.orders",
+      "ecommerce.customers",
+      "events.events",
+      "events.event_windows",
+      "scheduling.appointments"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "event_heavy_ops",
+    "max_rows_hint": 1200000
+  },
+  "search_path": "ecommerce, events, scheduling, public",
+  "expected_output_shape": "explain_plan",
+  "sessions": 1,
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "Names the exact query pattern and predicate or operator.",
+    "Compares estimated rows, actual rows, buffers, and selected node types.",
+    "Explains the read benefit and write, storage, or maintenance cost."
+  ],
+  "time_target_minutes": 35,
+  "rubric_id": "indexing-reasoning",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-7",
+    "indexing",
+    "gin-for-jsonb-and-arrays",
+    "b"
+  ],
+  "status": "active",
+  "hints": [
+    "Start with EXPLAIN (ANALYZE, BUFFERS).",
+    "Change one index or statistics object at a time."
+  ]
+}

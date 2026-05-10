@@ -1,0 +1,1 @@
+The partial index is not used because the query predicate does not imply the index predicate exactly. Rewrite status <> delivered into status = pending when the workflow really means pending, or create a different partial index whose WHERE clause matches the broader workflow. Verify with EXPLAIN before and after.

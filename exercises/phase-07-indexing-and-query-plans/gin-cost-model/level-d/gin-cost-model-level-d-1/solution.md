@@ -1,0 +1,1 @@
+The GIN index has a poor bloat-to-value ratio when writes dominate and containment queries are rare. Inspect size, pending-list behavior, and query frequency; prefer a narrower expression index or a generated scalar column when only one JSONB attribute is queried. The correct recommendation may be to drop the GIN index and keep measuring the workload.

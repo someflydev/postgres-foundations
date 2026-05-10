@@ -1,0 +1,2 @@
+-- when-partial-indexes-win-level-c-2
+-- Run the baseline query with EXPLAIN (ANALYZE, BUFFERS), then make one measured change.

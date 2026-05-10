@@ -1,0 +1,1 @@
+Diagnose the gist-for-geospatial-preview plan by comparing the stated workload, the predicate, estimated rows, actual rows, buffers, and maintenance cost. Keep the index only if it matches the operator and materially improves the measured query without imposing unjustified write cost.
