@@ -105,6 +105,11 @@ Current baseline:
   10 active lessons, 80 active exercises, Phase 7b ecommerce/event seed
   extensions, `docs/indexing-playbook-part2.md`, unused/redundant index
   anti-pattern docs, and fixture-based explain diff tests.
+- Phase 8 PostgreSQL full-text search: PROMPT_22 added lexical search content:
+  10 active lessons, 80 active exercises, a 5000-row `document_search` FTS
+  corpus with generated `tsvector` and GIN index, ecommerce product search
+  vectors, `unaccent` lab initialization, pg_trgm/pgvector forward pointers,
+  `docs/search-playbook.md`, and Phase 8 corpus tests.
 
 Canonical docs:
 
@@ -129,6 +134,7 @@ Canonical docs:
 - `docs/observability-intro.md`
 - `docs/anti-patterns/unused_indexes.md`
 - `docs/anti-patterns/redundant_indexes.md`
+- `docs/search-playbook.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
@@ -164,6 +170,8 @@ Expected green checks:
 - `uv run pgfound content seed scheduling --phase 7a --reset --generate`
 - `uv run pgfound content seed ecommerce --phase 7b --reset --generate`
 - `uv run pgfound content seed event_heavy_ops --phase 7b --reset`
+- `uv run pgfound content seed document_search --phase 8 --reset --generate`
+- `uv run pgfound content seed ecommerce --phase 8 --reset --generate`
 - `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound content seed-doctor`

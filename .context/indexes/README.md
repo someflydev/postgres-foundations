@@ -198,3 +198,16 @@ Phase 7a indexing fundamentals references introduced by PROMPT_20:
 - `docs/observability-intro.md`
 - `docs/glossary.md`
 - `tests/test_phase7a_corpus.py`
+
+Phase 8 PostgreSQL full-text search references introduced by PROMPT_22:
+
+- `lessons/phase-08-postgresql-full-text-search/`
+- `exercises/phase-08-postgresql-full-text-search/`
+- `seed-data/packs/document_search/phases/phase-08.sql`
+- `seed-data/packs/document_search/generators/documents_csv.py`
+- `seed-data/packs/ecommerce/phases/phase-08.sql`
+- `docker/initdb/00-extensions.sql`
+- `docs/search-playbook.md`
+- `docs/lab.md`
+- `tests/test_phase8_corpus.py`
+- `tests/test_document_corpus.py`

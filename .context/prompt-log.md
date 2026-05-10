@@ -73,10 +73,11 @@ Completed:
   7b ecommerce/event seed extensions, indexing playbook part 2, unused and
   redundant index anti-pattern docs, and fixture-based explain diff tests.
 
+- PROMPT_22: Phase 8 full-text search in PostgreSQL core; 10 active lessons,
+  80 exercises, a 5000-row `document_search` FTS corpus, ecommerce product
+  search vectors, `unaccent`, pg_trgm/pgvector forward pointers, and
+  `docs/search-playbook.md`.
+
 Next expected prompt:
 
-- PROMPT_22: Phase 8 full-text search in PostgreSQL core.
-
-Notes:
-
-- Do not run PROMPT_22 unless the user explicitly asks.
+- PROMPT_23: Phase 9 partitioning and large-table operations.
