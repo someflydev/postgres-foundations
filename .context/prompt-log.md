@@ -53,11 +53,17 @@ Completed:
   Phase 5 seed extensions for ecommerce/scheduling/SaaS/event-heavy ops,
   expressive SQL style guidance, glossary additions, ordered-output authoring
   guidance, exercise-runner `--timing`, and Phase 5 corpus tests.
+- PROMPT_18: Phase 6 transactions, concurrency, and correctness corpus for
+  transactions, MVCC, isolation levels, lost updates, write skew, phantom
+  range checks, row locks, deadlocks, and idempotency; 12 active lessons, 96
+  active exercises, Phase 6 ecommerce/scheduling seed extensions, a small
+  `bank` transfer mini-domain, multi-session exercise metadata and scaffolding,
+  concurrency playbook docs, glossary additions, and Phase 6 corpus tests.
 
 Next expected prompt:
 
-- PROMPT_18: Phase 6 transactions, concurrency, and correctness.
+- PROMPT_19: Multi-session concurrency lab harness.
 
 Notes:
 
-- Do not run PROMPT_18 unless the user explicitly asks.
+- Do not run PROMPT_19 unless the user explicitly asks.

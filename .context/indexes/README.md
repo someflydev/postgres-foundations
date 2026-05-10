@@ -159,3 +159,17 @@ Phase 5 expressive querying references introduced by PROMPT_17:
 - `src/pgfound/exercise.py`
 - `src/pgfound/content/seed_doctor.py`
 - `tests/test_phase5_corpus.py`
+
+Phase 6 transactions/concurrency references introduced by PROMPT_18:
+
+- `lessons/phase-06-transactions-concurrency-and-correctness/`
+- `exercises/phase-06-transactions-concurrency-and-correctness/`
+- `seed-data/packs/ecommerce/phases/phase-06.sql`
+- `seed-data/packs/scheduling/phases/phase-06.sql`
+- `docs/concurrency-playbook.md`
+- `docs/glossary.md`
+- `docs/authoring-exercises.md`
+- `content-schemas/exercise.schema.json`
+- `src/pgfound/content/scaffold.py`
+- `src/pgfound/content/validate.py`
+- `tests/test_phase6_corpus.py`

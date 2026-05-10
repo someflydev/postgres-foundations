@@ -84,6 +84,13 @@ Current baseline:
   extensions for ecommerce, scheduling, SaaS multi-tenancy, and event-heavy
   ops, `docs/expressive-sql-style.md`, glossary additions, ordered-output
   authoring guidance, exercise-runner `--timing`, and Phase 5 corpus tests.
+- Phase 6 transactions, concurrency, and correctness: PROMPT_18 added
+  transaction, MVCC, isolation, race, lock, deadlock, and idempotency content:
+  12 active lessons, 96 active exercises, Phase 6 seed extensions for
+  ecommerce and scheduling, a small `bank` mini-domain for transfer drills,
+  multi-session exercise metadata (`sessions`, `lab_harness_profile`),
+  scaffold support for `--sessions`, `docs/concurrency-playbook.md`, glossary
+  additions, and Phase 6 corpus tests.
 
 Canonical docs:
 
@@ -101,6 +108,7 @@ Canonical docs:
 - `docs/anti-patterns/jsonb_everything.md`
 - `docs/anti-patterns/arrays_over_child_tables.md`
 - `docs/expressive-sql-style.md`
+- `docs/concurrency-playbook.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
@@ -130,6 +138,8 @@ Expected green checks:
 - `uv run pgfound content seed scheduling --phase 5 --reset`
 - `uv run pgfound content seed saas_multi_tenant --phase 5 --reset`
 - `uv run pgfound content seed event_heavy_ops --phase 5 --reset`
+- `uv run pgfound content seed ecommerce --phase 6 --reset`
+- `uv run pgfound content seed scheduling --phase 6 --reset`
 - `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound content seed-doctor`
