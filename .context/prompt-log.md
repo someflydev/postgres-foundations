@@ -67,11 +67,16 @@ Completed:
   lessons, 64 active exercises, generated ecommerce/scheduling volume seeds,
   `pgfound lab explain`, indexing and observability docs, glossary additions,
   and Phase 7a corpus tests.
+- PROMPT_21: Phase 7b advanced indexing corpus for partial indexes,
+  expression indexes, GIN, GiST, BRIN, deeper EXPLAIN, estimated-vs-actual
+  debugging, and extended statistics; 10 active lessons, 80 exercises, Phase
+  7b ecommerce/event seed extensions, indexing playbook part 2, unused and
+  redundant index anti-pattern docs, and fixture-based explain diff tests.
 
 Next expected prompt:
 
-- PROMPT_21: Phase 7b advanced index types and deeper EXPLAIN.
+- PROMPT_22: Phase 8 full-text search in PostgreSQL core.
 
 Notes:
 
-- Do not run PROMPT_21 unless the user explicitly asks.
+- Do not run PROMPT_22 unless the user explicitly asks.

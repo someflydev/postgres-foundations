@@ -100,6 +100,11 @@ Current baseline:
   lessons, 64 active exercises, Phase 7a generated ecommerce/scheduling seed
   extensions, `pgfound lab explain`, `docs/indexing-playbook-part1.md`,
   `docs/observability-intro.md`, glossary additions, and Phase 7a corpus tests.
+- Phase 7b advanced indexing: PROMPT_21 added partial, expression, GIN, GiST,
+  BRIN, deep EXPLAIN, estimated-vs-actual, and extended-statistics content:
+  10 active lessons, 80 active exercises, Phase 7b ecommerce/event seed
+  extensions, `docs/indexing-playbook-part2.md`, unused/redundant index
+  anti-pattern docs, and fixture-based explain diff tests.
 
 Canonical docs:
 
@@ -120,7 +125,10 @@ Canonical docs:
 - `docs/concurrency-playbook.md`
 - `docs/concurrency-harness.md`
 - `docs/indexing-playbook-part1.md`
+- `docs/indexing-playbook-part2.md`
 - `docs/observability-intro.md`
+- `docs/anti-patterns/unused_indexes.md`
+- `docs/anti-patterns/redundant_indexes.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
@@ -154,6 +162,8 @@ Expected green checks:
 - `uv run pgfound content seed scheduling --phase 6 --reset`
 - `uv run pgfound content seed ecommerce --phase 7a --reset --generate`
 - `uv run pgfound content seed scheduling --phase 7a --reset --generate`
+- `uv run pgfound content seed ecommerce --phase 7b --reset --generate`
+- `uv run pgfound content seed event_heavy_ops --phase 7b --reset`
 - `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound content seed-doctor`
