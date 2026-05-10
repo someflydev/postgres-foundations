@@ -1,0 +1,57 @@
+{
+  "id": "what-a-cte-is-level-b-1",
+  "title": "What a CTE Is Level B1",
+  "lesson_id": "what-a-cte-is",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "aggregate",
+    "cte",
+    "join",
+    "select",
+    "subquery"
+  ],
+  "not_yet_allowed_concepts": [
+    "transaction",
+    "concurrency",
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls"
+  ],
+  "schema_scope": {
+    "phase": "5",
+    "tables": [
+      "ecommerce.orders",
+      "ecommerce.customers",
+      "saas.usage_events",
+      "events.events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 60000
+  },
+  "search_path": "ecommerce, saas, events, scheduling, public",
+  "expected_output_shape": "rowset",
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "The answer preserves the requested row grain.",
+    "The answer uses deterministic ordering when ordered output is expected.",
+    "The answer avoids future-phase performance or concurrency concepts."
+  ],
+  "time_target_minutes": 12,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "tags": [
+    "phase-5",
+    "expressive-querying",
+    "cte"
+  ],
+  "status": "active",
+  "hints": [
+    "Name the grain before writing the SELECT list.",
+    "Keep the final ORDER BY aligned with the expected output."
+  ],
+  "starter_path": "starter.sql"
+}

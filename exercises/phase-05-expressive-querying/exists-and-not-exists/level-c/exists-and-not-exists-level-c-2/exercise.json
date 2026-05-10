@@ -1,0 +1,61 @@
+{
+  "id": "exists-and-not-exists-level-c-2",
+  "title": "EXISTS and NOT EXISTS Level C2",
+  "lesson_id": "exists-and-not-exists",
+  "scaffolding_level": "C",
+  "kind": "query",
+  "allowed_concepts": [
+    "aggregate",
+    "correlated_subquery",
+    "exists",
+    "join",
+    "not_exists",
+    "select",
+    "subquery"
+  ],
+  "not_yet_allowed_concepts": [
+    "transaction",
+    "concurrency",
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls"
+  ],
+  "schema_scope": {
+    "phase": "5",
+    "tables": [
+      "ecommerce.orders",
+      "ecommerce.customers",
+      "saas.usage_events",
+      "events.events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 60000
+  },
+  "search_path": "ecommerce, saas, events, scheduling, public",
+  "expected_output_shape": "rowset",
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "The answer preserves the requested row grain.",
+    "The answer uses deterministic ordering when ordered output is expected.",
+    "The answer avoids future-phase performance or concurrency concepts."
+  ],
+  "time_target_minutes": 20,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "tags": [
+    "phase-5",
+    "expressive-querying",
+    "correlated_subquery",
+    "exists",
+    "not_exists"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "What is one output row in your answer?",
+    "Which edge case would make a visually similar query wrong?",
+    "Why is this query shape a better fit than one alternative?"
+  ]
+}

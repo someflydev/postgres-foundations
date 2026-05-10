@@ -1,0 +1,62 @@
+{
+  "id": "what-window-functions-are-level-a-1",
+  "title": "What Window Functions Are Level A1",
+  "lesson_id": "what-window-functions-are",
+  "scaffolding_level": "A",
+  "kind": "query",
+  "allowed_concepts": [
+    "aggregate",
+    "frame_clause",
+    "join",
+    "order_in_window",
+    "partition_by",
+    "select",
+    "subquery",
+    "window_function"
+  ],
+  "not_yet_allowed_concepts": [
+    "transaction",
+    "concurrency",
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls"
+  ],
+  "schema_scope": {
+    "phase": "5",
+    "tables": [
+      "ecommerce.orders",
+      "ecommerce.customers",
+      "saas.usage_events",
+      "events.events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 60000
+  },
+  "search_path": "ecommerce, saas, events, scheduling, public",
+  "expected_output_shape": "rowset",
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "The answer preserves the requested row grain.",
+    "The answer uses deterministic ordering when ordered output is expected.",
+    "The answer avoids future-phase performance or concurrency concepts."
+  ],
+  "time_target_minutes": 12,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "tags": [
+    "phase-5",
+    "expressive-querying",
+    "window_function",
+    "partition_by",
+    "order_in_window",
+    "frame_clause"
+  ],
+  "status": "active",
+  "hints": [
+    "Name the grain before writing the SELECT list.",
+    "Keep the final ORDER BY aligned with the expected output."
+  ]
+}

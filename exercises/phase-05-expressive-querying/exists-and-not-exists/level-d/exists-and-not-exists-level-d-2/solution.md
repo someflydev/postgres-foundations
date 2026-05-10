@@ -1,0 +1,3 @@
+# Solution
+
+The reference solution in `solution.sql` demonstrates one valid answer for EXISTS and NOT EXISTS. Equivalent answers are acceptable when they preserve row grain, filtering semantics, deterministic ordering where required, and the same output columns.

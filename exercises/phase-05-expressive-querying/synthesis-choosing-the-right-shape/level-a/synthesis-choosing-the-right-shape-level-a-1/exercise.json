@@ -1,0 +1,68 @@
+{
+  "id": "synthesis-choosing-the-right-shape-level-a-1",
+  "title": "Synthesis: Choosing the Right Shape Level A1",
+  "lesson_id": "synthesis-choosing-the-right-shape",
+  "scaffolding_level": "A",
+  "kind": "query",
+  "allowed_concepts": [
+    "aggregate",
+    "cte",
+    "exists",
+    "join",
+    "lateral_join",
+    "materialized_view",
+    "select",
+    "subquery",
+    "upsert",
+    "view",
+    "window_function"
+  ],
+  "not_yet_allowed_concepts": [
+    "transaction",
+    "concurrency",
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls"
+  ],
+  "schema_scope": {
+    "phase": "5",
+    "tables": [
+      "ecommerce.orders",
+      "ecommerce.customers",
+      "saas.usage_events",
+      "events.events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "saas_multi_tenant",
+    "max_rows_hint": 60000
+  },
+  "search_path": "ecommerce, saas, events, scheduling, public",
+  "expected_output_shape": "rowset",
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "The answer preserves the requested row grain.",
+    "The answer uses deterministic ordering when ordered output is expected.",
+    "The answer avoids future-phase performance or concurrency concepts."
+  ],
+  "time_target_minutes": 12,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "tags": [
+    "phase-5",
+    "expressive-querying",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "upsert",
+    "view",
+    "materialized_view",
+    "exists"
+  ],
+  "status": "active",
+  "hints": [
+    "Name the grain before writing the SELECT list.",
+    "Keep the final ORDER BY aligned with the expected output."
+  ]
+}
