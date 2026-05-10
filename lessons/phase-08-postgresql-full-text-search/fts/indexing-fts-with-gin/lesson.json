@@ -1,0 +1,59 @@
+{
+  "id": "indexing-fts-with-gin",
+  "title": "Indexing Fts With Gin",
+  "phase": 8,
+  "capability_layer": "full_text_search",
+  "summary": "Index stored tsvectors with GIN and read the plan evidence.",
+  "learning_objectives": [
+    "Explain the PostgreSQL full-text search concept in operational terms.",
+    "Write or critique SQL that applies the concept to the document_search corpus.",
+    "Name the evidence that would change the search design."
+  ],
+  "prerequisites": [
+    "plan-debugging-workflow"
+  ],
+  "concepts_introduced": [
+    "gin_index",
+    "full_text_index",
+    "bitmap_scan"
+  ],
+  "concepts_not_yet_allowed": [
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "indexing-fts-with-gin-level-a-1",
+    "indexing-fts-with-gin-level-a-2",
+    "indexing-fts-with-gin-level-b-1",
+    "indexing-fts-with-gin-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "indexing-fts-with-gin-level-c-1",
+    "indexing-fts-with-gin-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "indexing-fts-with-gin-level-d-1",
+    "indexing-fts-with-gin-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence says this is a lexical search problem?",
+    "What operational cost does this search design add?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "search-playbook",
+      "why": "Cross-cutting search choices and not yet guidance."
+    }
+  ],
+  "tags": [
+    "phase-8",
+    "full-text-search",
+    "indexing-fts-with-gin"
+  ],
+  "status": "active"
+}

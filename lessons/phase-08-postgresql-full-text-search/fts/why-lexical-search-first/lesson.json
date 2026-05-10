@@ -1,0 +1,59 @@
+{
+  "id": "why-lexical-search-first",
+  "title": "Why Lexical Search First",
+  "phase": 8,
+  "capability_layer": "full_text_search",
+  "summary": "Decide whether core PostgreSQL FTS solves a search problem before adding pgvector, Elasticsearch, or another index.",
+  "learning_objectives": [
+    "Explain the PostgreSQL full-text search concept in operational terms.",
+    "Write or critique SQL that applies the concept to the document_search corpus.",
+    "Name the evidence that would change the search design."
+  ],
+  "prerequisites": [
+    "plan-debugging-workflow"
+  ],
+  "concepts_introduced": [
+    "full_text_search",
+    "not_yet_logic",
+    "lexical_search"
+  ],
+  "concepts_not_yet_allowed": [
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "why-lexical-search-first-level-a-1",
+    "why-lexical-search-first-level-a-2",
+    "why-lexical-search-first-level-b-1",
+    "why-lexical-search-first-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "why-lexical-search-first-level-c-1",
+    "why-lexical-search-first-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "why-lexical-search-first-level-d-1",
+    "why-lexical-search-first-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence says this is a lexical search problem?",
+    "What operational cost does this search design add?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "search-playbook",
+      "why": "Cross-cutting search choices and not yet guidance."
+    }
+  ],
+  "tags": [
+    "phase-8",
+    "full-text-search",
+    "why-lexical-search-first"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,60 @@
+{
+  "id": "when-to-leave-core-fts",
+  "title": "When To Leave Core Fts",
+  "phase": 8,
+  "capability_layer": "full_text_search",
+  "summary": "Recognize signals for pg_trgm, pgvector, or an external search engine and defend not yet.",
+  "learning_objectives": [
+    "Explain the PostgreSQL full-text search concept in operational terms.",
+    "Write or critique SQL that applies the concept to the document_search corpus.",
+    "Name the evidence that would change the search design."
+  ],
+  "prerequisites": [
+    "plan-debugging-workflow"
+  ],
+  "concepts_introduced": [
+    "pg_trgm_preview",
+    "pgvector_later",
+    "external_search",
+    "not_yet_logic"
+  ],
+  "concepts_not_yet_allowed": [
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "when-to-leave-core-fts-level-a-1",
+    "when-to-leave-core-fts-level-a-2",
+    "when-to-leave-core-fts-level-b-1",
+    "when-to-leave-core-fts-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "when-to-leave-core-fts-level-c-1",
+    "when-to-leave-core-fts-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "when-to-leave-core-fts-level-d-1",
+    "when-to-leave-core-fts-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence says this is a lexical search problem?",
+    "What operational cost does this search design add?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "search-playbook",
+      "why": "Cross-cutting search choices and not yet guidance."
+    }
+  ],
+  "tags": [
+    "phase-8",
+    "full-text-search",
+    "when-to-leave-core-fts"
+  ],
+  "status": "active"
+}

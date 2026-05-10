@@ -1,0 +1,59 @@
+{
+  "id": "headlines-and-snippets",
+  "title": "Headlines And Snippets",
+  "phase": 8,
+  "capability_layer": "full_text_search",
+  "summary": "Produce useful snippets with ts_headline without confusing snippets for ranking.",
+  "learning_objectives": [
+    "Explain the PostgreSQL full-text search concept in operational terms.",
+    "Write or critique SQL that applies the concept to the document_search corpus.",
+    "Name the evidence that would change the search design."
+  ],
+  "prerequisites": [
+    "plan-debugging-workflow"
+  ],
+  "concepts_introduced": [
+    "ts_headline",
+    "snippet",
+    "highlight"
+  ],
+  "concepts_not_yet_allowed": [
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "headlines-and-snippets-level-a-1",
+    "headlines-and-snippets-level-a-2",
+    "headlines-and-snippets-level-b-1",
+    "headlines-and-snippets-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "headlines-and-snippets-level-c-1",
+    "headlines-and-snippets-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "headlines-and-snippets-level-d-1",
+    "headlines-and-snippets-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence says this is a lexical search problem?",
+    "What operational cost does this search design add?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "search-playbook",
+      "why": "Cross-cutting search choices and not yet guidance."
+    }
+  ],
+  "tags": [
+    "phase-8",
+    "full-text-search",
+    "headlines-and-snippets"
+  ],
+  "status": "active"
+}
