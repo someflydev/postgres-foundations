@@ -72,6 +72,12 @@ Current baseline:
   multi-tenancy, `docs/anti-patterns/jsonb_everything.md`, JSON-aware rowset
   comparison, a `multi_session_trace` comparator placeholder, and Phase 4a
   corpus tests.
+- Phase 4b PostgreSQL data modeling: PROMPT_16 added arrays, ranges, and
+  multiranges: 10 active lessons, 70 active exercises, Phase 4b seed
+  extensions for ecommerce, scheduling, and event-heavy ops,
+  `docs/anti-patterns/arrays_over_child_tables.md`, exclusion-constraint
+  cookbook guidance, array/range comparison normalization, and Phase 4b corpus
+  tests.
 
 Canonical docs:
 
@@ -87,6 +93,7 @@ Canonical docs:
 - `docs/domain-conventions.md`
 - `docs/constraints-cookbook.md`
 - `docs/anti-patterns/jsonb_everything.md`
+- `docs/anti-patterns/arrays_over_child_tables.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
@@ -109,6 +116,9 @@ Expected green checks:
 - `uv run pgfound content seed ecommerce --phase 4a --reset`
 - `uv run pgfound content seed scheduling --phase 4a --reset`
 - `uv run pgfound content seed saas_multi_tenant --phase 4a --reset`
+- `uv run pgfound content seed ecommerce --phase 4b --reset`
+- `uv run pgfound content seed scheduling --phase 4b --reset`
+- `uv run pgfound content seed event_heavy_ops --phase 4b --reset`
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound content seed-doctor`
 - `uv run pgfound exercise run first-select-write-query --dry-run`

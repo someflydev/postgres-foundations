@@ -42,12 +42,16 @@ Completed:
   zones, UUIDs, and JSON/JSONB; 9 active lessons, 63 active exercises, Phase
   4a seed extensions for ecommerce/scheduling/SaaS, JSONB anti-pattern docs,
   JSON-aware row comparison, and Phase 4a corpus tests.
+- PROMPT_16: Phase 4b PostgreSQL data modeling corpus for arrays, ranges, and
+  multiranges; 10 active lessons, 70 active exercises, Phase 4b seed
+  extensions for ecommerce/scheduling/event-heavy ops, arrays-over-child-tables
+  anti-pattern docs, exclusion constraints cookbook coverage, array/range
+  comparison normalization, and Phase 4b corpus tests.
 
 Next expected prompt:
 
-- PROMPT_16: Phase 4b PostgreSQL data modeling: arrays, ranges, and
-  multiranges.
+- PROMPT_17: Phase 5 expressive querying.
 
 Notes:
 
-- Do not run PROMPT_16 unless the user explicitly asks.
+- Do not run PROMPT_17 unless the user explicitly asks.
