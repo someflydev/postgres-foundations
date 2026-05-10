@@ -6,7 +6,6 @@ import difflib
 import json
 import subprocess
 from dataclasses import dataclass
-from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +14,7 @@ import psycopg
 from pgfound import paths, progress
 from pgfound.content import seed as content_seed
 from pgfound.lab.psql import build_argv
+from pgfound.review.normalize import normalize_for_comparison
 
 
 @dataclass(frozen=True)
@@ -315,25 +315,7 @@ def _normalize_rows(rows: list[str], *, comparison: str) -> list[str]:
 
 
 def _normalize_value(value: object) -> object:
-    if value is None:
-        return None
-    if isinstance(value, dict):
-        return {
-            str(key): _normalize_value(value[key])
-            for key in sorted(value, key=lambda item: str(item))
-        }
-    if isinstance(value, list | tuple):
-        return [_normalize_value(item) for item in value]
-    if isinstance(value, Decimal):
-        return str(value)
-    if isinstance(value, str):
-        stripped = value.strip()
-        if stripped.startswith(("{", "[")):
-            try:
-                return _normalize_value(json.loads(stripped))
-            except json.JSONDecodeError:
-                pass
-    return str(value)
+    return normalize_for_comparison(value)
 
 
 def _last_history_statement(history: str) -> str:
