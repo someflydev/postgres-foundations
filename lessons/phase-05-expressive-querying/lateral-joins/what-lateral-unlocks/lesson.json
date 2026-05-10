@@ -1,0 +1,58 @@
+{
+  "id": "what-lateral-unlocks",
+  "title": "What LATERAL Unlocks",
+  "phase": 5,
+  "capability_layer": "expressive_querying",
+  "summary": "Use what lateral unlocks to shape complex PostgreSQL answers without leaving core SQL.",
+  "learning_objectives": [
+    "Choose the expressive SQL construct that matches the business question.",
+    "Explain row grain, ordering, NULL behavior, and operational tradeoffs."
+  ],
+  "prerequisites": [
+    "ranges-vs-arrays-vs-child-tables"
+  ],
+  "concepts_introduced": [
+    "lateral_join"
+  ],
+  "concepts_not_yet_allowed": [
+    "transaction",
+    "concurrency",
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "what-lateral-unlocks-level-a-1",
+    "what-lateral-unlocks-level-a-2",
+    "what-lateral-unlocks-level-b-1",
+    "what-lateral-unlocks-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "what-lateral-unlocks-level-c-1",
+    "what-lateral-unlocks-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "what-lateral-unlocks-level-d-1",
+    "what-lateral-unlocks-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What query shape would make this result easiest to review?",
+    "Which edge case would you test before trusting this answer?"
+  ],
+  "estimated_time_minutes": 35,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "expressive-sql-style",
+      "why": "Style guidance for choosing among expressive SQL shapes."
+    }
+  ],
+  "tags": [
+    "phase-5",
+    "expressive-querying",
+    "lateral_join"
+  ],
+  "status": "active"
+}
