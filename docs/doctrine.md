@@ -140,6 +140,12 @@ modeling clear relational structure. JSONB is useful when shape is genuinely
 variable or when document-style access is the right fit; it is not a substitute
 for constraints, joins, and understandable ownership.
 
+It rejects
+[arrays-over-child-tables](anti-patterns/arrays_over_child_tables.md) designs
+that pack lifecycle-bearing facts into one array column. Arrays are useful for
+small bounded labels; they are not a replacement for child rows that need
+metadata, audit, joins, or independent constraints.
+
 It rejects partition-too-early designs that add maintenance and routing
 complexity before data volume, retention, or query patterns justify it.
 

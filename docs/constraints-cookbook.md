@@ -74,6 +74,31 @@ ALTER TABLE ecommerce.order_items
 Use cascading actions only when the business rule really says child rows should
 follow parent changes or deletions.
 
+## Exclusion Constraints
+
+Use an exclusion constraint when the invariant says two rows must not conflict
+according to an operator, not just equality. Appointment scheduling is the
+canonical example: one professional cannot have overlapping booked slots.
+
+```sql
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+ALTER TABLE scheduling.appointments
+    ADD COLUMN slot tstzrange
+        GENERATED ALWAYS AS (tstzrange(starts_at, ends_at, '[)')) STORED;
+
+ALTER TABLE scheduling.appointments
+    ADD CONSTRAINT appointments_no_overlap
+    EXCLUDE USING gist (
+        provider_id WITH =,
+        slot WITH &&
+    );
+```
+
+The range operator `&&` means overlap. `btree_gist` supplies GiST support for
+the equality side of the constraint. Phase 4b uses this for correctness; later
+indexing lessons explain GiST performance behavior in more detail.
+
 ## Reference Tables
 
 Prefer a small table plus a foreign key when values need labels, metadata, or
