@@ -9,6 +9,17 @@ from pgfound import paths
 from pgfound.content import lint, validate
 
 PHASE_DIR = "phase-04-postgresql-data-modeling"
+PHASE4A_LESSONS = {
+    "json-vs-jsonb",
+    "modeling-hybrid-schemas",
+    "querying-jsonb",
+    "when-jsonb-is-wrong",
+    "arithmetic-and-ranges-preview",
+    "storing-wall-clock-vs-event-time",
+    "why-timestamptz",
+    "uuid-v4-vs-v7-discussion",
+    "when-uuid-is-the-right-key",
+}
 WORD_RE = re.compile(r"\b[\w'-]+\b")
 
 
@@ -37,13 +48,18 @@ def test_phase4a_lessons_and_exercises_validate_and_lint_cleanly() -> None:
 
 
 def test_phase4a_has_required_lessons_and_exercise_distribution() -> None:
-    lessons = sorted((paths.LESSONS_DIR / PHASE_DIR).glob("*/*/lesson.json"))
+    lessons = [
+        path
+        for path in sorted((paths.LESSONS_DIR / PHASE_DIR).glob("*/*/lesson.json"))
+        if _load_json(path)["id"] in PHASE4A_LESSONS
+    ]
     assert len(lessons) == 9
 
     exercises_by_lesson: dict[str, list[dict]] = defaultdict(list)
     for exercise_path in (paths.EXERCISES_DIR / PHASE_DIR).glob("*/*/*/exercise.json"):
         exercise = _load_json(exercise_path)
-        exercises_by_lesson[exercise["lesson_id"]].append(exercise)
+        if exercise["lesson_id"] in PHASE4A_LESSONS:
+            exercises_by_lesson[exercise["lesson_id"]].append(exercise)
 
     assert sum(len(items) for items in exercises_by_lesson.values()) == 63
     for lesson_path in lessons:
@@ -59,6 +75,8 @@ def test_phase4a_jsonb_lessons_reference_antipattern_doc() -> None:
     referenced = []
     for lesson_path in (paths.LESSONS_DIR / PHASE_DIR).glob("*/*/lesson.json"):
         lesson = _load_json(lesson_path)
+        if lesson["id"] not in PHASE4A_LESSONS:
+            continue
         concepts = set(lesson.get("concepts_introduced", []))
         if "jsonb" not in concepts:
             continue
@@ -73,6 +91,7 @@ def test_phase4a_required_level_d_drills_are_present() -> None:
     phase_text = "\n".join(
         path.read_text(encoding="utf-8")
         for path in (paths.EXERCISES_DIR / PHASE_DIR).glob("**/prompt.md")
+        if any(part in PHASE4A_LESSONS for part in path.parts)
     )
     assert "timezone-naive timestamp" in phase_text
     assert "metadata ->> 'channel'" in phase_text
@@ -91,9 +110,7 @@ def test_phase4a_required_level_d_drills_are_present() -> None:
 
 def test_phase4a_domain_sql_and_antipattern_doc_exist() -> None:
     for domain in ("ecommerce", "scheduling", "saas_multi_tenant"):
-        assert (
-            paths.SEED_DATA_DIR / "packs" / domain / "phases" / "phase-04a.sql"
-        ).is_file()
+        assert (paths.SEED_DATA_DIR / "packs" / domain / "phases" / "phase-04a.sql").is_file()
 
     antipattern = paths.REPO_ROOT / "docs" / "anti-patterns" / "jsonb_everything.md"
     doctrine = paths.REPO_ROOT / "docs" / "doctrine.md"
@@ -103,18 +120,10 @@ def test_phase4a_domain_sql_and_antipattern_doc_exist() -> None:
 
 def test_phase4a_domain_sql_matches_prompt_schema_contracts() -> None:
     scheduling_sql = (
-        paths.SEED_DATA_DIR
-        / "packs"
-        / "scheduling"
-        / "phases"
-        / "phase-04a.sql"
+        paths.SEED_DATA_DIR / "packs" / "scheduling" / "phases" / "phase-04a.sql"
     ).read_text(encoding="utf-8")
     saas_sql = (
-        paths.SEED_DATA_DIR
-        / "packs"
-        / "saas_multi_tenant"
-        / "phases"
-        / "phase-04a.sql"
+        paths.SEED_DATA_DIR / "packs" / "saas_multi_tenant" / "phases" / "phase-04a.sql"
     ).read_text(encoding="utf-8")
 
     assert "CREATE TABLE IF NOT EXISTS scheduling.professionals" in scheduling_sql
