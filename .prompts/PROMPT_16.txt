@@ -19,11 +19,22 @@ This prompt covers:
 
 - PROMPT_15 phase 4a active (timestamps, UUID, JSONB).
 - Postgres 16 in the lab (multiranges available natively).
-- Phase 4b directories empty.
+- Phase 4b lesson/exercise slugs absent. The Phase 4 root directory
+  already contains Phase 4a content.
+- Phase 4a types are now allowed carryover: `timestamptz`, UUID, and
+  JSON/JSONB. Still not yet allowed unless this prompt explicitly
+  introduces them: CTEs, window functions, lateral joins, recursive
+  queries, and upserts as a subject of study.
+- Seed manifest `phases_covered` still uses integer phase numbers, so
+  phase 4a/4b seed files should be represented as phase `4` in
+  manifests unless the manifest schema is changed deliberately.
 
 ## Task
 
 ### 1. Extend domain packs
+
+Author `phase-04b.sql` for each touched seed pack and update manifests
+idempotently.
 
 Ecommerce:
 
@@ -35,14 +46,20 @@ Ecommerce:
 
 Scheduling:
 
+- PROMPT_15 created `scheduling.professionals` as a real table with a
+  check-validated `timezone` column. Add working-hours modeling there,
+  rather than creating a parallel provider/professional concept.
 - `scheduling.professionals.working_hours tstzrange[]` (OR
   `tstzmultirange` if the authoring team chooses Postgres 14+
   multirange; 16 supports both). Exercise authors will choose.
 - `scheduling.availability_slots` table as an alternative
   representation for comparison purposes.
 
-Events (new domain phase-01 authored here if not already deep enough):
+Events:
 
+- Extend the existing `event_heavy_ops` seed pack, which owns the
+  `events` schema. Do not create a duplicate events seed pack unless
+  the existing pack is missing.
 - `events.event_windows(id, source_id, window tstzrange)` — append
   heavy, range-indexed for range queries. Introduce a GiST index as
   a pointer but do not require it yet.
