@@ -16,6 +16,8 @@ The event-heavy operations domain models append-only operational events from ser
   facts on paper before SQL.
 - Phase 1: inspect recent events by source and type.
 - Phase 2: group events by source and join to incident context.
+- Phase 4b: add `event_windows` with `tstzrange` and a GiST index pointer for
+  append-heavy time-window questions.
 - Phase 5: derive rolling counts and latest event per source.
 - Phase 7: tune time-ordered event queries.
 - Phase 8: discuss operational visibility for ingest-heavy tables.

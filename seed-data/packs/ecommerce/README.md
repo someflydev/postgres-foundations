@@ -19,6 +19,8 @@ The ecommerce domain models a small store that sells catalog items and records c
 - Phase 2: join orders to line items and products.
 - Phase 3: enforce non-negative quantities, non-negative totals, natural-key
   uniqueness, and reference-backed country and currency values.
+- Phase 4b: use bounded product `tags text[]` as a good array fit and contrast
+  it with a relational `price_history` table instead of a misleading range.
 - Phase 5: compute running revenue with window functions.
 - Phase 7: tune the hot order-history query.
 - Phase 9: partition old orders by month.

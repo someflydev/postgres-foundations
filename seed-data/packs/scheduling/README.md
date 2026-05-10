@@ -19,7 +19,8 @@ The scheduling domain models appointments between providers and clients. It give
 - Phase 2: join appointments to providers and clients.
 - Phase 3: reject invalid appointment status, impossible durations, and duplicate
   provider start times.
-- Phase 4: model availability with PostgreSQL time and range types.
+- Phase 4: model event time, professional time zones, availability ranges, and
+  multirange working calendars.
 - Phase 6: reason about two sessions booking the same slot.
 - Phase 8: inspect locks and operational symptoms around hot schedules.
 
