@@ -33,3 +33,10 @@ This pack does not implement calendar invitations, reminder delivery, billing, o
 Large labs use the `scheduling` schema. Small exercises may use `pgfound` when schemas would distract from the lesson. Tables: `providers`, `clients`, `appointments`, and `availability_blocks`.
 
 Phase 05 volume: at least 1500 generated appointments, with 501 appointments per professional across Dr. Rivera, Dr. Chen, and Dr. Malik.
+
+Phase 7a volume is generated on demand with
+`pgfound content seed scheduling --phase 7a --generate`. The generator writes
+CSV cache files under `tmp/generated-seed-data/scheduling/phase-07a/`; the
+Python seed loader copies them into staging tables and merges them into the
+canonical tables. Expected scale is at least 50k appointments across 10
+professionals.

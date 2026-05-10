@@ -42,3 +42,9 @@ Large labs use the `ecommerce` schema. Small phase exercises may collapse these 
   prevent duplicate, conflicting, or impossible facts.
 
 Phase 05 volume: at least 220 Phase 5 customers, 2400 generated orders over 12 months, generated order items, category hierarchy rows, nullable customer segments, and daily inventory snapshots for upsert drills.
+
+Phase 7a volume is generated on demand with
+`pgfound content seed ecommerce --phase 7a --generate`. The generator writes
+CSV cache files under `tmp/generated-seed-data/ecommerce/phase-07a/`; the Python
+seed loader copies them into staging tables and merges them into the canonical
+tables. Expected scale is at least 200k orders, 1M order_items, and 5k products.

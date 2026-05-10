@@ -23,6 +23,7 @@ SEED_DATA_DIR = REPO_ROOT / "seed-data"
 DECISION_ENGINE_DIR = REPO_ROOT / "decision-engine"
 DOCKER_DIR = REPO_ROOT / "docker"
 LLM_PROMPTS_DIR = REPO_ROOT / "llm-prompts"
+TMP_DIR = REPO_ROOT / "tmp"
 
 
 def ensure_exists(path: Path) -> Path:
