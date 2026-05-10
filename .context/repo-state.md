@@ -66,6 +66,12 @@ Current baseline:
   attempt records, `pgfound progress show`, exercise runner `--answer`,
   `--no-prompt`, and `--save-answer`, plus `pgfound lab reset-domain`,
   `snapshot`, and `restore`.
+- Phase 4a PostgreSQL data modeling: PROMPT_15 added the timestamps/time
+  zones, UUID, and JSON/JSONB content set: 9 active lessons, 63 active
+  exercises, Phase 4a seed extensions for ecommerce, scheduling, and SaaS
+  multi-tenancy, `docs/anti-patterns/jsonb_everything.md`, JSON-aware rowset
+  comparison, a `multi_session_trace` comparator placeholder, and Phase 4a
+  corpus tests.
 
 Canonical docs:
 
@@ -80,6 +86,7 @@ Canonical docs:
 - `docs/authoring-exercises.md`
 - `docs/domain-conventions.md`
 - `docs/constraints-cookbook.md`
+- `docs/anti-patterns/jsonb_everything.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
@@ -99,9 +106,9 @@ Expected green checks:
 - `uv run pgfound content list`
 - `uv run pgfound content validate`
 - `uv run pgfound content lint`
-- `uv run pgfound content seed ecommerce --phase 3 --reset`
-- `uv run pgfound content seed scheduling --phase 3 --reset`
-- `uv run pgfound content seed saas_multi_tenant --phase 3 --reset`
+- `uv run pgfound content seed ecommerce --phase 4a --reset`
+- `uv run pgfound content seed scheduling --phase 4a --reset`
+- `uv run pgfound content seed saas_multi_tenant --phase 4a --reset`
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound content seed-doctor`
 - `uv run pgfound exercise run first-select-write-query --dry-run`

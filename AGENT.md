@@ -39,7 +39,7 @@ concrete, operational, and PostgreSQL core-first.
 - Content lint: `uv run pgfound content lint`
 - Seed doctor: `uv run pgfound content seed-doctor`
 - Seed dry-run: `uv run pgfound content seed ecommerce --phase 1 --dry-run`
-- Seed lab data: `uv run pgfound content seed ecommerce --phase 3 --reset`
+- Seed lab data: `uv run pgfound content seed ecommerce --phase 4a --reset`
 - Exercise dry-run: `uv run pgfound exercise run first-select-write-query --dry-run`
 - Exercise check: `uv run pgfound exercise run first-select-write-query --check`
 - Progress summary: `uv run pgfound progress show`

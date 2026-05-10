@@ -114,3 +114,21 @@ Phase 3 database-truth references introduced by PROMPT_13:
 - `docs/constraints-cookbook.md`
 - `src/pgfound/exercise.py`
 - `tests/test_phase3_corpus.py`
+
+Seed and runner polish references introduced by PROMPT_14:
+
+- `src/pgfound/content/seed_doctor.py`
+- `src/pgfound/progress.py`
+- `src/pgfound/lab/psql.py`
+- `docs/learner-workflow.md`
+
+Phase 4a PostgreSQL data modeling references introduced by PROMPT_15:
+
+- `lessons/phase-04-postgresql-data-modeling/`
+- `exercises/phase-04-postgresql-data-modeling/`
+- `seed-data/packs/ecommerce/phases/phase-04a.sql`
+- `seed-data/packs/scheduling/phases/phase-04a.sql`
+- `seed-data/packs/saas_multi_tenant/phases/phase-04a.sql`
+- `docs/anti-patterns/jsonb_everything.md`
+- `src/pgfound/exercise.py`
+- `tests/test_phase4a_corpus.py`

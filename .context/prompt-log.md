@@ -38,12 +38,16 @@ Completed:
 - PROMPT_14: seed doctor, per-exercise search_path metadata, canonical
   tmp/progress exercise attempts, lab reset/snapshot/restore helpers, exercise
   runner QoL flags, learner workflow docs, and seed/progress tests.
+- PROMPT_15: Phase 4a PostgreSQL data modeling corpus for timestamps/time
+  zones, UUIDs, and JSON/JSONB; 9 active lessons, 63 active exercises, Phase
+  4a seed extensions for ecommerce/scheduling/SaaS, JSONB anti-pattern docs,
+  JSON-aware row comparison, and Phase 4a corpus tests.
 
 Next expected prompt:
 
-- PROMPT_15: Phase 4 PostgreSQL data modeling: timestamps/time zones, UUIDs,
-  JSON/JSONB.
+- PROMPT_16: Phase 4b PostgreSQL data modeling: arrays, ranges, and
+  multiranges.
 
 Notes:
 
-- Do not run PROMPT_15 unless the user explicitly asks.
+- Do not run PROMPT_16 unless the user explicitly asks.
