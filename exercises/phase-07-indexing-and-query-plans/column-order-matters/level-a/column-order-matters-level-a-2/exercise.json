@@ -1,0 +1,70 @@
+{
+  "id": "column-order-matters-level-a-2",
+  "title": "Column Order Matters Level A2",
+  "lesson_id": "column-order-matters",
+  "scaffolding_level": "A",
+  "kind": "lab",
+  "allowed_concepts": [
+    "aggregate",
+    "analyze",
+    "b_tree_index",
+    "bitmap_scan",
+    "composite_index",
+    "covering_index",
+    "explain",
+    "explain_analyze",
+    "include_clause",
+    "index_only_scan",
+    "index_scan",
+    "join",
+    "leftmost_prefix",
+    "select",
+    "seq_scan",
+    "selectivity",
+    "write_amplification"
+  ],
+  "not_yet_allowed_concepts": [
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "schema_scope": {
+    "phase": "7a",
+    "tables": [
+      "ecommerce.orders",
+      "ecommerce.order_items",
+      "ecommerce.products",
+      "scheduling.appointments"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "scheduling",
+    "max_rows_hint": 52000
+  },
+  "search_path": "ecommerce, scheduling, public",
+  "expected_output_shape": "explain_plan",
+  "sessions": 1,
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "Names the access path PostgreSQL selected.",
+    "Connects the plan choice to composite column order.",
+    "Explains read benefit and write or storage cost."
+  ],
+  "time_target_minutes": 25,
+  "rubric_id": "indexing-reasoning",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-7",
+    "indexing",
+    "column-order-matters",
+    "a"
+  ],
+  "status": "active",
+  "hints": [
+    "Start by finding the first scan node in the plan.",
+    "Compare estimated rows to actual rows before judging the index."
+  ]
+}

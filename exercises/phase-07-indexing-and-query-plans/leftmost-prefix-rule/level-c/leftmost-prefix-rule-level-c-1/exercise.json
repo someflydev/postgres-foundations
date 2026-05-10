@@ -1,0 +1,70 @@
+{
+  "id": "leftmost-prefix-rule-level-c-1",
+  "title": "Leftmost Prefix Rule Level C1",
+  "lesson_id": "leftmost-prefix-rule",
+  "scaffolding_level": "C",
+  "kind": "lab",
+  "allowed_concepts": [
+    "aggregate",
+    "analyze",
+    "b_tree_index",
+    "bitmap_scan",
+    "composite_index",
+    "covering_index",
+    "explain",
+    "explain_analyze",
+    "include_clause",
+    "index_only_scan",
+    "index_scan",
+    "join",
+    "leftmost_prefix",
+    "select",
+    "seq_scan",
+    "selectivity",
+    "write_amplification"
+  ],
+  "not_yet_allowed_concepts": [
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "schema_scope": {
+    "phase": "7a",
+    "tables": [
+      "ecommerce.orders",
+      "ecommerce.order_items",
+      "ecommerce.products",
+      "scheduling.appointments"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 1200000
+  },
+  "search_path": "ecommerce, scheduling, public",
+  "expected_output_shape": "explain_plan",
+  "sessions": 1,
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "Names the access path PostgreSQL selected.",
+    "Connects the plan choice to the leftmost-prefix rule for composite indexes.",
+    "Explains read benefit and write or storage cost."
+  ],
+  "time_target_minutes": 40,
+  "rubric_id": "indexing-reasoning",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-7",
+    "indexing",
+    "leftmost-prefix-rule",
+    "c"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "Why did the original plan choose that access path?",
+    "Which predicate and ordering requirement does your index serve?"
+  ]
+}

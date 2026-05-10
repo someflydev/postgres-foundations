@@ -192,6 +192,54 @@ index useful when physical row order correlates with filtered values.
 First taught: phase 7, `indexing-and-query-plans`. PostgreSQL's default index
 method for equality and ordered comparisons on scalar values.
 
+## Sequential Scan
+
+First taught: phase 7, `indexing-and-query-plans`. An access path that reads
+table pages and evaluates the predicate against visible rows, often correct for
+small tables or broad predicates.
+
+## Index Scan
+
+First taught: phase 7, `indexing-and-query-plans`. An access path that uses an
+index to find matching keys and then visits table rows when needed for
+visibility or payload columns.
+
+## Composite Index
+
+First taught: phase 7, `indexing-and-query-plans`. An index over multiple key
+columns where the leading column sequence controls which predicates can enter
+the B-tree efficiently.
+
+## Leftmost Prefix
+
+First taught: phase 7, `indexing-and-query-plans`. The practical rule that an
+index on `(a, b, c)` can directly support predicates starting with `a`, then
+`a, b`, then `a, b, c`, but not usually `b` alone.
+
+## Covering Index
+
+First taught: phase 7, `indexing-and-query-plans`. An index whose key and
+included columns provide the data a query needs, allowing PostgreSQL to avoid
+some heap fetches when visibility permits.
+
+## INCLUDE Clause
+
+First taught: phase 7, `indexing-and-query-plans`. PostgreSQL syntax for adding
+non-key payload columns to a B-tree index so they can be returned from the
+index without participating in search order.
+
+## Selectivity
+
+First taught: phase 7, `indexing-and-query-plans`. The fraction of rows a
+predicate is expected to keep; selective predicates keep few rows and are
+usually better index candidates.
+
+## Write Amplification
+
+First taught: phase 7, `indexing-and-query-plans`. Extra write work caused by
+maintaining additional indexes or structures for each insert, update, or
+delete.
+
 ## Range Partitioning
 
 First taught: phase 9, `partitioning-and-large-table-operations`. Partitioning

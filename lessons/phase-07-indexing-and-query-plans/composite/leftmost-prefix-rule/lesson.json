@@ -1,0 +1,66 @@
+{
+  "id": "leftmost-prefix-rule",
+  "title": "Leftmost Prefix Rule",
+  "phase": 7,
+  "capability_layer": "indexing_and_plans",
+  "summary": "Predict when a composite index can be entered from the leading column sequence.",
+  "learning_objectives": [
+    "Predict the access path for the leftmost-prefix rule for composite indexes from a stated query pattern.",
+    "Use EXPLAIN ANALYZE with buffers to compare estimates, actual rows, and page access.",
+    "Justify the read benefit and write-maintenance cost of the proposed index."
+  ],
+  "prerequisites": [
+    "making-operations-safe-to-retry"
+  ],
+  "concepts_introduced": [
+    "composite_index",
+    "leftmost_prefix",
+    "index_condition",
+    "predicate_order"
+  ],
+  "concepts_not_yet_allowed": [
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "leftmost-prefix-rule-level-a-1",
+    "leftmost-prefix-rule-level-a-2",
+    "leftmost-prefix-rule-level-b-1",
+    "leftmost-prefix-rule-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "leftmost-prefix-rule-level-c-1",
+    "leftmost-prefix-rule-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "leftmost-prefix-rule-level-d-1",
+    "leftmost-prefix-rule-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which query pattern makes this index defensible?",
+    "What write or storage cost would make you remove it?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "indexing-playbook-part1",
+      "why": "Phase 7a indexing cookbook."
+    },
+    {
+      "kind": "doc",
+      "slug": "observability-intro",
+      "why": "Small pg_stat_statements operator tour."
+    }
+  ],
+  "tags": [
+    "phase-7",
+    "indexing-and-plans",
+    "composite"
+  ],
+  "status": "active"
+}

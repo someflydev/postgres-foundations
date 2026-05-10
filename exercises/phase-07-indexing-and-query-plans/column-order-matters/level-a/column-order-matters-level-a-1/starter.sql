@@ -1,0 +1,7 @@
+-- Predict the access path, then run with pgfound lab explain.
+SELECT id, starts_at, ends_at, status
+FROM scheduling.appointments
+WHERE provider_id = 1
+  AND starts_at >= '2026-01-01'::timestamptz
+ORDER BY starts_at
+LIMIT 30;

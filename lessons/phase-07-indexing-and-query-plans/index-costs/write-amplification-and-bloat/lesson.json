@@ -1,0 +1,66 @@
+{
+  "id": "write-amplification-and-bloat",
+  "title": "Write Amplification and Bloat",
+  "phase": 7,
+  "capability_layer": "indexing_and_plans",
+  "summary": "Explain why every extra index increases write work, storage, and maintenance pressure.",
+  "learning_objectives": [
+    "Predict the access path for write amplification, redundant indexes, and bloat from a stated query pattern.",
+    "Use EXPLAIN ANALYZE with buffers to compare estimates, actual rows, and page access.",
+    "Justify the read benefit and write-maintenance cost of the proposed index."
+  ],
+  "prerequisites": [
+    "making-operations-safe-to-retry"
+  ],
+  "concepts_introduced": [
+    "write_amplification",
+    "index_bloat",
+    "redundant_index",
+    "vacuum"
+  ],
+  "concepts_not_yet_allowed": [
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "write-amplification-and-bloat-level-a-1",
+    "write-amplification-and-bloat-level-a-2",
+    "write-amplification-and-bloat-level-b-1",
+    "write-amplification-and-bloat-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "write-amplification-and-bloat-level-c-1",
+    "write-amplification-and-bloat-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "write-amplification-and-bloat-level-d-1",
+    "write-amplification-and-bloat-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which query pattern makes this index defensible?",
+    "What write or storage cost would make you remove it?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "indexing-playbook-part1",
+      "why": "Phase 7a indexing cookbook."
+    },
+    {
+      "kind": "doc",
+      "slug": "observability-intro",
+      "why": "Small pg_stat_statements operator tour."
+    }
+  ],
+  "tags": [
+    "phase-7",
+    "indexing-and-plans",
+    "index-costs"
+  ],
+  "status": "active"
+}

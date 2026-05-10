@@ -1,0 +1,66 @@
+{
+  "id": "column-order-matters",
+  "title": "Column Order Matters",
+  "phase": 7,
+  "capability_layer": "indexing_and_plans",
+  "summary": "Choose composite index order by equality predicates before range and sort needs.",
+  "learning_objectives": [
+    "Predict the access path for composite column order from a stated query pattern.",
+    "Use EXPLAIN ANALYZE with buffers to compare estimates, actual rows, and page access.",
+    "Justify the read benefit and write-maintenance cost of the proposed index."
+  ],
+  "prerequisites": [
+    "making-operations-safe-to-retry"
+  ],
+  "concepts_introduced": [
+    "column_order",
+    "equality_first",
+    "range_predicate",
+    "sort_avoidance"
+  ],
+  "concepts_not_yet_allowed": [
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "column-order-matters-level-a-1",
+    "column-order-matters-level-a-2",
+    "column-order-matters-level-b-1",
+    "column-order-matters-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "column-order-matters-level-c-1",
+    "column-order-matters-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "column-order-matters-level-d-1",
+    "column-order-matters-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which query pattern makes this index defensible?",
+    "What write or storage cost would make you remove it?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "indexing-playbook-part1",
+      "why": "Phase 7a indexing cookbook."
+    },
+    {
+      "kind": "doc",
+      "slug": "observability-intro",
+      "why": "Small pg_stat_statements operator tour."
+    }
+  ],
+  "tags": [
+    "phase-7",
+    "indexing-and-plans",
+    "composite"
+  ],
+  "status": "active"
+}

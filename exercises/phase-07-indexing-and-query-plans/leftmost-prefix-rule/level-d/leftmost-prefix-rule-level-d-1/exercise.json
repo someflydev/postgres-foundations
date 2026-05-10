@@ -1,0 +1,71 @@
+{
+  "id": "leftmost-prefix-rule-level-d-1",
+  "title": "Leftmost Prefix Rule Level D1",
+  "lesson_id": "leftmost-prefix-rule",
+  "scaffolding_level": "D",
+  "kind": "critique",
+  "allowed_concepts": [
+    "aggregate",
+    "analyze",
+    "b_tree_index",
+    "bitmap_scan",
+    "composite_index",
+    "covering_index",
+    "explain",
+    "explain_analyze",
+    "include_clause",
+    "index_only_scan",
+    "index_scan",
+    "join",
+    "leftmost_prefix",
+    "select",
+    "seq_scan",
+    "selectivity",
+    "write_amplification"
+  ],
+  "not_yet_allowed_concepts": [
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "schema_scope": {
+    "phase": "7a",
+    "tables": [
+      "ecommerce.orders",
+      "ecommerce.order_items",
+      "ecommerce.products",
+      "scheduling.appointments"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 1200000
+  },
+  "search_path": "ecommerce, scheduling, public",
+  "expected_output_shape": "prose_explanation",
+  "sessions": 1,
+  "output_comparison": "ordered",
+  "success_criteria": [
+    "Names the access path PostgreSQL selected.",
+    "Connects the plan choice to the leftmost-prefix rule for composite indexes.",
+    "Explains read benefit and write or storage cost."
+  ],
+  "time_target_minutes": 40,
+  "rubric_id": "indexing-reasoning",
+  "solution_path": "solution.md",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-7",
+    "indexing",
+    "leftmost-prefix-rule",
+    "d"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "What evidence shows the index is not helping the hot query?",
+    "Which write path now pays extra maintenance cost?",
+    "Would a narrower phase 7b partial index be a better candidate?"
+  ]
+}

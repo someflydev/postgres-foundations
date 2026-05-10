@@ -1,0 +1,6 @@
+-- Run with pgfound lab explain and compare estimated rows, actual rows, and buffers.
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT id, order_number, placed_at
+FROM ecommerce.orders
+WHERE customer_id = 42
+ORDER BY placed_at DESC;

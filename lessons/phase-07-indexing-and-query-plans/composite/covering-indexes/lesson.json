@@ -1,0 +1,66 @@
+{
+  "id": "covering-indexes",
+  "title": "Covering Indexes",
+  "phase": 7,
+  "capability_layer": "indexing_and_plans",
+  "summary": "Use INCLUDE columns to remove heap fetches when the query pattern justifies the bloat.",
+  "learning_objectives": [
+    "Predict the access path for covering indexes and heap fetch avoidance from a stated query pattern.",
+    "Use EXPLAIN ANALYZE with buffers to compare estimates, actual rows, and page access.",
+    "Justify the read benefit and write-maintenance cost of the proposed index."
+  ],
+  "prerequisites": [
+    "making-operations-safe-to-retry"
+  ],
+  "concepts_introduced": [
+    "covering_index",
+    "include_clause",
+    "heap_fetch",
+    "index_only_scan"
+  ],
+  "concepts_not_yet_allowed": [
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "covering-indexes-level-a-1",
+    "covering-indexes-level-a-2",
+    "covering-indexes-level-b-1",
+    "covering-indexes-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "covering-indexes-level-c-1",
+    "covering-indexes-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "covering-indexes-level-d-1",
+    "covering-indexes-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which query pattern makes this index defensible?",
+    "What write or storage cost would make you remove it?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "indexing-playbook-part1",
+      "why": "Phase 7a indexing cookbook."
+    },
+    {
+      "kind": "doc",
+      "slug": "observability-intro",
+      "why": "Small pg_stat_statements operator tour."
+    }
+  ],
+  "tags": [
+    "phase-7",
+    "indexing-and-plans",
+    "composite"
+  ],
+  "status": "active"
+}
