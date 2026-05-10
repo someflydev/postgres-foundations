@@ -31,3 +31,5 @@ This pack does not implement calendar invitations, reminder delivery, billing, o
 ## Naming and schema overview
 
 Large labs use the `scheduling` schema. Small exercises may use `pgfound` when schemas would distract from the lesson. Tables: `providers`, `clients`, `appointments`, and `availability_blocks`.
+
+Phase 05 volume: at least 1500 generated appointments, with 501 appointments per professional across Dr. Rivera, Dr. Chen, and Dr. Malik.

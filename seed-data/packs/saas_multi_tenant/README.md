@@ -30,3 +30,5 @@ This pack does not implement billing, OAuth, SSO, audit products, or a complete 
 ## Naming and schema overview
 
 Large labs use the `saas` schema. Small phase exercises can collapse the same tables into `pgfound` for simpler examples. Tables: `tenants`, `users`, `projects`, and `project_memberships`.
+
+Phase 05 volume: at least 50 tenants, each with 5-200 generated users, plus a saas.usage_events table with at least 6000 events for lateral-join and window-function drills.

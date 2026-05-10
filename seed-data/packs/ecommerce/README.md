@@ -40,3 +40,5 @@ Large labs use the `ecommerce` schema. Small phase exercises may collapse these 
   items. Phase 3 uses it to practice refactoring spreadsheet-shaped data into
   customers, products, orders, and order_items while naming the constraints that
   prevent duplicate, conflicting, or impossible facts.
+
+Phase 05 volume: at least 220 Phase 5 customers, 2400 generated orders over 12 months, generated order items, category hierarchy rows, nullable customer segments, and daily inventory snapshots for upsert drills.

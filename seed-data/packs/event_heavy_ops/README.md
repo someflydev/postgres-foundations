@@ -34,3 +34,5 @@ Large labs use the `events` schema. Small exercises may collapse these tables in
 ## Generators
 
 Run `python generators/events_csv.py` from this pack to print deterministic CSV rows for larger event exercises. The seed CLI can run generators with `--generate`; current phase SQL remains small and self-contained.
+
+Phase 05 volume: at least 50000 deterministic generated events across checkout, billing, catalog, identity, and notifications sources.

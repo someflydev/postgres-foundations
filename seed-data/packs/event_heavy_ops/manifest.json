@@ -1,7 +1,22 @@
 {
   "domain": "event_heavy_ops",
-  "phases_covered": [1, 2, 4],
-  "planned_phases": [1, 2, 4, 5, 7, 8, 9],
-  "depends_on_extensions": ["pgcrypto"],
+  "phases_covered": [
+    1,
+    2,
+    4,
+    5
+  ],
+  "planned_phases": [
+    1,
+    2,
+    4,
+    5,
+    7,
+    8,
+    9
+  ],
+  "depends_on_extensions": [
+    "pgcrypto"
+  ],
   "notes": "Append-heavy event data supports event inspection, grouping, ingestion pressure, index design, retention, and partitioning."
 }
