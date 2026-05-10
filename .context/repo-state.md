@@ -95,6 +95,11 @@ Current baseline:
   `src/pgfound/lab/harness.py`, `pgfound lab concurrency list|run|record`,
   scenario YAML files under `scenarios/concurrency/`, exercise `--check`
   integration for `multi_session_trace`, and `docs/concurrency-harness.md`.
+- Phase 7a indexing fundamentals: PROMPT_20 added scans, EXPLAIN basics,
+  B-tree, composite indexes, covering indexes, and index-cost content: 8 active
+  lessons, 64 active exercises, Phase 7a generated ecommerce/scheduling seed
+  extensions, `pgfound lab explain`, `docs/indexing-playbook-part1.md`,
+  `docs/observability-intro.md`, glossary additions, and Phase 7a corpus tests.
 
 Canonical docs:
 
@@ -114,6 +119,8 @@ Canonical docs:
 - `docs/expressive-sql-style.md`
 - `docs/concurrency-playbook.md`
 - `docs/concurrency-harness.md`
+- `docs/indexing-playbook-part1.md`
+- `docs/observability-intro.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
@@ -145,11 +152,14 @@ Expected green checks:
 - `uv run pgfound content seed event_heavy_ops --phase 5 --reset`
 - `uv run pgfound content seed ecommerce --phase 6 --reset`
 - `uv run pgfound content seed scheduling --phase 6 --reset`
+- `uv run pgfound content seed ecommerce --phase 7a --reset --generate`
+- `uv run pgfound content seed scheduling --phase 7a --reset --generate`
 - `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound content seed-doctor`
 - `uv run pgfound exercise run first-select-write-query --dry-run`
 - `uv run pgfound lab concurrency run scenarios/concurrency/inventory-lost-update.yaml`
+- `uv run pgfound lab explain --help`
 - `uv run pytest -q -m 'not docker'`
 - `uv run pgfound progress show`
 - `docker compose -f docker/docker-compose.yml config`

@@ -62,11 +62,16 @@ Completed:
 - PROMPT_19: Multi-session concurrency lab harness, `pgfound lab concurrency`
   commands, scenario library, `multi_session_trace` check integration, harness
   docs, and scenario validation tests.
+- PROMPT_20: Phase 7a indexing fundamentals corpus for scans, EXPLAIN basics,
+  B-tree, composite indexes, covering indexes, and index costs; 8 active
+  lessons, 64 active exercises, generated ecommerce/scheduling volume seeds,
+  `pgfound lab explain`, indexing and observability docs, glossary additions,
+  and Phase 7a corpus tests.
 
 Next expected prompt:
 
-- PROMPT_20: Phase 7a indexing fundamentals.
+- PROMPT_21: Phase 7b advanced index types and deeper EXPLAIN.
 
 Notes:
 
-- Do not run PROMPT_20 unless the user explicitly asks.
+- Do not run PROMPT_21 unless the user explicitly asks.

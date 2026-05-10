@@ -183,3 +183,18 @@ Multi-session harness references introduced by PROMPT_19:
 - `src/pgfound/exercise.py`
 - `tests/test_harness_runs.py`
 - `tests/test_scenario_files_valid.py`
+
+Phase 7a indexing fundamentals references introduced by PROMPT_20:
+
+- `lessons/phase-07-indexing-and-query-plans/`
+- `exercises/phase-07-indexing-and-query-plans/`
+- `seed-data/packs/ecommerce/phases/phase-07a.sql`
+- `seed-data/packs/ecommerce/generators/phase_07a.py`
+- `seed-data/packs/scheduling/phases/phase-07a.sql`
+- `seed-data/packs/scheduling/generators/phase_07a.py`
+- `src/pgfound/lab/explain.py`
+- `src/pgfound/content/seed.py`
+- `docs/indexing-playbook-part1.md`
+- `docs/observability-intro.md`
+- `docs/glossary.md`
+- `tests/test_phase7a_corpus.py`
