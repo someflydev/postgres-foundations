@@ -14,6 +14,7 @@ import psycopg
 
 from pgfound import paths, progress
 from pgfound.content import seed as content_seed
+from pgfound.lab import harness as concurrency_harness
 from pgfound.lab.psql import build_argv
 from pgfound.review.normalize import normalize_for_comparison
 
@@ -70,6 +71,11 @@ class ExerciseRecord:
     @property
     def search_path(self) -> str:
         return str(self.data.get("search_path", "pgfound, public"))
+
+    @property
+    def lab_harness_profile(self) -> str | None:
+        profile = self.data.get("lab_harness_profile")
+        return str(profile) if profile else None
 
 
 def find_exercise(identifier: str) -> ExerciseRecord:
@@ -146,7 +152,7 @@ def check_answer_with_timing(
 ) -> tuple[bool, str, dict[str, float]]:
     """Compare a saved learner answer and optionally report execution timings."""
     if record.expected_output_shape == "multi_session_trace":
-        return True, "multi_session_trace comparison is reserved for the concurrency phase.", {}
+        return _check_multi_session_trace(record, answer_path=answer_path)
 
     resolved_answer_path = answer_path or record.answer_path
     if not resolved_answer_path.is_file():
@@ -214,6 +220,34 @@ def _timing_payload(expected_seconds: float, actual_seconds: float) -> dict[str,
     if expected_seconds == 0.0 and actual_seconds == 0.0:
         return {}
     return {"solution_seconds": expected_seconds, "answer_seconds": actual_seconds}
+
+
+def _check_multi_session_trace(
+    record: ExerciseRecord, answer_path: Path | None = None
+) -> tuple[bool, str, dict[str, float]]:
+    profile = record.lab_harness_profile
+    if not profile:
+        msg = "multi_session_trace checks require lab_harness_profile"
+        raise ValueError(msg)
+    scenario_path = concurrency_harness.find_scenario(profile)
+    resolved_answer_path = answer_path or record.answer_path
+    learner_sql = None
+    scenario_text = scenario_path.read_text(encoding="utf-8")
+    if concurrency_harness.LEARNER_SQL_PLACEHOLDER in scenario_text:
+        if not resolved_answer_path.is_file():
+            msg = f"answer file not found: {_relative_path(resolved_answer_path)}"
+            raise FileNotFoundError(msg)
+        learner_sql = resolved_answer_path.read_text(encoding="utf-8")
+    else:
+        msg = (
+            "multi_session_trace checks require a scenario with "
+            f"{concurrency_harness.LEARNER_SQL_PLACEHOLDER}"
+        )
+        raise ValueError(msg)
+    report = concurrency_harness.run_scenario_path(scenario_path, learner_sql=learner_sql)
+    if report.ok:
+        return True, "", {}
+    return False, report.diff or concurrency_harness.normalized_transcript(report), {}
 
 
 def save_answer_from_history(record: ExerciseRecord) -> Path:

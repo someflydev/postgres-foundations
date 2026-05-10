@@ -10,6 +10,8 @@ The seed data includes Phase 6 rows for ecommerce inventory, order reservations,
 
 Reproduce a lost update in two psql sessions; fix it with FOR UPDATE and re-run; document the outcome of each.
 
+For `--check`, submit only the SQL statement that Session A should run after `BEGIN` to lock `pgfound_harness.inventory` row `product_id = 1`.
+
 ## Success Criteria
 
 - The answer names the invariant before choosing a PostgreSQL mechanism.

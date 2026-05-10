@@ -10,6 +10,8 @@ The seed data includes Phase 6 rows for ecommerce inventory, order reservations,
 
 Reproduce write skew in REPEATABLE READ and show that SERIALIZABLE prevents it.
 
+For `--check`, submit only the `BEGIN` statement that starts each session at the isolation level that prevents write skew.
+
 ## Success Criteria
 
 - The answer names the invariant before choosing a PostgreSQL mechanism.

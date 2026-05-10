@@ -1,0 +1,39 @@
+name: check-appointment-exclusion-fix
+sessions:
+  A: {role: pgfound, database: pgfound}
+  B: {role: pgfound, database: pgfound}
+setup_sql: |
+  CREATE EXTENSION IF NOT EXISTS btree_gist;
+  CREATE SCHEMA IF NOT EXISTS pgfound_harness;
+  DROP TABLE IF EXISTS pgfound_harness.appointment_holds;
+  CREATE TABLE pgfound_harness.appointment_holds (
+      id bigint generated always as identity PRIMARY KEY,
+      professional_id integer NOT NULL,
+      slot tstzrange NOT NULL,
+      CONSTRAINT appointment_holds_nonempty_check CHECK (NOT isempty(slot))
+  );
+steps:
+  - session: A
+    sql: "${LEARNER_SQL}"
+  - session: A
+    sql: "BEGIN;"
+  - session: B
+    sql: "BEGIN;"
+  - session: A
+    sql: "INSERT INTO pgfound_harness.appointment_holds (professional_id, slot) VALUES (1, tstzrange('2026-05-10 15:00:00+00', '2026-05-10 15:30:00+00', '[)'));"
+    expect:
+      rowcount: 1
+  - session: A
+    sql: "COMMIT;"
+  - session: B
+    sql: "INSERT INTO pgfound_harness.appointment_holds (professional_id, slot) VALUES (1, tstzrange('2026-05-10 15:15:00+00', '2026-05-10 15:45:00+00', '[)'));"
+    expect:
+      error_code: "23P01"
+  - session: B
+    sql: "ROLLBACK;"
+  - session: A
+    sql: "SELECT count(*)::int AS holds FROM pgfound_harness.appointment_holds;"
+    expect:
+      rows: [{holds: 1}]
+teardown_sql: |
+  DROP TABLE IF EXISTS pgfound_harness.appointment_holds;

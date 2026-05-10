@@ -10,6 +10,8 @@ The seed data includes Phase 6 rows for ecommerce inventory, order reservations,
 
 Trace a timeout and retry of the same reservation request, then add an idempotency key so the retry returns the original result.
 
+For `--check`, submit only the retry insert into `pgfound_harness.transfer_requests`; it should use the existing `retry-key` idempotency key and avoid duplicating the transfer.
+
 ## Success Criteria
 
 - The answer names the invariant before choosing a PostgreSQL mechanism.

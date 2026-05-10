@@ -10,6 +10,8 @@ The seed data includes Phase 6 rows for ecommerce inventory, order reservations,
 
 Run two range-check transactions and capture the serialization failure that protects the invariant.
 
+For `--check`, submit only the `BEGIN` statement that starts each session at SERIALIZABLE isolation.
+
 ## Success Criteria
 
 - The answer names the invariant before choosing a PostgreSQL mechanism.

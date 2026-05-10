@@ -64,7 +64,7 @@
     "phantom-reads-and-range-checks"
   ],
   "status": "active",
-  "lab_harness_profile": "two-session",
+  "lab_harness_profile": "check-appointment-exclusion-fix",
   "oral_defense_prompts": [
     "What exact interleaving creates the risk?",
     "What does PostgreSQL guarantee at the chosen isolation level?",

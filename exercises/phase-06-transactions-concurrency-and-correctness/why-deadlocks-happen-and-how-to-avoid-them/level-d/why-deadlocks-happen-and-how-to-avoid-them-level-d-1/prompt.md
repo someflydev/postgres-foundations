@@ -10,6 +10,8 @@ The seed data includes Phase 6 rows for ecommerce inventory, order reservations,
 
 A deadlock arises from two functions that update the same two rows in opposite orders. Reorder the work and explain the retry boundary.
 
+For `--check`, submit only the Session B row-locking query that locks both `pgfound_harness.accounts` rows in deterministic id order.
+
 ## Success Criteria
 
 - The answer names the invariant before choosing a PostgreSQL mechanism.

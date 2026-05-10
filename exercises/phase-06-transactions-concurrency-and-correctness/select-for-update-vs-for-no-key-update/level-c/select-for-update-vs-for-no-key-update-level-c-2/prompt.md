@@ -10,6 +10,8 @@ The seed data includes Phase 6 rows for ecommerce inventory, order reservations,
 
 Trace blocking behavior for FOR UPDATE and FOR NO KEY UPDATE around a reservation row.
 
+For `--check`, submit only the SQL statement that Session A should run after `BEGIN` to lock `pgfound_harness.inventory` row `product_id = 1`.
+
 ## Success Criteria
 
 - The answer names the invariant before choosing a PostgreSQL mechanism.

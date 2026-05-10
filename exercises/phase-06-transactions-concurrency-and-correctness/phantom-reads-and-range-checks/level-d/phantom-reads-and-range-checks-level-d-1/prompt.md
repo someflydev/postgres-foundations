@@ -10,6 +10,8 @@ The seed data includes Phase 6 rows for ecommerce inventory, order reservations,
 
 A reservation system silently allows double-booking because the check-then-insert pattern has no row lock. Fix it and explain why it works under concurrent load.
 
+For `--check`, submit only the DDL that adds the exclusion constraint to `pgfound_harness.appointment_holds`.
+
 ## Success Criteria
 
 - The answer names the invariant before choosing a PostgreSQL mechanism.

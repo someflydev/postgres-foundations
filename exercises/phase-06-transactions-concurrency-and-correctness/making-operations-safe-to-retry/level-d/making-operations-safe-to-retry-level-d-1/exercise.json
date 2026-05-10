@@ -63,7 +63,7 @@
     "making-operations-safe-to-retry"
   ],
   "status": "active",
-  "lab_harness_profile": "two-session",
+  "lab_harness_profile": "check-funds-idempotent-retry",
   "oral_defense_prompts": [
     "What exact interleaving creates the risk?",
     "What does PostgreSQL guarantee at the chosen isolation level?",

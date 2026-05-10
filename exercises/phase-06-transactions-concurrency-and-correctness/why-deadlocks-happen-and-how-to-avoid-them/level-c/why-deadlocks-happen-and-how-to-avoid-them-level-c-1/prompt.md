@@ -10,6 +10,8 @@ The seed data includes Phase 6 rows for ecommerce inventory, order reservations,
 
 Run two transfers that lock bank accounts in opposite order and annotate PostgreSQL deadlock detection.
 
+For `--check`, submit only Session B's second account update, the statement that completes the opposite lock order and triggers deadlock detection.
+
 ## Success Criteria
 
 - The answer names the invariant before choosing a PostgreSQL mechanism.

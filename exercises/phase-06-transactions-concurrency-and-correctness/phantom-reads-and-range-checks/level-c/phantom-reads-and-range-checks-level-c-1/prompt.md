@@ -10,6 +10,8 @@ The seed data includes Phase 6 rows for ecommerce inventory, order reservations,
 
 Show how two sessions can both pass an absence check before inserting overlapping range facts.
 
+For `--check`, submit only the absence-check query against `pgfound_harness.appointment_holds`; it must return one column named `overlapping`.
+
 ## Success Criteria
 
 - The answer names the invariant before choosing a PostgreSQL mechanism.
