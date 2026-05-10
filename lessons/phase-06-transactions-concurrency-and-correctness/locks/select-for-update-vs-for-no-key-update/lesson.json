@@ -1,0 +1,62 @@
+{
+  "id": "select-for-update-vs-for-no-key-update",
+  "title": "SELECT FOR UPDATE vs FOR NO KEY UPDATE",
+  "phase": 6,
+  "capability_layer": "transactions_and_correctness",
+  "summary": "Not every row lock needs to block key-related foreign key work.",
+  "learning_objectives": [
+    "Choose the weakest row lock that protects the operation.",
+    "Explain the concurrent session ordering that makes the issue appear or disappear."
+  ],
+  "prerequisites": [
+    "synthesis-choosing-the-right-shape"
+  ],
+  "concepts_introduced": [
+    "select_for_update",
+    "select_for_no_key_update",
+    "lock"
+  ],
+  "concepts_not_yet_allowed": [
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "select-for-update-vs-for-no-key-update-level-a-1",
+    "select-for-update-vs-for-no-key-update-level-a-2",
+    "select-for-update-vs-for-no-key-update-level-b-1",
+    "select-for-update-vs-for-no-key-update-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "select-for-update-vs-for-no-key-update-level-c-1",
+    "select-for-update-vs-for-no-key-update-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "select-for-update-vs-for-no-key-update-level-d-1",
+    "select-for-update-vs-for-no-key-update-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which invariant is at risk when two sessions overlap?",
+    "What is the weakest PostgreSQL mechanism that preserves it?"
+  ],
+  "estimated_time_minutes": 40,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "concurrency-playbook",
+      "why": "Race-family reference for Phase 6 drills."
+    }
+  ],
+  "tags": [
+    "phase-6",
+    "transactions-and-correctness",
+    "select_for_update",
+    "select_for_no_key_update",
+    "lock"
+  ],
+  "status": "active"
+}

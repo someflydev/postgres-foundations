@@ -1,0 +1,60 @@
+{
+  "id": "begin-commit-rollback-and-error-handling",
+  "title": "BEGIN, COMMIT, ROLLBACK, and Error Handling",
+  "phase": 6,
+  "capability_layer": "transactions_and_correctness",
+  "summary": "Failed statements poison the transaction until rollback.",
+  "learning_objectives": [
+    "Handle transaction errors deliberately and recover with rollback or savepoint.",
+    "Explain the concurrent session ordering that makes the issue appear or disappear."
+  ],
+  "prerequisites": [
+    "synthesis-choosing-the-right-shape"
+  ],
+  "concepts_introduced": [
+    "begin_commit_rollback",
+    "transaction"
+  ],
+  "concepts_not_yet_allowed": [
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "begin-commit-rollback-and-error-handling-level-a-1",
+    "begin-commit-rollback-and-error-handling-level-a-2",
+    "begin-commit-rollback-and-error-handling-level-b-1",
+    "begin-commit-rollback-and-error-handling-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "begin-commit-rollback-and-error-handling-level-c-1",
+    "begin-commit-rollback-and-error-handling-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "begin-commit-rollback-and-error-handling-level-d-1",
+    "begin-commit-rollback-and-error-handling-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which invariant is at risk when two sessions overlap?",
+    "What is the weakest PostgreSQL mechanism that preserves it?"
+  ],
+  "estimated_time_minutes": 40,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "concurrency-playbook",
+      "why": "Race-family reference for Phase 6 drills."
+    }
+  ],
+  "tags": [
+    "phase-6",
+    "transactions-and-correctness",
+    "begin_commit_rollback",
+    "transaction"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,62 @@
+{
+  "id": "why-deadlocks-happen-and-how-to-avoid-them",
+  "title": "Why Deadlocks Happen and How to Avoid Them",
+  "phase": 6,
+  "capability_layer": "transactions_and_correctness",
+  "summary": "Deadlocks are cycles in lock ordering, not mysterious database failures.",
+  "learning_objectives": [
+    "Prevent deadlocks with consistent ordering and retry logic.",
+    "Explain the concurrent session ordering that makes the issue appear or disappear."
+  ],
+  "prerequisites": [
+    "synthesis-choosing-the-right-shape"
+  ],
+  "concepts_introduced": [
+    "deadlock",
+    "lock",
+    "advisory_lock"
+  ],
+  "concepts_not_yet_allowed": [
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "why-deadlocks-happen-and-how-to-avoid-them-level-a-1",
+    "why-deadlocks-happen-and-how-to-avoid-them-level-a-2",
+    "why-deadlocks-happen-and-how-to-avoid-them-level-b-1",
+    "why-deadlocks-happen-and-how-to-avoid-them-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "why-deadlocks-happen-and-how-to-avoid-them-level-c-1",
+    "why-deadlocks-happen-and-how-to-avoid-them-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "why-deadlocks-happen-and-how-to-avoid-them-level-d-1",
+    "why-deadlocks-happen-and-how-to-avoid-them-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which invariant is at risk when two sessions overlap?",
+    "What is the weakest PostgreSQL mechanism that preserves it?"
+  ],
+  "estimated_time_minutes": 40,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "concurrency-playbook",
+      "why": "Race-family reference for Phase 6 drills."
+    }
+  ],
+  "tags": [
+    "phase-6",
+    "transactions-and-correctness",
+    "deadlock",
+    "lock",
+    "advisory_lock"
+  ],
+  "status": "active"
+}

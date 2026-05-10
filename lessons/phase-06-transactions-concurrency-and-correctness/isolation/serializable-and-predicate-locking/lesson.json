@@ -1,0 +1,60 @@
+{
+  "id": "serializable-and-predicate-locking",
+  "title": "SERIALIZABLE and Predicate Locking",
+  "phase": 6,
+  "capability_layer": "transactions_and_correctness",
+  "summary": "Serializable protects read predicates by aborting unsafe interleavings.",
+  "learning_objectives": [
+    "Apply retry-on-conflict around serializable transactions.",
+    "Explain the concurrent session ordering that makes the issue appear or disappear."
+  ],
+  "prerequisites": [
+    "synthesis-choosing-the-right-shape"
+  ],
+  "concepts_introduced": [
+    "serializable",
+    "predicate_lock"
+  ],
+  "concepts_not_yet_allowed": [
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "serializable-and-predicate-locking-level-a-1",
+    "serializable-and-predicate-locking-level-a-2",
+    "serializable-and-predicate-locking-level-b-1",
+    "serializable-and-predicate-locking-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "serializable-and-predicate-locking-level-c-1",
+    "serializable-and-predicate-locking-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "serializable-and-predicate-locking-level-d-1",
+    "serializable-and-predicate-locking-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which invariant is at risk when two sessions overlap?",
+    "What is the weakest PostgreSQL mechanism that preserves it?"
+  ],
+  "estimated_time_minutes": 40,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "concurrency-playbook",
+      "why": "Race-family reference for Phase 6 drills."
+    }
+  ],
+  "tags": [
+    "phase-6",
+    "transactions-and-correctness",
+    "serializable",
+    "predicate_lock"
+  ],
+  "status": "active"
+}

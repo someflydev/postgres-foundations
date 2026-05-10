@@ -1,0 +1,2 @@
+-- Optional starter SQL for Phase 6 concurrency practice.
+-- Open separate psql sessions when the exercise asks for a trace.

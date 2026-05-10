@@ -1,0 +1,62 @@
+{
+  "id": "lost-update",
+  "title": "Lost Update",
+  "phase": 6,
+  "capability_layer": "transactions_and_correctness",
+  "summary": "Two sessions overwrite each other unless the row is locked or retried.",
+  "learning_objectives": [
+    "Reproduce and repair a lost inventory update.",
+    "Explain the concurrent session ordering that makes the issue appear or disappear."
+  ],
+  "prerequisites": [
+    "synthesis-choosing-the-right-shape"
+  ],
+  "concepts_introduced": [
+    "lost_update",
+    "select_for_update",
+    "row_lock"
+  ],
+  "concepts_not_yet_allowed": [
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "lost-update-level-a-1",
+    "lost-update-level-a-2",
+    "lost-update-level-b-1",
+    "lost-update-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "lost-update-level-c-1",
+    "lost-update-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "lost-update-level-d-1",
+    "lost-update-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which invariant is at risk when two sessions overlap?",
+    "What is the weakest PostgreSQL mechanism that preserves it?"
+  ],
+  "estimated_time_minutes": 40,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "concurrency-playbook",
+      "why": "Race-family reference for Phase 6 drills."
+    }
+  ],
+  "tags": [
+    "phase-6",
+    "transactions-and-correctness",
+    "lost_update",
+    "select_for_update",
+    "row_lock"
+  ],
+  "status": "active"
+}

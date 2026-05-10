@@ -1,0 +1,60 @@
+{
+  "id": "repeatable-read-and-snapshot-isolation",
+  "title": "REPEATABLE READ and Snapshot Isolation",
+  "phase": 6,
+  "capability_layer": "transactions_and_correctness",
+  "summary": "A stable snapshot helps reports but does not make every invariant safe.",
+  "learning_objectives": [
+    "Use REPEATABLE READ where a stable view is needed and name its limits.",
+    "Explain the concurrent session ordering that makes the issue appear or disappear."
+  ],
+  "prerequisites": [
+    "synthesis-choosing-the-right-shape"
+  ],
+  "concepts_introduced": [
+    "repeatable_read",
+    "snapshot_isolation"
+  ],
+  "concepts_not_yet_allowed": [
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "repeatable-read-and-snapshot-isolation-level-a-1",
+    "repeatable-read-and-snapshot-isolation-level-a-2",
+    "repeatable-read-and-snapshot-isolation-level-b-1",
+    "repeatable-read-and-snapshot-isolation-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "repeatable-read-and-snapshot-isolation-level-c-1",
+    "repeatable-read-and-snapshot-isolation-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "repeatable-read-and-snapshot-isolation-level-d-1",
+    "repeatable-read-and-snapshot-isolation-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which invariant is at risk when two sessions overlap?",
+    "What is the weakest PostgreSQL mechanism that preserves it?"
+  ],
+  "estimated_time_minutes": 40,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "concurrency-playbook",
+      "why": "Race-family reference for Phase 6 drills."
+    }
+  ],
+  "tags": [
+    "phase-6",
+    "transactions-and-correctness",
+    "repeatable_read",
+    "snapshot_isolation"
+  ],
+  "status": "active"
+}

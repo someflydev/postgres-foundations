@@ -1,0 +1,60 @@
+{
+  "id": "making-operations-safe-to-retry",
+  "title": "Making Operations Safe to Retry",
+  "phase": 6,
+  "capability_layer": "transactions_and_correctness",
+  "summary": "Retries are only safe when the operation has a durable identity.",
+  "learning_objectives": [
+    "Design retryable operations with idempotency keys and upserts.",
+    "Explain the concurrent session ordering that makes the issue appear or disappear."
+  ],
+  "prerequisites": [
+    "synthesis-choosing-the-right-shape"
+  ],
+  "concepts_introduced": [
+    "idempotency",
+    "savepoint"
+  ],
+  "concepts_not_yet_allowed": [
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "making-operations-safe-to-retry-level-a-1",
+    "making-operations-safe-to-retry-level-a-2",
+    "making-operations-safe-to-retry-level-b-1",
+    "making-operations-safe-to-retry-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "making-operations-safe-to-retry-level-c-1",
+    "making-operations-safe-to-retry-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "making-operations-safe-to-retry-level-d-1",
+    "making-operations-safe-to-retry-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which invariant is at risk when two sessions overlap?",
+    "What is the weakest PostgreSQL mechanism that preserves it?"
+  ],
+  "estimated_time_minutes": 40,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "concurrency-playbook",
+      "why": "Race-family reference for Phase 6 drills."
+    }
+  ],
+  "tags": [
+    "phase-6",
+    "transactions-and-correctness",
+    "idempotency",
+    "savepoint"
+  ],
+  "status": "active"
+}

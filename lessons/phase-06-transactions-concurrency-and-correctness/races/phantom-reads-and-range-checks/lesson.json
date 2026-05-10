@@ -1,0 +1,60 @@
+{
+  "id": "phantom-reads-and-range-checks",
+  "title": "Phantom Reads and Range Checks",
+  "phase": 6,
+  "capability_layer": "transactions_and_correctness",
+  "summary": "Range checks need protection for the rows that do not exist yet.",
+  "learning_objectives": [
+    "Choose isolation or locking for predicates over sets of rows.",
+    "Explain the concurrent session ordering that makes the issue appear or disappear."
+  ],
+  "prerequisites": [
+    "synthesis-choosing-the-right-shape"
+  ],
+  "concepts_introduced": [
+    "phantom_read",
+    "predicate_lock"
+  ],
+  "concepts_not_yet_allowed": [
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "phantom-reads-and-range-checks-level-a-1",
+    "phantom-reads-and-range-checks-level-a-2",
+    "phantom-reads-and-range-checks-level-b-1",
+    "phantom-reads-and-range-checks-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "phantom-reads-and-range-checks-level-c-1",
+    "phantom-reads-and-range-checks-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "phantom-reads-and-range-checks-level-d-1",
+    "phantom-reads-and-range-checks-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which invariant is at risk when two sessions overlap?",
+    "What is the weakest PostgreSQL mechanism that preserves it?"
+  ],
+  "estimated_time_minutes": 40,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "concurrency-playbook",
+      "why": "Race-family reference for Phase 6 drills."
+    }
+  ],
+  "tags": [
+    "phase-6",
+    "transactions-and-correctness",
+    "phantom_read",
+    "predicate_lock"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,68 @@
+{
+  "id": "what-a-transaction-is-level-a-2",
+  "title": "What a Transaction Is Level A2",
+  "lesson_id": "what-a-transaction-is",
+  "scaffolding_level": "A",
+  "kind": "lab",
+  "allowed_concepts": [
+    "acid",
+    "aggregate",
+    "begin_commit_rollback",
+    "cte",
+    "deadlock",
+    "idempotency",
+    "isolation_level",
+    "join",
+    "lock",
+    "mvcc",
+    "read_committed",
+    "repeatable_read",
+    "row_lock",
+    "select",
+    "serializable",
+    "transaction",
+    "upsert"
+  ],
+  "not_yet_allowed_concepts": [
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "schema_scope": {
+    "phase": "6",
+    "tables": [
+      "ecommerce.inventory",
+      "ecommerce.order_reservations",
+      "scheduling.appointment_holds"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 60000
+  },
+  "search_path": "ecommerce, scheduling, bank, public",
+  "expected_output_shape": "prose_explanation",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Names the protected invariant.",
+    "Shows the relevant transaction or lock behavior.",
+    "Explains why the repair is sufficient for the stated workload."
+  ],
+  "time_target_minutes": 15,
+  "rubric_id": "concurrency-reasoning",
+  "solution_path": "solution.md",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-6",
+    "concurrency",
+    "what-a-transaction-is"
+  ],
+  "status": "active",
+  "hints": [
+    "Start by naming the invariant and the two statements that could overlap."
+  ]
+}

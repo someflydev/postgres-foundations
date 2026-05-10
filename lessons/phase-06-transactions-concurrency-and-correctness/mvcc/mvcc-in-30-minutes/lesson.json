@@ -1,0 +1,60 @@
+{
+  "id": "mvcc-in-30-minutes",
+  "title": "MVCC in 30 Minutes",
+  "phase": 6,
+  "capability_layer": "transactions_and_correctness",
+  "summary": "Snapshots and row versions explain why PostgreSQL concurrency feels different.",
+  "learning_objectives": [
+    "Explain reader and writer behavior using row versions and snapshots.",
+    "Explain the concurrent session ordering that makes the issue appear or disappear."
+  ],
+  "prerequisites": [
+    "synthesis-choosing-the-right-shape"
+  ],
+  "concepts_introduced": [
+    "mvcc",
+    "snapshot_isolation"
+  ],
+  "concepts_not_yet_allowed": [
+    "index",
+    "full_text_search",
+    "partitioning",
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "mvcc-in-30-minutes-level-a-1",
+    "mvcc-in-30-minutes-level-a-2",
+    "mvcc-in-30-minutes-level-b-1",
+    "mvcc-in-30-minutes-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "mvcc-in-30-minutes-level-c-1",
+    "mvcc-in-30-minutes-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "mvcc-in-30-minutes-level-d-1",
+    "mvcc-in-30-minutes-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which invariant is at risk when two sessions overlap?",
+    "What is the weakest PostgreSQL mechanism that preserves it?"
+  ],
+  "estimated_time_minutes": 40,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "concurrency-playbook",
+      "why": "Race-family reference for Phase 6 drills."
+    }
+  ],
+  "tags": [
+    "phase-6",
+    "transactions-and-correctness",
+    "mvcc",
+    "snapshot_isolation"
+  ],
+  "status": "active"
+}

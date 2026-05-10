@@ -8,6 +8,18 @@ First taught: phase 6, `transactions-concurrency-and-correctness`. Atomicity,
 consistency, isolation, and durability describe the transaction properties
 PostgreSQL provides so groups of changes can be treated as reliable units.
 
+## Transaction
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. A unit of
+work bounded by `BEGIN`, `COMMIT`, and `ROLLBACK` so related changes succeed or
+fail together.
+
+## BEGIN, COMMIT, and ROLLBACK
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. Commands
+that start a transaction, make its changes durable, or abandon its uncommitted
+changes.
+
 ## MVCC
 
 First taught: phase 6, `transactions-concurrency-and-correctness`. Multi-version
@@ -18,6 +30,18 @@ than forcing every read to block every write.
 
 First taught: phase 6, `transactions-concurrency-and-correctness`. A snapshot is
 the set of row versions a transaction can see under its isolation rules.
+
+## Isolation Level
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. The rule set
+that controls which concurrent changes a transaction can observe and which
+interleavings PostgreSQL may reject.
+
+## Snapshot Isolation
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. Isolation
+behavior where a transaction works from a stable snapshot while concurrent
+writers create newer row versions.
 
 ## SERIALIZABLE
 
@@ -45,6 +69,52 @@ specific row version, commonly taken by updates or explicit locking reads.
 First taught: phase 6, `transactions-concurrency-and-correctness`. A lock-like
 serialization mechanism that protects a searched condition, not only an
 individual row.
+
+## Lost Update
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. A race where
+two sessions read the same value and the later write overwrites the effect of
+the earlier write.
+
+## Write Skew
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. A race where
+two sessions each make a locally valid change to different rows while their
+combined result violates a shared invariant.
+
+## Phantom Read
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. A visibility
+effect where a repeated predicate can see rows that were inserted by another
+transaction after the earlier check.
+
+## SELECT FOR UPDATE
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. A locking
+read that takes row locks suitable when the selected rows drive later writes.
+
+## SELECT FOR NO KEY UPDATE
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. A weaker
+locking read that protects row contents without taking the stronger lock used
+for key-changing updates.
+
+## Savepoint
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. A marker
+inside a transaction that allows part of the work to roll back without
+abandoning the whole transaction.
+
+## Advisory Lock
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. An
+application-defined PostgreSQL lock keyed by numbers rather than by table rows.
+
+## Idempotency
+
+First taught: phase 6, `transactions-concurrency-and-correctness`. A property
+of an operation that lets a retry safely return the same result instead of
+duplicating the side effect.
 
 ## Foreign Key
 
