@@ -1,0 +1,3 @@
+# Reference Solution
+
+The incident is that a timezone-naive timestamp was stored as UTC by convention, but PostgreSQL could not enforce or display that convention. A client in another zone can read the label as local time and move the real appointment or order instant. Repair by adding a `timestamptz` column, backfilling with `old_timestamp AT TIME ZONE 'UTC'` only after confirming the old convention, making the column `NOT NULL`, and updating application writes. Display with `ordered_at AT TIME ZONE requested_timezone`. The bad-fit example is keeping `timestamp` for event time and relying on comments. The good-fit example is `orders.ordered_at timestamptz` for an order instant.

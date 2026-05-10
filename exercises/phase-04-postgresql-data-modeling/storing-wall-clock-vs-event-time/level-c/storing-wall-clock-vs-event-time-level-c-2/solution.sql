@@ -1,0 +1,1 @@
+SELECT p.display_name, a.starts_at AT TIME ZONE p.timezone AS appointment_wall_clock FROM scheduling.appointments a INNER JOIN scheduling.providers p ON p.id=a.provider_id ORDER BY appointment_wall_clock;

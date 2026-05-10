@@ -1,0 +1,78 @@
+{
+  "id": "json-vs-jsonb-diagnose-phase4a-incident",
+  "title": "Diagnose and repair the incident: JSON vs JSONB",
+  "lesson_id": "json-vs-jsonb",
+  "scaffolding_level": "D",
+  "kind": "debug",
+  "allowed_concepts": [
+    "select",
+    "where",
+    "order_by",
+    "limit",
+    "insert",
+    "update",
+    "delete",
+    "null",
+    "data_type",
+    "primary_key",
+    "foreign_key",
+    "inner_join",
+    "left_join",
+    "group_by",
+    "aggregate",
+    "unique_constraint",
+    "check_constraint",
+    "not_null",
+    "alter_table",
+    "migration",
+    "timestamp",
+    "timestamptz",
+    "uuid",
+    "json",
+    "jsonb",
+    "interval"
+  ],
+  "not_yet_allowed_concepts": [
+    "array",
+    "range_type",
+    "multirange",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "partitioning",
+    "gin_index",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "schema_scope": {
+    "phase": "4a",
+    "schemas": [
+      "saas"
+    ],
+    "tables": []
+  },
+  "dataset": {
+    "seed_pack_id": "saas_multi_tenant",
+    "max_rows_hint": 50
+  },
+  "expected_output_shape": "prose_explanation",
+  "success_criteria": [
+    "The answer addresses the modeled fact, not just the syntax.",
+    "The answer stays inside the Phase 4a concept boundary."
+  ],
+  "time_target_minutes": 45,
+  "rubric_id": "critique-and-repair",
+  "solution_path": "solution.md",
+  "tags": [
+    "phase-4a"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "What incident can this mistake cause?",
+    "Which schema or query change repairs the root cause?",
+    "Which later feature is still not allowed as the first fix?"
+  ]
+}

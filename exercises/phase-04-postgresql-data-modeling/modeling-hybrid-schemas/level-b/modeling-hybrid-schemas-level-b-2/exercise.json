@@ -1,0 +1,77 @@
+{
+  "id": "modeling-hybrid-schemas-level-b-2",
+  "title": "Filter the modeled rows: Modeling Hybrid Schemas",
+  "lesson_id": "modeling-hybrid-schemas",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "select",
+    "where",
+    "order_by",
+    "limit",
+    "insert",
+    "update",
+    "delete",
+    "null",
+    "data_type",
+    "primary_key",
+    "foreign_key",
+    "inner_join",
+    "left_join",
+    "group_by",
+    "aggregate",
+    "unique_constraint",
+    "check_constraint",
+    "not_null",
+    "alter_table",
+    "migration",
+    "timestamp",
+    "timestamptz",
+    "uuid",
+    "json",
+    "jsonb",
+    "interval"
+  ],
+  "not_yet_allowed_concepts": [
+    "array",
+    "range_type",
+    "multirange",
+    "cte",
+    "window_function",
+    "lateral_join",
+    "recursive_cte",
+    "partitioning",
+    "gin_index",
+    "materialized_view",
+    "view",
+    "upsert",
+    "function_definitions"
+  ],
+  "schema_scope": {
+    "phase": "4a",
+    "schemas": [
+      "ecommerce"
+    ],
+    "tables": []
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 50
+  },
+  "expected_output_shape": "rowset",
+  "success_criteria": [
+    "The answer addresses the modeled fact, not just the syntax.",
+    "The answer stays inside the Phase 4a concept boundary."
+  ],
+  "time_target_minutes": 20,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "tags": [
+    "phase-4a"
+  ],
+  "status": "active",
+  "starter_path": "starter.sql",
+  "hints": [
+    "Name the fact first, then choose the PostgreSQL feature that preserves it."
+  ]
+}

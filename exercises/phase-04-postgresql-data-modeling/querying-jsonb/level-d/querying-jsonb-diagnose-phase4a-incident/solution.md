@@ -1,0 +1,3 @@
+# Reference Solution
+
+The incident is a containment predicate over `metadata @> ...` that must inspect many JSONB values. A normal scalar B-tree index does not understand JSONB containment, so it cannot make that predicate selective in the way the team expects. A GIN index is the later PostgreSQL feature that matches containment, but Phase 4a only asks for diagnosis. The repair now is to explain the slow query, confirm whether the filtered key is hot enough to become a real column, and avoid pretending a wrong index fixes the model. Good fit: occasional containment checks on cold metadata. Bad fit: a constant reporting predicate hidden in JSONB.
