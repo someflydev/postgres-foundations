@@ -21,6 +21,9 @@ from pgfound.content import scaffold as content_scaffold
 from pgfound.content import seed as content_seed
 from pgfound.content import seed_doctor as content_seed_doctor
 from pgfound.content import validate as content_validator
+from pgfound.interview import rubric as interview_rubric
+from pgfound.interview import scenario as interview_scenario
+from pgfound.interview import session as interview_session
 from pgfound.lab import compose
 from pgfound.lab import explain as lab_explain
 from pgfound.lab import harness as concurrency_harness
@@ -815,6 +818,37 @@ def exercise_review(
     _success(f"json: {result.report_paths['json']}")
 
 
+@main.group(help="Run interview simulator sessions.")
+def interview() -> None:
+    """Run interview simulator sessions."""
+
+
+@interview.command("start", help="Start a stubbed interview session.")
+@click.option("--scenario", "scenario_id", help="Interview scenario ID.")
+@click.option("--learner", default="local-learner", show_default=True, help="Learner label.")
+def interview_start(scenario_id: str | None, learner: str) -> None:
+    """Run one interview scenario and write a transcript."""
+    if scenario_id is None:
+        _success("interview simulator implemented in PROMPT_28; pass --scenario <id> to start")
+        return
+    try:
+        scenario = interview_scenario.load_scenario(scenario_id)
+        interview_session.run_session(scenario, learner=learner)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+
+
+@interview.command("review", help="Review an existing interview transcript.")
+@click.argument("transcript_path", type=click.Path(path_type=Path))
+def interview_review(transcript_path: Path) -> None:
+    """Evaluate one saved interview transcript."""
+    try:
+        result = interview_rubric.evaluate(transcript_path)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    console.print(interview_rubric.format_summary(result))
+
+
 @main.group(help="Show learner progress.")
 def progress() -> None:
     """Show learner progress."""
@@ -986,14 +1020,3 @@ def decision() -> None:
 def decision_run() -> None:
     """Run the decision engine; implemented in PROMPT_43."""
     _success("decision engine lands in PROMPT_43")
-
-
-@main.group(help="Run interview simulator commands.")
-def interview() -> None:
-    """Run interview simulator commands."""
-
-
-@interview.command("start", help="Start the interview simulator; implemented in PROMPT_28.")
-def interview_start() -> None:
-    """Start the interview simulator; implemented in PROMPT_28."""
-    _success("interview simulator lands in PROMPT_28")
