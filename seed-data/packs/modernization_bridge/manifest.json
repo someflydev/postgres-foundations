@@ -1,7 +1,7 @@
 {
   "domain": "modernization_bridge",
-  "phases_covered": [1, 2],
+  "phases_covered": [1, 2, 10],
   "planned_phases": [1, 2, 3, 4, 8, 10],
-  "depends_on_extensions": [],
-  "notes": "Legacy customer and order data supports migration, cleanup, federation, compatibility, and capstone modernization planning."
+  "depends_on_extensions": ["postgres_fdw"],
+  "notes": "Legacy customer and order data supports migration, cleanup, FDW federation, compatibility, and capstone modernization planning."
 }
