@@ -66,6 +66,13 @@ an answer, receives review, and defends the design. Capstones combine multiple
 skills and require the learner to handle ambiguity, failure, and operational
 constraints.
 
+Capstones are the clearest cross-subsystem exercise. They pull curriculum
+skills, administration practice, extension posture, scenario harnesses, rubrics,
+and decision-engine doctrine into one artifact. A capstone submission is not
+only a schema or a set of queries; it is a small planning record that explains
+which PostgreSQL core features are enough now, which extensions or topologies
+are deferred, and what operational evidence would change the recommendation.
+
 The coach or reviewer flow starts from a learner artifact. The reviewer uses
 rubrics, expected observations, and prompt templates to evaluate correctness,
 explanation quality, operational awareness, and repair ability. The interview

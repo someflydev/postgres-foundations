@@ -92,7 +92,13 @@ Completed:
   availability; capstone starter/reference layouts, composed capstone rubrics,
   `pgfound capstone start|evaluate`, scheduling concurrency scenario, and
   capstone corpus/CLI tests.
+- PROMPT_26: Capstones 3 and 4 for event-heavy operations and modernization
+  bridge; capstone starter/reference layouts, retention and FDW wiring
+  artifacts, extension-posture and operational-reasoning rubric dimensions,
+  backported capstone rubric composition, a stale materialized-view FDW
+  concurrency scenario, a Phase 10 critique exercise, capstones README, and
+  capstone corpus tests.
 
 Next expected prompt:
 
-- PROMPT_26: Capstones 3 and 4.
+- PROMPT_27: Review engine and rubric system.

@@ -132,6 +132,12 @@ Current baseline:
   reference DDL/query/runbook/writeup material, composed capstone rubrics,
   `pgfound capstone start|evaluate`, and a scheduling double-booking scenario
   under `scenarios/concurrency/`.
+- Capstones 3 and 4: PROMPT_26 added `capstones/03-event-heavy-ops/` and
+  `capstones/04-modernization-bridge/` with learner starter files, reference
+  DDL/query/runbook/writeup material, event retention and FDW wiring scripts,
+  extension-posture and operational-reasoning rubric dimensions, a capstones
+  README, a stale materialized-view FDW concurrency scenario, and a Phase 10
+  critique exercise for the modernization bridge.
 
 Canonical docs:
 
@@ -161,6 +167,7 @@ Canonical docs:
 - `docs/rls-playbook.md`
 - `docs/logical-replication-playbook.md`
 - `docs/anti-patterns/partition_too_early.md`
+- `capstones/README.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
@@ -207,6 +214,8 @@ Expected green checks:
 - `uv run pgfound content seed-doctor`
 - `uv run pgfound exercise run first-select-write-query --dry-run`
 - `uv run pgfound lab concurrency run scenarios/concurrency/inventory-lost-update.yaml`
+- `uv run pgfound capstone start 03-event-heavy-ops`
+- `uv run pgfound capstone start 04-modernization-bridge`
 - `uv run pgfound lab explain --help`
 - `uv run pytest -q -m 'not docker'`
 - `uv run pgfound progress show`

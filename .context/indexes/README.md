@@ -251,3 +251,15 @@ Capstone references introduced by PROMPT_25:
 - `docs/cli.md`
 - `tests/test_capstone_corpus.py`
 - `tests/test_capstone_start_cli.py`
+
+Capstone references introduced by PROMPT_26:
+
+- `capstones/03-event-heavy-ops/`
+- `capstones/04-modernization-bridge/`
+- `capstones/README.md`
+- `rubrics/default/extension-posture.rubric.json`
+- `rubrics/default/operational-reasoning.rubric.json`
+- `scenarios/concurrency/legacy-fdw-stale-matview.yaml`
+- `exercises/phase-10-roles-rls-replication-and-fdw/modernization-bridge-pattern/level-d/modernization-bridge-pattern-level-d-3/`
+- `tests/test_capstones_all.py`
+- `tests/test_extension_posture_rubric.py`

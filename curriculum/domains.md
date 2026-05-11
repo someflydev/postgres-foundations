@@ -39,7 +39,7 @@ double-booking races; phase 7 indexes lookup and range predicates; phase 9
 partitions historical reservation events if volume supports it; phase 10 adds
 role boundaries for operators and customers.
 
-Capstones: `02-scheduling-and-availability` is built directly on this domain.
+Capstones: `02-scheduling-availability` is built directly on this domain.
 
 ## `saas_multi_tenant`
 

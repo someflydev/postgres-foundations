@@ -482,7 +482,7 @@
       "summary": "Design, secure, query, and defend a tenant-scoped CRM with realistic reporting and access-control obligations."
     },
     {
-      "id": "02-scheduling-and-availability",
+      "id": "02-scheduling-availability",
       "title": "Scheduling and availability",
       "primary_domains": ["scheduling"],
       "planned_prompt": 25,
