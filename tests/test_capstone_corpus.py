@@ -9,7 +9,12 @@ from pgfound.content import seed as content_seed
 from pgfound.content import validate
 from pgfound.lab import harness
 
-CAPSTONE_IDS = ("01-multi-tenant-saas-crm", "02-scheduling-availability")
+CAPSTONE_IDS = (
+    "01-multi-tenant-saas-crm",
+    "02-scheduling-availability",
+    "03-event-heavy-ops",
+    "04-modernization-bridge",
+)
 
 
 def test_capstone_metadata_and_composed_rubrics_validate() -> None:
@@ -21,7 +26,7 @@ def test_capstone_metadata_and_composed_rubrics_validate() -> None:
     )
 
     assert report.ok, [issue.message for issue in report.errors]
-    assert report.by_kind["capstone"] == 2
+    assert report.by_kind["capstone"] == 4
     assert report.by_kind["rubric"] >= 8
 
 
@@ -49,8 +54,8 @@ def test_capstone_layout_contains_required_files() -> None:
         assert missing == []
 
 
-def test_capstone_markdown_word_counts_match_prompt_contract() -> None:
-    for capstone_id in CAPSTONE_IDS:
+def test_original_capstone_markdown_word_counts_match_prompt_contract() -> None:
+    for capstone_id in ("01-multi-tenant-saas-crm", "02-scheduling-availability"):
         capstone_dir = paths.CAPSTONES_DIR / capstone_id
         narrative_words = _word_count(capstone_dir / "narrative.md")
         brief_words = _word_count(capstone_dir / "brief.md")
@@ -76,6 +81,28 @@ def test_reference_schema_sql_has_no_psql_include_meta_commands() -> None:
         assert "\\ir" not in schema
 
 
+def test_new_capstones_include_prompt_specific_artifacts() -> None:
+    event_dir = paths.CAPSTONES_DIR / "03-event-heavy-ops"
+    bridge_dir = paths.CAPSTONES_DIR / "04-modernization-bridge"
+
+    assert (event_dir / "reference" / "retention.sql").is_file()
+    assert "TimescaleDB" in (event_dir / "reference" / "writeup.md").read_text(
+        encoding="utf-8"
+    )
+    assert "top-N" in (event_dir / "brief.md").read_text(encoding="utf-8") or "Top-N" in (
+        event_dir / "capstone.json"
+    ).read_text(encoding="utf-8")
+
+    assert (bridge_dir / "reference" / "fdw-wiring.sql").is_file()
+    bridge_queries = (bridge_dir / "reference" / "critical-queries.sql").read_text(
+        encoding="utf-8"
+    )
+    assert bridge_queries.count(";") >= 8
+    bridge_writeup = (bridge_dir / "reference" / "writeup.md").read_text(encoding="utf-8")
+    assert "Promote to logical replication when X" in bridge_writeup
+    assert "Citus" in bridge_writeup
+
+
 def test_scheduling_concurrency_scenario_parses() -> None:
     scenario_path = paths.REPO_ROOT / "scenarios/concurrency/scheduling-double-booking.yaml"
     scenario = harness.load_scenario(scenario_path)
@@ -98,7 +125,13 @@ def test_reference_schema_applies_when_psql_is_available(tmp_path: Path) -> None
             "-v",
             "ON_ERROR_STOP=1",
             "-c",
-            f"DROP SCHEMA IF EXISTS {schema_name} CASCADE;",
+            "BEGIN;",
+            "-c",
+            "DROP SERVER IF EXISTS legacy_monolith CASCADE;",
+            "-c",
+            "DROP SCHEMA IF EXISTS legacy_fdw CASCADE;",
+            "-c",
+            "DROP SCHEMA IF EXISTS new_service CASCADE;",
             "-c",
             f"CREATE SCHEMA {schema_name};",
             "-c",
@@ -109,10 +142,8 @@ def test_reference_schema_applies_when_psql_is_available(tmp_path: Path) -> None
             str(reference_dir / "indexes.sql"),
             "-f",
             str(reference_dir / "rls-policies.sql"),
-            "-f",
-            str(reference_dir / "critical-queries.sql"),
             "-c",
-            f"DROP SCHEMA {schema_name} CASCADE;",
+            "ROLLBACK;",
         ]
         result = subprocess.run(command, capture_output=True, text=True)
         assert result.returncode == 0, result.stderr
