@@ -48,7 +48,10 @@ def test_required_field_violations_have_clear_messages(kind: str, required_field
 
     messages = [error.message for error in validator.iter_errors(invalid)]
 
-    assert f"{required_field!r} is a required property" in messages
+    if kind == "rubric" and required_field == "dimensions":
+        assert any("is not valid under any of the given schemas" in message for message in messages)
+    else:
+        assert f"{required_field!r} is a required property" in messages
 
 
 def test_rubric_weight_sum_is_enforced_by_content_validator(tmp_path: Path) -> None:
@@ -59,6 +62,31 @@ def test_rubric_weight_sum_is_enforced_by_content_validator(tmp_path: Path) -> N
     path.write_text(json.dumps(rubric), encoding="utf-8")
 
     report = validate.validate_content(path_globs=(str(path),))
+
+    assert not report.ok
+    assert "weights must sum to 1.0" in report.errors[0].message
+
+
+def test_composed_rubric_weight_sum_includes_extends_and_own_dimensions(tmp_path: Path) -> None:
+    rubric = _example("rubric")
+    rubric["id"] = "composed-capstone"
+    rubric["applies_to"] = "capstone"
+    rubric.pop("dimensions")
+    rubric["extends"] = [{"rubric_id": "schema-design", "weight": 0.6}]
+    rubric["own_dimensions"] = [
+        {
+            "name": "defense",
+            "weight": 0.3,
+            "levels": {"0": "none", "1": "weak", "2": "partial", "3": "clear", "4": "strong"},
+        }
+    ]
+    path = tmp_path / "rubrics" / "composed.rubric.json"
+    path.parent.mkdir()
+    path.write_text(json.dumps(rubric), encoding="utf-8")
+
+    report = validate.validate_content(
+        path_globs=(str(path), "rubrics/default/schema-design.rubric.json")
+    )
 
     assert not report.ok
     assert "weights must sum to 1.0" in report.errors[0].message

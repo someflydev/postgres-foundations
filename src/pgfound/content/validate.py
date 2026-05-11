@@ -170,6 +170,10 @@ def discover_content_files(
 
 
 def infer_kind(file_path: Path) -> str | None:
+    if file_path.name == "rubric.json":
+        return "rubric"
+    if file_path.name == "capstone.json":
+        return "capstone"
     parts = set(file_path.parts)
     if file_path.name == "map.json" and file_path.parent.name == "curriculum":
         return "curriculum"
@@ -337,23 +341,69 @@ def _cross_file_checks(
                     ValidationIssue(item.kind, item.path, f"rubric_id {rubric_id!r} does not exist")
                 )
         elif item.kind == "rubric":
-            dimensions = data.get("dimensions", [])
-            if isinstance(dimensions, list):
-                total = sum(
-                    dimension.get("weight", 0)
-                    for dimension in dimensions
-                    if isinstance(dimension, dict)
-                    and isinstance(dimension.get("weight"), int | float)
-                )
-                if abs(total - 1.0) > 1e-6:
-                    errors.append(
-                        ValidationIssue(
-                            item.kind,
-                            item.path,
-                            f"rubric dimension weights must sum to 1.0; got {total:.6f}",
-                        )
+            errors.extend(_rubric_composition_errors(item, rubrics))
+        elif item.kind == "capstone":
+            rubric_id = data.get("review_rubric_id")
+            if rubric_id and str(rubric_id) not in rubrics:
+                errors.append(
+                    ValidationIssue(
+                        item.kind,
+                        item.path,
+                        f"review_rubric_id {rubric_id!r} does not exist",
                     )
+                )
     return errors, warnings
+
+
+def _rubric_composition_errors(
+    item: LoadedContent, rubrics: dict[str, LoadedContent]
+) -> list[ValidationIssue]:
+    errors: list[ValidationIssue] = []
+    data = item.data
+    total = 0.0
+    dimensions = data.get("dimensions", [])
+    if isinstance(dimensions, list):
+        total += _dimension_weight_total(dimensions)
+    own_dimensions = data.get("own_dimensions", [])
+    if isinstance(own_dimensions, list):
+        total += _dimension_weight_total(own_dimensions)
+    extends = data.get("extends", [])
+    if isinstance(extends, list):
+        for entry in extends:
+            if not isinstance(entry, dict):
+                continue
+            rubric_id = str(entry.get("rubric_id", ""))
+            if rubric_id == data.get("id"):
+                errors.append(ValidationIssue(item.kind, item.path, "rubric cannot extend itself"))
+            elif rubric_id and rubric_id not in rubrics:
+                errors.append(
+                    ValidationIssue(
+                        item.kind,
+                        item.path,
+                        f"extended rubric_id {rubric_id!r} does not exist",
+                    )
+                )
+            weight = entry.get("weight", 0)
+            if isinstance(weight, int | float):
+                total += weight
+
+    if abs(total - 1.0) > 1e-6:
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                item.path,
+                f"rubric dimension weights must sum to 1.0; got {total:.6f}",
+            )
+        )
+    return errors
+
+
+def _dimension_weight_total(dimensions: list[Any]) -> float:
+    return sum(
+        dimension.get("weight", 0)
+        for dimension in dimensions
+        if isinstance(dimension, dict) and isinstance(dimension.get("weight"), int | float)
+    )
 
 
 def _exercise_authoring_errors(

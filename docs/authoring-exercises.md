@@ -161,6 +161,38 @@ Set `rubric_id` to one of these IDs when it fits. Use a custom rubric only when
 the default dimensions would cause reviewers to score different competencies
 than the exercise is actually testing.
 
+Capstone rubrics may compose existing rubrics with local dimensions. Use
+`extends` to reference base rubrics and scale their full dimension set by a
+composition weight, then add `own_dimensions` for capstone-specific judgment.
+The sum of all `extends[].weight` values plus all local dimension weights must
+be exactly `1.0`.
+
+```json
+{
+  "id": "capstone-01-saas-crm",
+  "title": "Capstone 01 SaaS CRM",
+  "applies_to": "capstone",
+  "extends": [
+    { "rubric_id": "schema-design", "weight": 0.2 },
+    { "rubric_id": "indexing-reasoning", "weight": 0.15 }
+  ],
+  "own_dimensions": [
+    {
+      "name": "RLS isolation",
+      "weight": 0.2,
+      "levels": {
+        "0": "No isolation story is present.",
+        "1": "Isolation relies on application filters only.",
+        "2": "RLS exists but has a meaningful bypass or coverage gap.",
+        "3": "RLS covers tenant-owned tables and common access paths.",
+        "4": "RLS is complete and backed by clear operational verification."
+      }
+    }
+  ],
+  "pass_threshold": 0.8
+}
+```
+
 ## Validate, Lint, Activate
 
 Run validation before review:

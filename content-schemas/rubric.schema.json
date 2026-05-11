@@ -4,7 +4,12 @@
   "title": "PostgreSQL Foundations rubric",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "title", "applies_to", "dimensions", "pass_threshold"],
+  "required": ["id", "title", "applies_to", "pass_threshold"],
+  "anyOf": [
+    { "required": ["dimensions"] },
+    { "required": ["extends"] },
+    { "required": ["own_dimensions"] }
+  ],
   "properties": {
     "id": {
       "$ref": "common.json#/$defs/id_slug"
@@ -21,47 +26,32 @@
       "type": "array",
       "minItems": 1,
       "items": {
+        "$ref": "#/$defs/dimension"
+      }
+    },
+    "extends": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["name", "weight", "levels"],
+        "required": ["rubric_id", "weight"],
         "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1
+          "rubric_id": {
+            "$ref": "common.json#/$defs/id_slug"
           },
           "weight": {
             "type": "number",
-            "minimum": 0,
+            "exclusiveMinimum": 0,
             "maximum": 1
-          },
-          "levels": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["0", "1", "2", "3", "4"],
-            "properties": {
-              "0": {
-                "type": "string",
-                "minLength": 1
-              },
-              "1": {
-                "type": "string",
-                "minLength": 1
-              },
-              "2": {
-                "type": "string",
-                "minLength": 1
-              },
-              "3": {
-                "type": "string",
-                "minLength": 1
-              },
-              "4": {
-                "type": "string",
-                "minLength": 1
-              }
-            }
           }
         }
+      }
+    },
+    "own_dimensions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dimension"
       }
     },
     "pass_threshold": {
@@ -71,6 +61,51 @@
     },
     "notes": {
       "type": "string"
+    }
+  },
+  "$defs": {
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "weight", "levels"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "levels": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["0", "1", "2", "3", "4"],
+          "properties": {
+            "0": {
+              "type": "string",
+              "minLength": 1
+            },
+            "1": {
+              "type": "string",
+              "minLength": 1
+            },
+            "2": {
+              "type": "string",
+              "minLength": 1
+            },
+            "3": {
+              "type": "string",
+              "minLength": 1
+            },
+            "4": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
     }
   }
 }
