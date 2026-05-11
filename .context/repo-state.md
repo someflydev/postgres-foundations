@@ -144,6 +144,16 @@ Current baseline:
   plan diffing, sandbox-backed `--full` capstone SQL/query checks, rubric
   `signals`, capstone writeup/critical-query metadata, and
   `docs/review-engine.md` plus `docs/rubric-signals.md`.
+- Interview simulator: PROMPT_28 added `src/pgfound/interview/`,
+  `pgfound interview start|review`, strict transcript files under
+  `tmp/interviews/`, prompt templates under `llm-prompts/interview/stages/`,
+  interview rubrics under `rubrics/interview/`, six initial interview
+  scenarios under `scenarios/interviews/`, a dedicated
+  `content-schemas/interview-scenario.schema.json`, and
+  `docs/interview-simulator.md`.
+  The interview stage templates are stub templates without PROMPT_29 front
+  matter; future LLM-template validation should treat them as interview-stage
+  assets until PROMPT_30 replaces or upgrades them.
 
 Canonical docs:
 
@@ -155,6 +165,7 @@ Canonical docs:
 - `docs/cli.md`
 - `docs/review-engine.md`
 - `docs/rubric-signals.md`
+- `docs/interview-simulator.md`
 - `docs/authoring.md`
 - `docs/authoring-lessons.md`
 - `docs/authoring-exercises.md`

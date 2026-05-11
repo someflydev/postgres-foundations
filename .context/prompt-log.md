@@ -103,7 +103,13 @@ Completed:
   writeup lint, schema/artifact runners, rubric `signals`, capstone
   `critical_queries_path` and `writeup_required_sections`, and review-engine
   docs/tests.
+- PROMPT_28: Interview simulator scaffolding; interview scenario loader,
+  session state machine, transcript parser/persistence, stubbed LLM prompt
+  logging, deterministic interview rubric evaluation, `pgfound interview
+  start|review`, interview rubrics, six interview scenarios, dedicated
+  interview scenario schema, prompt templates, docs, and tests.
 
 Next expected prompt:
 
-- PROMPT_28: Interview simulator.
+- PROMPT_29: Training-side LLM prompt templates used by the interview
+  simulator and review engine.

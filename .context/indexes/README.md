@@ -55,6 +55,17 @@ Lesson authoring references introduced by PROMPT_07:
 - `src/pgfound/content/scaffold.py`
 - `src/pgfound/content/lint.py`
 
+Interview simulator references introduced by PROMPT_28:
+
+- `src/pgfound/interview/`
+- `scenarios/interviews/*.yaml`
+- `content-schemas/interview-scenario.schema.json`
+- `rubrics/interview/*.rubric.json`
+- `llm-prompts/interview/stages/*.md`
+- `docs/interview-simulator.md`
+- `tests/test_interview_scenarios.py`
+- `tests/test_interview_session_stubbed.py`
+
 Exercise authoring references introduced by PROMPT_08:
 
 - `exercises/phase-*/`
