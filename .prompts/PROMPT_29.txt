@@ -20,7 +20,11 @@ Doctrine (from `docs/llm-usage.md`):
 
 ## Prior work (verify before starting)
 
-- `llm-prompts/` exists with only `.gitkeep`.
+- `llm-prompts/` exists. PROMPT_28 added
+  `llm-prompts/interview/stages/*.md` as stub interview-stage templates
+  without the front matter described below; PROMPT_29 should not treat
+  those stage stubs as training-side LLM templates. PROMPT_30 owns the
+  interview-specific LLM prompt upgrade.
 - `docs/llm-usage.md` (PROMPT_02).
 - Review engine and interview simulator scaffolding (PROMPTS 27/28).
 
