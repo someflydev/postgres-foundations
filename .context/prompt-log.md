@@ -77,7 +77,13 @@ Completed:
   80 exercises, a 5000-row `document_search` FTS corpus, ecommerce product
   search vectors, `unaccent`, pg_trgm/pgvector forward pointers, and
   `docs/search-playbook.md`.
+- PROMPT_23: Phase 9 partitioning and large-table operations; 10 active
+  lessons, 80 exercises, `events.event_log_partitioned` monthly range
+  partitions with a detached cold partition example, `ecommerce.orders_partitioned`
+  quarterly comparison table, deterministic Phase 9 partition manifest
+  generator, `docs/partitioning-playbook.md`, partition-too-early anti-pattern,
+  partitioned-index guidance, and Phase 9 corpus/seed tests.
 
 Next expected prompt:
 
-- PROMPT_23: Phase 9 partitioning and large-table operations.
+- PROMPT_24: Phase 10 roles, row-level security, replication concepts, and FDW.

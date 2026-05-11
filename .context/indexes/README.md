@@ -211,3 +211,16 @@ Phase 8 PostgreSQL full-text search references introduced by PROMPT_22:
 - `docs/lab.md`
 - `tests/test_phase8_corpus.py`
 - `tests/test_document_corpus.py`
+
+Phase 9 partitioning references introduced by PROMPT_23:
+
+- `lessons/phase-09-partitioning-and-large-table-operations/`
+- `exercises/phase-09-partitioning-and-large-table-operations/`
+- `seed-data/packs/event_heavy_ops/phases/phase-09.sql`
+- `seed-data/packs/event_heavy_ops/generators/phase_09.py`
+- `seed-data/packs/ecommerce/phases/phase-09.sql`
+- `docs/partitioning-playbook.md`
+- `docs/anti-patterns/partition_too_early.md`
+- `docs/indexing-playbook-part2.md`
+- `tests/test_phase9_corpus.py`
+- `tests/test_partitioning_seed.py`

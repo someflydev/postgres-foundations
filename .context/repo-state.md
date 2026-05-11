@@ -110,6 +110,15 @@ Current baseline:
   corpus with generated `tsvector` and GIN index, ecommerce product search
   vectors, `unaccent` lab initialization, pg_trgm/pgvector forward pointers,
   `docs/search-playbook.md`, and Phase 8 corpus tests.
+- Phase 9 partitioning and large-table operations: PROMPT_23 added
+  partitioning content: 10 active lessons, 80 active exercises,
+  `events.event_log_partitioned` with monthly range partitions, parent BRIN and
+  B-tree partitioned indexes, a detached cold-partition retention example,
+  `ecommerce.orders_partitioned` with quarterly range partitions for
+  comparison, deterministic Phase 9 partition metadata generation,
+  `docs/partitioning-playbook.md`, `docs/anti-patterns/partition_too_early.md`,
+  partitioned-table index guidance in `docs/indexing-playbook-part2.md`, and
+  Phase 9 corpus/seed tests.
 
 Canonical docs:
 
@@ -135,6 +144,8 @@ Canonical docs:
 - `docs/anti-patterns/unused_indexes.md`
 - `docs/anti-patterns/redundant_indexes.md`
 - `docs/search-playbook.md`
+- `docs/partitioning-playbook.md`
+- `docs/anti-patterns/partition_too_early.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
@@ -172,6 +183,8 @@ Expected green checks:
 - `uv run pgfound content seed event_heavy_ops --phase 7b --reset`
 - `uv run pgfound content seed document_search --phase 8 --reset --generate`
 - `uv run pgfound content seed ecommerce --phase 8 --reset --generate`
+- `uv run pgfound content seed event_heavy_ops --phase 9 --reset --generate`
+- `uv run pgfound content seed ecommerce --phase 9 --reset --generate`
 - `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound content seed-doctor`

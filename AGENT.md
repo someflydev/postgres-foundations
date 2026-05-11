@@ -44,6 +44,8 @@ concrete, operational, and PostgreSQL core-first.
 - Seed event indexing lab data: `uv run pgfound content seed event_heavy_ops --phase 7b --reset`
 - Seed document FTS lab data: `uv run pgfound content seed document_search --phase 8 --reset --generate`
 - Seed ecommerce FTS lab data: `uv run pgfound content seed ecommerce --phase 8 --reset --generate`
+- Seed event partitioning lab data: `uv run pgfound content seed event_heavy_ops --phase 9 --reset --generate`
+- Seed ecommerce partitioning lab data: `uv run pgfound content seed ecommerce --phase 9 --reset --generate`
 - Exercise dry-run: `uv run pgfound exercise run first-select-write-query --dry-run`
 - Exercise check: `uv run pgfound exercise run first-select-write-query --check`
 - Exercise timing check: `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
