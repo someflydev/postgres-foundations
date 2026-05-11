@@ -166,6 +166,12 @@ Current baseline:
   YAML-front-matter/Jinja2 format, added follow-up and closing-feedback prompt
   rendering, added `pgfound interview dispatch`, and added capstone reviewer
   prompt bundles under `tmp/reviews/capstone/<id>/<timestamp>/`.
+- Administration track A1-A2: PROMPT_31 added `curriculum/admin/map.json`
+  with A1-A6 module anchors, validator/schema support for `admin_map` content
+  and admin lesson `module_id` directory checks, 15 active lessons under
+  `lessons/admin/`, 120 exercises under `exercises/admin/`, admin role/access
+  review SQL under `seed-data/packs/admin/`, `docs/admin-track/`, and admin
+  corpus/map tests.
 
 Canonical docs:
 
@@ -199,6 +205,9 @@ Canonical docs:
 - `docs/partitioning-playbook.md`
 - `docs/rls-playbook.md`
 - `docs/logical-replication-playbook.md`
+- `docs/admin-track/README.md`
+- `docs/admin-track/a1-roles-playbook.md`
+- `docs/admin-track/a2-schemas-playbook.md`
 - `docs/anti-patterns/partition_too_early.md`
 - `capstones/README.md`
 - `docs/learner-workflow.md`

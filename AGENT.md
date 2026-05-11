@@ -48,6 +48,8 @@ concrete, operational, and PostgreSQL core-first.
 - Seed ecommerce partitioning lab data: `uv run pgfound content seed ecommerce --phase 9 --reset --generate`
 - Seed SaaS RLS lab data: `uv run pgfound content seed saas_multi_tenant --phase 10 --reset`
 - Seed modernization FDW lab data: `uv run pgfound content seed modernization_bridge --phase 10 --reset`
+- Apply admin role matrix: `psql "postgresql://pgfound:pgfound@localhost:55433/pgfound" -v ON_ERROR_STOP=1 -f seed-data/packs/admin/roles-matrix.sql`
+- Run admin access review queries: `psql "postgresql://pgfound:pgfound@localhost:55433/pgfound" -v ON_ERROR_STOP=1 -f seed-data/packs/admin/access-review-queries.sql`
 - Replication lab up: `docker compose -f docker/docker-compose.yml --profile replication up -d`
 - Exercise dry-run: `uv run pgfound exercise run first-select-write-query --dry-run`
 - Exercise check: `uv run pgfound exercise run first-select-write-query --check`

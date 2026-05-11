@@ -117,8 +117,11 @@ Completed:
   feedback, interview dispatch bundles, capstone reviewer prompt templates,
   full capstone prompt bundles, provider-neutral LLM documentation, and prompt
   rendering tests.
+- PROMPT_31: Administration Track A1 and A2; admin map with A1-A6 anchors,
+  admin lesson/exercise tree support in the validator, 15 active admin lessons,
+  120 admin exercises, admin seed SQL for role matrices and access reviews,
+  admin-track docs/playbooks, and admin corpus/map tests.
 
 Next expected prompt:
 
-- PROMPT_31: Administration Track A1-A2 roles/privileges and
-  schemas/databases.
+- PROMPT_32: Administration Track A3 auth/pooling and A4 maintenance/lifecycle.

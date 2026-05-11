@@ -81,6 +81,22 @@ Training-side LLM prompt references introduced by PROMPT_29:
 - `tests/test_llm_render_cli.py`
 - `tests/test_template_completeness.py`
 
+Administration track references introduced by PROMPT_31:
+
+- `curriculum/admin/map.json`
+- `lessons/admin/a1-roles-and-privileges/`
+- `lessons/admin/a2-schemas-and-databases/`
+- `exercises/admin/a1-roles-and-privileges/`
+- `exercises/admin/a2-schemas-and-databases/`
+- `seed-data/packs/admin/roles-matrix.sql`
+- `seed-data/packs/admin/access-review-queries.sql`
+- `docs/admin-track/README.md`
+- `docs/admin-track/a1-roles-playbook.md`
+- `docs/admin-track/a2-schemas-playbook.md`
+- `content-schemas/admin-map.schema.json`
+- `tests/test_admin_map.py`
+- `tests/test_admin_a1_a2_corpus.py`
+
 Exercise authoring references introduced by PROMPT_08:
 
 - `exercises/phase-*/`
