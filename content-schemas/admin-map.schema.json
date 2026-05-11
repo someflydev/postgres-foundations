@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/admin-map.schema.json",
+  "title": "PostgreSQL Foundations administration track map",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "modules"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "capability_layer",
+          "prerequisites",
+          "goals",
+          "exit_competencies"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common.json#/$defs/module_id"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capability_layer": {
+            "const": "admin_mastery"
+          },
+          "prerequisites": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["phase"],
+              "properties": {
+                "phase": {
+                  "$ref": "common.json#/$defs/phase"
+                }
+              }
+            }
+          },
+          "goals": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "exit_competencies": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

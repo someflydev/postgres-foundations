@@ -1,0 +1,125 @@
+{
+  "$schema": "https://postgres-foundations/schema/admin-map.schema.json",
+  "modules": [
+    {
+      "id": "a1-roles-and-privileges",
+      "title": "Roles and privileges",
+      "capability_layer": "admin_mastery",
+      "prerequisites": [
+        {
+          "phase": 10
+        }
+      ],
+      "goals": [
+        "Operate PostgreSQL roles and privileges with explicit, reviewable SQL.",
+        "Prefer core PostgreSQL mechanisms before adding external operational burden.",
+        "Connect administrative choices to application safety, portability, and recovery."
+      ],
+      "exit_competencies": [
+        "Diagnose common roles and privileges incidents from catalog evidence.",
+        "Write least-privilege or least-surprise remediation plans.",
+        "Explain the operational tradeoff without relying on superuser shortcuts."
+      ]
+    },
+    {
+      "id": "a2-schemas-and-databases",
+      "title": "Schemas and databases",
+      "capability_layer": "admin_mastery",
+      "prerequisites": [
+        {
+          "phase": 10
+        }
+      ],
+      "goals": [
+        "Operate PostgreSQL schemas and databases with explicit, reviewable SQL.",
+        "Prefer core PostgreSQL mechanisms before adding external operational burden.",
+        "Connect administrative choices to application safety, portability, and recovery."
+      ],
+      "exit_competencies": [
+        "Diagnose common schemas and databases incidents from catalog evidence.",
+        "Write least-privilege or least-surprise remediation plans.",
+        "Explain the operational tradeoff without relying on superuser shortcuts."
+      ]
+    },
+    {
+      "id": "a3-auth-and-pooling",
+      "title": "Authentication and pooling",
+      "capability_layer": "admin_mastery",
+      "prerequisites": [
+        {
+          "phase": 10
+        }
+      ],
+      "goals": [
+        "Operate PostgreSQL authentication and pooling with explicit, reviewable SQL.",
+        "Prefer core PostgreSQL mechanisms before adding external operational burden.",
+        "Connect administrative choices to application safety, portability, and recovery."
+      ],
+      "exit_competencies": [
+        "Diagnose common authentication and pooling incidents from catalog evidence.",
+        "Write least-privilege or least-surprise remediation plans.",
+        "Explain the operational tradeoff without relying on superuser shortcuts."
+      ]
+    },
+    {
+      "id": "a4-maintenance-and-lifecycle",
+      "title": "Maintenance and lifecycle",
+      "capability_layer": "admin_mastery",
+      "prerequisites": [
+        {
+          "phase": 10
+        }
+      ],
+      "goals": [
+        "Operate PostgreSQL maintenance and lifecycle with explicit, reviewable SQL.",
+        "Prefer core PostgreSQL mechanisms before adding external operational burden.",
+        "Connect administrative choices to application safety, portability, and recovery."
+      ],
+      "exit_competencies": [
+        "Diagnose common maintenance and lifecycle incidents from catalog evidence.",
+        "Write least-privilege or least-surprise remediation plans.",
+        "Explain the operational tradeoff without relying on superuser shortcuts."
+      ]
+    },
+    {
+      "id": "a5-monitoring-and-performance-ops",
+      "title": "Monitoring and performance operations",
+      "capability_layer": "admin_mastery",
+      "prerequisites": [
+        {
+          "phase": 10
+        }
+      ],
+      "goals": [
+        "Operate PostgreSQL monitoring and performance operations with explicit, reviewable SQL.",
+        "Prefer core PostgreSQL mechanisms before adding external operational burden.",
+        "Connect administrative choices to application safety, portability, and recovery."
+      ],
+      "exit_competencies": [
+        "Diagnose common monitoring and performance operations incidents from catalog evidence.",
+        "Write least-privilege or least-surprise remediation plans.",
+        "Explain the operational tradeoff without relying on superuser shortcuts."
+      ]
+    },
+    {
+      "id": "a6-replication-and-ha",
+      "title": "Replication and high availability",
+      "capability_layer": "admin_mastery",
+      "prerequisites": [
+        {
+          "phase": 10
+        }
+      ],
+      "goals": [
+        "Operate PostgreSQL replication and high availability with explicit, reviewable SQL.",
+        "Prefer core PostgreSQL mechanisms before adding external operational burden.",
+        "Connect administrative choices to application safety, portability, and recovery."
+      ],
+      "exit_competencies": [
+        "Diagnose common replication and high availability incidents from catalog evidence.",
+        "Write least-privilege or least-surprise remediation plans.",
+        "Explain the operational tradeoff without relying on superuser shortcuts."
+      ]
+    }
+  ]
+}
