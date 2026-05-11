@@ -1,0 +1,25 @@
+id: senior-backend-indexing-and-partitioning
+title: "Senior backend - indexing and partitioning"
+duration_minutes: 45
+capability_layers_required:
+  - expressive_querying
+  - indexing_and_plans
+  - partitioning_operations
+  - transactions_and_correctness
+stages:
+  - kind: warmup
+    prompt_template: interview/stages/warmup
+    budget_minutes: 5
+  - kind: design_probe
+    topic: indexing_for_selectivity_and_write_cost
+    prompt_template: interview/stages/design-probe
+    budget_minutes: 15
+  - kind: debugging_drill
+    exercise_id: explain-analyze-deep-dive-level-c-1
+    budget_minutes: 15
+  - kind: explainability
+    topic: partitioning_tradeoffs
+    prompt_template: interview/stages/oral-defense
+    budget_minutes: 10
+rubric_id: senior-backend
+

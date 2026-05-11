@@ -1,0 +1,26 @@
+id: staff-level-modernization-bridge
+title: "Staff-level modernization bridge"
+duration_minutes: 50
+capability_layers_required:
+  - database_truth
+  - postgres_data_modeling
+  - transactions_and_correctness
+  - indexing_and_plans
+  - security_federation
+stages:
+  - kind: warmup
+    prompt_template: interview/stages/warmup
+    budget_minutes: 5
+  - kind: design_probe
+    topic: modernization_bridge_with_postgres_fdw
+    prompt_template: interview/stages/design-probe
+    budget_minutes: 20
+  - kind: debugging_drill
+    exercise_id: modernization-bridge-pattern-level-c-1
+    budget_minutes: 15
+  - kind: explainability
+    topic: not_yet_and_operational_cutover
+    prompt_template: interview/stages/oral-defense
+    budget_minutes: 10
+rubric_id: senior-backend
+

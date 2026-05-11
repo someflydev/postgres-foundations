@@ -1,0 +1,112 @@
+{
+  "id": "senior-backend",
+  "title": "Senior backend interview",
+  "applies_to": "interview",
+  "pass_threshold": 0.72,
+  "dimensions": [
+    {
+      "name": "Communication",
+      "weight": 0.2,
+      "levels": {
+        "0": "No usable explanation.",
+        "1": "Unstructured explanation.",
+        "2": "Understandable but incomplete explanation.",
+        "3": "Structured explanation with clear assumptions.",
+        "4": "Concise, structured, and resilient under follow-up pressure."
+      },
+      "signals": [
+        {
+          "pattern": "communication_detail",
+          "levels": {
+            "weak": 1,
+            "adequate": 3,
+            "strong": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Decision Justification",
+      "weight": 0.25,
+      "levels": {
+        "0": "No decision reasoning.",
+        "1": "Preference stated without evidence.",
+        "2": "Some causal reasoning.",
+        "3": "Uses requirements and tradeoffs to justify decisions.",
+        "4": "Compares alternatives and explains why the chosen path fits now."
+      },
+      "signals": [
+        {
+          "pattern": "decision_justification",
+          "levels": {
+            "weak": 1,
+            "adequate": 3,
+            "strong": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operational Awareness",
+      "weight": 0.2,
+      "levels": {
+        "0": "No operational discussion.",
+        "1": "Ignores rollout and ownership concerns.",
+        "2": "Mentions operations without concrete signals.",
+        "3": "Connects rollout, monitoring, migration, or bloat to the design.",
+        "4": "Shows not-yet posture and workload-driven escalation."
+      },
+      "signals": [
+        {
+          "pattern": "operational_awareness",
+          "levels": {
+            "weak": 1,
+            "adequate": 3,
+            "strong": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Correctness",
+      "weight": 0.2,
+      "levels": {
+        "0": "No correctness reasoning.",
+        "1": "Correctness vocabulary appears without application.",
+        "2": "Identifies a likely risk.",
+        "3": "Connects transactions, constraints, isolation, or locks to failure modes.",
+        "4": "Defends correctness with evidence and test strategy."
+      },
+      "signals": [
+        {
+          "pattern": "correctness_language",
+          "levels": {
+            "weak": 1,
+            "strong": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Simulator Trace Completeness",
+      "weight": 0.15,
+      "levels": {
+        "0": "No simulator notes.",
+        "1": "Simulator notes are incomplete.",
+        "2": "Simulator notes exist but omit the LLM payload.",
+        "3": "Stubbed LLM payload is captured.",
+        "4": "Stubbed LLM payload and follow-ups are captured."
+      },
+      "signals": [
+        {
+          "pattern": "stubbed_llm_logged",
+          "levels": {
+            "missing": 1,
+            "present": 4
+          }
+        }
+      ]
+    }
+  ],
+  "notes": "Signal patterns intentionally use weak transcript heuristics until PROMPT_29/30 add LLM-assisted review."
+}

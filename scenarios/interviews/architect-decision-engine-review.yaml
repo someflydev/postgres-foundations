@@ -1,0 +1,26 @@
+id: architect-decision-engine-review
+title: "Architect - decision engine review"
+duration_minutes: 50
+capability_layers_required:
+  - schema_literacy
+  - database_truth
+  - postgres_data_modeling
+  - indexing_and_plans
+  - partitioning_operations
+  - security_federation
+stages:
+  - kind: warmup
+    prompt_template: interview/stages/warmup
+    budget_minutes: 5
+  - kind: design_probe
+    topic: decision_engine_recommendation_critique_prompt_43
+    prompt_template: interview/stages/design-probe
+    budget_minutes: 20
+  - kind: debugging_drill
+    exercise_id: synthesis-choosing-the-right-shape-level-d-1
+    budget_minutes: 15
+  - kind: explainability
+    topic: explainable_recommendations_and_not_yet_posture
+    prompt_template: interview/stages/oral-defense
+    budget_minutes: 10
+rubric_id: senior-backend

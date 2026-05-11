@@ -114,6 +114,15 @@ def schema_store() -> dict[str, dict[str, Any]]:
 
 def validator_for(kind: str) -> Draft202012Validator:
     schema = load_schema(kind)
+    return _validator_for_schema(schema)
+
+
+def validator_for_schema_file(schema_filename: str) -> Draft202012Validator:
+    schema = json.loads((schema_dir() / schema_filename).read_text(encoding="utf-8"))
+    return _validator_for_schema(schema)
+
+
+def _validator_for_schema(schema: dict[str, Any]) -> Draft202012Validator:
     resolver = RefResolver(
         base_uri=f"{schema_dir().resolve().as_uri()}/",
         referrer=schema,
@@ -189,6 +198,21 @@ def infer_kind(file_path: Path) -> str | None:
     return None
 
 
+def _is_interview_scenario_path(file_path: Path) -> bool:
+    return "scenarios" in file_path.parts and "interviews" in file_path.parts
+
+
+def _exercise_exists(exercise_id: str) -> bool:
+    for exercise_path in paths.EXERCISES_DIR.rglob("exercise.json"):
+        try:
+            data = json.loads(exercise_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if data.get("id") == exercise_id:
+            return True
+    return False
+
+
 def load_content_file(file_path: Path) -> dict[str, Any]:
     raw = file_path.read_text(encoding="utf-8")
     if file_path.suffix.lower() == ".json":
@@ -216,6 +240,7 @@ def validate_content(
     validate_schema_files()
     files = discover_content_files(path_globs=path_globs, include_examples=include_examples)
     validators = {kind: validator_for(kind) for kind in CONTENT_KINDS}
+    interview_scenario_validator = validator_for_schema_file("interview-scenario.schema.json")
     loaded: list[LoadedContent] = []
     errors: list[ValidationIssue] = []
     warnings: list[ValidationIssue] = []
@@ -235,7 +260,11 @@ def validate_content(
             errors.append(ValidationIssue(kind, file_path, f"could not load file: {exc}"))
             continue
 
-        validator = validators[kind]
+        validator = (
+            interview_scenario_validator
+            if kind == "scenario" and _is_interview_scenario_path(file_path)
+            else validators[kind]
+        )
         schema_errors = sorted(validator.iter_errors(data), key=lambda item: item.path)
         if schema_errors:
             errors.extend(
@@ -352,7 +381,64 @@ def _cross_file_checks(
                         f"review_rubric_id {rubric_id!r} does not exist",
                     )
                 )
+        elif item.kind == "scenario" and _is_interview_scenario_path(item.path):
+            errors.extend(_interview_scenario_errors(item, rubrics))
     return errors, warnings
+
+
+def _interview_scenario_errors(
+    item: LoadedContent,
+    rubrics: dict[str, LoadedContent],
+) -> list[ValidationIssue]:
+    errors: list[ValidationIssue] = []
+    data = item.data
+    rubric_id = str(data.get("rubric_id", ""))
+    rubric = rubrics.get(rubric_id)
+    if rubric is None:
+        errors.append(
+            ValidationIssue(item.kind, item.path, f"rubric_id {rubric_id!r} does not exist")
+        )
+    elif rubric.data.get("applies_to") != "interview":
+        errors.append(
+            ValidationIssue(
+                item.kind, item.path, f"rubric_id {rubric_id!r} is not an interview rubric"
+            )
+        )
+
+    duration = data.get("duration_minutes")
+    stages = data.get("stages", [])
+    if isinstance(duration, int) and isinstance(stages, list):
+        total = sum(
+            stage.get("budget_minutes", 0)
+            for stage in stages
+            if isinstance(stage, dict) and isinstance(stage.get("budget_minutes"), int)
+        )
+        if total > duration:
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    f"stage budgets sum to {total}, exceeding duration_minutes {duration}",
+                )
+            )
+    for stage in stages if isinstance(stages, list) else []:
+        if not isinstance(stage, dict):
+            continue
+        exercise_id = stage.get("exercise_id")
+        if isinstance(exercise_id, str) and not _exercise_exists(exercise_id):
+            errors.append(
+                ValidationIssue(item.kind, item.path, f"exercise_id {exercise_id!r} does not exist")
+            )
+        template = stage.get("prompt_template")
+        if isinstance(template, str) and not (paths.LLM_PROMPTS_DIR / f"{template}.md").is_file():
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    f"prompt_template {template!r} does not resolve to an existing template",
+                )
+            )
+    return errors
 
 
 def _rubric_composition_errors(
@@ -740,7 +826,11 @@ def _duplicates(values: Any) -> list[str]:
 
 
 def _catalog_warnings(loaded: list[LoadedContent]) -> list[ValidationIssue]:
-    scenario_items = [item for item in loaded if item.kind == "scenario"]
+    scenario_items = [
+        item
+        for item in loaded
+        if item.kind == "scenario" and not _is_interview_scenario_path(item.path)
+    ]
     if not scenario_items:
         return []
 

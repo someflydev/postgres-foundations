@@ -1,0 +1,29 @@
+id: senior-backend-saas-rls
+title: "Senior backend - multi-tenant SaaS with RLS"
+duration_minutes: 45
+capability_layers_required:
+  - schema_literacy
+  - relational_joins
+  - database_truth
+  - postgres_data_modeling
+  - expressive_querying
+  - transactions_and_correctness
+  - indexing_and_plans
+  - security_federation
+stages:
+  - kind: warmup
+    prompt_template: interview/stages/warmup
+    budget_minutes: 5
+  - kind: design_probe
+    topic: multi_tenant_rls
+    prompt_template: interview/stages/design-probe
+    budget_minutes: 15
+  - kind: debugging_drill
+    exercise_id: introduction-to-row-level-security-level-c-1
+    budget_minutes: 15
+  - kind: explainability
+    topic: rls_policy_operational_tradeoffs
+    prompt_template: interview/stages/oral-defense
+    budget_minutes: 10
+rubric_id: senior-backend
+

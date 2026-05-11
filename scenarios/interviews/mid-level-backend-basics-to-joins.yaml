@@ -1,0 +1,24 @@
+id: mid-level-backend-basics-to-joins
+title: "Mid-level backend - basics to joins"
+duration_minutes: 35
+capability_layers_required:
+  - schema_literacy
+  - relational_joins
+  - database_truth
+stages:
+  - kind: warmup
+    prompt_template: interview/stages/warmup
+    budget_minutes: 5
+  - kind: design_probe
+    topic: joined_schema_reading
+    prompt_template: interview/stages/design-probe
+    budget_minutes: 10
+  - kind: debugging_drill
+    exercise_id: join-then-aggregate-level-c-1
+    budget_minutes: 10
+  - kind: explainability
+    topic: database_truth_over_application_guesswork
+    prompt_template: interview/stages/oral-defense
+    budget_minutes: 10
+rubric_id: mid-level-backend
+

@@ -1,0 +1,93 @@
+{
+  "id": "mid-level-backend",
+  "title": "Mid-level backend interview",
+  "applies_to": "interview",
+  "pass_threshold": 0.65,
+  "dimensions": [
+    {
+      "name": "Communication",
+      "weight": 0.25,
+      "levels": {
+        "0": "No usable explanation.",
+        "1": "Fragmented answer with little structure.",
+        "2": "Basic explanation with some gaps.",
+        "3": "Clear explanation of the main design and query choices.",
+        "4": "Clear, structured, and easy to follow under follow-up pressure."
+      },
+      "signals": [
+        {
+          "pattern": "communication_detail",
+          "levels": {
+            "weak": 1,
+            "adequate": 3,
+            "strong": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Decision Justification",
+      "weight": 0.25,
+      "levels": {
+        "0": "No justification.",
+        "1": "Names choices without reasoning.",
+        "2": "Some reasoning, but weak causal links.",
+        "3": "Connects choices to requirements using because-style reasoning.",
+        "4": "Explains alternatives and tradeoffs clearly."
+      },
+      "signals": [
+        {
+          "pattern": "decision_justification",
+          "levels": {
+            "weak": 1,
+            "adequate": 3,
+            "strong": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Correctness",
+      "weight": 0.25,
+      "levels": {
+        "0": "No correctness vocabulary.",
+        "1": "Mentions correctness vaguely.",
+        "2": "Identifies one correctness concern.",
+        "3": "Connects constraints, transactions, locks, or isolation to the problem.",
+        "4": "Explains failure modes and how the database prevents them."
+      },
+      "signals": [
+        {
+          "pattern": "correctness_language",
+          "levels": {
+            "weak": 1,
+            "strong": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operational Awareness",
+      "weight": 0.25,
+      "levels": {
+        "0": "No operational awareness.",
+        "1": "Treats implementation as isolated from operations.",
+        "2": "Mentions one operational concern.",
+        "3": "Discusses rollout, monitoring, or future workload signals.",
+        "4": "Balances current delivery with explicit not-yet posture."
+      },
+      "signals": [
+        {
+          "pattern": "operational_awareness",
+          "levels": {
+            "weak": 1,
+            "adequate": 3,
+            "strong": 4
+          }
+        }
+      ]
+    }
+  ],
+  "notes": "Signal patterns intentionally use weak transcript heuristics until PROMPT_29/30 add LLM-assisted review."
+}
+
