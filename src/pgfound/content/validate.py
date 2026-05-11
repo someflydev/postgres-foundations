@@ -18,6 +18,7 @@ from pgfound import paths
 CONTENT_KINDS: Final[tuple[str, ...]] = (
     "curriculum",
     "admin_map",
+    "extension_map",
     "lesson",
     "exercise",
     "rubric",
@@ -27,6 +28,7 @@ CONTENT_KINDS: Final[tuple[str, ...]] = (
 SCHEMA_FILENAMES: Final[dict[str, str]] = {
     "curriculum": "curriculum.schema.json",
     "admin_map": "admin-map.schema.json",
+    "extension_map": "extension-map.schema.json",
     "lesson": "lesson.schema.json",
     "exercise": "exercise.schema.json",
     "rubric": "rubric.schema.json",
@@ -50,6 +52,7 @@ CONTENT_DIRS: Final[dict[str, Path]] = {
 ROOT_CONTENT_FILES: Final[dict[str, Path]] = {
     "curriculum": paths.CURRICULUM_DIR / "map.json",
     "admin_map": paths.CURRICULUM_DIR / "admin" / "map.json",
+    "extension_map": paths.CURRICULUM_DIR / "extensions" / "map.json",
 }
 CONTENT_SUFFIXES: Final[set[str]] = {".json", ".yaml", ".yml"}
 EXAMPLE_SUFFIX: Final[str] = ".example"
@@ -195,6 +198,12 @@ def infer_kind(file_path: Path) -> str | None:
         and file_path.parent.parent.name == "curriculum"
     ):
         return "admin_map"
+    if (
+        file_path.name == "map.json"
+        and file_path.parent.name == "extensions"
+        and file_path.parent.parent.name == "curriculum"
+    ):
+        return "extension_map"
     for kind, directory_name in CONTENT_DIR_NAMES.items():
         if directory_name in parts:
             return kind
@@ -323,6 +332,13 @@ def _cross_file_checks(
         for module in item.data.get("modules", [])
         if isinstance(module, dict) and isinstance(module.get("id"), str)
     }
+    extension_module_ids = {
+        str(module.get("id"))
+        for item in loaded
+        if item.kind == "extension_map"
+        for module in item.data.get("modules", [])
+        if isinstance(module, dict) and isinstance(module.get("id"), str)
+    }
     exercises_by_lesson: dict[str, list[LoadedContent]] = {}
     for exercise in (item for item in loaded if item.kind == "exercise"):
         lesson_id = exercise.data.get("lesson_id")
@@ -335,6 +351,8 @@ def _cross_file_checks(
             errors.extend(_curriculum_errors(item))
         elif item.kind == "admin_map":
             errors.extend(_admin_map_errors(item))
+        elif item.kind == "extension_map":
+            errors.extend(_extension_map_errors(item))
         elif item.kind == "lesson":
             has_phase = "phase" in data
             has_module = "module_id" in data
@@ -346,7 +364,13 @@ def _cross_file_checks(
                         "lesson must carry exactly one of phase or module_id",
                     )
                 )
-            errors.extend(_lesson_authoring_errors(item, admin_module_ids=admin_module_ids))
+            errors.extend(
+                _lesson_authoring_errors(
+                    item,
+                    admin_module_ids=admin_module_ids,
+                    extension_module_ids=extension_module_ids,
+                )
+            )
             if data.get("status") == "active" and not exercises_by_lesson.get(str(data.get("id"))):
                 warnings.append(
                     ValidationIssue(
@@ -689,7 +713,10 @@ def _lesson_dir_slug(path: Path) -> str | None:
 
 
 def _lesson_authoring_errors(
-    item: LoadedContent, *, admin_module_ids: set[str] | None = None
+    item: LoadedContent,
+    *,
+    admin_module_ids: set[str] | None = None,
+    extension_module_ids: set[str] | None = None,
 ) -> list[ValidationIssue]:
     errors: list[ValidationIssue] = []
     data = item.data
@@ -791,6 +818,30 @@ def _lesson_authoring_errors(
                         "curriculum/admin/map.json",
                     )
                 )
+        elif "lessons" in parts and "extensions" in parts:
+            module_dir = item.path.parent.parent.name
+            if module_dir != module_id:
+                errors.append(
+                    ValidationIssue(
+                        item.kind,
+                        item.path,
+                        f"lesson.module_id {module_id!r} does not match enclosing directory "
+                        f"{module_dir!r}",
+                    )
+                )
+            if (
+                extension_module_ids is not None
+                and extension_module_ids
+                and module_id not in extension_module_ids
+            ):
+                errors.append(
+                    ValidationIssue(
+                        item.kind,
+                        item.path,
+                        f"lesson.module_id {module_id!r} is not present in "
+                        "curriculum/extensions/map.json",
+                    )
+                )
     return errors
 
 
@@ -826,6 +877,47 @@ def _admin_map_errors(item: LoadedContent) -> list[ValidationIssue]:
                 item.kind,
                 item.path,
                 f"admin module ids must be A1..A6 in order; got {ids}",
+            )
+        )
+    return errors
+
+
+def _extension_map_errors(item: LoadedContent) -> list[ValidationIssue]:
+    data = item.data
+    errors: list[ValidationIssue] = []
+    modules = data.get("modules", [])
+    if not isinstance(modules, list):
+        return errors
+
+    ids = [module.get("id") for module in modules if isinstance(module, dict)]
+    duplicate_ids = _duplicates(ids)
+    if duplicate_ids:
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                item.path,
+                "extension module ids must be unique: " + ", ".join(duplicate_ids),
+            )
+        )
+
+    expected = [
+        "e1-pg-stat-statements",
+        "e2-pg-trgm",
+        "e3-postgis",
+        "e4-pgvector",
+        "e5-timescaledb",
+        "e6-postgres-fdw",
+        "e7-pg-cron",
+        "ltree",
+        "pg-partman",
+        "pgbouncer",
+    ]
+    if ids != expected:
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                item.path,
+                f"extension module ids must be in canonical order; got {ids}",
             )
         )
     return errors

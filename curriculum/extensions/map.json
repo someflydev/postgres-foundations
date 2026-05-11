@@ -1,0 +1,231 @@
+{
+  "$schema": "https://postgres-foundations/schema/extension-map.schema.json",
+  "modules": [
+    {
+      "id": "e1-pg-stat-statements",
+      "title": "pg_stat_statements (deep)",
+      "prerequisites": [
+        {
+          "phase": 7
+        },
+        {
+          "admin_module": "a5-monitoring-and-performance-ops"
+        }
+      ],
+      "replaces_or_complements_core": "complements",
+      "managed_service_availability": "broadly available",
+      "goals": [
+        "Use pg_stat_statements as workload evidence rather than as a dashboard ornament.",
+        "Connect normalized statement statistics to EXPLAIN, index, and deploy review workflows.",
+        "Bound the operational cost of collection, reset, and configuration choices."
+      ],
+      "exit_competencies": [
+        "Rank workload pain by total time, mean time, calls, rows, and I/O counters.",
+        "Produce before and after baselines without erasing the evidence needed for review.",
+        "Diagnose configuration drift such as low pg_stat_statements.max or missing track_io_timing."
+      ],
+      "capability_layer": "extension_mastery"
+    },
+    {
+      "id": "e2-pg-trgm",
+      "title": "pg_trgm",
+      "prerequisites": [
+        {
+          "phase": 8
+        },
+        {
+          "phase": 7
+        }
+      ],
+      "replaces_or_complements_core": "complements",
+      "managed_service_availability": "broadly available",
+      "goals": [
+        "Add typo-tolerant matching only when lexical search or btree lookup is not enough.",
+        "Choose GIN, GiST, or btree support from query shape and write cost evidence.",
+        "Combine trigrams with core full-text search without confusing their jobs."
+      ],
+      "exit_competencies": [
+        "Use similarity, word_similarity, thresholds, and trigram operators deliberately.",
+        "Design support search and deduplication workflows with explainable thresholds.",
+        "Recognize when PostgreSQL trigram search should yield to a dedicated search engine."
+      ],
+      "capability_layer": "extension_mastery"
+    },
+    {
+      "id": "e3-postgis",
+      "title": "PostGIS",
+      "capability_layer": "extension_mastery",
+      "prerequisites": [
+        {
+          "phase": 4
+        }
+      ],
+      "goals": [
+        "Identify the workload signal that makes PostGIS worth considering.",
+        "Compare the PostgreSQL core alternative before adding operational burden.",
+        "Account for backup, replication, upgrade, and portability consequences."
+      ],
+      "exit_competencies": [
+        "Explain where PostGIS fits and where not yet is the better answer.",
+        "Design a small proof that measures benefit and operating cost.",
+        "Document managed-service constraints before committing to production use."
+      ],
+      "replaces_or_complements_core": "complements",
+      "managed_service_availability": "common on major managed services"
+    },
+    {
+      "id": "e4-pgvector",
+      "title": "pgvector",
+      "capability_layer": "extension_mastery",
+      "prerequisites": [
+        {
+          "phase": 8
+        }
+      ],
+      "goals": [
+        "Identify the workload signal that makes pgvector worth considering.",
+        "Compare the PostgreSQL core alternative before adding operational burden.",
+        "Account for backup, replication, upgrade, and portability consequences."
+      ],
+      "exit_competencies": [
+        "Explain where pgvector fits and where not yet is the better answer.",
+        "Design a small proof that measures benefit and operating cost.",
+        "Document managed-service constraints before committing to production use."
+      ],
+      "replaces_or_complements_core": "complements",
+      "managed_service_availability": "available on many managed services"
+    },
+    {
+      "id": "e5-timescaledb",
+      "title": "TimescaleDB",
+      "capability_layer": "extension_mastery",
+      "prerequisites": [
+        {
+          "phase": 9
+        }
+      ],
+      "goals": [
+        "Identify the workload signal that makes TimescaleDB worth considering.",
+        "Compare the PostgreSQL core alternative before adding operational burden.",
+        "Account for backup, replication, upgrade, and portability consequences."
+      ],
+      "exit_competencies": [
+        "Explain where TimescaleDB fits and where not yet is the better answer.",
+        "Design a small proof that measures benefit and operating cost.",
+        "Document managed-service constraints before committing to production use."
+      ],
+      "replaces_or_complements_core": "external",
+      "managed_service_availability": "managed availability varies"
+    },
+    {
+      "id": "e6-postgres-fdw",
+      "title": "postgres_fdw",
+      "capability_layer": "extension_mastery",
+      "prerequisites": [
+        {
+          "phase": 10
+        }
+      ],
+      "goals": [
+        "Identify the workload signal that makes postgres_fdw worth considering.",
+        "Compare the PostgreSQL core alternative before adding operational burden.",
+        "Account for backup, replication, upgrade, and portability consequences."
+      ],
+      "exit_competencies": [
+        "Explain where postgres_fdw fits and where not yet is the better answer.",
+        "Design a small proof that measures benefit and operating cost.",
+        "Document managed-service constraints before committing to production use."
+      ],
+      "replaces_or_complements_core": "complements",
+      "managed_service_availability": "broadly available"
+    },
+    {
+      "id": "e7-pg-cron",
+      "title": "pg_cron",
+      "capability_layer": "extension_mastery",
+      "prerequisites": [
+        {
+          "admin_module": "a4-maintenance-and-lifecycle"
+        }
+      ],
+      "goals": [
+        "Identify the workload signal that makes pg_cron worth considering.",
+        "Compare the PostgreSQL core alternative before adding operational burden.",
+        "Account for backup, replication, upgrade, and portability consequences."
+      ],
+      "exit_competencies": [
+        "Explain where pg_cron fits and where not yet is the better answer.",
+        "Design a small proof that measures benefit and operating cost.",
+        "Document managed-service constraints before committing to production use."
+      ],
+      "replaces_or_complements_core": "complements",
+      "managed_service_availability": "varies by managed service"
+    },
+    {
+      "id": "ltree",
+      "title": "ltree",
+      "capability_layer": "extension_mastery",
+      "prerequisites": [
+        {
+          "phase": 4
+        }
+      ],
+      "goals": [
+        "Identify the workload signal that makes ltree worth considering.",
+        "Compare the PostgreSQL core alternative before adding operational burden.",
+        "Account for backup, replication, upgrade, and portability consequences."
+      ],
+      "exit_competencies": [
+        "Explain where ltree fits and where not yet is the better answer.",
+        "Design a small proof that measures benefit and operating cost.",
+        "Document managed-service constraints before committing to production use."
+      ],
+      "replaces_or_complements_core": "complements",
+      "managed_service_availability": "available on many managed services"
+    },
+    {
+      "id": "pg-partman",
+      "title": "pg_partman",
+      "capability_layer": "extension_mastery",
+      "prerequisites": [
+        {
+          "phase": 9
+        }
+      ],
+      "goals": [
+        "Identify the workload signal that makes pg_partman worth considering.",
+        "Compare the PostgreSQL core alternative before adding operational burden.",
+        "Account for backup, replication, upgrade, and portability consequences."
+      ],
+      "exit_competencies": [
+        "Explain where pg_partman fits and where not yet is the better answer.",
+        "Design a small proof that measures benefit and operating cost.",
+        "Document managed-service constraints before committing to production use."
+      ],
+      "replaces_or_complements_core": "complements",
+      "managed_service_availability": "varies by managed service"
+    },
+    {
+      "id": "pgbouncer",
+      "title": "PgBouncer",
+      "capability_layer": "extension_mastery",
+      "prerequisites": [
+        {
+          "admin_module": "a3-auth-and-pooling"
+        }
+      ],
+      "goals": [
+        "Identify the workload signal that makes PgBouncer worth considering.",
+        "Compare the PostgreSQL core alternative before adding operational burden.",
+        "Account for backup, replication, upgrade, and portability consequences."
+      ],
+      "exit_competencies": [
+        "Explain where PgBouncer fits and where not yet is the better answer.",
+        "Design a small proof that measures benefit and operating cost.",
+        "Document managed-service constraints before committing to production use."
+      ],
+      "replaces_or_complements_core": "external",
+      "managed_service_availability": "provider-specific or self-managed"
+    }
+  ]
+}

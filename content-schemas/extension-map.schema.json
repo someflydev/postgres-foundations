@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/extension-map.schema.json",
+  "title": "PostgreSQL Foundations extension track map",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "modules"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "capability_layer",
+          "prerequisites",
+          "goals",
+          "exit_competencies",
+          "replaces_or_complements_core",
+          "managed_service_availability"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "common.json#/$defs/module_id"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capability_layer": {
+            "const": "extension_mastery"
+          },
+          "prerequisites": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "minProperties": 1,
+              "maxProperties": 1,
+              "properties": {
+                "phase": {
+                  "$ref": "common.json#/$defs/phase"
+                },
+                "admin_module": {
+                  "$ref": "common.json#/$defs/module_id"
+                },
+                "extension_module": {
+                  "$ref": "common.json#/$defs/module_id"
+                }
+              }
+            }
+          },
+          "goals": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "exit_competencies": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "replaces_or_complements_core": {
+            "type": "string",
+            "enum": ["replaces", "complements", "external"]
+          },
+          "managed_service_availability": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
