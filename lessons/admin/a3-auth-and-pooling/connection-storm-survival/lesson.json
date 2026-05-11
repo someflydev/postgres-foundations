@@ -1,0 +1,54 @@
+{
+  "id": "connection-storm-survival",
+  "title": "Connection Storm Survival",
+  "module_id": "a3-auth-and-pooling",
+  "capability_layer": "admin_mastery",
+  "summary": "When max_connections is exhausted, new clients fail while existing sessions may continue consuming resources. Recovery starts with an admin connection, pg_stat_activity triage, terminating safe idle sessions, reducing app concurrency, and adding pooling or backpressure after the incident.",
+  "learning_objectives": [
+    "Explain the operational purpose of Connection Storm Survival.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "max-connections",
+    "reserved-connections",
+    "connection-storm",
+    "pg-stat-activity"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "connection-storm-survival-level-a-1",
+    "connection-storm-survival-level-a-2",
+    "connection-storm-survival-level-b-1",
+    "connection-storm-survival-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "connection-storm-survival-level-c-1",
+    "connection-storm-survival-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "connection-storm-survival-level-d-1",
+    "connection-storm-survival-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a3",
+    "connection-storm-survival"
+  ],
+  "status": "active"
+}

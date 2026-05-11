@@ -1,0 +1,54 @@
+{
+  "id": "pg-hba-concepts",
+  "title": "Pg HBA Concepts",
+  "module_id": "a3-auth-and-pooling",
+  "capability_layer": "admin_mastery",
+  "summary": "The authentication file is ordered policy. A local line is Unix socket access, host is TCP without requiring TLS, and hostssl is TCP that must use TLS. The pg_hba_file_rules view is operational evidence because it shows parsed line numbers, errors, address ranges, databases, users, and methods.",
+  "learning_objectives": [
+    "Explain the operational purpose of Pg HBA Concepts.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "pg-hba-conf",
+    "pg-hba-file-rules",
+    "hostssl",
+    "first-matching-rule-wins"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "pg-hba-concepts-level-a-1",
+    "pg-hba-concepts-level-a-2",
+    "pg-hba-concepts-level-b-1",
+    "pg-hba-concepts-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "pg-hba-concepts-level-c-1",
+    "pg-hba-concepts-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "pg-hba-concepts-level-d-1",
+    "pg-hba-concepts-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a3",
+    "pg-hba-concepts"
+  ],
+  "status": "active"
+}

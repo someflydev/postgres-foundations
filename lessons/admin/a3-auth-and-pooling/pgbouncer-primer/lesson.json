@@ -1,0 +1,53 @@
+{
+  "id": "pgbouncer-primer",
+  "title": "PgBouncer Primer",
+  "module_id": "a3-auth-and-pooling",
+  "capability_layer": "admin_mastery",
+  "summary": "PgBouncer sits between clients and PostgreSQL, owns client sockets, and multiplexes them onto fewer server connections. Application layer multiplexing may reuse drivers inside one service, but PgBouncer centralizes admission control across services and changes the failure and state model.",
+  "learning_objectives": [
+    "Explain the operational purpose of PgBouncer Primer.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "pgbouncer",
+    "transaction-pooling",
+    "application-layer-multiplexing"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "pgbouncer-primer-level-a-1",
+    "pgbouncer-primer-level-a-2",
+    "pgbouncer-primer-level-b-1",
+    "pgbouncer-primer-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "pgbouncer-primer-level-c-1",
+    "pgbouncer-primer-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "pgbouncer-primer-level-d-1",
+    "pgbouncer-primer-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a3",
+    "pgbouncer-primer"
+  ],
+  "status": "active"
+}

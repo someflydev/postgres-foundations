@@ -1,0 +1,54 @@
+{
+  "id": "manual-vacuum-and-when-it-is-needed",
+  "title": "Manual Vacuum And When It Is Needed",
+  "module_id": "a4-maintenance-and-lifecycle",
+  "capability_layer": "admin_mastery",
+  "summary": "Manual VACUUM can catch up after bulk delete, VACUUM FREEZE can manage wraparound risk before maintenance windows, and VACUUM FULL rewrites and blocks, so it is a last resort for reclaiming disk. The least disruptive remedy is usually plain VACUUM plus better autovacuum settings.",
+  "learning_objectives": [
+    "Explain the operational purpose of Manual Vacuum And When It Is Needed.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "vacuum-full",
+    "vacuum-freeze",
+    "blocking-rewrite",
+    "visibility-map"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "manual-vacuum-and-when-it-is-needed-level-a-1",
+    "manual-vacuum-and-when-it-is-needed-level-a-2",
+    "manual-vacuum-and-when-it-is-needed-level-b-1",
+    "manual-vacuum-and-when-it-is-needed-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "manual-vacuum-and-when-it-is-needed-level-c-1",
+    "manual-vacuum-and-when-it-is-needed-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "manual-vacuum-and-when-it-is-needed-level-d-1",
+    "manual-vacuum-and-when-it-is-needed-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a4",
+    "manual-vacuum-and-when-it-is-needed"
+  ],
+  "status": "active"
+}

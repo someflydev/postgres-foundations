@@ -1,0 +1,7 @@
+# Manual Vacuum And When It Is Needed Level D1
+
+## Scenario
+
+Work through the Manual Vacuum And When It Is Needed administration scenario and produce auditable PostgreSQL evidence.
+
+Produce the SQL, shell command, or incident-note fragment that an operator could review. Include the before-state evidence, the action you would take, and the after-state verification.

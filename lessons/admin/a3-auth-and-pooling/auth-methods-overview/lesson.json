@@ -1,0 +1,54 @@
+{
+  "id": "auth-methods-overview",
+  "title": "Auth Methods Overview",
+  "module_id": "a3-auth-and-pooling",
+  "capability_layer": "admin_mastery",
+  "summary": "trust is only for disposable local labs, peer maps an operating-system user, md5 is legacy password verification, scram-sha-256 is the preferred password method, and cert-based authentication moves trust to a client certificate chain. SCRAM over md5 matters because the verifier and exchange resist offline password attacks better.",
+  "learning_objectives": [
+    "Explain the operational purpose of Auth Methods Overview.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "trust",
+    "peer",
+    "md5",
+    "scram-sha-256"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "auth-methods-overview-level-a-1",
+    "auth-methods-overview-level-a-2",
+    "auth-methods-overview-level-b-1",
+    "auth-methods-overview-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "auth-methods-overview-level-c-1",
+    "auth-methods-overview-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "auth-methods-overview-level-d-1",
+    "auth-methods-overview-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a3",
+    "auth-methods-overview"
+  ],
+  "status": "active"
+}

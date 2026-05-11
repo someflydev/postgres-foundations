@@ -1,0 +1,53 @@
+{
+  "id": "rotating-credentials-and-secret-management",
+  "title": "Rotating Credentials And Secret Management",
+  "module_id": "a3-auth-and-pooling",
+  "capability_layer": "admin_mastery",
+  "summary": "A rotation plan creates a replacement login role, grants the same group-role membership, deploys the new secret, verifies new sessions, then drains and retires the old role. Short-lived app credentials reduce leak windows without causing downtime when both credentials overlap briefly.",
+  "learning_objectives": [
+    "Explain the operational purpose of Rotating Credentials And Secret Management.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "short-lived-app-credentials",
+    "dual-credentials",
+    "zero-downtime-rotation"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "rotating-credentials-and-secret-management-level-a-1",
+    "rotating-credentials-and-secret-management-level-a-2",
+    "rotating-credentials-and-secret-management-level-b-1",
+    "rotating-credentials-and-secret-management-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "rotating-credentials-and-secret-management-level-c-1",
+    "rotating-credentials-and-secret-management-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "rotating-credentials-and-secret-management-level-d-1",
+    "rotating-credentials-and-secret-management-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a3",
+    "rotating-credentials-and-secret-management"
+  ],
+  "status": "active"
+}

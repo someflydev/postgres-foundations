@@ -1,0 +1,54 @@
+{
+  "id": "autovacuum-in-30-minutes",
+  "title": "Autovacuum In 30 Minutes",
+  "module_id": "a4-maintenance-and-lifecycle",
+  "capability_layer": "admin_mastery",
+  "summary": "Autovacuum launches workers that vacuum dead tuples and analyze tables based on thresholds and scale factors. It does not fix every bloat problem, cannot advance cleanup past an old xmin horizon, and needs enough cost and worker capacity for the write workload.",
+  "learning_objectives": [
+    "Explain the operational purpose of Autovacuum In 30 Minutes.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "autovacuum-worker",
+    "scale-factor",
+    "freeze",
+    "xmin-horizon"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "autovacuum-in-30-minutes-level-a-1",
+    "autovacuum-in-30-minutes-level-a-2",
+    "autovacuum-in-30-minutes-level-b-1",
+    "autovacuum-in-30-minutes-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "autovacuum-in-30-minutes-level-c-1",
+    "autovacuum-in-30-minutes-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "autovacuum-in-30-minutes-level-d-1",
+    "autovacuum-in-30-minutes-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a4",
+    "autovacuum-in-30-minutes"
+  ],
+  "status": "active"
+}

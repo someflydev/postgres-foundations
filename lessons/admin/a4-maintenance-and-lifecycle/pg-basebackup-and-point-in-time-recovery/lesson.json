@@ -1,0 +1,54 @@
+{
+  "id": "pg-basebackup-and-point-in-time-recovery",
+  "title": "Pg Basebackup And Point In Time Recovery",
+  "module_id": "a4-maintenance-and-lifecycle",
+  "capability_layer": "admin_mastery",
+  "summary": "PITR combines a base backup with archived WAL so recovery can replay to a timestamp, LSN, or named target. archive_command must be monitored as production infrastructure, and retention must cover both recovery goals and the time needed to discover an incident.",
+  "learning_objectives": [
+    "Explain the operational purpose of Pg Basebackup And Point In Time Recovery.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "pitr",
+    "archive-command",
+    "restore-command",
+    "retention"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "pg-basebackup-and-point-in-time-recovery-level-a-1",
+    "pg-basebackup-and-point-in-time-recovery-level-a-2",
+    "pg-basebackup-and-point-in-time-recovery-level-b-1",
+    "pg-basebackup-and-point-in-time-recovery-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "pg-basebackup-and-point-in-time-recovery-level-c-1",
+    "pg-basebackup-and-point-in-time-recovery-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "pg-basebackup-and-point-in-time-recovery-level-d-1",
+    "pg-basebackup-and-point-in-time-recovery-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a4",
+    "pg-basebackup-and-point-in-time-recovery"
+  ],
+  "status": "active"
+}

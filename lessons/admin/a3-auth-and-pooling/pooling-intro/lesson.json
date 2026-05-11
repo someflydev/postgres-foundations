@@ -1,0 +1,54 @@
+{
+  "id": "pooling-intro",
+  "title": "Pooling Intro",
+  "module_id": "a3-auth-and-pooling",
+  "capability_layer": "admin_mastery",
+  "summary": "Pooling exists because PostgreSQL backends are real server processes with memory and scheduler cost. Session pooling keeps one server connection per client session, transaction pooling returns the server connection after COMMIT or ROLLBACK, and statement pooling is stricter. Prepared statements and SET state behave differently in each mode.",
+  "learning_objectives": [
+    "Explain the operational purpose of Pooling Intro.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "session-pooling",
+    "transaction-pooling",
+    "statement-pooling",
+    "prepared-statements"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "pooling-intro-level-a-1",
+    "pooling-intro-level-a-2",
+    "pooling-intro-level-b-1",
+    "pooling-intro-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "pooling-intro-level-c-1",
+    "pooling-intro-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "pooling-intro-level-d-1",
+    "pooling-intro-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a3",
+    "pooling-intro"
+  ],
+  "status": "active"
+}

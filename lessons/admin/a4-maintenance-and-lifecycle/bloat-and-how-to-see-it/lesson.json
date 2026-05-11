@@ -1,0 +1,54 @@
+{
+  "id": "bloat-and-how-to-see-it",
+  "title": "Bloat And How To See It",
+  "module_id": "a4-maintenance-and-lifecycle",
+  "capability_layer": "admin_mastery",
+  "summary": "Bloat diagnosis starts with pg_stat_all_tables signals such as n_dead_tup, vacuum counts, analyze counts, and tuple churn. Extensions like pgstattuple can measure more directly, but the operational habit is to correlate stats with workload, age, and table size.",
+  "learning_objectives": [
+    "Explain the operational purpose of Bloat And How To See It.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "pg-stat-all-tables",
+    "n-dead-tup",
+    "pgstattuple",
+    "bloat"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "bloat-and-how-to-see-it-level-a-1",
+    "bloat-and-how-to-see-it-level-a-2",
+    "bloat-and-how-to-see-it-level-b-1",
+    "bloat-and-how-to-see-it-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "bloat-and-how-to-see-it-level-c-1",
+    "bloat-and-how-to-see-it-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "bloat-and-how-to-see-it-level-d-1",
+    "bloat-and-how-to-see-it-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a4",
+    "bloat-and-how-to-see-it"
+  ],
+  "status": "active"
+}

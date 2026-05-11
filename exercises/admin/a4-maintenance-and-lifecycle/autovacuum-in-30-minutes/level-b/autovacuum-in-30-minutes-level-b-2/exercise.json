@@ -1,0 +1,55 @@
+{
+  "id": "autovacuum-in-30-minutes-level-b-2",
+  "title": "Autovacuum In 30 Minutes Level B2",
+  "lesson_id": "autovacuum-in-30-minutes",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "pg_catalog",
+    "pg_stat_activity",
+    "pg_hba_file_rules",
+    "scram_sha_256",
+    "pg_dump",
+    "pg_restore",
+    "vacuum",
+    "analyze",
+    "pgbouncer"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "saas.accounts",
+      "saas.projects",
+      "saas.documents",
+      "saas.audit_events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "saas_multi_tenant",
+    "max_rows_hint": 5000
+  },
+  "search_path": "saas, public",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Names the PostgreSQL mechanism being inspected or changed.",
+    "Includes SQL, command output, or catalog evidence suitable for an operational review.",
+    "States the rollback, drain, or verification step that keeps the action safe."
+  ],
+  "time_target_minutes": 15,
+  "rubric_id": "schema-design",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "admin",
+    "a4",
+    "autovacuum-in-30-minutes",
+    "b"
+  ],
+  "status": "active",
+  "hints": [
+    "Start by collecting the PostgreSQL evidence before proposing a change."
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "id": "logical-vs-physical-backups",
+  "title": "Logical Vs Physical Backups",
+  "module_id": "a4-maintenance-and-lifecycle",
+  "capability_layer": "admin_mastery",
+  "summary": "pg_dump produces logical SQL or archive content for selected databases and portable restores. pg_basebackup plus WAL archive captures a physical cluster timeline for point-in-time recovery. The right answer depends on object scope, RPO, RTO, version movement, and corruption posture.",
+  "learning_objectives": [
+    "Explain the operational purpose of Logical Vs Physical Backups.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "pg-dump",
+    "pg-basebackup",
+    "wal-archive",
+    "restore-target"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "logical-vs-physical-backups-level-a-1",
+    "logical-vs-physical-backups-level-a-2",
+    "logical-vs-physical-backups-level-b-1",
+    "logical-vs-physical-backups-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "logical-vs-physical-backups-level-c-1",
+    "logical-vs-physical-backups-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "logical-vs-physical-backups-level-d-1",
+    "logical-vs-physical-backups-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a4",
+    "logical-vs-physical-backups"
+  ],
+  "status": "active"
+}

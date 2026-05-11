@@ -94,6 +94,10 @@
       "type": "string",
       "minLength": 1
     },
+    "restore_drill": {
+      "type": "boolean",
+      "default": false
+    },
     "output_comparison": {
       "type": "string",
       "enum": ["ordered", "unordered", "multiset"],

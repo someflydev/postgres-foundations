@@ -1,0 +1,54 @@
+{
+  "id": "restore-drills-are-mandatory",
+  "title": "Restore Drills Are Mandatory",
+  "module_id": "a4-maintenance-and-lifecycle",
+  "capability_layer": "admin_mastery",
+  "summary": "A backup is an intention until a restore drill proves it. The drill restores into a disposable database, checks row counts, runs critical queries, records duration, and fails loudly on mismatch. Checksums and logs help validate the artifact and recovery process.",
+  "learning_objectives": [
+    "Explain the operational purpose of Restore Drills Are Mandatory.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "restore-drill",
+    "checksums",
+    "row-counts",
+    "known-good-query"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "restore-drills-are-mandatory-level-a-1",
+    "restore-drills-are-mandatory-level-a-2",
+    "restore-drills-are-mandatory-level-b-1",
+    "restore-drills-are-mandatory-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "restore-drills-are-mandatory-level-c-1",
+    "restore-drills-are-mandatory-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "restore-drills-are-mandatory-level-d-1",
+    "restore-drills-are-mandatory-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a4",
+    "restore-drills-are-mandatory"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,54 @@
+{
+  "id": "pg-dump-in-practice",
+  "title": "Pg Dump In Practice",
+  "module_id": "a4-maintenance-and-lifecycle",
+  "capability_layer": "admin_mastery",
+  "summary": "Custom format dumps give selective pg_restore, compression, object ordering, and parallel restore. A practical dump records the database, role assumptions, extension inventory, restore command, row-count checks, and the known query that proves business data survived.",
+  "learning_objectives": [
+    "Explain the operational purpose of Pg Dump In Practice.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "custom-format",
+    "parallel-restore",
+    "compression",
+    "pg-restore"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "pg-dump-in-practice-level-a-1",
+    "pg-dump-in-practice-level-a-2",
+    "pg-dump-in-practice-level-b-1",
+    "pg-dump-in-practice-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "pg-dump-in-practice-level-c-1",
+    "pg-dump-in-practice-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "pg-dump-in-practice-level-d-1",
+    "pg-dump-in-practice-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a4",
+    "pg-dump-in-practice"
+  ],
+  "status": "active"
+}

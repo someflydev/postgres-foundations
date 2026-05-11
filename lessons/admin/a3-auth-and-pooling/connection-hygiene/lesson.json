@@ -1,0 +1,54 @@
+{
+  "id": "connection-hygiene",
+  "title": "Connection Hygiene",
+  "module_id": "a3-auth-and-pooling",
+  "capability_layer": "admin_mastery",
+  "summary": "Connection hygiene means every session is identifiable, bounded, and disposable. max_connections is a hard capacity envelope, idle_in_transaction_session_timeout releases forgotten transactions, statement_timeout caps runaway work, and application_name lets responders tie sessions to services.",
+  "learning_objectives": [
+    "Explain the operational purpose of Connection Hygiene.",
+    "Collect PostgreSQL evidence before proposing remediation.",
+    "Describe verification and rollback for the administrative action."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "max-connections",
+    "idle-in-transaction-session-timeout",
+    "statement-timeout",
+    "application-name"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "connection-hygiene-level-a-1",
+    "connection-hygiene-level-a-2",
+    "connection-hygiene-level-b-1",
+    "connection-hygiene-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "connection-hygiene-level-c-1",
+    "connection-hygiene-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "connection-hygiene-level-d-1",
+    "connection-hygiene-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which part of the remediation has the largest operational blast radius?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a3",
+    "connection-hygiene"
+  ],
+  "status": "active"
+}
