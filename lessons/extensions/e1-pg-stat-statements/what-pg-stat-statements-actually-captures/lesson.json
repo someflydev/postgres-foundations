@@ -1,0 +1,57 @@
+{
+  "id": "what-pg-stat-statements-actually-captures",
+  "title": "What pg_stat_statements Actually Captures",
+  "module_id": "e1-pg-stat-statements",
+  "capability_layer": "extension_mastery",
+  "summary": "Deep extension lesson for normalized queries, per-query total and mean time, calls, rows, and I/O counters.",
+  "learning_objectives": [
+    "Explain when pg_stat_statements is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-07-indexing-and-query-plans"
+  ],
+  "concepts_introduced": [
+    "pg_stat_statements",
+    "queryid",
+    "total_exec_time",
+    "mean_exec_time",
+    "shared_blks_read"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "what-pg-stat-statements-actually-captures-level-a-1",
+    "what-pg-stat-statements-actually-captures-level-a-2",
+    "what-pg-stat-statements-actually-captures-level-b-1",
+    "what-pg-stat-statements-actually-captures-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "what-pg-stat-statements-actually-captures-level-c-1",
+    "what-pg-stat-statements-actually-captures-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "what-pg-stat-statements-actually-captures-level-d-1",
+    "what-pg-stat-statements-actually-captures-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-e1-pg-stat-statements",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "e1",
+    "pg-stat-statements",
+    "what-pg-stat-statements-actually-captures"
+  ],
+  "status": "active"
+}

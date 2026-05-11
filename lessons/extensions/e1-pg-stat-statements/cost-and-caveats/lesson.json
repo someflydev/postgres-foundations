@@ -1,0 +1,56 @@
+{
+  "id": "e1-pg-stat-statements-cost-and-caveats",
+  "title": "Cost and Caveats",
+  "module_id": "e1-pg-stat-statements",
+  "capability_layer": "extension_mastery",
+  "summary": "Deep extension lesson for overhead, normalization edge cases, dynamic SQL, IN lists, and JSONB path expressions.",
+  "learning_objectives": [
+    "Explain when pg_stat_statements is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-07-indexing-and-query-plans"
+  ],
+  "concepts_introduced": [
+    "normalization_edge_cases",
+    "dynamic_sql",
+    "in_list_shape",
+    "jsonb_path_expressions"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "e1-pg-stat-statements-cost-and-caveats-level-a-1",
+    "e1-pg-stat-statements-cost-and-caveats-level-a-2",
+    "e1-pg-stat-statements-cost-and-caveats-level-b-1",
+    "e1-pg-stat-statements-cost-and-caveats-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "e1-pg-stat-statements-cost-and-caveats-level-c-1",
+    "e1-pg-stat-statements-cost-and-caveats-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "e1-pg-stat-statements-cost-and-caveats-level-d-1",
+    "e1-pg-stat-statements-cost-and-caveats-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-e1-pg-stat-statements",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "e1",
+    "pg-stat-statements",
+    "cost-and-caveats"
+  ],
+  "status": "active"
+}

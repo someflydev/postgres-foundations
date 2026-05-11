@@ -1,0 +1,48 @@
+{
+  "id": "integrating-with-explain-workflows-level-d-2",
+  "title": "Integrating with EXPLAIN Workflows Level D2",
+  "lesson_id": "integrating-with-explain-workflows",
+  "scaffolding_level": "D",
+  "kind": "critique",
+  "allowed_concepts": [
+    "explain_analyze_buffers",
+    "pg_stat_statements",
+    "queryid_to_plan",
+    "representative_query_text"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "pg_catalog.pg_stat_statements"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "admin",
+    "max_rows_hint": 5000
+  },
+  "search_path": "public, pg_catalog",
+  "expected_output_shape": "prose_explanation",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses PostgreSQL evidence rather than unsupported assertion.",
+    "Names the core-first alternative or not-yet boundary.",
+    "Includes a verification step tied to the workload signal."
+  ],
+  "time_target_minutes": 35,
+  "rubric_id": "operational-reasoning",
+  "solution_path": "solution.md",
+  "tags": [
+    "extensions",
+    "e1",
+    "integrating-with-explain-workflows",
+    "d"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "What evidence distinguishes the diagnosis from a plausible guess?",
+    "What would you monitor after the change?",
+    "Where is the not-yet boundary for this extension?"
+  ]
+}

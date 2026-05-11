@@ -1,0 +1,50 @@
+{
+  "id": "e1-pg-stat-statements-cost-and-caveats-level-b-1",
+  "title": "Cost and Caveats Level B1",
+  "lesson_id": "e1-pg-stat-statements-cost-and-caveats",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "dynamic_sql",
+    "explain_analyze_buffers",
+    "in_list_shape",
+    "jsonb_path_expressions",
+    "normalization_edge_cases",
+    "pg_stat_statements"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "pg_catalog.pg_stat_statements"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "admin",
+    "max_rows_hint": 5000
+  },
+  "search_path": "public, pg_catalog",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses PostgreSQL evidence rather than unsupported assertion.",
+    "Names the core-first alternative or not-yet boundary.",
+    "Includes a verification step tied to the workload signal."
+  ],
+  "time_target_minutes": 20,
+  "rubric_id": "operational-reasoning",
+  "solution_path": "solution.sql",
+  "tags": [
+    "extensions",
+    "e1",
+    "cost-and-caveats",
+    "b"
+  ],
+  "status": "active",
+  "starter_path": "starter.sql",
+  "hints": [
+    "Start by naming the workload question before choosing columns.",
+    "Sort by the metric that answers the question directly."
+  ]
+}

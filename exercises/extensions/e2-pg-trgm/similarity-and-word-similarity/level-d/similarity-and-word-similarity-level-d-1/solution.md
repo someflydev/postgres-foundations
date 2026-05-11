@@ -1,0 +1,1 @@
+A strong answer explains that a GIN trigram index is not the right access path for a simple LIKE 'prefix%' lookup. Keep the trigram index for typo-tolerant contains or similarity searches, but add a btree or expression btree that matches the prefix predicate. Verify with EXPLAIN and keep the not-yet boundary explicit for external search engines.

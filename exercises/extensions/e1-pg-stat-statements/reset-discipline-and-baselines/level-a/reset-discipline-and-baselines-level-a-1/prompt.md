@@ -1,0 +1,5 @@
+# Reset Discipline and Baselines Level A1
+
+Practice Reset Discipline and Baselines: produce evidence for when to reset statistics and how to preserve before and after evidence.
+
+Return the SQL result or written triage note requested by the exercise metadata.

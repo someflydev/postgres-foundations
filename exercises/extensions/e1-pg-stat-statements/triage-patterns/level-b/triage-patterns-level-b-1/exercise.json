@@ -1,0 +1,50 @@
+{
+  "id": "triage-patterns-level-b-1",
+  "title": "Triage Patterns Level B1",
+  "lesson_id": "triage-patterns",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "deploy_regression",
+    "explain_analyze_buffers",
+    "pg_stat_statements",
+    "top_n_mean_time",
+    "top_n_total_time",
+    "triage_report"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "pg_catalog.pg_stat_statements"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "admin",
+    "max_rows_hint": 5000
+  },
+  "search_path": "public, pg_catalog",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses PostgreSQL evidence rather than unsupported assertion.",
+    "Names the core-first alternative or not-yet boundary.",
+    "Includes a verification step tied to the workload signal."
+  ],
+  "time_target_minutes": 20,
+  "rubric_id": "operational-reasoning",
+  "solution_path": "solution.sql",
+  "tags": [
+    "extensions",
+    "e1",
+    "triage-patterns",
+    "b"
+  ],
+  "status": "active",
+  "starter_path": "starter.sql",
+  "hints": [
+    "Start by naming the workload question before choosing columns.",
+    "Sort by the metric that answers the question directly."
+  ]
+}

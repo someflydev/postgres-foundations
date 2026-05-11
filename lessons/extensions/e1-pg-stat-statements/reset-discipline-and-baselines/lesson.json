@@ -1,0 +1,55 @@
+{
+  "id": "reset-discipline-and-baselines",
+  "title": "Reset Discipline and Baselines",
+  "module_id": "e1-pg-stat-statements",
+  "capability_layer": "extension_mastery",
+  "summary": "Deep extension lesson for when to reset statistics and how to preserve before and after evidence.",
+  "learning_objectives": [
+    "Explain when pg_stat_statements is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-07-indexing-and-query-plans"
+  ],
+  "concepts_introduced": [
+    "pg_stat_statements_reset",
+    "baseline_window",
+    "before_after_measurement"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "reset-discipline-and-baselines-level-a-1",
+    "reset-discipline-and-baselines-level-a-2",
+    "reset-discipline-and-baselines-level-b-1",
+    "reset-discipline-and-baselines-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "reset-discipline-and-baselines-level-c-1",
+    "reset-discipline-and-baselines-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "reset-discipline-and-baselines-level-d-1",
+    "reset-discipline-and-baselines-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-e1-pg-stat-statements",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "e1",
+    "pg-stat-statements",
+    "reset-discipline-and-baselines"
+  ],
+  "status": "active"
+}

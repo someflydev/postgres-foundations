@@ -10,7 +10,7 @@ Use lexical FTS when exact words, stems, titles, bodies, tags, authors, and cate
 
 ## Fuzzy Search Preview
 
-`pg_trgm` helps when users misspell words, use partial fragments, or search short labels where stemming is not the issue. Phase 8 only previews this choice so learners can recognize the signal. The extension deep-dive arrives in Phase E2, PROMPT_34.
+`pg_trgm` helps when users misspell words, use partial fragments, or search short labels where stemming is not the issue. Phase 8 only previews this choice so learners can recognize the signal. The extension deep-dive is `docs/extension-track/e2-pg-trgm.md`, with authored lessons under `lessons/extensions/e2-pg-trgm/`.
 
 ## Semantic Search Pointer
 
