@@ -121,7 +121,12 @@ Completed:
   admin lesson/exercise tree support in the validator, 15 active admin lessons,
   120 admin exercises, admin seed SQL for role matrices and access reviews,
   admin-track docs/playbooks, and admin corpus/map tests.
+- PROMPT_32: Administration Track A3 and A4; 17 active admin lessons, 136
+  admin exercises, optional exercise `restore_drill` metadata, HBA overlay and
+  PgBouncer Docker profiles, restore drill script, A3/A4 playbooks, lab docs,
+  and admin/compose tests.
 
 Next expected prompt:
 
-- PROMPT_32: Administration Track A3 auth/pooling and A4 maintenance/lifecycle.
+- PROMPT_33: Administration Track A5 monitoring/performance operations and A6
+  replication/HA operations.

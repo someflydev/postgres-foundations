@@ -172,6 +172,14 @@ Current baseline:
   `lessons/admin/`, 120 exercises under `exercises/admin/`, admin role/access
   review SQL under `seed-data/packs/admin/`, `docs/admin-track/`, and admin
   corpus/map tests.
+- Administration track A3-A4: PROMPT_32 added auth/pooling and
+  backup/maintenance/lifecycle content: 17 active lessons under
+  `lessons/admin/a3-auth-and-pooling/` and
+  `lessons/admin/a4-maintenance-and-lifecycle/`, 136 exercises under matching
+  `exercises/admin/` modules, optional `restore_drill` exercise metadata,
+  `docker/hba_overlay/`, `docker/pgbouncer/`, HBA overlay and PgBouncer Compose
+  profiles, `scripts/restore-drill.sh`, A3/A4 admin playbooks, and admin
+  A3/A4 plus PgBouncer compose tests.
 
 Canonical docs:
 
@@ -208,6 +216,8 @@ Canonical docs:
 - `docs/admin-track/README.md`
 - `docs/admin-track/a1-roles-playbook.md`
 - `docs/admin-track/a2-schemas-playbook.md`
+- `docs/admin-track/a3-auth-and-pooling-playbook.md`
+- `docs/admin-track/a4-backup-and-upgrades-playbook.md`
 - `docs/anti-patterns/partition_too_early.md`
 - `capstones/README.md`
 - `docs/learner-workflow.md`

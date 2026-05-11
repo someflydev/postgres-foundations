@@ -97,6 +97,20 @@ Administration track references introduced by PROMPT_31:
 - `tests/test_admin_map.py`
 - `tests/test_admin_a1_a2_corpus.py`
 
+Administration track references introduced by PROMPT_32:
+
+- `lessons/admin/a3-auth-and-pooling/`
+- `lessons/admin/a4-maintenance-and-lifecycle/`
+- `exercises/admin/a3-auth-and-pooling/`
+- `exercises/admin/a4-maintenance-and-lifecycle/`
+- `docs/admin-track/a3-auth-and-pooling-playbook.md`
+- `docs/admin-track/a4-backup-and-upgrades-playbook.md`
+- `docker/hba_overlay/pg_hba.conf`
+- `docker/pgbouncer/pgbouncer.ini`
+- `scripts/restore-drill.sh`
+- `tests/test_admin_a3_a4_corpus.py`
+- `tests/test_pgbouncer_compose.py`
+
 Exercise authoring references introduced by PROMPT_08:
 
 - `exercises/phase-*/`
