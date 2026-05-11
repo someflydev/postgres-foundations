@@ -20,7 +20,10 @@
         "2": "The plan mentions operations but misses a key scheduling failure mode.",
         "3": "The runbook covers booking conflicts, observation, backups, and waitlist handling.",
         "4": "The runbook is specific enough to support live healthcare scheduling with clear escalation."
-      }
+      },
+      "signals": [
+        { "pattern": "operational_runbook_present", "levels": { "missing": 0, "present": 4 } }
+      ]
     },
     {
       "name": "Writeup and defense",
@@ -31,7 +34,11 @@
         "2": "The explanation handles some choices but misses a core concurrency or time-zone tradeoff.",
         "3": "The writeup defends exclusion constraints, availability modeling, time zones, indexes, and deferred geo/partitioning.",
         "4": "The writeup is precise about race behavior, operational burden, and future decision points."
-      }
+      },
+      "signals": [
+        { "pattern": "writeup_required_sections", "levels": { "missing": 1, "present": 4 } },
+        { "pattern": "writeup_minimum_word_count", "levels": { "missing": 2, "present": 4 } }
+      ]
     }
   ],
   "pass_threshold": 0.8,

@@ -21,6 +21,16 @@
     "Search professionals by specialty and bio when FTS is implemented.",
     "Explain why appointments are not partitioned yet."
   ],
+  "critical_queries_path": "critical-queries.sql",
+  "writeup_required_sections": [
+    "Modeling",
+    "Constraints",
+    "Indexes",
+    "Concurrency",
+    "Operations",
+    "Extension posture",
+    "Not yet"
+  ],
   "security_posture": {
     "correctness": "exclusion constraints prevent overlapping confirmed appointments",
     "timezone": "stored timestamptz with provider timezone for rendering",

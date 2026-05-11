@@ -19,7 +19,10 @@
         "2": "Range partitions exist but retention or cold archive handling is weak.",
         "3": "Monthly range partitioning, pruning checks, detach, and cold archive flow are coherent.",
         "4": "The design includes maintenance cadence, lock-risk notes, validation, and future partition automation triggers."
-      }
+      },
+      "signals": [
+        { "pattern": "operational_runbook_present", "levels": { "missing": 0, "present": 4 } }
+      ]
     },
     {
       "name": "Writeup and defense",
@@ -30,7 +33,11 @@
         "2": "The explanation covers the basics but misses TimescaleDB, replica, or observability tradeoffs.",
         "3": "The writeup defends partitioning, BRIN, btree, retention, analytics replica posture, and TimescaleDB-later criteria.",
         "4": "The writeup ties every choice to workload evidence and names the measurement that would change it."
-      }
+      },
+      "signals": [
+        { "pattern": "writeup_required_sections", "levels": { "missing": 1, "present": 4 } },
+        { "pattern": "extension_posture_not_yet", "levels": { "missing": 1, "present": 4 } }
+      ]
     }
   ],
   "pass_threshold": 0.8,

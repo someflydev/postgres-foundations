@@ -19,7 +19,10 @@
         "2": "Foreign tables exist but local ownership, cache freshness, or failure handling is weak.",
         "3": "FDW, IMPORT FOREIGN SCHEMA, local writes, materialized views, and RLS boundaries are coherent.",
         "4": "The design includes pushdown awareness, stale-cache controls, migration sequencing, and clear ownership boundaries."
-      }
+      },
+      "signals": [
+        { "pattern": "critical_queries_present", "levels": { "missing": 0, "present": 4 } }
+      ]
     },
     {
       "name": "Writeup and defense",
@@ -30,7 +33,11 @@
         "2": "The explanation misses a core legacy, RLS, FDW, or migration tradeoff.",
         "3": "The writeup defends FDW now, logical replication later, Citus not now, cache policy, and local correctness.",
         "4": "The writeup gives measurable promotion criteria and shows how the bridge can be unwound during migration."
-      }
+      },
+      "signals": [
+        { "pattern": "writeup_required_sections", "levels": { "missing": 1, "present": 4 } },
+        { "pattern": "extension_posture_not_yet", "levels": { "missing": 1, "present": 4 } }
+      ]
     }
   ],
   "pass_threshold": 0.8,

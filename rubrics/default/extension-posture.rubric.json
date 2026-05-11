@@ -12,7 +12,10 @@
         "2": "Identifies at least one deferred extension with limited workload evidence.",
         "3": "Clearly states enabled, deferred, and rejected extensions with workload signals.",
         "4": "Defines measurable adoption triggers, core alternatives, rollback concerns, and portability consequences."
-      }
+      },
+      "signals": [
+        { "pattern": "extension_posture_not_yet", "levels": { "missing": 1, "present": 4 } }
+      ]
     },
     {
       "name": "Core alternative",
@@ -23,7 +26,10 @@
         "2": "Uses a core feature but does not explain its limits.",
         "3": "Explains why PostgreSQL core is sufficient for the current stage.",
         "4": "Compares core and extension paths with operational and migration implications."
-      }
+      },
+      "signals": [
+        { "pattern": "not_yet_section_present", "levels": { "missing": 1, "present": 4 } }
+      ]
     },
     {
       "name": "Operational burden",

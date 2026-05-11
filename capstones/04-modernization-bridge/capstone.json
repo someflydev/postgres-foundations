@@ -22,6 +22,16 @@
     "Audit RLS tenant isolation on new-service rows.",
     "Explain a foreign query and identify pushdown risks."
   ],
+  "critical_queries_path": "critical-queries.sql",
+  "writeup_required_sections": [
+    "Modeling",
+    "FDW",
+    "Indexes",
+    "RLS",
+    "Operations",
+    "Extension posture",
+    "Not yet"
+  ],
   "security_posture": {
     "tenant_isolation": "RLS on all new-service tenant-owned tables even though legacy tables are not tenant-isolated",
     "application_context": "current_setting('app.tenant_id', true) for new-service access",

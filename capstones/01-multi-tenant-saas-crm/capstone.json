@@ -24,6 +24,16 @@
     "Tenant admin membership and role review.",
     "Retention candidate query for audit event partition maintenance."
   ],
+  "critical_queries_path": "critical-queries.sql",
+  "writeup_required_sections": [
+    "Modeling",
+    "RLS",
+    "Indexes",
+    "Search",
+    "Operations",
+    "Extension posture",
+    "Not yet"
+  ],
   "security_posture": {
     "tenant_isolation": "strict RLS in a single database and schema",
     "application_context": "current_setting('app.tenant_id') and current_setting('app.user_id')",

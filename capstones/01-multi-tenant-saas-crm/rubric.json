@@ -19,7 +19,10 @@
         "2": "RLS exists but misses an owned table or allows a realistic cross-tenant path.",
         "3": "RLS covers tenant-owned tables, tests the app context, and blocks ordinary cross-tenant reads and writes.",
         "4": "RLS is complete, includes operational verification, and explains bypass roles, migrations, and support access."
-      }
+      },
+      "signals": [
+        { "pattern": "rls_policies_present", "levels": { "missing": 0, "present_but_weak": 2, "present_and_strict": 4 } }
+      ]
     },
     {
       "name": "Operational posture",
@@ -30,7 +33,10 @@
         "2": "Backups, metrics, or retention are mentioned but not tied to the schema.",
         "3": "The runbook covers observation, backups, retention, and low-risk maintenance.",
         "4": "The runbook is specific enough for a small team to operate and evolve without surprise paging."
-      }
+      },
+      "signals": [
+        { "pattern": "operational_runbook_present", "levels": { "missing": 0, "present": 4 } }
+      ]
     },
     {
       "name": "Writeup and defense",
@@ -41,7 +47,11 @@
         "2": "Major choices are named but at least one core tradeoff is weak or unsupported.",
         "3": "The writeup clearly defends modeling, RLS, indexes, FTS, audit retention, and portability.",
         "4": "The writeup anticipates alternatives, states why not now, and ties every choice to workload and operations."
-      }
+      },
+      "signals": [
+        { "pattern": "writeup_required_sections", "levels": { "missing": 1, "present": 4 } },
+        { "pattern": "writeup_minimum_word_count", "levels": { "missing": 2, "present": 4 } }
+      ]
     }
   ],
   "pass_threshold": 0.8,

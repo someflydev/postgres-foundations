@@ -12,7 +12,11 @@
         "2": "Mostly answers the question but has a material edge-case or grain error.",
         "3": "Answers the question with correct rows, columns, and grain for the stated data.",
         "4": "Answers correctly and explicitly accounts for boundary cases in the prompt."
-      }
+      },
+      "signals": [
+        { "pattern": "output_matches_reference", "levels": { "missing": 0, "present": 4 } },
+        { "pattern": "critical_query_outputs_match", "levels": { "missing": 0, "present": 4 } }
+      ]
     },
     {
       "name": "SQL clarity",
@@ -89,7 +93,11 @@
         "2": "Runs with minor assumptions that should be made explicit.",
         "3": "Runs cleanly against the stated schema and seed pack.",
         "4": "Runs cleanly and includes only deterministic, reviewable SQL."
-      }
+      },
+      "signals": [
+        { "pattern": "output_matches_reference", "levels": { "missing": 1, "present": 4 } },
+        { "pattern": "capstone_database_checks", "levels": { "failed": 0, "skipped": 1, "present": 4 } }
+      ]
     }
   ],
   "pass_threshold": 0.75

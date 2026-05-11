@@ -23,7 +23,11 @@
         "2": "Uses some plan evidence but misses an important cost or row-count signal.",
         "3": "Uses row estimates, access methods, filters, and sorts to support the answer.",
         "4": "Compares before and after evidence and explains remaining uncertainty."
-      }
+      },
+      "signals": [
+        { "pattern": "seq_scan_where_index_expected", "levels": { "present": 1, "absent": 4 } },
+        { "pattern": "actual_rows_far_from_estimate", "levels": { "present": 2, "absent": 4 } }
+      ]
     },
     {
       "name": "Write cost",
@@ -78,7 +82,10 @@
         "2": "Avoids most duplication but leaves one redundant or premature index.",
         "3": "Recommends the smallest index set that supports the demonstrated workload.",
         "4": "Explicitly rejects premature indexes and states the signal that would change the decision."
-      }
+      },
+      "signals": [
+        { "pattern": "indexes_present", "levels": { "missing": 0, "present": 4 } }
+      ]
     },
     {
       "name": "Measurement discipline",

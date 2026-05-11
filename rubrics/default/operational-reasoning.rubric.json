@@ -56,7 +56,10 @@
         "2": "The path handles one common symptom but misses escalation criteria.",
         "3": "The runbook starts from symptoms, gathers evidence, and gives bounded next actions.",
         "4": "The runbook prevents thrash by naming stop conditions, owner handoff, and customer impact."
-      }
+      },
+      "signals": [
+        { "pattern": "operational_runbook_present", "levels": { "missing": 0, "present": 4 } }
+      ]
     }
   ],
   "pass_threshold": 0.75

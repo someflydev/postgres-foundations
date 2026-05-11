@@ -22,6 +22,16 @@
     "Retention candidate partition report.",
     "pg_stat_statements slow-query triage."
   ],
+  "critical_queries_path": "critical-queries.sql",
+  "writeup_required_sections": [
+    "Modeling",
+    "Partitioning",
+    "Indexes",
+    "Retention",
+    "Operations",
+    "Extension posture",
+    "Not yet"
+  ],
   "security_posture": {
     "tenant_isolation": "device-fleet scoping through account_id and support-role access rules",
     "application_context": "current_setting('app.account_id', true) for account-scoped readers",

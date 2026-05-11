@@ -12,7 +12,10 @@
         "2": "Captures the main facts with one significant ambiguity or duplicated truth.",
         "3": "Represents entities, identifiers, relationships, and lifecycle facts accurately.",
         "4": "Represents the facts and names open requirement questions that affect design."
-      }
+      },
+      "signals": [
+        { "pattern": "expected_tables_present", "levels": { "missing": 0, "present": 4 } }
+      ]
     },
     {
       "name": "Constraints",
@@ -23,7 +26,10 @@
         "2": "Includes basic keys but misses one important integrity rule.",
         "3": "Uses primary keys, foreign keys, nullability, and checks appropriately.",
         "4": "Uses constraints deliberately and explains the operational effect of each."
-      }
+      },
+      "signals": [
+        { "pattern": "constraints_present", "levels": { "missing": 1, "present": 4 } }
+      ]
     },
     {
       "name": "PostgreSQL fit",
@@ -45,7 +51,10 @@
         "2": "DDL is usable but has minor naming or organization issues.",
         "3": "DDL is organized, named consistently, and easy to review.",
         "4": "DDL includes clear names and notes that make future migration review easier."
-      }
+      },
+      "signals": [
+        { "pattern": "schema_files_present", "levels": { "missing": 0, "present": 4 } }
+      ]
     },
     {
       "name": "Normalization",
