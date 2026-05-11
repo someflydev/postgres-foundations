@@ -255,6 +255,17 @@ Options:
 Reads `tmp/progress/` and prints a minimal summary of profile, exercise, and
 capstone attempt records. The evaluator-grade progress engine lands later.
 
+## `pgfound capstone start ID`
+
+Copies `capstones/<ID>/starter/` into `tmp/capstone-work/<ID>/`, prints the
+capstone brief, constraints, and acceptance criteria, and registers a started
+attempt under `tmp/progress/capstones/<ID>.json`.
+
+## `pgfound capstone evaluate ID --path DIR`
+
+Stub command for the `PROMPT_27` review engine. It verifies the command surface
+exists for future wiring and exits successfully with a `PROMPT_27` message.
+
 ## `pgfound review run`
 
 Stub command that exits 0 and reports that the review engine lands in

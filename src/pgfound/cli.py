@@ -1,5 +1,6 @@
 """Click command surface for pgfound."""
 
+import json
 import shutil
 import subprocess
 import sys
@@ -791,6 +792,61 @@ def progress_show() -> None:
     table.add_row("exercises", str(summary.exercise_files), str(summary.exercise_attempts))
     table.add_row("capstones", str(summary.capstone_files), str(summary.capstone_attempts))
     console.print(table)
+
+
+@main.group(help="Run capstone workspace commands.")
+def capstone() -> None:
+    """Run capstone workspace commands."""
+
+
+@capstone.command("start", help="Copy a capstone starter workspace and print its brief.")
+@click.argument("capstone_id")
+def capstone_start(capstone_id: str) -> None:
+    """Start a capstone attempt."""
+    capstone_dir = paths.CAPSTONES_DIR / capstone_id
+    starter_dir = capstone_dir / "starter"
+    if not starter_dir.is_dir():
+        raise click.ClickException(f"capstone starter not found: {capstone_id}")
+
+    work_dir = paths.TMP_DIR / "capstone-work" / capstone_id
+    if work_dir.exists():
+        shutil.rmtree(work_dir)
+    shutil.copytree(starter_dir, work_dir)
+
+    started_at = datetime.now(timezone.utc).isoformat()
+    progress_path = progress_store.capstone_progress_path(capstone_id)
+    progress_path.parent.mkdir(parents=True, exist_ok=True)
+    if progress_path.is_file():
+        payload = json.loads(progress_path.read_text(encoding="utf-8"))
+    else:
+        payload = {"capstone_id": capstone_id, "attempts": []}
+    attempts = payload.setdefault("attempts", [])
+    if not isinstance(attempts, list):
+        raise click.ClickException(f"invalid capstone progress record: {progress_path}")
+    attempts.append(
+        {
+            "started_at": started_at,
+            "workspace": str(work_dir.relative_to(paths.REPO_ROOT)),
+            "status": "started",
+        }
+    )
+    progress_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+    for name in ("brief.md", "constraints.md", "acceptance-criteria.md"):
+        path = capstone_dir / name
+        if path.is_file():
+            console.print(path.read_text(encoding="utf-8").rstrip())
+            console.print("")
+    _success(f"workspace: {work_dir.relative_to(paths.REPO_ROOT)}")
+    _success(f"recorded: {progress_path.relative_to(paths.REPO_ROOT)}")
+
+
+@capstone.command("evaluate", help="Evaluate a capstone submission; implemented in PROMPT_27.")
+@click.argument("capstone_id")
+@click.option("--path", "submission_path", type=click.Path(path_type=Path), required=True)
+def capstone_evaluate(capstone_id: str, submission_path: Path) -> None:
+    """Evaluate a capstone submission; implemented in PROMPT_27."""
+    _success(f"capstone evaluation for {capstone_id} at {submission_path} lands in PROMPT_27")
 
 
 def _snapshot_path(name: str) -> Path:

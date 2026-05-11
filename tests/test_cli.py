@@ -51,6 +51,7 @@ def test_stub_commands_exit_zero_with_prompt_numbers() -> None:
 
     cases = [
         (["review", "run"], "PROMPT_27"),
+        (["capstone", "evaluate", "01-multi-tenant-saas-crm", "--path", "."], "PROMPT_27"),
         (["decision", "run"], "PROMPT_43"),
         (["interview", "start"], "PROMPT_28"),
     ]
@@ -64,5 +65,14 @@ def test_root_help_lists_command_groups() -> None:
     result = CliRunner().invoke(main, ["--help"])
 
     assert result.exit_code == 0
-    for command in ["content", "decision", "doctor", "interview", "lab", "review", "version"]:
+    for command in [
+        "capstone",
+        "content",
+        "decision",
+        "doctor",
+        "interview",
+        "lab",
+        "review",
+        "version",
+    ]:
         assert command in result.output

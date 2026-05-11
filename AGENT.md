@@ -54,6 +54,9 @@ concrete, operational, and PostgreSQL core-first.
 - Exercise timing check: `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
 - Concurrency scenario list: `uv run pgfound lab concurrency list`
 - Concurrency scenario run: `uv run pgfound lab concurrency run scenarios/concurrency/inventory-lost-update.yaml`
+- Capstone start: `uv run pgfound capstone start 01-multi-tenant-saas-crm`
+- Capstone evaluation stub: `uv run pgfound capstone evaluate 01-multi-tenant-saas-crm --path tmp/capstone-work/01-multi-tenant-saas-crm`
+- Capstone scheduling concurrency check: `uv run pgfound lab concurrency run scenarios/concurrency/scheduling-double-booking.yaml`
 - Explain plan: `uv run pgfound lab explain <sql-file-or-inline>`
 - Progress summary: `uv run pgfound progress show`
 - Lab up: `make lab-up`
