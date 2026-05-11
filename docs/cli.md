@@ -250,6 +250,20 @@ Options:
 - `--save-answer`: best-effort copy of the last statement from `~/.psql_history`
   into the canonical answer path after the psql session.
 
+## `pgfound exercise review EXERCISE_ID --answer PATH`
+
+Runs the mechanical review engine for one exercise answer, writes Markdown and
+JSON reports under `tmp/reviews/<exercise-id>/`, and prints the scored rubric
+summary plus findings.
+
+```bash
+uv run pgfound exercise review first-select-write-query --answer tmp/answers/first-select-write-query.sql --auto
+uv run pgfound exercise review what-lateral-unlocks-level-c-1 --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --full
+```
+
+`--auto` runs correctness comparison. `--full` also attempts plan comparison
+against the live lab database.
+
 ## `pgfound progress show`
 
 Reads `tmp/progress/` and prints a minimal summary of profile, exercise, and
@@ -263,13 +277,23 @@ attempt under `tmp/progress/capstones/<ID>.json`.
 
 ## `pgfound capstone evaluate ID --path DIR`
 
-Stub command for the `PROMPT_27` review engine. It verifies the command surface
-exists for future wiring and exits successfully with a `PROMPT_27` message.
+Runs the capstone review engine for a learner workspace, scores mechanically
+observable rubric dimensions, and writes reports under
+`tmp/reviews/capstone/<id>/`.
+
+`--full` uses the sandbox database URL (`PGFOUND_SANDBOX_DB_URL`, otherwise
+compose defaults on port 55434), applies schema/index/RLS artifacts in a
+rollback, executes reference and learner critical-query files, and compares
+normalized outputs.
 
 ## `pgfound review run`
 
-Stub command that exits 0 and reports that the review engine lands in
-`PROMPT_27`.
+Generic review entry point. Provide exactly one target:
+
+```bash
+uv run pgfound review run --exercise-id first-select-write-query --answer tmp/answers/first-select-write-query.sql
+uv run pgfound review run --capstone-id 01-multi-tenant-saas-crm --path capstones/01-multi-tenant-saas-crm/reference --full
+```
 
 ## `pgfound decision run`
 

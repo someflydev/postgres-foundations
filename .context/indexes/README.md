@@ -263,3 +263,16 @@ Capstone references introduced by PROMPT_26:
 - `exercises/phase-10-roles-rls-replication-and-fdw/modernization-bridge-pattern/level-d/modernization-bridge-pattern-level-d-3/`
 - `tests/test_capstones_all.py`
 - `tests/test_extension_posture_rubric.py`
+
+Review engine references introduced by PROMPT_27:
+
+- `src/pgfound/review/engine.py`
+- `src/pgfound/review/grading.py`
+- `src/pgfound/review/models.py`
+- `src/pgfound/review/runners/`
+- `src/pgfound/review/output/`
+- `docs/review-engine.md`
+- `docs/rubric-signals.md`
+- `tests/test_review_engine_exercise.py`
+- `tests/test_review_engine_capstone.py`
+- `tests/test_plan_diff.py`

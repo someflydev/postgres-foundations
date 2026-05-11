@@ -98,7 +98,12 @@ Completed:
   backported capstone rubric composition, a stale materialized-view FDW
   concurrency scenario, a Phase 10 critique exercise, capstones README, and
   capstone corpus tests.
+- PROMPT_27: Mechanical review engine and rubric signal system; exercise and
+  capstone review commands, Markdown/JSON report writers, plan diff helpers,
+  writeup lint, schema/artifact runners, rubric `signals`, capstone
+  `critical_queries_path` and `writeup_required_sections`, and review-engine
+  docs/tests.
 
 Next expected prompt:
 
-- PROMPT_27: Review engine and rubric system.
+- PROMPT_28: Interview simulator.

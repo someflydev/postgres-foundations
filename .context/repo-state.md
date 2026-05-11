@@ -138,6 +138,12 @@ Current baseline:
   extension-posture and operational-reasoning rubric dimensions, a capstones
   README, a stale materialized-view FDW concurrency scenario, and a Phase 10
   critique exercise for the modernization bridge.
+- Review engine: PROMPT_27 added `pgfound exercise review`, implemented
+  `pgfound capstone evaluate` and `pgfound review run`, introduced
+  `src/pgfound/review/` result models, grading, runners, Markdown/JSON output,
+  plan diffing, sandbox-backed `--full` capstone SQL/query checks, rubric
+  `signals`, capstone writeup/critical-query metadata, and
+  `docs/review-engine.md` plus `docs/rubric-signals.md`.
 
 Canonical docs:
 
@@ -147,6 +153,8 @@ Canonical docs:
 - `docs/llm-usage.md`
 - `docs/lab.md`
 - `docs/cli.md`
+- `docs/review-engine.md`
+- `docs/rubric-signals.md`
 - `docs/authoring.md`
 - `docs/authoring-lessons.md`
 - `docs/authoring-exercises.md`

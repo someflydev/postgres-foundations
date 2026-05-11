@@ -55,7 +55,10 @@ concrete, operational, and PostgreSQL core-first.
 - Concurrency scenario list: `uv run pgfound lab concurrency list`
 - Concurrency scenario run: `uv run pgfound lab concurrency run scenarios/concurrency/inventory-lost-update.yaml`
 - Capstone start: `uv run pgfound capstone start 01-multi-tenant-saas-crm`
-- Capstone evaluation stub: `uv run pgfound capstone evaluate 01-multi-tenant-saas-crm --path tmp/capstone-work/01-multi-tenant-saas-crm`
+- Exercise review: `uv run pgfound exercise review first-select-write-query --answer tmp/answers/first-select-write-query.sql --auto`
+- Capstone evaluation: `uv run pgfound capstone evaluate 01-multi-tenant-saas-crm --path tmp/capstone-work/01-multi-tenant-saas-crm`
+- Capstone full evaluation: `uv run pgfound capstone evaluate 01-multi-tenant-saas-crm --path capstones/01-multi-tenant-saas-crm/reference --full`
+- Review engine: `uv run pgfound review run --exercise-id first-select-write-query --answer tmp/answers/first-select-write-query.sql`
 - Capstone scheduling concurrency check: `uv run pgfound lab concurrency run scenarios/concurrency/scheduling-double-booking.yaml`
 - Explain plan: `uv run pgfound lab explain <sql-file-or-inline>`
 - Progress summary: `uv run pgfound progress show`
