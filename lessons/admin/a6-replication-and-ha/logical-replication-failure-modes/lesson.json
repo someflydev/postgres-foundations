@@ -1,0 +1,54 @@
+{
+  "id": "logical-replication-failure-modes",
+  "title": "Logical Replication Failure Modes",
+  "module_id": "a6-replication-and-ha",
+  "capability_layer": "admin_mastery",
+  "summary": "Operational lesson for logical replication failure modes with PostgreSQL catalog evidence, bounded remediation, and verification.",
+  "learning_objectives": [
+    "Collect PostgreSQL evidence for logical replication failure modes.",
+    "Explain the operational risk, remediation, and verification path.",
+    "Prefer core PostgreSQL mechanisms before adding external operational burden."
+  ],
+  "prerequisites": [
+    "phase-10-operational-foundations"
+  ],
+  "concepts_introduced": [
+    "replica-identity",
+    "schema-drift",
+    "toast",
+    "large-transactions"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "logical-replication-failure-modes-level-a-1",
+    "logical-replication-failure-modes-level-a-2",
+    "logical-replication-failure-modes-level-b-1",
+    "logical-replication-failure-modes-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "logical-replication-failure-modes-level-c-1",
+    "logical-replication-failure-modes-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "logical-replication-failure-modes-level-d-1",
+    "logical-replication-failure-modes-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which verification step would prove the risk is lower?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a6",
+    "logical-replication-failure-modes"
+  ],
+  "status": "active"
+}

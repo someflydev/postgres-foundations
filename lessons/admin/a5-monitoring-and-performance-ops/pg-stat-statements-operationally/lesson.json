@@ -1,0 +1,54 @@
+{
+  "id": "pg-stat-statements-operationally",
+  "title": "Pg Stat Statements Operationally",
+  "module_id": "a5-monitoring-and-performance-ops",
+  "capability_layer": "admin_mastery",
+  "summary": "Operational lesson for pg stat statements operationally with PostgreSQL catalog evidence, bounded remediation, and verification.",
+  "learning_objectives": [
+    "Collect PostgreSQL evidence for pg stat statements operationally.",
+    "Explain the operational risk, remediation, and verification path.",
+    "Prefer core PostgreSQL mechanisms before adding external operational burden."
+  ],
+  "prerequisites": [
+    "phase-10-operational-foundations"
+  ],
+  "concepts_introduced": [
+    "pg-stat-statements",
+    "top-5-by-total-time",
+    "average-time",
+    "weekly-triage-rhythm"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "pg-stat-statements-operationally-level-a-1",
+    "pg-stat-statements-operationally-level-a-2",
+    "pg-stat-statements-operationally-level-b-1",
+    "pg-stat-statements-operationally-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "pg-stat-statements-operationally-level-c-1",
+    "pg-stat-statements-operationally-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "pg-stat-statements-operationally-level-d-1",
+    "pg-stat-statements-operationally-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which verification step would prove the risk is lower?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a5",
+    "pg-stat-statements-operationally"
+  ],
+  "status": "active"
+}

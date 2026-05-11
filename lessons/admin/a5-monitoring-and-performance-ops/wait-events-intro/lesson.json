@@ -1,0 +1,54 @@
+{
+  "id": "wait-events-intro",
+  "title": "Wait Events Intro",
+  "module_id": "a5-monitoring-and-performance-ops",
+  "capability_layer": "admin_mastery",
+  "summary": "Operational lesson for wait events intro with PostgreSQL catalog evidence, bounded remediation, and verification.",
+  "learning_objectives": [
+    "Collect PostgreSQL evidence for wait events intro.",
+    "Explain the operational risk, remediation, and verification path.",
+    "Prefer core PostgreSQL mechanisms before adding external operational burden."
+  ],
+  "prerequisites": [
+    "phase-10-operational-foundations"
+  ],
+  "concepts_introduced": [
+    "wait-event-type",
+    "wait-event",
+    "lock",
+    "io"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "wait-events-intro-level-a-1",
+    "wait-events-intro-level-a-2",
+    "wait-events-intro-level-b-1",
+    "wait-events-intro-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "wait-events-intro-level-c-1",
+    "wait-events-intro-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "wait-events-intro-level-d-1",
+    "wait-events-intro-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which verification step would prove the risk is lower?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a5",
+    "wait-events-intro"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,54 @@
+{
+  "id": "growth-and-capacity",
+  "title": "Growth And Capacity",
+  "module_id": "a5-monitoring-and-performance-ops",
+  "capability_layer": "admin_mastery",
+  "summary": "Operational lesson for growth and capacity with PostgreSQL catalog evidence, bounded remediation, and verification.",
+  "learning_objectives": [
+    "Collect PostgreSQL evidence for growth and capacity.",
+    "Explain the operational risk, remediation, and verification path.",
+    "Prefer core PostgreSQL mechanisms before adding external operational burden."
+  ],
+  "prerequisites": [
+    "phase-10-operational-foundations"
+  ],
+  "concepts_introduced": [
+    "disk-growth-monitoring",
+    "table-size",
+    "index-size",
+    "early-warning-thresholds"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "growth-and-capacity-level-a-1",
+    "growth-and-capacity-level-a-2",
+    "growth-and-capacity-level-b-1",
+    "growth-and-capacity-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "growth-and-capacity-level-c-1",
+    "growth-and-capacity-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "growth-and-capacity-level-d-1",
+    "growth-and-capacity-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which verification step would prove the risk is lower?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a5",
+    "growth-and-capacity"
+  ],
+  "status": "active"
+}

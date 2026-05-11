@@ -1,0 +1,54 @@
+{
+  "id": "index-usage-and-unused-indexes",
+  "title": "Index Usage And Unused Indexes",
+  "module_id": "a5-monitoring-and-performance-ops",
+  "capability_layer": "admin_mastery",
+  "summary": "Operational lesson for index usage and unused indexes with PostgreSQL catalog evidence, bounded remediation, and verification.",
+  "learning_objectives": [
+    "Collect PostgreSQL evidence for index usage and unused indexes.",
+    "Explain the operational risk, remediation, and verification path.",
+    "Prefer core PostgreSQL mechanisms before adding external operational burden."
+  ],
+  "prerequisites": [
+    "phase-10-operational-foundations"
+  ],
+  "concepts_introduced": [
+    "pg-stat-user-indexes",
+    "unused-indexes",
+    "candidates-for-drop",
+    "idx-scan"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "index-usage-and-unused-indexes-level-a-1",
+    "index-usage-and-unused-indexes-level-a-2",
+    "index-usage-and-unused-indexes-level-b-1",
+    "index-usage-and-unused-indexes-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "index-usage-and-unused-indexes-level-c-1",
+    "index-usage-and-unused-indexes-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "index-usage-and-unused-indexes-level-d-1",
+    "index-usage-and-unused-indexes-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which verification step would prove the risk is lower?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a5",
+    "index-usage-and-unused-indexes"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,54 @@
+{
+  "id": "failover-basics",
+  "title": "Failover Basics",
+  "module_id": "a6-replication-and-ha",
+  "capability_layer": "admin_mastery",
+  "summary": "Operational lesson for failover basics with PostgreSQL catalog evidence, bounded remediation, and verification.",
+  "learning_objectives": [
+    "Collect PostgreSQL evidence for failover basics.",
+    "Explain the operational risk, remediation, and verification path.",
+    "Prefer core PostgreSQL mechanisms before adding external operational burden."
+  ],
+  "prerequisites": [
+    "phase-10-operational-foundations"
+  ],
+  "concepts_introduced": [
+    "failover",
+    "sync-vs-async-replication",
+    "quorum",
+    "patroni"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "failover-basics-level-a-1",
+    "failover-basics-level-a-2",
+    "failover-basics-level-b-1",
+    "failover-basics-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "failover-basics-level-c-1",
+    "failover-basics-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "failover-basics-level-d-1",
+    "failover-basics-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which verification step would prove the risk is lower?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a6",
+    "failover-basics"
+  ],
+  "status": "active"
+}

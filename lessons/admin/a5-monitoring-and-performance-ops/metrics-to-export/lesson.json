@@ -1,0 +1,54 @@
+{
+  "id": "metrics-to-export",
+  "title": "Metrics To Export",
+  "module_id": "a5-monitoring-and-performance-ops",
+  "capability_layer": "admin_mastery",
+  "summary": "Operational lesson for metrics to export with PostgreSQL catalog evidence, bounded remediation, and verification.",
+  "learning_objectives": [
+    "Collect PostgreSQL evidence for metrics to export.",
+    "Explain the operational risk, remediation, and verification path.",
+    "Prefer core PostgreSQL mechanisms before adding external operational burden."
+  ],
+  "prerequisites": [
+    "phase-10-operational-foundations"
+  ],
+  "concepts_introduced": [
+    "checkpoints",
+    "bgwriter",
+    "replication-lag",
+    "wal-generation-rate"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "metrics-to-export-level-a-1",
+    "metrics-to-export-level-a-2",
+    "metrics-to-export-level-b-1",
+    "metrics-to-export-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "metrics-to-export-level-c-1",
+    "metrics-to-export-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "metrics-to-export-level-d-1",
+    "metrics-to-export-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which verification step would prove the risk is lower?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a5",
+    "metrics-to-export"
+  ],
+  "status": "active"
+}

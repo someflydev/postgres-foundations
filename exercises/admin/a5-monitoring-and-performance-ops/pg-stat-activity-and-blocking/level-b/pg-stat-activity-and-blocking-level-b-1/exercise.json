@@ -1,0 +1,53 @@
+{
+  "id": "pg-stat-activity-and-blocking-level-b-1",
+  "title": "Pg Stat Activity And Blocking Level B1",
+  "lesson_id": "pg-stat-activity-and-blocking",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "pg-catalog",
+    "pg-stat-activity",
+    "pg-stat-statements",
+    "explain-analyze-buffers",
+    "replication",
+    "logical-replication",
+    "alerting"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "pg_catalog.pg_stat_activity",
+      "pg_catalog.pg_locks",
+      "public.replication_lab_events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "admin",
+    "max_rows_hint": 5000
+  },
+  "search_path": "public, pg_catalog",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Names the PostgreSQL evidence source used for the diagnosis.",
+    "Includes a bounded action or recommendation tied to that evidence.",
+    "States the verification step an operator would run afterward."
+  ],
+  "time_target_minutes": 18,
+  "rubric_id": "schema-design",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "admin",
+    "a5",
+    "pg-stat-activity-and-blocking",
+    "b"
+  ],
+  "status": "active",
+  "hints": [
+    "Start from the PostgreSQL catalog or statistics view named in the lesson.",
+    "Keep the action smaller than the incident until the evidence is stronger."
+  ]
+}

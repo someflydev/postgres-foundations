@@ -1,0 +1,54 @@
+{
+  "id": "postmortem-discipline",
+  "title": "Postmortem Discipline",
+  "module_id": "a6-replication-and-ha",
+  "capability_layer": "admin_mastery",
+  "summary": "Operational lesson for postmortem discipline with PostgreSQL catalog evidence, bounded remediation, and verification.",
+  "learning_objectives": [
+    "Collect PostgreSQL evidence for postmortem discipline.",
+    "Explain the operational risk, remediation, and verification path.",
+    "Prefer core PostgreSQL mechanisms before adding external operational burden."
+  ],
+  "prerequisites": [
+    "phase-10-operational-foundations"
+  ],
+  "concepts_introduced": [
+    "postmortem",
+    "invariant-violated",
+    "blast-radius",
+    "detection-latency"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "postmortem-discipline-level-a-1",
+    "postmortem-discipline-level-a-2",
+    "postmortem-discipline-level-b-1",
+    "postmortem-discipline-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "postmortem-discipline-level-c-1",
+    "postmortem-discipline-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "postmortem-discipline-level-d-1",
+    "postmortem-discipline-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which verification step would prove the risk is lower?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a6",
+    "postmortem-discipline"
+  ],
+  "status": "active"
+}

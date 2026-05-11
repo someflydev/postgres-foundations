@@ -1,0 +1,54 @@
+{
+  "id": "upgrade-via-logical-replication",
+  "title": "Upgrade Via Logical Replication",
+  "module_id": "a6-replication-and-ha",
+  "capability_layer": "admin_mastery",
+  "summary": "Operational lesson for upgrade via logical replication with PostgreSQL catalog evidence, bounded remediation, and verification.",
+  "learning_objectives": [
+    "Collect PostgreSQL evidence for upgrade via logical replication.",
+    "Explain the operational risk, remediation, and verification path.",
+    "Prefer core PostgreSQL mechanisms before adding external operational burden."
+  ],
+  "prerequisites": [
+    "phase-10-operational-foundations"
+  ],
+  "concepts_introduced": [
+    "near-zero-downtime",
+    "major-version-upgrade",
+    "logical-replication",
+    "cutover"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "upgrade-via-logical-replication-level-a-1",
+    "upgrade-via-logical-replication-level-a-2",
+    "upgrade-via-logical-replication-level-b-1",
+    "upgrade-via-logical-replication-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "upgrade-via-logical-replication-level-c-1",
+    "upgrade-via-logical-replication-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "upgrade-via-logical-replication-level-d-1",
+    "upgrade-via-logical-replication-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which verification step would prove the risk is lower?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a6",
+    "upgrade-via-logical-replication"
+  ],
+  "status": "active"
+}

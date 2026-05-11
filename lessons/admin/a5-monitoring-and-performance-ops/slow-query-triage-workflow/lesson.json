@@ -1,0 +1,54 @@
+{
+  "id": "slow-query-triage-workflow",
+  "title": "Slow Query Triage Workflow",
+  "module_id": "a5-monitoring-and-performance-ops",
+  "capability_layer": "admin_mastery",
+  "summary": "Operational lesson for slow query triage workflow with PostgreSQL catalog evidence, bounded remediation, and verification.",
+  "learning_objectives": [
+    "Collect PostgreSQL evidence for slow query triage workflow.",
+    "Explain the operational risk, remediation, and verification path.",
+    "Prefer core PostgreSQL mechanisms before adding external operational burden."
+  ],
+  "prerequisites": [
+    "phase-10-operational-foundations"
+  ],
+  "concepts_introduced": [
+    "pg-stat-statements",
+    "explain-analyze-buffers",
+    "pg-stat-user-tables",
+    "triage-loop"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "slow-query-triage-workflow-level-a-1",
+    "slow-query-triage-workflow-level-a-2",
+    "slow-query-triage-workflow-level-b-1",
+    "slow-query-triage-workflow-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "slow-query-triage-workflow-level-c-1",
+    "slow-query-triage-workflow-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "slow-query-triage-workflow-level-d-1",
+    "slow-query-triage-workflow-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would you attach to an incident review?",
+    "Which verification step would prove the risk is lower?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a5",
+    "slow-query-triage-workflow"
+  ],
+  "status": "active"
+}

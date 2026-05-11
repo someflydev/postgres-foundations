@@ -1,0 +1,53 @@
+{
+  "id": "logical-replication-lifecycle-in-ops-level-c-1",
+  "title": "Logical Replication Lifecycle In Ops Level C1",
+  "lesson_id": "logical-replication-lifecycle-in-ops",
+  "scaffolding_level": "C",
+  "kind": "lab",
+  "allowed_concepts": [
+    "pg-catalog",
+    "pg-stat-activity",
+    "pg-stat-statements",
+    "explain-analyze-buffers",
+    "replication",
+    "logical-replication",
+    "alerting"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "pg_catalog.pg_stat_activity",
+      "pg_catalog.pg_locks",
+      "public.replication_lab_events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "admin",
+    "max_rows_hint": 5000
+  },
+  "search_path": "public, pg_catalog",
+  "expected_output_shape": "prose_explanation",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Names the PostgreSQL evidence source used for the diagnosis.",
+    "Includes a bounded action or recommendation tied to that evidence.",
+    "States the verification step an operator would run afterward."
+  ],
+  "time_target_minutes": 30,
+  "rubric_id": "schema-design",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "admin",
+    "a6",
+    "logical-replication-lifecycle-in-ops",
+    "c"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "What evidence proves the diagnosis rather than merely matching the symptom?",
+    "What would you monitor after applying the remediation?"
+  ]
+}
