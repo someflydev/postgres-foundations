@@ -82,7 +82,9 @@ def test_admin_a3_a4_lessons_exercises_and_restore_drill_tag() -> None:
             restore_drills.append(exercise)
 
     assert sum(len(exercises_by_lesson[lesson]) for lesson in A3_LESSONS | A4_LESSONS) == 136
-    assert any(exercise["lesson_id"] == "restore-drills-are-mandatory" for exercise in restore_drills)
+    assert any(
+        exercise["lesson_id"] == "restore-drills-are-mandatory" for exercise in restore_drills
+    )
 
     for lesson_path in a3_paths + a4_paths:
         lesson = _load(lesson_path)
