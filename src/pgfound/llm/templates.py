@@ -16,6 +16,10 @@ from pgfound import paths
 FRONT_MATTER_RE = re.compile(r"\A---\n(.*?)\n---\n(.*)\Z", re.DOTALL)
 
 TRAINING_TEMPLATE_IDS = {
+    "capstone-reviewer/extension-posture-review",
+    "capstone-reviewer/full-capstone-review",
+    "capstone-reviewer/operational-runbook-review",
+    "capstone-reviewer/writeup-review",
     "coaching/concept-check",
     "coaching/analogy-generator",
     "coaching/misunderstanding-probe",
@@ -23,6 +27,16 @@ TRAINING_TEMPLATE_IDS = {
     "critique/schema-critique",
     "critique/index-critique",
     "critique/concurrency-critique",
+    "interview/follow-up-generator",
+    "interview/personas/adversarial-architect",
+    "interview/personas/mid-interviewer",
+    "interview/personas/senior-interviewer",
+    "interview/stages/capstone-defense",
+    "interview/stages/closing-feedback",
+    "interview/stages/debugging-drill-wrap",
+    "interview/stages/design-probe",
+    "interview/stages/oral-defense",
+    "interview/stages/warmup",
     "remediation/remediation-pack-generator",
     "remediation/hint-ladder-generator",
     "remediation/failure-lab-generator",
@@ -85,8 +99,6 @@ def list_templates() -> list[PromptTemplate]:
         if not FRONT_MATTER_RE.match(text):
             continue
         template = parse_template(path)
-        if template.id.startswith("interview/"):
-            continue
         templates.append(template)
     return templates
 

@@ -63,6 +63,7 @@ concrete, operational, and PostgreSQL core-first.
 - LLM prompt render: `uv run pgfound llm render critique/query-critique --context tests/fixtures/critique-context.json --out tmp/preview.md`
 - Interview start: `uv run pgfound interview start --scenario senior-backend-saas-rls`
 - Interview review: `uv run pgfound interview review tmp/interviews/<scenario-id>/<timestamp>.md`
+- Interview dispatch bundle: `uv run pgfound interview dispatch tmp/interviews/<scenario-id>/<timestamp>.md`
 - Capstone scheduling concurrency check: `uv run pgfound lab concurrency run scenarios/concurrency/scheduling-double-booking.yaml`
 - Explain plan: `uv run pgfound lab explain <sql-file-or-inline>`
 - Progress summary: `uv run pgfound progress show`

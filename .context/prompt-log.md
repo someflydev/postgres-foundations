@@ -113,7 +113,12 @@ Completed:
   template format; Jinja2-backed `pgfound llm list|render`; full exercise
   review prompt artifacts; full capstone schema/index prompt artifacts; LLM
   integration docs; and template render/completeness tests.
+- PROMPT_30: Interview personas, stage prompts, follow-up generation, closing
+  feedback, interview dispatch bundles, capstone reviewer prompt templates,
+  full capstone prompt bundles, provider-neutral LLM documentation, and prompt
+  rendering tests.
 
 Next expected prompt:
 
-- PROMPT_30: Interview, oral-defense, and capstone-reviewer LLM prompts.
+- PROMPT_31: Administration Track A1-A2 roles/privileges and
+  schemas/databases.

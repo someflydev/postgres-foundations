@@ -161,6 +161,11 @@ Current baseline:
   rendering in `src/pgfound/llm/`; added `pgfound llm list|render`; and writes
   LLM prompt artifacts from `exercise review --full` and capstone full
   evaluation.
+- Interview and capstone reviewer LLM prompts: PROMPT_30 added
+  `llm-prompts/interview/personas/`, upgraded interview stage prompts to the
+  YAML-front-matter/Jinja2 format, added follow-up and closing-feedback prompt
+  rendering, added `pgfound interview dispatch`, and added capstone reviewer
+  prompt bundles under `tmp/reviews/capstone/<id>/<timestamp>/`.
 
 Canonical docs:
 
@@ -169,6 +174,7 @@ Canonical docs:
 - `docs/repo-layout.md`
 - `docs/llm-usage.md`
 - `docs/llm-integration.md`
+- `docs/llm-provider-neutrality.md`
 - `docs/lab.md`
 - `docs/cli.md`
 - `docs/review-engine.md`

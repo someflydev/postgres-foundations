@@ -27,7 +27,7 @@ def context_for(template_id: str) -> dict[str, object]:
             "workload_description": "Lookup recent orders by customer.",
             "existing_schema": "create table orders (id bigint, customer_id bigint);",
             "query_examples": ["select * from orders where customer_id = 1;"],
-            "scenario_id": "inventory-lost-update",
+            "scenario_id": "senior-backend-saas-rls",
             "race_description": "Two sessions decrement the same row.",
             "proposed_fix": "select * from inventory where id = 1 for update;",
             "observed_trace": "both sessions read quantity 1",
@@ -42,6 +42,35 @@ def context_for(template_id: str) -> dict[str, object]:
             "stuck_point": "I do not know which column to filter.",
             "common_mistake": "Using prose rules instead of constraints.",
             "domain_context": "Scheduling appointments.",
+            "scenario_title": "Senior backend - multi-tenant SaaS with RLS",
+            "duration_minutes": 45,
+            "capability_layers_required": ["schema_literacy", "security_federation"],
+            "stage_kind": "design_probe",
+            "topic": "multi_tenant_rls",
+            "previous_stages": [],
+            "latest_response": "I would start with tenant invariants.",
+            "full_transcript": "Learner defended tenant-scoped RLS.",
+            "stage_transcript": "Prompt and learner response.",
+            "capstone_id": "01-multi-tenant-saas-crm",
+            "capstone_metadata": {"id": "01-multi-tenant-saas-crm"},
+            "learner_artifacts": {
+                "schema.sql": "create table accounts (id bigint primary key);",
+                "indexes.sql": "create index on accounts (id);",
+                "rls-policies.sql": "alter table accounts enable row level security;",
+                "critical-queries.sql": "select 1;",
+                "operational-runbook.md": "Rollback and monitor.",
+                "writeup.md": "Extension posture: not yet.",
+            },
+            "reference_artifacts": {
+                "schema.sql": "create table accounts (id bigint primary key);",
+                "indexes.sql": "create index on accounts (id);",
+                "rls-policies.sql": "alter table accounts enable row level security;",
+                "critical-queries.sql": "select 1;",
+                "operational-runbook.md": "Rollback and monitor.",
+                "writeup.md": "Extension posture: not yet.",
+            },
+            "engine_result": {"overall_score": 1.0},
+            "rubric": {"id": "capstone"},
         }
     )
     return context
@@ -54,4 +83,11 @@ def test_training_templates_parse_and_render() -> None:
     for template in loaded:
         rendered = templates.render_template(template.id, context_for(template.id))
         assert rendered.strip()
-        assert template.id.split("/", 1)[0] in {"coaching", "critique", "remediation", "shared"}
+        assert template.id.split("/", 1)[0] in {
+            "capstone-reviewer",
+            "coaching",
+            "critique",
+            "interview",
+            "remediation",
+            "shared",
+        }

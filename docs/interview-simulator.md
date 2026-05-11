@@ -1,10 +1,11 @@
 # Interview Simulator
 
 The interview simulator lets learners practice explaining and defending
-PostgreSQL design decisions. Prompt 28 keeps the interviewer voice stubbed:
-the session prints the stage prompt, records the learner response, logs the
-payload that would be sent to an LLM, and writes a transcript for deterministic
-rubric review.
+PostgreSQL design decisions. The interviewer voice is still stubbed, but each
+stage renders the same provider-neutral LLM prompt that an external dispatch
+layer can send to a model. The session prints the rendered stage prompt, records
+the learner response, logs the prompt and canned stub response, and writes a
+transcript for deterministic rubric review.
 
 ## Commands
 
@@ -18,6 +19,12 @@ Review an existing transcript:
 
 ```bash
 uv run pgfound interview review tmp/interviews/senior-backend-saas-rls/<timestamp>.md
+```
+
+Print a single prompt bundle for an external LLM CLI:
+
+```bash
+uv run pgfound interview dispatch tmp/interviews/senior-backend-saas-rls/<timestamp>.md
 ```
 
 Transcripts are written under `tmp/interviews/<scenario-id>/<timestamp>.md`.
@@ -42,19 +49,17 @@ stage and any remaining session input.
 
 ## Prompt Templates
 
-Stage templates live under `llm-prompts/interview/stages/`. Templates may use
-these placeholders:
+Stage templates live under `llm-prompts/interview/stages/` and use the same
+YAML-front-matter/Jinja2 format as the rest of `llm-prompts/`. Persona prompts
+live under `llm-prompts/interview/personas/`; the simulator chooses the
+adversarial architect persona for `architect-decision-engine-review`, the
+mid-level persona for mid-level scenarios, and the senior persona otherwise.
 
-- `{scenario_id}`
-- `{scenario_title}`
-- `{stage_kind}`
-- `{topic}`
-- `{exercise_id}`
-- `{exercise_prompt}`
-
-Templates may include a `## Follow-ups` section with bullet questions. The
-session prints those follow-ups for design and explainability stages and records
-them in simulator notes.
+The simulator renders the warmup prompt, the persona prompt after warmup, every
+configured scenario stage, the follow-up generator for probing stages, and a
+closing-feedback prompt over the full transcript. Hidden simulator notes are
+delimited with `=== HIDDEN SIMULATOR NOTES ===` so a future live simulator can
+strip them before showing output to learners.
 
 ## Transcript Contract
 
@@ -67,6 +72,9 @@ Every transcript follows this shape:
 - completed_at: ...
 - learner: ...
 
+## Persona Prompt
+...
+
 ## Stage: warmup
 ### Prompt
 ...
@@ -77,7 +85,8 @@ Every transcript follows this shape:
 ```
 
 `pgfound.interview.transcripts.validate_transcript()` parses this structure so
-future review tooling can consume the file without scraping arbitrary Markdown.
+review tooling and `pgfound interview dispatch` can consume the file without
+scraping arbitrary Markdown.
 
 ## Rubrics
 
@@ -85,5 +94,5 @@ Interview rubrics live under `rubrics/interview/` and set
 `applies_to: interview`. The current evaluator is deterministic and deliberately
 weak: it looks for transcript signals such as enough explanatory detail,
 because-style justification, tradeoff language, correctness vocabulary, and
-operational/not-yet posture. PROMPT_30 can add interview-specific rendered
-prompts without changing the transcript contract.
+operational/not-yet posture. LLM prompts remain provider-neutral artifacts; the
+local simulator does not call a model.
