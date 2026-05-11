@@ -24,6 +24,9 @@ from pgfound.content import validate as content_validator
 from pgfound.lab import compose
 from pgfound.lab import explain as lab_explain
 from pgfound.lab import harness as concurrency_harness
+from pgfound.review import engine as review_engine
+from pgfound.review.models import EvaluationContext, EvaluationRequest
+from pgfound.review.output import report as review_report
 
 console = Console()
 
@@ -775,6 +778,43 @@ def exercise_run(
     _success(f"recorded {progress_path.relative_to(paths.REPO_ROOT)}")
 
 
+@exercise.command("review", help="Review an exercise answer and write reports.")
+@click.argument("exercise_id")
+@click.option(
+    "--answer",
+    "answer_path",
+    type=click.Path(path_type=Path),
+    required=True,
+    help="SQL answer path to review.",
+)
+@click.option("--auto", "mode_auto", is_flag=True, help="Run mechanical checks only.")
+@click.option("--full", "mode_full", is_flag=True, help="Run all available mechanical checks.")
+def exercise_review(
+    exercise_id: str,
+    answer_path: Path,
+    mode_auto: bool,
+    mode_full: bool,
+) -> None:
+    """Review one exercise answer."""
+    mode = "full" if mode_full else "auto"
+    if mode_auto and mode_full:
+        raise click.ClickException("choose only one of --auto or --full")
+    request = EvaluationRequest(
+        target_id=exercise_id,
+        artifact_path=answer_path,
+        context=EvaluationContext(repo_root=paths.REPO_ROOT, db_url=content_seed.database_url()),
+        mode=mode,
+        target_kind="exercise",
+    )
+    try:
+        result = review_engine.evaluate(request)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    review_report.render_console(console, result)
+    _success(f"markdown: {result.report_paths['markdown']}")
+    _success(f"json: {result.report_paths['json']}")
+
+
 @main.group(help="Show learner progress.")
 def progress() -> None:
     """Show learner progress."""
@@ -841,12 +881,29 @@ def capstone_start(capstone_id: str) -> None:
     _success(f"recorded: {progress_path.relative_to(paths.REPO_ROOT)}")
 
 
-@capstone.command("evaluate", help="Evaluate a capstone submission; implemented in PROMPT_27.")
+@capstone.command("evaluate", help="Evaluate a capstone submission.")
 @click.argument("capstone_id")
 @click.option("--path", "submission_path", type=click.Path(path_type=Path), required=True)
-def capstone_evaluate(capstone_id: str, submission_path: Path) -> None:
-    """Evaluate a capstone submission; implemented in PROMPT_27."""
-    _success(f"capstone evaluation for {capstone_id} at {submission_path} lands in PROMPT_27")
+@click.option("--full", "mode_full", is_flag=True, help="Run all available mechanical checks.")
+def capstone_evaluate(capstone_id: str, submission_path: Path, mode_full: bool) -> None:
+    """Evaluate a capstone submission."""
+    request = EvaluationRequest(
+        target_id=capstone_id,
+        artifact_path=submission_path,
+        context=EvaluationContext(
+            repo_root=paths.REPO_ROOT,
+            db_url=content_seed.sandbox_database_url() if mode_full else None,
+        ),
+        mode="full" if mode_full else "auto",
+        target_kind="capstone",
+    )
+    try:
+        result = review_engine.evaluate(request)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    review_report.render_console(console, result)
+    _success(f"markdown: {result.report_paths['markdown']}")
+    _success(f"json: {result.report_paths['json']}")
 
 
 def _snapshot_path(name: str) -> Path:
@@ -876,10 +933,48 @@ def review() -> None:
     """Run review engine commands."""
 
 
-@review.command("run", help="Run the review engine; implemented in PROMPT_27.")
-def review_run() -> None:
-    """Run the review engine; implemented in PROMPT_27."""
-    _success("review engine lands in PROMPT_27")
+@review.command("run", help="Run the review engine for an exercise or capstone.")
+@click.option("--exercise-id", help="Exercise ID to review.")
+@click.option("--capstone-id", help="Capstone ID to review.")
+@click.option(
+    "--answer", "answer_path", type=click.Path(path_type=Path), help="Exercise answer path."
+)
+@click.option(
+    "--path", "artifact_path", type=click.Path(path_type=Path), help="Capstone attempt directory."
+)
+@click.option("--full", "mode_full", is_flag=True, help="Run all available mechanical checks.")
+def review_run(
+    exercise_id: str | None,
+    capstone_id: str | None,
+    answer_path: Path | None,
+    artifact_path: Path | None,
+    mode_full: bool,
+) -> None:
+    """Run the review engine."""
+    if bool(exercise_id) == bool(capstone_id):
+        raise click.ClickException("provide exactly one of --exercise-id or --capstone-id")
+    target_kind = "exercise" if exercise_id else "capstone"
+    target_id = exercise_id or capstone_id
+    artifact = answer_path if exercise_id else artifact_path
+    if target_id is None or artifact is None:
+        raise click.ClickException("exercise reviews need --answer; capstone reviews need --path")
+    db_url = content_seed.database_url() if exercise_id else None
+    if capstone_id and mode_full:
+        db_url = content_seed.sandbox_database_url()
+    request = EvaluationRequest(
+        target_id=target_id,
+        artifact_path=artifact,
+        context=EvaluationContext(repo_root=paths.REPO_ROOT, db_url=db_url),
+        mode="full" if mode_full else "auto",
+        target_kind=target_kind,
+    )
+    try:
+        result = review_engine.evaluate(request)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    review_report.render_console(console, result)
+    _success(f"markdown: {result.report_paths['markdown']}")
+    _success(f"json: {result.report_paths['json']}")
 
 
 @main.group(help="Run decision-engine commands.")

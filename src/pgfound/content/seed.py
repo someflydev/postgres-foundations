@@ -45,6 +45,20 @@ def database_url() -> str:
     )
 
 
+def sandbox_database_url() -> str:
+    """Return the sandbox database URL from env or compose defaults."""
+    env_url = os.environ.get("PGFOUND_SANDBOX_DB_URL")
+    if env_url:
+        return env_url
+
+    config = load_config()
+    return (
+        "postgresql://"
+        f"{config.postgres_user}:{config.postgres_password}"
+        f"@{config.postgres_host}:{config.postgres_sandbox_port}/{config.postgres_db}"
+    )
+
+
 def phase_sort_key(phase: str) -> tuple[int, int, str]:
     """Sort plain and lettered curriculum phases in teaching order."""
     match = re.fullmatch(r"(?P<number>\d+)(?P<suffix>[a-z]?)", phase)
