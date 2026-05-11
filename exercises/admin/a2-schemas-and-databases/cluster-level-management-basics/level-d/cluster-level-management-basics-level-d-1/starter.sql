@@ -1,0 +1,2 @@
+-- Unsafe state: using databases as casual project folders and later needing cross-database transactions or consistent restore behavior.
+-- Expected remediation: reserve new databases for real lifecycle boundaries and document template, encoding, and locale choices.

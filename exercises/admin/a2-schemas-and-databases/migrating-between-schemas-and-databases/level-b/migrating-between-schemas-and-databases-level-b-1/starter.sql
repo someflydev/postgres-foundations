@@ -1,0 +1,2 @@
+-- Target state: use `pg_dump --schema=saas --format=custom` for a logical move, or logical replication when downtime must be reduced.
+-- Add the catalog query below.

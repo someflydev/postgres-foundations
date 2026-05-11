@@ -1,0 +1,2 @@
+-- Target state: create a scratch restore database from `template0` with explicit UTF8 encoding and locale values rather than inheriting accidental template state.
+-- Add the catalog query below.

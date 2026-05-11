@@ -1,0 +1,60 @@
+{
+  "id": "cluster-level-management-basics",
+  "title": "Cluster Level Management Basics",
+  "module_id": "a2-schemas-and-databases",
+  "capability_layer": "admin_mastery",
+  "summary": "Database creation, template databases, encodings, and locale choices are cluster-level administrative decisions.",
+  "learning_objectives": [
+    "Create and drop databases with explicit operational intent.",
+    "Explain TEMPLATE, ENCODING, LC_COLLATE, and LC_CTYPE constraints.",
+    "Avoid using databases as casual project folders."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "create_database",
+    "drop_database",
+    "template_database",
+    "encoding",
+    "locale"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "cluster-level-management-basics-level-a-1",
+    "cluster-level-management-basics-level-a-2",
+    "cluster-level-management-basics-level-b-1",
+    "cluster-level-management-basics-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "cluster-level-management-basics-level-c-1",
+    "cluster-level-management-basics-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "cluster-level-management-basics-level-d-1",
+    "cluster-level-management-basics-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a2",
+    "cluster-level-management-basics"
+  ],
+  "status": "active"
+}

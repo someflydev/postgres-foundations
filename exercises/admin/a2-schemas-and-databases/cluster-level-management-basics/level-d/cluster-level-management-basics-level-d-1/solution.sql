@@ -1,0 +1,4 @@
+-- Cluster Level Management Basics Level D1
+-- Unsafe state: using databases as casual project folders and later needing cross-database transactions or consistent restore behavior.
+-- Remediation: reserve new databases for real lifecycle boundaries and document template, encoding, and locale choices.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

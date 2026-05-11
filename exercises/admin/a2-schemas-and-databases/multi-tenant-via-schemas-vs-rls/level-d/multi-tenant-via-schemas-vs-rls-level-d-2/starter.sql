@@ -1,0 +1,2 @@
+-- Unsafe state: choosing schema-per-tenant because it sounds isolated without planning migrations across hundreds of schemas.
+-- Expected remediation: write down tenant count, restore needs, migration fan-out, and reporting queries before choosing the pattern.

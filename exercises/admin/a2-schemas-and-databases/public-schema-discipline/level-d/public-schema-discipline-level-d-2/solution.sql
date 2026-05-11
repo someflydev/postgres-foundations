@@ -1,0 +1,4 @@
+-- Public Schema Discipline Level D2
+-- Unsafe state: assuming all clusters have PostgreSQL 15 public-schema defaults after an upgrade history.
+-- Remediation: audit `public` ACLs and move application objects into owned schemas.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

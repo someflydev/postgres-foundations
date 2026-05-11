@@ -1,0 +1,4 @@
+-- Multi Tenant via Schemas vs RLS Level D2
+-- Unsafe state: choosing schema-per-tenant because it sounds isolated without planning migrations across hundreds of schemas.
+-- Remediation: write down tenant count, restore needs, migration fan-out, and reporting queries before choosing the pattern.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

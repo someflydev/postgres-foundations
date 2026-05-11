@@ -1,0 +1,2 @@
+-- Target state: on upgraded or older clusters, explicitly revoke CREATE from PUBLIC and place application objects in named schemas.
+-- Add the catalog query below.

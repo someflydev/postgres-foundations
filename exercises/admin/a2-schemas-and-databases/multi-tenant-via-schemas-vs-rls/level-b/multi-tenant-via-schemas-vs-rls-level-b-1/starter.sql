@@ -1,0 +1,2 @@
+-- Target state: a handful of enterprise tenants may justify tenant schemas; thousands of small tenants usually fit shared tables with RLS better.
+-- Add the catalog query below.

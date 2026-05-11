@@ -1,0 +1,58 @@
+{
+  "id": "search-path-discipline",
+  "title": "Search Path Discipline",
+  "module_id": "a2-schemas-and-databases",
+  "capability_layer": "admin_mastery",
+  "summary": "Unqualified names resolve through search_path, so privileged functions and application roles need explicit discipline.",
+  "learning_objectives": [
+    "Predict object resolution from a search_path.",
+    "Recognize hostile search_path risk in SECURITY DEFINER functions.",
+    "Set safe per-role or per-function search_path values."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "search_path",
+    "security_definer",
+    "qualified_names"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "search-path-discipline-level-a-1",
+    "search-path-discipline-level-a-2",
+    "search-path-discipline-level-b-1",
+    "search-path-discipline-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "search-path-discipline-level-c-1",
+    "search-path-discipline-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "search-path-discipline-level-d-1",
+    "search-path-discipline-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a2",
+    "search-path-discipline"
+  ],
+  "status": "active"
+}

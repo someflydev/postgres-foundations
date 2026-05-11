@@ -1,0 +1,4 @@
+-- Search Path Discipline Level D1
+-- Unsafe state: letting a caller-controlled schema appear before trusted schemas for privileged function execution.
+-- Remediation: schema-qualify references and pin search_path on SECURITY DEFINER functions.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

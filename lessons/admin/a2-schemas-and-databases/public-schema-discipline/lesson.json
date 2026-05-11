@@ -1,0 +1,58 @@
+{
+  "id": "public-schema-discipline",
+  "title": "Public Schema Discipline",
+  "module_id": "a2-schemas-and-databases",
+  "capability_layer": "admin_mastery",
+  "summary": "Treat public as a shared compatibility namespace and know that PostgreSQL 15 stopped granting CREATE on public to PUBLIC by default.",
+  "learning_objectives": [
+    "Lock down the public schema on older clusters.",
+    "Explain the PostgreSQL 15 public CREATE behavior change.",
+    "Move application objects out of public unless there is a deliberate reason."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "public_schema",
+    "revoke_create",
+    "postgres_15"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "public-schema-discipline-level-a-1",
+    "public-schema-discipline-level-a-2",
+    "public-schema-discipline-level-b-1",
+    "public-schema-discipline-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "public-schema-discipline-level-c-1",
+    "public-schema-discipline-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "public-schema-discipline-level-d-1",
+    "public-schema-discipline-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a2",
+    "public-schema-discipline"
+  ],
+  "status": "active"
+}

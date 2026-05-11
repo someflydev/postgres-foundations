@@ -1,0 +1,2 @@
+-- Unsafe state: moving only tables and forgetting sequences, default privileges, ownership, and dependent functions.
+-- Expected remediation: inventory dependencies first and verify grants after restore or schema move.

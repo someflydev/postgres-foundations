@@ -1,0 +1,59 @@
+{
+  "id": "what-a-schema-is-for",
+  "title": "What a Schema Is For",
+  "module_id": "a2-schemas-and-databases",
+  "capability_layer": "admin_mastery",
+  "summary": "Schemas provide namespaces, grant boundaries, and search_path behavior inside a single database.",
+  "learning_objectives": [
+    "Explain schemas as namespaces rather than lightweight databases.",
+    "Use schema USAGE and CREATE grants intentionally.",
+    "Connect schema names to search_path resolution."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "schema",
+    "namespace",
+    "schema_usage",
+    "search_path"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "what-a-schema-is-for-level-a-1",
+    "what-a-schema-is-for-level-a-2",
+    "what-a-schema-is-for-level-b-1",
+    "what-a-schema-is-for-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "what-a-schema-is-for-level-c-1",
+    "what-a-schema-is-for-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "what-a-schema-is-for-level-d-1",
+    "what-a-schema-is-for-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a2",
+    "what-a-schema-is-for"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,4 @@
+-- Migrating Between Schemas and Databases Level D2
+-- Unsafe state: moving only tables and forgetting sequences, default privileges, ownership, and dependent functions.
+-- Remediation: inventory dependencies first and verify grants after restore or schema move.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

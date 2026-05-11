@@ -1,0 +1,2 @@
+-- Incident: treating schemas as folders while forgetting that USAGE and CREATE on the schema are real privileges.
+-- Repair goal: make schema ownership and schema grants explicit before object grants.

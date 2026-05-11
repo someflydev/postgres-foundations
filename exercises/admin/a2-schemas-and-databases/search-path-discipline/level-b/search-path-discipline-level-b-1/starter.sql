@@ -1,0 +1,2 @@
+-- Target state: a SECURITY DEFINER function should use qualified names and set a safe search_path such as `pg_catalog, saas`.
+-- Add the catalog query below.

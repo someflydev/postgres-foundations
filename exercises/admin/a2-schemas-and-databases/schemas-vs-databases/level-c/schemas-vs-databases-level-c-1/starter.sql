@@ -1,0 +1,2 @@
+-- Incident: creating a new database for every internal boundary and then discovering backups, migrations, and connection pools multiplied.
+-- Repair goal: choose a database only when the operational boundary is worth separate connections, dumps, and restore posture.

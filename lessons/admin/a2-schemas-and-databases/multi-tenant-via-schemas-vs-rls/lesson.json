@@ -1,0 +1,58 @@
+{
+  "id": "multi-tenant-via-schemas-vs-rls",
+  "title": "Multi Tenant via Schemas vs RLS",
+  "module_id": "a2-schemas-and-databases",
+  "capability_layer": "admin_mastery",
+  "summary": "Compare schema-per-tenant isolation with row-level security and choose based on tenant count, operations, and query patterns.",
+  "learning_objectives": [
+    "Describe when schema-per-tenant works better than shared tables with RLS.",
+    "Describe when RLS works better than schema-per-tenant.",
+    "Name the operational costs each pattern creates."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "multi_tenant",
+    "schema_per_tenant",
+    "row_level_security"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "multi-tenant-via-schemas-vs-rls-level-a-1",
+    "multi-tenant-via-schemas-vs-rls-level-a-2",
+    "multi-tenant-via-schemas-vs-rls-level-b-1",
+    "multi-tenant-via-schemas-vs-rls-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "multi-tenant-via-schemas-vs-rls-level-c-1",
+    "multi-tenant-via-schemas-vs-rls-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "multi-tenant-via-schemas-vs-rls-level-d-1",
+    "multi-tenant-via-schemas-vs-rls-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a2",
+    "multi-tenant-via-schemas-vs-rls"
+  ],
+  "status": "active"
+}

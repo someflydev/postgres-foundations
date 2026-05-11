@@ -1,0 +1,2 @@
+-- Target state: keep `saas`, `reporting`, and `audit` schemas in one database so cross-schema transactions and backups stay coherent.
+-- Add the catalog query below.

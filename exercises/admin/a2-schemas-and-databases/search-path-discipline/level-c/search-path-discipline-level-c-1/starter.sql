@@ -1,0 +1,2 @@
+-- Incident: letting a caller-controlled schema appear before trusted schemas for privileged function execution.
+-- Repair goal: schema-qualify references and pin search_path on SECURITY DEFINER functions.

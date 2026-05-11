@@ -1,0 +1,2 @@
+-- Unsafe state: letting a caller-controlled schema appear before trusted schemas for privileged function execution.
+-- Expected remediation: schema-qualify references and pin search_path on SECURITY DEFINER functions.

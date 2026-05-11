@@ -1,0 +1,2 @@
+-- Target state: put tenant application objects in `saas`, reporting objects in `reporting`, and keep shared extensions or compatibility objects out of the way.
+-- Add the catalog query below.

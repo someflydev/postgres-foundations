@@ -1,0 +1,2 @@
+-- Unsafe state: treating schemas as folders while forgetting that USAGE and CREATE on the schema are real privileges.
+-- Expected remediation: make schema ownership and schema grants explicit before object grants.

@@ -1,0 +1,4 @@
+-- Schemas vs Databases Level D1
+-- Unsafe state: creating a new database for every internal boundary and then discovering backups, migrations, and connection pools multiplied.
+-- Remediation: choose a database only when the operational boundary is worth separate connections, dumps, and restore posture.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

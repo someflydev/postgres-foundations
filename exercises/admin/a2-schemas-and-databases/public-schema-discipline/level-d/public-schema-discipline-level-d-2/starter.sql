@@ -1,0 +1,2 @@
+-- Unsafe state: assuming all clusters have PostgreSQL 15 public-schema defaults after an upgrade history.
+-- Expected remediation: audit `public` ACLs and move application objects into owned schemas.

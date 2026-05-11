@@ -1,0 +1,62 @@
+{
+  "id": "public-schema-discipline-level-d-2",
+  "title": "Fix a search_path exploit scenario",
+  "lesson_id": "public-schema-discipline",
+  "scaffolding_level": "D",
+  "kind": "critique",
+  "allowed_concepts": [
+    "alter_default_privileges",
+    "alter_function",
+    "create_database",
+    "create_role",
+    "create_schema",
+    "grant",
+    "information_schema",
+    "ownership",
+    "pg_catalog",
+    "reassign_owned",
+    "revoke",
+    "search_path",
+    "sequence_privilege",
+    "set_role"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "saas.accounts",
+      "saas.projects",
+      "saas.documents",
+      "saas.audit_events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "saas_multi_tenant",
+    "max_rows_hint": 5000
+  },
+  "search_path": "saas, public",
+  "expected_output_shape": "prose_explanation",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Names the actor, object, operation, and boundary being changed or reviewed.",
+    "Uses targeted PostgreSQL GRANT, REVOKE, ALTER DEFAULT PRIVILEGES, ownership, schema, or search_path syntax as appropriate.",
+    "Includes catalog or information_schema evidence suitable for an access review."
+  ],
+  "time_target_minutes": 45,
+  "rubric_id": "schema-design",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "admin",
+    "a2",
+    "public-schema-discipline",
+    "d"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "What was the unsafe grant or namespace choice?",
+    "Which REVOKE, ALTER, or function definition change removes the risk?",
+    "How would you prevent the same drift in a recurring access review?"
+  ]
+}

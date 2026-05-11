@@ -1,0 +1,59 @@
+{
+  "id": "migrating-between-schemas-and-databases",
+  "title": "Migrating Between Schemas and Databases",
+  "module_id": "a2-schemas-and-databases",
+  "capability_layer": "admin_mastery",
+  "summary": "Move data with qualified DDL, pg_dump patterns, and logical replication when downtime or scale requires it.",
+  "learning_objectives": [
+    "Move objects between schemas while preserving ownership and grants.",
+    "Use pg_dump schema and database options accurately.",
+    "Explain when logical replication is the better migration path."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "pg_dump",
+    "logical_replication",
+    "alter_schema",
+    "migration"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "migrating-between-schemas-and-databases-level-a-1",
+    "migrating-between-schemas-and-databases-level-a-2",
+    "migrating-between-schemas-and-databases-level-b-1",
+    "migrating-between-schemas-and-databases-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "migrating-between-schemas-and-databases-level-c-1",
+    "migrating-between-schemas-and-databases-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "migrating-between-schemas-and-databases-level-d-1",
+    "migrating-between-schemas-and-databases-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a2",
+    "migrating-between-schemas-and-databases"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,4 @@
+-- What a Schema Is For Level D2
+-- Unsafe state: treating schemas as folders while forgetting that USAGE and CREATE on the schema are real privileges.
+-- Remediation: make schema ownership and schema grants explicit before object grants.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

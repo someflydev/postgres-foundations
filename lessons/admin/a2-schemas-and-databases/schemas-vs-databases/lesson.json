@@ -1,0 +1,58 @@
+{
+  "id": "schemas-vs-databases",
+  "title": "Schemas vs Databases",
+  "module_id": "a2-schemas-and-databases",
+  "capability_layer": "admin_mastery",
+  "summary": "The default operational advice is one database, many schemas unless isolation requirements justify more databases.",
+  "learning_objectives": [
+    "Choose between schemas and databases using backup, connection, ownership, and isolation facts.",
+    "Explain why one database with many schemas is the default for related application data.",
+    "Identify cases where separate databases are worth the overhead."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "database",
+    "schema",
+    "isolation_boundary"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "schemas-vs-databases-level-a-1",
+    "schemas-vs-databases-level-a-2",
+    "schemas-vs-databases-level-b-1",
+    "schemas-vs-databases-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "schemas-vs-databases-level-c-1",
+    "schemas-vs-databases-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "schemas-vs-databases-level-d-1",
+    "schemas-vs-databases-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a2",
+    "schemas-vs-databases"
+  ],
+  "status": "active"
+}
