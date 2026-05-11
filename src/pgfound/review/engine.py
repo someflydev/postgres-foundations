@@ -265,18 +265,42 @@ def _render_capstone_prompts(
 ) -> dict[str, Path]:
     markdown_path = paths.REPO_ROOT / result.report_paths["markdown"]
     directory = markdown_path.parent
+    reviewer_directory = directory / markdown_path.stem
+    prompts_directory = reviewer_directory / "prompts"
     capstone_id = str(capstone["id"])
     findings = json_output.result_to_dict(result)["findings"]
+    engine_result = json_output.result_to_dict(result)
     allowed_concepts = list(capstone.get("allowed_concepts", []))
     not_yet_allowed_concepts = list(capstone.get("not_yet_allowed_concepts", []))
+    reference_dir = paths.CAPSTONES_DIR / capstone_id / "reference"
+    artifacts = {
+        "schema.sql": _read_optional(artifact_dir / "schema.sql"),
+        "indexes.sql": _read_optional(artifact_dir / "indexes.sql"),
+        "rls-policies.sql": _read_optional(artifact_dir / "rls-policies.sql"),
+        "critical-queries.sql": _read_optional(artifact_dir / "critical-queries.sql"),
+        "operational-runbook.md": _read_optional(artifact_dir / "operational-runbook.md"),
+        "writeup.md": _read_optional(artifact_dir / "writeup.md"),
+    }
+    reference_artifacts = {
+        "schema.sql": _read_optional(reference_dir / "schema.sql"),
+        "indexes.sql": _read_optional(reference_dir / "indexes.sql"),
+        "rls-policies.sql": _read_optional(reference_dir / "rls-policies.sql"),
+        "critical-queries.sql": _read_optional(reference_dir / "critical-queries.sql"),
+        "operational-runbook.md": _read_optional(reference_dir / "operational-runbook.md"),
+        "writeup.md": _read_optional(reference_dir / "writeup.md"),
+    }
     common = {
         "capstone_id": capstone_id,
+        "capstone_metadata": capstone,
         "rubric_id": result.rubric_id,
+        "rubric": grading.load_rubric(result.rubric_id),
+        "engine_result": engine_result,
         "findings": findings,
+        "learner_artifacts": artifacts,
+        "reference_artifacts": reference_artifacts,
         "allowed_concepts": allowed_concepts,
         "not_yet_allowed_concepts": not_yet_allowed_concepts,
     }
-    reference_dir = paths.CAPSTONES_DIR / capstone_id / "reference"
     rendered: dict[str, Path] = {}
     rendered["schema_prompt"] = llm_templates.render_template_to_path(
         "critique/schema-critique",
@@ -300,6 +324,48 @@ def _render_capstone_prompts(
         },
         directory / "index-prompt.md",
     )
+    reviewer_templates = {
+        "full_capstone_review_prompt": "capstone-reviewer/full-capstone-review",
+        "operational_runbook_review_prompt": "capstone-reviewer/operational-runbook-review",
+        "writeup_review_prompt": "capstone-reviewer/writeup-review",
+        "extension_posture_review_prompt": "capstone-reviewer/extension-posture-review",
+    }
+    bundle_parts = ["# Capstone Reviewer Prompt Bundle", ""]
+    for key, template_id in reviewer_templates.items():
+        path = prompts_directory / f"{template_id.rsplit('/', 1)[1]}.md"
+        rendered[key] = llm_templates.render_template_to_path(template_id, common, path)
+        bundle_parts.extend(
+            [
+                f"## {template_id}",
+                "",
+                path.read_text(encoding="utf-8").rstrip(),
+                "",
+            ]
+        )
+    bundle_path = reviewer_directory / "prompt-bundle.md"
+    bundle_path.parent.mkdir(parents=True, exist_ok=True)
+    bundle_path.write_text("\n".join(bundle_parts).rstrip() + "\n", encoding="utf-8")
+    readme_path = reviewer_directory / "README.md"
+    readme_path.write_text(
+        "\n".join(
+            [
+                "# Capstone Reviewer Prompt Bundle",
+                "",
+                "This directory contains provider-neutral LLM prompts rendered after the",
+                "deterministic capstone review engine finished.",
+                "",
+                "- Send `prompt-bundle.md` to the LLM provider or CLI selected by the coach.",
+                "- Individual prompts live under `prompts/` for targeted review passes.",
+                "- The expected response shape is documented inside each rendered prompt.",
+                "- Keep the deterministic Markdown and JSON review reports as the source of",
+                "  engine findings; the LLM response is advisory coach feedback.",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    rendered["prompt_bundle"] = bundle_path
+    rendered["prompt_bundle_readme"] = readme_path
     return rendered
 
 

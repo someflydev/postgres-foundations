@@ -29,5 +29,14 @@ schema/index/RLS SQL and reference-vs-learner critical query files inside a
 rollback against the sandbox database URL. Set `PGFOUND_SANDBOX_DB_URL` or start
 the sandbox profile on port 55434.
 
+Full capstone evaluation also renders provider-neutral reviewer prompts under
+`tmp/reviews/capstone/<id>/<timestamp>/prompts/` and a concatenated
+`prompt-bundle.md` beside them. The bundle includes full-capstone,
+operational-runbook, writeup, and extension-posture review prompts, all seeded
+with learner artifacts, reference artifacts, engine findings, and rubric
+metadata. The local CLI does not call an LLM; a coach can send the bundle to an
+external provider and keep the deterministic Markdown/JSON reports as the
+source of engine evidence.
+
 Reports begin with a weighted dimension table, then group findings by severity,
 and include a manual-review queue for dimensions that were not auto-scored.
