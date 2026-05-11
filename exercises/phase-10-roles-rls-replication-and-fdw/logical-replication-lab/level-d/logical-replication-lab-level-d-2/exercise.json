@@ -1,0 +1,82 @@
+{
+  "id": "logical-replication-lab-level-d-2",
+  "title": "Logical Replication Lab Level D2",
+  "lesson_id": "logical-replication-lab",
+  "scaffolding_level": "D",
+  "kind": "debug",
+  "allowed_concepts": [
+    "alter_table",
+    "b_tree_index",
+    "create_index",
+    "create_policy",
+    "create_publication",
+    "create_role",
+    "create_server",
+    "create_subscription",
+    "create_user_mapping",
+    "default_privileges",
+    "explain",
+    "forced_rls",
+    "foreign_server",
+    "foreign_table",
+    "grant",
+    "group_role",
+    "import_foreign_schema",
+    "logical_replication",
+    "login_role",
+    "ownership",
+    "physical_replication",
+    "policy",
+    "policy_qual",
+    "postgres_fdw",
+    "publication",
+    "replication_slot",
+    "revoke",
+    "role",
+    "row_level_security",
+    "select",
+    "set",
+    "subscription",
+    "wal",
+    "where"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "saas.documents",
+      "saas.audit_events",
+      "legacy_fdw.crm_accounts_1998",
+      "public.replication_lab_events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "modernization_bridge",
+    "max_rows_hint": 5000
+  },
+  "search_path": "saas, legacy, legacy_fdw, public",
+  "expected_output_shape": "prose_explanation",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses the Phase 10 corpus and names the actor, object, and boundary.",
+    "Shows concrete SQL or catalog evidence for the result.",
+    "Explains the operational risk and cleanup step."
+  ],
+  "time_target_minutes": 45,
+  "rubric_id": "critique-and-repair",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-10",
+    "replication",
+    "logical-replication-lab",
+    "d"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "Which PostgreSQL object enforces the boundary?",
+    "What proves the boundary is working?",
+    "What operational failure mode would you monitor?"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "id": "login-vs-group-roles-and-membership",
+  "title": "Login vs Group Roles and Membership",
+  "phase": 10,
+  "capability_layer": "security_federation",
+  "summary": "Use login vs group roles and membership to reason about PostgreSQL access boundaries, tenant isolation, data movement, and federation.",
+  "learning_objectives": [
+    "Explain login vs group roles and membership in operational PostgreSQL terms.",
+    "Verify the security or federation behavior with concrete SQL evidence.",
+    "Identify the operational risk introduced by the feature and the cleanup step."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "role",
+    "group_role",
+    "login_role"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "login-vs-group-roles-and-membership-level-a-1",
+    "login-vs-group-roles-and-membership-level-a-2",
+    "login-vs-group-roles-and-membership-level-b-1",
+    "login-vs-group-roles-and-membership-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "login-vs-group-roles-and-membership-level-c-1",
+    "login-vs-group-roles-and-membership-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "login-vs-group-roles-and-membership-level-d-1",
+    "login-vs-group-roles-and-membership-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Where should PostgreSQL enforce this boundary instead of application code?",
+    "What observation proves the design is working?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 security and tenant-isolation guide."
+    },
+    {
+      "kind": "doc",
+      "slug": "logical-replication-playbook",
+      "why": "Phase 10 replication checklist and operational notes."
+    }
+  ],
+  "tags": [
+    "phase-10",
+    "roles",
+    "login-vs-group-roles-and-membership"
+  ],
+  "status": "active"
+}

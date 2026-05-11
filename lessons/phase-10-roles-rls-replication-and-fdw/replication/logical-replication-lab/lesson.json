@@ -1,0 +1,59 @@
+{
+  "id": "logical-replication-lab",
+  "title": "Logical Replication Lab",
+  "phase": 10,
+  "capability_layer": "security_federation",
+  "summary": "Use logical replication lab to reason about PostgreSQL access boundaries, tenant isolation, data movement, and federation.",
+  "learning_objectives": [
+    "Explain logical replication lab in operational PostgreSQL terms.",
+    "Verify the security or federation behavior with concrete SQL evidence.",
+    "Identify the operational risk introduced by the feature and the cleanup step."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "logical_replication",
+    "publication",
+    "subscription",
+    "replication_slot"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "logical-replication-lab-level-a-1",
+    "logical-replication-lab-level-a-2",
+    "logical-replication-lab-level-b-1",
+    "logical-replication-lab-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "logical-replication-lab-level-c-1",
+    "logical-replication-lab-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "logical-replication-lab-level-d-1",
+    "logical-replication-lab-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Where should PostgreSQL enforce this boundary instead of application code?",
+    "What observation proves the design is working?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 security and tenant-isolation guide."
+    },
+    {
+      "kind": "doc",
+      "slug": "logical-replication-playbook",
+      "why": "Phase 10 replication checklist and operational notes."
+    }
+  ],
+  "tags": [
+    "phase-10",
+    "replication",
+    "logical-replication-lab"
+  ],
+  "status": "active"
+}

@@ -1,0 +1,57 @@
+{
+  "id": "rls-performance-and-indexing",
+  "title": "RLS Performance and Indexing",
+  "phase": 10,
+  "capability_layer": "security_federation",
+  "summary": "Use rls performance and indexing to reason about PostgreSQL access boundaries, tenant isolation, data movement, and federation.",
+  "learning_objectives": [
+    "Explain rls performance and indexing in operational PostgreSQL terms.",
+    "Verify the security or federation behavior with concrete SQL evidence.",
+    "Identify the operational risk introduced by the feature and the cleanup step."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "row_level_security",
+    "b_tree_index"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "rls-performance-and-indexing-level-a-1",
+    "rls-performance-and-indexing-level-a-2",
+    "rls-performance-and-indexing-level-b-1",
+    "rls-performance-and-indexing-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "rls-performance-and-indexing-level-c-1",
+    "rls-performance-and-indexing-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "rls-performance-and-indexing-level-d-1",
+    "rls-performance-and-indexing-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Where should PostgreSQL enforce this boundary instead of application code?",
+    "What observation proves the design is working?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 security and tenant-isolation guide."
+    },
+    {
+      "kind": "doc",
+      "slug": "logical-replication-playbook",
+      "why": "Phase 10 replication checklist and operational notes."
+    }
+  ],
+  "tags": [
+    "phase-10",
+    "rls",
+    "rls-performance-and-indexing"
+  ],
+  "status": "active"
+}

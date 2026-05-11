@@ -1,0 +1,80 @@
+{
+  "id": "postgres-fdw-introduction-level-b-1",
+  "title": "Postgres FDW Introduction Level B1",
+  "lesson_id": "postgres-fdw-introduction",
+  "scaffolding_level": "B",
+  "kind": "lab",
+  "allowed_concepts": [
+    "alter_table",
+    "b_tree_index",
+    "create_index",
+    "create_policy",
+    "create_publication",
+    "create_role",
+    "create_server",
+    "create_subscription",
+    "create_user_mapping",
+    "default_privileges",
+    "explain",
+    "forced_rls",
+    "foreign_server",
+    "foreign_table",
+    "grant",
+    "group_role",
+    "import_foreign_schema",
+    "logical_replication",
+    "login_role",
+    "ownership",
+    "physical_replication",
+    "policy",
+    "policy_qual",
+    "postgres_fdw",
+    "publication",
+    "replication_slot",
+    "revoke",
+    "role",
+    "row_level_security",
+    "select",
+    "set",
+    "subscription",
+    "wal",
+    "where"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "saas.documents",
+      "saas.audit_events",
+      "legacy_fdw.crm_accounts_1998",
+      "public.replication_lab_events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "modernization_bridge",
+    "max_rows_hint": 5000
+  },
+  "search_path": "saas, legacy, legacy_fdw, public",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses the Phase 10 corpus and names the actor, object, and boundary.",
+    "Shows concrete SQL or catalog evidence for the result.",
+    "Explains the operational risk and cleanup step."
+  ],
+  "time_target_minutes": 20,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-10",
+    "fdw",
+    "postgres-fdw-introduction",
+    "b"
+  ],
+  "status": "active",
+  "hints": [
+    "Name the PostgreSQL object that carries the boundary before writing the final SQL."
+  ]
+}

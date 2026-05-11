@@ -1,0 +1,57 @@
+{
+  "id": "physical-replication-concepts",
+  "title": "Physical Replication Concepts",
+  "phase": 10,
+  "capability_layer": "security_federation",
+  "summary": "Use physical replication concepts to reason about PostgreSQL access boundaries, tenant isolation, data movement, and federation.",
+  "learning_objectives": [
+    "Explain physical replication concepts in operational PostgreSQL terms.",
+    "Verify the security or federation behavior with concrete SQL evidence.",
+    "Identify the operational risk introduced by the feature and the cleanup step."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "physical_replication",
+    "wal"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "physical-replication-concepts-level-a-1",
+    "physical-replication-concepts-level-a-2",
+    "physical-replication-concepts-level-b-1",
+    "physical-replication-concepts-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "physical-replication-concepts-level-c-1",
+    "physical-replication-concepts-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "physical-replication-concepts-level-d-1",
+    "physical-replication-concepts-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Where should PostgreSQL enforce this boundary instead of application code?",
+    "What observation proves the design is working?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 security and tenant-isolation guide."
+    },
+    {
+      "kind": "doc",
+      "slug": "logical-replication-playbook",
+      "why": "Phase 10 replication checklist and operational notes."
+    }
+  ],
+  "tags": [
+    "phase-10",
+    "replication",
+    "physical-replication-concepts"
+  ],
+  "status": "active"
+}
