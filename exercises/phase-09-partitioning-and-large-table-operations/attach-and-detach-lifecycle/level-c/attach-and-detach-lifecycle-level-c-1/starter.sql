@@ -1,0 +1,1 @@
+-- Write a function that detaches one named old partition and records the action.

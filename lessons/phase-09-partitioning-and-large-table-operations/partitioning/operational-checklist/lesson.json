@@ -1,0 +1,58 @@
+{
+  "id": "operational-checklist",
+  "title": "Operational Checklist",
+  "phase": 9,
+  "capability_layer": "partitioning_operations",
+  "summary": "Use operational checklist to decide, build, and operate PostgreSQL partitions only when the workload evidence supports the cost.",
+  "learning_objectives": [
+    "Explain operational checklist in operational PostgreSQL terms.",
+    "Verify pruning, retention, or index behavior with concrete SQL evidence.",
+    "Reject premature partitioning when the table lifecycle does not justify it."
+  ],
+  "prerequisites": [
+    "when-to-leave-core-fts"
+  ],
+  "concepts_introduced": [
+    "partition_pruning",
+    "retention_via_detach",
+    "statistics"
+  ],
+  "concepts_not_yet_allowed": [
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "operational-checklist-level-a-1",
+    "operational-checklist-level-a-2",
+    "operational-checklist-level-b-1",
+    "operational-checklist-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "operational-checklist-level-c-1",
+    "operational-checklist-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "operational-checklist-level-d-1",
+    "operational-checklist-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence makes partitioning worth its operational cost?",
+    "What would tell you the design should be simplified?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "partitioning-playbook",
+      "why": "Phase 9 operational guide and retention template."
+    }
+  ],
+  "tags": [
+    "phase-9",
+    "partitioning",
+    "operational-checklist"
+  ],
+  "status": "active"
+}

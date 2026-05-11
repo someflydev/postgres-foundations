@@ -1,0 +1,1 @@
+-- Build a small partitioned copy, load data, and compare EXPLAIN output.

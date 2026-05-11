@@ -1,0 +1,1 @@
+The function-wrapped predicate blocks straightforward partition pruning. Rewrite it as `event_time >= '2026-01-01'::timestamptz AND event_time < '2026-02-01'::timestamptz`, then compare EXPLAIN output and confirm only the January partition is scanned.

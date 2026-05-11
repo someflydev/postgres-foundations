@@ -1,0 +1,1 @@
+Inspect the Phase 9 partitioning corpus and identify where uniqueness on partitioned tables appears in the schema. Return the table, partition key, and one operational reason the design exists.

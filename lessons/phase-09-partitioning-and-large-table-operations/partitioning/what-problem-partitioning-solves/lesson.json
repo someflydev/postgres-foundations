@@ -1,0 +1,58 @@
+{
+  "id": "what-problem-partitioning-solves",
+  "title": "What Problem Partitioning Solves",
+  "phase": 9,
+  "capability_layer": "partitioning_operations",
+  "summary": "Use what problem partitioning solves to decide, build, and operate PostgreSQL partitions only when the workload evidence supports the cost.",
+  "learning_objectives": [
+    "Explain what problem partitioning solves in operational PostgreSQL terms.",
+    "Verify pruning, retention, or index behavior with concrete SQL evidence.",
+    "Reject premature partitioning when the table lifecycle does not justify it."
+  ],
+  "prerequisites": [
+    "when-to-leave-core-fts"
+  ],
+  "concepts_introduced": [
+    "range_partitioning",
+    "retention_via_detach",
+    "operational_cost_of_partitioning"
+  ],
+  "concepts_not_yet_allowed": [
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "what-problem-partitioning-solves-level-a-1",
+    "what-problem-partitioning-solves-level-a-2",
+    "what-problem-partitioning-solves-level-b-1",
+    "what-problem-partitioning-solves-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "what-problem-partitioning-solves-level-c-1",
+    "what-problem-partitioning-solves-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "what-problem-partitioning-solves-level-d-1",
+    "what-problem-partitioning-solves-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence makes partitioning worth its operational cost?",
+    "What would tell you the design should be simplified?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "partitioning-playbook",
+      "why": "Phase 9 operational guide and retention template."
+    }
+  ],
+  "tags": [
+    "phase-9",
+    "partitioning",
+    "what-problem-partitioning-solves"
+  ],
+  "status": "active"
+}

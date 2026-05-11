@@ -1,0 +1,1 @@
+A defensible answer names the workload signal, keeps the partition key visible to pruning, verifies with EXPLAIN, and rejects partitioning as too early when retention, lifecycle, or maintenance evidence is absent for uniqueness on partitioned tables.

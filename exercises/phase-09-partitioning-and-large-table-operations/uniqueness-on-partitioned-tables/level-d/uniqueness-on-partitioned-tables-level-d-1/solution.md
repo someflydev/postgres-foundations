@@ -1,0 +1,1 @@
+Per-partition unique indexes on `event_uuid` only prove uniqueness inside each child table. Repair by enforcing identity on the parent with a key that includes the partition key, such as `UNIQUE (event_uuid, event_time)`, or move the globally unique identifier to an unpartitioned registry table referenced by the partitions.

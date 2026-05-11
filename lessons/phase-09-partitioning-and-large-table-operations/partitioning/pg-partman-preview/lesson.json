@@ -1,0 +1,58 @@
+{
+  "id": "pg-partman-preview",
+  "title": "pg_partman Preview",
+  "phase": 9,
+  "capability_layer": "partitioning_operations",
+  "summary": "Use pg_partman preview to decide, build, and operate PostgreSQL partitions only when the workload evidence supports the cost.",
+  "learning_objectives": [
+    "Explain pg_partman preview in operational PostgreSQL terms.",
+    "Verify pruning, retention, or index behavior with concrete SQL evidence.",
+    "Reject premature partitioning when the table lifecycle does not justify it."
+  ],
+  "prerequisites": [
+    "when-to-leave-core-fts"
+  ],
+  "concepts_introduced": [
+    "pg_partman_preview",
+    "not_yet_logic",
+    "operational_cost_of_partitioning"
+  ],
+  "concepts_not_yet_allowed": [
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "pg-partman-preview-level-a-1",
+    "pg-partman-preview-level-a-2",
+    "pg-partman-preview-level-b-1",
+    "pg-partman-preview-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "pg-partman-preview-level-c-1",
+    "pg-partman-preview-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "pg-partman-preview-level-d-1",
+    "pg-partman-preview-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence makes partitioning worth its operational cost?",
+    "What would tell you the design should be simplified?"
+  ],
+  "estimated_time_minutes": 45,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "partitioning-playbook",
+      "why": "Phase 9 operational guide and retention template."
+    }
+  ],
+  "tags": [
+    "phase-9",
+    "partitioning",
+    "pg-partman-preview"
+  ],
+  "status": "active"
+}

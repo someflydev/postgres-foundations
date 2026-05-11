@@ -1,0 +1,1 @@
+-- Use prose: list the signals that make this partitioning premature or defensible.

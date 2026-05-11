@@ -1,0 +1,76 @@
+{
+  "id": "uniqueness-on-partitioned-tables-level-a-2",
+  "title": "Uniqueness on Partitioned Tables Level A2",
+  "lesson_id": "uniqueness-on-partitioned-tables",
+  "scaffolding_level": "A",
+  "kind": "query",
+  "allowed_concepts": [
+    "alter_table",
+    "analyze",
+    "attach_partition",
+    "b_tree_index",
+    "brin_index",
+    "create_index",
+    "create_table",
+    "default_partition",
+    "detach_partition",
+    "explain",
+    "hash_partitioning",
+    "indexes_on_partitioned_tables",
+    "list_partitioning",
+    "operational_cost_of_partitioning",
+    "order_by",
+    "partition_key",
+    "partition_pruning",
+    "partitioned_table",
+    "range_partitioning",
+    "retention_via_detach",
+    "retention_window",
+    "select",
+    "unique_constraint",
+    "uniqueness_on_partitioned_tables",
+    "where"
+  ],
+  "not_yet_allowed_concepts": [
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "schema_scope": {
+    "phase": 9,
+    "tables": [
+      "events.event_log_partitioned",
+      "events.events",
+      "ecommerce.orders_partitioned",
+      "ecommerce.orders"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "event_heavy_ops",
+    "max_rows_hint": 1000008
+  },
+  "search_path": "events, ecommerce, public",
+  "expected_output_shape": "row",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses the Phase 9 partitioning corpus.",
+    "Connects the partitioning choice to retention, pruning, or maintenance evidence.",
+    "States how the result is verified with EXPLAIN, catalog inspection, or lifecycle checks."
+  ],
+  "time_target_minutes": 30,
+  "rubric_id": "query-correctness",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-9",
+    "partitioning",
+    "uniqueness-on-partitioned-tables",
+    "a"
+  ],
+  "status": "active",
+  "hints": [
+    "Start with the partition key and the retention or pruning goal.",
+    "Use EXPLAIN or catalog views rather than row counts alone."
+  ]
+}

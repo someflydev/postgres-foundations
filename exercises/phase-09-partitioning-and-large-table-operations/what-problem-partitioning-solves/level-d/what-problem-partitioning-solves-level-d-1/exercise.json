@@ -1,0 +1,76 @@
+{
+  "id": "what-problem-partitioning-solves-level-d-1",
+  "title": "What Problem Partitioning Solves Level D1",
+  "lesson_id": "what-problem-partitioning-solves",
+  "scaffolding_level": "D",
+  "kind": "critique",
+  "allowed_concepts": [
+    "alter_table",
+    "analyze",
+    "attach_partition",
+    "b_tree_index",
+    "brin_index",
+    "create_index",
+    "create_table",
+    "default_partition",
+    "detach_partition",
+    "explain",
+    "hash_partitioning",
+    "indexes_on_partitioned_tables",
+    "list_partitioning",
+    "operational_cost_of_partitioning",
+    "order_by",
+    "partition_key",
+    "partition_pruning",
+    "partitioned_table",
+    "range_partitioning",
+    "retention_via_detach",
+    "retention_window",
+    "select",
+    "uniqueness_on_partitioned_tables",
+    "where"
+  ],
+  "not_yet_allowed_concepts": [
+    "rls",
+    "logical_replication",
+    "fdw"
+  ],
+  "schema_scope": {
+    "phase": 9,
+    "tables": [
+      "events.event_log_partitioned",
+      "events.events",
+      "ecommerce.orders_partitioned",
+      "ecommerce.orders"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "event_heavy_ops",
+    "max_rows_hint": 1000008
+  },
+  "search_path": "events, ecommerce, public",
+  "expected_output_shape": "prose_explanation",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses the Phase 9 partitioning corpus.",
+    "Connects the partitioning choice to retention, pruning, or maintenance evidence.",
+    "States how the result is verified with EXPLAIN, catalog inspection, or lifecycle checks."
+  ],
+  "time_target_minutes": 45,
+  "rubric_id": "critique-and-repair",
+  "solution_path": "solution.md",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-9",
+    "partitioning",
+    "what-problem-partitioning-solves",
+    "d"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "What operational signal justifies or rejects partitioning here?",
+    "How do you know pruning or retention works after the change?",
+    "What ongoing maintenance does this design add?"
+  ]
+}
