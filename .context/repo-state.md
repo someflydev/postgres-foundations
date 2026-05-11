@@ -5,7 +5,8 @@ Current baseline:
 - Python package: `src/pgfound/`
 - CLI entry point: `pgfound = pgfound.cli:main`
 - CLI surface: `pgfound version`, `doctor`, `lab`, `content`, `exercise`,
-  `progress`, `review`, `decision`, and `interview` command groups.
+  `capstone`, `progress`, `review`, `decision`, and `interview` command
+  groups.
 - Test suite: `tests/test_cli.py`, `tests/test_paths.py`,
   `tests/test_lab_psql.py`, and Docker Compose tests.
 - Tooling: `uv`, `ruff`, `pytest`
@@ -126,6 +127,11 @@ Current baseline:
   `pg-replica`, `docs/rls-playbook.md`,
   `docs/logical-replication-playbook.md`, glossary additions, and Phase 10
   corpus/RLS policy tests.
+- Capstones 1 and 2: PROMPT_25 added `capstones/01-multi-tenant-saas-crm/`
+  and `capstones/02-scheduling-availability/` with learner starter files,
+  reference DDL/query/runbook/writeup material, composed capstone rubrics,
+  `pgfound capstone start|evaluate`, and a scheduling double-booking scenario
+  under `scenarios/concurrency/`.
 
 Canonical docs:
 

@@ -88,7 +88,11 @@ Completed:
   modernization loopback `postgres_fdw` seed bridge, a replication Docker
   profile with `pg-replica`, RLS and logical replication playbooks, lab docs,
   glossary additions, and Phase 10 corpus/RLS policy tests.
+- PROMPT_25: Capstones 1 and 2 for multi-tenant SaaS CRM and scheduling
+  availability; capstone starter/reference layouts, composed capstone rubrics,
+  `pgfound capstone start|evaluate`, scheduling concurrency scenario, and
+  capstone corpus/CLI tests.
 
 Next expected prompt:
 
-- PROMPT_25: Phase F capstones 1 and 2.
+- PROMPT_26: Capstones 3 and 4.

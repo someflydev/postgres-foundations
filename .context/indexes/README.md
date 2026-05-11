@@ -238,3 +238,16 @@ Phase 10 security and federation references introduced by PROMPT_24:
 - `docs/lab.md`
 - `tests/test_phase10_corpus.py`
 - `tests/test_rls_policy_sql.py`
+
+Capstone references introduced by PROMPT_25:
+
+- `capstones/01-multi-tenant-saas-crm/`
+- `capstones/02-scheduling-availability/`
+- `scenarios/concurrency/scheduling-double-booking.yaml`
+- `content-schemas/rubric.schema.json`
+- `src/pgfound/cli.py`
+- `src/pgfound/content/validate.py`
+- `docs/authoring-exercises.md`
+- `docs/cli.md`
+- `tests/test_capstone_corpus.py`
+- `tests/test_capstone_start_cli.py`
