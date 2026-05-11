@@ -1,0 +1,32 @@
+{
+  "id": "02-scheduling-availability",
+  "title": "Scheduling and Availability",
+  "industry": "healthcare_ops",
+  "summary": "Design a healthcare appointment platform where provider availability, blackout windows, waitlists, time zones, and database-level double-booking prevention are correct under concurrency.",
+  "phases_required": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "deliverables": [
+    { "name": "Schema", "kind": "schema", "path": "capstones/02-scheduling-availability/reference/schema.sql" },
+    { "name": "Indexes", "kind": "indexes", "path": "capstones/02-scheduling-availability/reference/indexes.sql" },
+    { "name": "RLS policies", "kind": "rls_policies", "path": "capstones/02-scheduling-availability/reference/rls-policies.sql" },
+    { "name": "Critical queries", "kind": "queries", "path": "capstones/02-scheduling-availability/reference/critical-queries.sql" },
+    { "name": "Operational runbook", "kind": "operational_runbook", "path": "capstones/02-scheduling-availability/reference/operational-runbook.md" },
+    { "name": "Writeup", "kind": "writeup", "path": "capstones/02-scheduling-availability/reference/writeup.md" }
+  ],
+  "critical_queries": [
+    "Find provider availability for a local date range.",
+    "Book one appointment without double-booking under concurrent requests.",
+    "List upcoming bookings for a provider.",
+    "Cancel an appointment and promote the first waitlisted patient.",
+    "Find patients on a provider waitlist.",
+    "Search professionals by specialty and bio when FTS is implemented.",
+    "Explain why appointments are not partitioned yet."
+  ],
+  "security_posture": {
+    "correctness": "exclusion constraints prevent overlapping confirmed appointments",
+    "timezone": "stored timestamptz with provider timezone for rendering",
+    "extensions": "btree_gist allowed for GiST equality support; no PostGIS"
+  },
+  "operational_notes": "Correctness under concurrent booking is more important than a clever scheduler. The design should explain lock behavior, error handling, time-zone rendering, and why geo and partitioning are not yet justified.",
+  "review_rubric_id": "capstone-02-scheduling-availability",
+  "tags": ["capstone", "healthcare", "scheduling", "concurrency", "ranges"]
+}

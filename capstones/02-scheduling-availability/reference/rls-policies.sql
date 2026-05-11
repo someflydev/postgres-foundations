@@ -1,0 +1,3 @@
+-- This capstone focuses on scheduling correctness rather than tenant RLS.
+-- A production system would add practice-scoped authorization policies once
+-- user and staff identity requirements are introduced.

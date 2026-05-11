@@ -1,0 +1,37 @@
+{
+  "id": "capstone-02-scheduling-availability",
+  "title": "Capstone 02 Scheduling Availability",
+  "applies_to": "capstone",
+  "extends": [
+    { "rubric_id": "schema-design", "weight": 0.2 },
+    { "rubric_id": "concurrency-reasoning", "weight": 0.2 },
+    { "rubric_id": "indexing-reasoning", "weight": 0.15 },
+    { "rubric_id": "query-correctness", "weight": 0.15 }
+  ],
+  "own_dimensions": [
+    {
+      "name": "Operational posture",
+      "weight": 0.1,
+      "levels": {
+        "0": "No operations plan is present.",
+        "1": "The plan ignores booking failures or time-zone support.",
+        "2": "The plan mentions operations but misses a key scheduling failure mode.",
+        "3": "The runbook covers booking conflicts, observation, backups, and waitlist handling.",
+        "4": "The runbook is specific enough to support live healthcare scheduling with clear escalation."
+      }
+    },
+    {
+      "name": "Writeup and defense",
+      "weight": 0.2,
+      "levels": {
+        "0": "No defensible explanation is submitted.",
+        "1": "The explanation is mostly restatement.",
+        "2": "The explanation handles some choices but misses a core concurrency or time-zone tradeoff.",
+        "3": "The writeup defends exclusion constraints, availability modeling, time zones, indexes, and deferred geo/partitioning.",
+        "4": "The writeup is precise about race behavior, operational burden, and future decision points."
+      }
+    }
+  ],
+  "pass_threshold": 0.8,
+  "notes": "Weights emphasize database-enforced scheduling correctness and a strong written defense."
+}

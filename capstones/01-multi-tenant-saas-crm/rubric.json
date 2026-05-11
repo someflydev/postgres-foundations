@@ -1,0 +1,47 @@
+{
+  "id": "capstone-01-saas-crm",
+  "title": "Capstone 01 SaaS CRM",
+  "applies_to": "capstone",
+  "extends": [
+    { "rubric_id": "schema-design", "weight": 0.2 },
+    { "rubric_id": "indexing-reasoning", "weight": 0.15 },
+    { "rubric_id": "query-correctness", "weight": 0.15 }
+  ],
+  "own_dimensions": [
+    {
+      "name": "RLS isolation",
+      "weight": 0.2,
+      "levels": {
+        "0": "Tenant isolation is absent or only described in prose.",
+        "1": "Isolation depends on application WHERE clauses with no reliable database backstop.",
+        "2": "RLS exists but misses an owned table or allows a realistic cross-tenant path.",
+        "3": "RLS covers tenant-owned tables, tests the app context, and blocks ordinary cross-tenant reads and writes.",
+        "4": "RLS is complete, includes operational verification, and explains bypass roles, migrations, and support access."
+      }
+    },
+    {
+      "name": "Operational posture",
+      "weight": 0.1,
+      "levels": {
+        "0": "No operations plan is present.",
+        "1": "The plan is generic and would not help during an incident.",
+        "2": "Backups, metrics, or retention are mentioned but not tied to the schema.",
+        "3": "The runbook covers observation, backups, retention, and low-risk maintenance.",
+        "4": "The runbook is specific enough for a small team to operate and evolve without surprise paging."
+      }
+    },
+    {
+      "name": "Writeup and defense",
+      "weight": 0.2,
+      "levels": {
+        "0": "No defensible explanation is submitted.",
+        "1": "The explanation repeats choices without tradeoffs.",
+        "2": "Major choices are named but at least one core tradeoff is weak or unsupported.",
+        "3": "The writeup clearly defends modeling, RLS, indexes, FTS, audit retention, and portability.",
+        "4": "The writeup anticipates alternatives, states why not now, and ties every choice to workload and operations."
+      }
+    }
+  ],
+  "pass_threshold": 0.8,
+  "notes": "Weights emphasize RLS correctness, durable modeling, justified indexes, query performance, operations, and written defense."
+}

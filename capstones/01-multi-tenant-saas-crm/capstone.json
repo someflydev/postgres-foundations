@@ -1,0 +1,35 @@
+{
+  "id": "01-multi-tenant-saas-crm",
+  "title": "Multi-tenant SaaS CRM",
+  "industry": "saas_multi_tenant",
+  "summary": "Design a portable PostgreSQL 16 CRM for strict tenant isolation, core full-text search, dashboard latency, audit retention, and operationally boring growth.",
+  "phases_required": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "deliverables": [
+    { "name": "Schema", "kind": "schema", "path": "capstones/01-multi-tenant-saas-crm/reference/schema.sql" },
+    { "name": "Indexes", "kind": "indexes", "path": "capstones/01-multi-tenant-saas-crm/reference/indexes.sql" },
+    { "name": "RLS policies", "kind": "rls_policies", "path": "capstones/01-multi-tenant-saas-crm/reference/rls-policies.sql" },
+    { "name": "Critical queries", "kind": "queries", "path": "capstones/01-multi-tenant-saas-crm/reference/critical-queries.sql" },
+    { "name": "Operational runbook", "kind": "operational_runbook", "path": "capstones/01-multi-tenant-saas-crm/reference/operational-runbook.md" },
+    { "name": "Writeup", "kind": "writeup", "path": "capstones/01-multi-tenant-saas-crm/reference/writeup.md" }
+  ],
+  "critical_queries": [
+    "Tenant dashboard account and open deal summary under p95 200ms.",
+    "Pipeline by stage for one tenant.",
+    "Recently touched contacts for the tenant landing page.",
+    "Upcoming activities assigned to one user.",
+    "Full-text note search scoped to one tenant.",
+    "Deal detail with account, primary contact, latest note, and activity counts.",
+    "Custom-field filter on accounts with bounded JSONB usage.",
+    "Append audit event and inspect recent audit history.",
+    "Tenant admin membership and role review.",
+    "Retention candidate query for audit event partition maintenance."
+  ],
+  "security_posture": {
+    "tenant_isolation": "strict RLS in a single database and schema",
+    "application_context": "current_setting('app.tenant_id') and current_setting('app.user_id')",
+    "extensions": "pgcrypto and pg_stat_statements only"
+  },
+  "operational_notes": "The design must stay portable to managed PostgreSQL such as Heroku Postgres or RDS, avoid exotic dependencies, explain audit retention, and keep dashboard reads observable with pg_stat_statements.",
+  "review_rubric_id": "capstone-01-saas-crm",
+  "tags": ["capstone", "saas", "rls", "fts", "partitioning"]
+}

@@ -1,0 +1,49 @@
+name: scheduling-double-booking
+sessions:
+  A: {role: pgfound, database: pgfound}
+  B: {role: pgfound, database: pgfound}
+setup_sql: |
+  CREATE EXTENSION IF NOT EXISTS pgcrypto;
+  CREATE EXTENSION IF NOT EXISTS btree_gist;
+  DROP SCHEMA IF EXISTS pgfound_scheduling_capstone CASCADE;
+  CREATE SCHEMA pgfound_scheduling_capstone;
+  CREATE TABLE pgfound_scheduling_capstone.professionals (
+      id uuid PRIMARY KEY,
+      display_name text NOT NULL
+  );
+  CREATE TABLE pgfound_scheduling_capstone.patients (
+      id uuid PRIMARY KEY,
+      full_name text NOT NULL
+  );
+  CREATE TABLE pgfound_scheduling_capstone.appointments (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      professional_id uuid NOT NULL REFERENCES pgfound_scheduling_capstone.professionals(id),
+      patient_id uuid NOT NULL REFERENCES pgfound_scheduling_capstone.patients(id),
+      slot tstzrange NOT NULL,
+      status text NOT NULL CHECK (status IN ('confirmed', 'cancelled')),
+      EXCLUDE USING gist (professional_id WITH =, slot WITH &&) WHERE (status = 'confirmed')
+  );
+  INSERT INTO pgfound_scheduling_capstone.professionals VALUES
+      ('00000000-0000-0000-0000-000000000201', 'Dr. Rivera');
+  INSERT INTO pgfound_scheduling_capstone.patients VALUES
+      ('00000000-0000-0000-0000-000000000301', 'Patient A'),
+      ('00000000-0000-0000-0000-000000000302', 'Patient B');
+steps:
+  - session: A
+    sql: "BEGIN;"
+  - session: A
+    sql: "INSERT INTO pgfound_scheduling_capstone.appointments (professional_id, patient_id, slot, status) VALUES ('00000000-0000-0000-0000-000000000201', '00000000-0000-0000-0000-000000000301', tstzrange('2026-06-01 15:00+00', '2026-06-01 15:30+00', '[)'), 'confirmed');"
+    expect:
+      rowcount: 1
+  - session: B
+    sql: "BEGIN;"
+  - session: A
+    sql: "COMMIT;"
+  - session: B
+    sql: "INSERT INTO pgfound_scheduling_capstone.appointments (professional_id, patient_id, slot, status) VALUES ('00000000-0000-0000-0000-000000000201', '00000000-0000-0000-0000-000000000302', tstzrange('2026-06-01 15:00+00', '2026-06-01 15:30+00', '[)'), 'confirmed');"
+    expect:
+      error_code: "23P01"
+  - session: B
+    sql: "ROLLBACK;"
+teardown_sql: |
+  DROP SCHEMA IF EXISTS pgfound_scheduling_capstone CASCADE;
