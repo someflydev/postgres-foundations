@@ -13,7 +13,7 @@ from pgfound import exercise as exercise_runner
 from pgfound.interview import prompts, rubric, transcripts
 from pgfound.interview.scenario import InterviewScenario
 
-LLM_STUB = "[LLM response intentionally stubbed until PROMPT_30 interview integration]"
+LLM_STUB = "[LLM response intentionally stubbed; rendered provider-neutral prompt captured]"
 
 
 @dataclass(frozen=True)
@@ -38,22 +38,23 @@ def run_session(
     output_stream = stdout or sys.stdout
     started_at = _now()
     captured_stages: list[dict[str, str]] = []
+    persona_prompt = ""
 
     print(f"Interview: {scenario.title}", file=output_stream)
     print(f"Scenario: {scenario.id}", file=output_stream)
-    for stage in scenario.stages:
-        resolved = prompts.load_prompt(scenario, stage)
+    for index, stage in enumerate(scenario.stages):
+        resolved = prompts.load_prompt(
+            scenario,
+            stage,
+            previous_stages=_previous_stage_context(captured_stages),
+        )
         print("", file=output_stream)
         print(f"== Stage: {stage.kind} ({stage.budget_minutes} min) ==", file=output_stream)
         print(resolved.text, file=output_stream)
         _print_timer(stage.budget_minutes, output_stream=output_stream, sleep_seconds=sleep_seconds)
         print("Enter response. End with /next or EOF.", file=output_stream)
         response = _read_response(input_stream)
-        notes = _stage_notes(stage, resolved, output_stream=output_stream)
-        if resolved.follow_ups and stage.kind in {"design_probe", "explainability"}:
-            print("Follow-up questions:", file=output_stream)
-            for follow_up in resolved.follow_ups:
-                print(f"- {follow_up}", file=output_stream)
+        notes = _stage_notes(scenario, stage, resolved, response, output_stream=output_stream)
         print(LLM_STUB, file=output_stream)
         captured_stages.append(
             {
@@ -63,6 +64,29 @@ def run_session(
                 "simulator_notes": notes,
             }
         )
+        if index == 0:
+            persona = prompts.render_persona(scenario)
+            persona_prompt = persona.text
+            captured_stages[-1]["simulator_notes"] += (
+                "\n\nPersona prompt rendered after warmup:\n\n```markdown\n"
+                + persona.text.rstrip()
+                + "\n```"
+            )
+
+    closing = prompts.load_prompt(
+        scenario,
+        _closing_stage(),
+        previous_stages=_previous_stage_context(captured_stages),
+        full_transcript=_stage_summary(captured_stages),
+    )
+    captured_stages.append(
+        {
+            "kind": "closing_feedback",
+            "prompt": closing.text,
+            "learner_response": "[closing feedback generated from transcript]",
+            "simulator_notes": _closing_notes(closing),
+        }
+    )
 
     completed_at = _now()
     path = transcripts.transcript_path(scenario.id)
@@ -72,6 +96,7 @@ def run_session(
         started_at=started_at,
         completed_at=completed_at,
         learner=learner,
+        persona_prompt=persona_prompt,
         stages=captured_stages,
     )
     result = rubric.evaluate(path)
@@ -98,10 +123,26 @@ def _print_timer(budget_minutes: int, *, output_stream: TextIO, sleep_seconds: f
     print("Timer checkpoint: continue or type /next when ready.", file=output_stream)
 
 
-def _stage_notes(stage, resolved, *, output_stream: TextIO) -> str:
+def _stage_notes(
+    scenario: InterviewScenario,
+    stage,
+    resolved,
+    learner_response: str,
+    *,
+    output_stream: TextIO,
+) -> str:
     lines = [
+        f"Rendered prompt template: `{resolved.template_id}`",
+        "",
         "What the simulator would send to the LLM:",
+        "",
+        "### Rendered Prompt",
+        "```markdown",
+        resolved.text,
         "```",
+        "",
+        "### LLM Dispatch Payload",
+        "```yaml",
         resolved.llm_payload,
         "```",
         "",
@@ -120,10 +161,76 @@ def _stage_notes(stage, resolved, *, output_stream: TextIO) -> str:
         except Exception as exc:
             lines.append(f"not run: {exc}")
             print(f"Exercise check not run: {exc}", file=output_stream)
-    if resolved.follow_ups:
-        lines.extend(["", "Follow-up questions:"])
-        lines.extend(f"- {item}" for item in resolved.follow_ups)
+    if stage.kind in {"design_probe", "explainability", "debugging_drill"} and learner_response:
+        follow_up = prompts.render_follow_ups(
+            scenario,
+            stage,
+            stage_transcript="\n\n".join(
+                [
+                    f"Prompt:\n{resolved.text}",
+                    f"Learner response:\n{learner_response or '[no response recorded]'}",
+                ]
+            ),
+        )
+        print("Follow-up questions:", file=output_stream)
+        print(follow_up.text, file=output_stream)
+        lines.extend(["", "### Follow-Up Generator Prompt", "```markdown", follow_up.text, "```"])
     return "\n".join(lines).strip()
+
+
+def _closing_notes(resolved) -> str:
+    return "\n".join(
+        [
+            f"Rendered prompt template: `{resolved.template_id}`",
+            "",
+            "### Rendered Prompt",
+            "```markdown",
+            resolved.text,
+            "```",
+            "",
+            f"Stubbed LLM response: {LLM_STUB}",
+        ]
+    ).strip()
+
+
+def _closing_stage():
+    return type(
+        "ClosingStage",
+        (),
+        {
+            "kind": "closing_feedback",
+            "budget_minutes": 0,
+            "prompt_template": "interview/stages/closing-feedback",
+            "topic": "closing_feedback",
+            "exercise_id": None,
+        },
+    )()
+
+
+def _stage_summary(stages: list[dict[str, str]]) -> str:
+    lines: list[str] = []
+    for stage in stages:
+        lines.extend(
+            [
+                f"## Stage: {stage['kind']}",
+                "### Prompt",
+                stage["prompt"],
+                "### Learner response",
+                stage["learner_response"] or "[no response recorded]",
+                "",
+            ]
+        )
+    return "\n".join(lines).strip()
+
+
+def _previous_stage_context(stages: list[dict[str, str]]) -> list[dict[str, str]]:
+    return [
+        {
+            "kind": stage["kind"],
+            "learner_response": stage["learner_response"] or "[no response recorded]",
+        }
+        for stage in stages
+    ]
 
 
 def _now() -> str:

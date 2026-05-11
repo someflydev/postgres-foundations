@@ -34,6 +34,7 @@ class Transcript:
     started_at: str
     completed_at: str
     learner: str
+    persona_prompt: str
     stages: tuple[TranscriptStage, ...]
     raw_text: str
 
@@ -52,6 +53,7 @@ def write_transcript(
     started_at: str,
     completed_at: str,
     learner: str,
+    persona_prompt: str = "",
     stages: list[dict[str, str]],
 ) -> Path:
     """Write a strict Markdown interview transcript."""
@@ -64,6 +66,14 @@ def write_transcript(
         f"- learner: {learner}",
         "",
     ]
+    if persona_prompt.strip():
+        lines.extend(
+            [
+                "## Persona Prompt",
+                persona_prompt.rstrip(),
+                "",
+            ]
+        )
     for stage in stages:
         lines.extend(
             [
@@ -108,6 +118,7 @@ def validate_transcript(path: Path) -> Transcript:
         started_at=header["started_at"],
         completed_at=header["completed_at"],
         learner=header["learner"],
+        persona_prompt=_persona_prompt(text),
         stages=tuple(stages),
         raw_text=text,
     )
@@ -145,6 +156,17 @@ def _parse_stages(text: str) -> list[TranscriptStage]:
             )
         )
     return stages
+
+
+def _persona_prompt(text: str) -> str:
+    marker = "## Persona Prompt"
+    first_stage = "\n## Stage: "
+    if marker not in text:
+        return ""
+    tail = text.split(marker, 1)[1]
+    if first_stage in tail:
+        tail = tail.split(first_stage, 1)[0]
+    return tail.strip()
 
 
 def _section(block: str, start: str, stop: str) -> str:

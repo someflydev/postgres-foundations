@@ -37,7 +37,8 @@ def test_interview_session_writes_well_formed_stubbed_transcript() -> None:
     output = stdout.getvalue()
 
     assert transcript.scenario_id == "senior-backend-saas-rls"
-    assert len(transcript.stages) == 4
+    assert len(transcript.stages) == 5
+    assert transcript.stages[-1].kind == "closing_feedback"
     assert "What the simulator would send to the LLM" in transcript.raw_text
     assert session.LLM_STUB in transcript.raw_text
     assert "Follow-up questions:" in output

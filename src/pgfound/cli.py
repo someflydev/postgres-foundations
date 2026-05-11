@@ -24,6 +24,7 @@ from pgfound.content import validate as content_validator
 from pgfound.interview import rubric as interview_rubric
 from pgfound.interview import scenario as interview_scenario
 from pgfound.interview import session as interview_session
+from pgfound.interview import transcripts
 from pgfound.lab import compose
 from pgfound.lab import explain as lab_explain
 from pgfound.lab import harness as concurrency_harness
@@ -852,6 +853,45 @@ def interview_review(transcript_path: Path) -> None:
     console.print(interview_rubric.format_summary(result))
 
 
+@interview.command("dispatch", help="Print a provider-neutral prompt bundle from a transcript.")
+@click.argument("transcript_path", type=click.Path(path_type=Path))
+def interview_dispatch(transcript_path: Path) -> None:
+    """Concatenate system, persona, stage prompts, and closing prompt."""
+    try:
+        transcript = transcripts.validate_transcript(transcript_path)
+        system_prompt = llm_templates.render_template(
+            "shared/system-prompt-trainer",
+            {
+                "learner_stage": "interview",
+                "allowed_concepts": [],
+                "not_yet_allowed_concepts": [],
+            },
+        )
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    sections = [
+        "# Provider-Neutral Interview Prompt Bundle",
+        "",
+        "## System",
+        system_prompt.rstrip(),
+    ]
+    if transcript.persona_prompt:
+        sections.extend(["", "## Persona", transcript.persona_prompt.rstrip()])
+    for stage in transcript.stages:
+        sections.extend(
+            [
+                "",
+                f"## Stage Prompt: {stage.kind}",
+                stage.prompt.rstrip(),
+                "",
+                "### Learner Response",
+                stage.learner_response.rstrip(),
+            ]
+        )
+    click.echo("\n".join(sections).rstrip() + "\n", nl=False)
+
+
 @main.group(help="Show learner progress.")
 def progress() -> None:
     """Show learner progress."""
@@ -945,6 +985,8 @@ def capstone_evaluate(capstone_id: str, submission_path: Path, mode_full: bool) 
         _success(f"schema prompt: {result.report_paths['schema_prompt']}")
     if "index_prompt" in result.report_paths:
         _success(f"index prompt: {result.report_paths['index_prompt']}")
+    if "prompt_bundle" in result.report_paths:
+        _success(f"prompt bundle: {result.report_paths['prompt_bundle']}")
 
 
 def _snapshot_path(name: str) -> Path:
@@ -1016,7 +1058,7 @@ def review_run(
     review_report.render_console(console, result)
     _success(f"markdown: {result.report_paths['markdown']}")
     _success(f"json: {result.report_paths['json']}")
-    for key in ("prompt", "schema_prompt", "index_prompt"):
+    for key in ("prompt", "schema_prompt", "index_prompt", "prompt_bundle"):
         if key in result.report_paths:
             _success(f"{key}: {result.report_paths[key]}")
 
