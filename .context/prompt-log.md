@@ -129,7 +129,13 @@ Completed:
   admin exercises, canonical monitoring SQL scripts under `scripts/monitoring/`,
   `pgfound ops query <name>`, monitoring and replication/HA playbooks,
   `docs/postmortem-template.md`, and admin/ops query tests.
+- PROMPT_34: Extension Mastery track E1 and E2; extension map with E1-E7
+  anchors (`pg_stat_statements`, `pg_trgm`, PostGIS, pgvector, TimescaleDB,
+  postgres_fdw, pg_cron), plus ltree, pg_partman, and PgBouncer; 13 active
+  lessons and 104 exercises for deep `pg_stat_statements` and `pg_trgm`;
+  extension-map validation support; `pg_trgm` lab initialization;
+  extension-track docs; and E1/E2 corpus tests.
 
 Next expected prompt:
 
-- PROMPT_34: Extension Mastery track E1 pg_stat_statements deep and E2 pg_trgm.
+- PROMPT_35: Extension Mastery track E3 PostGIS and E4 pgvector.

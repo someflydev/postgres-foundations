@@ -282,6 +282,22 @@ Phase 8 PostgreSQL full-text search references introduced by PROMPT_22:
 - `tests/test_phase8_corpus.py`
 - `tests/test_document_corpus.py`
 
+Extension track E1-E2 references introduced by PROMPT_34:
+
+- `curriculum/extensions/map.json`
+- `content-schemas/extension-map.schema.json`
+- `lessons/extensions/e1-pg-stat-statements/`
+- `lessons/extensions/e2-pg-trgm/`
+- `exercises/extensions/e1-pg-stat-statements/`
+- `exercises/extensions/e2-pg-trgm/`
+- `docs/extension-track/README.md`
+- `docs/extension-track/e1-pg-stat-statements.md`
+- `docs/extension-track/e2-pg-trgm.md`
+- `docs/search-playbook.md`
+- `docker/initdb/00-extensions.sql`
+- `tests/test_extension_map.py`
+- `tests/test_extension_e1_e2_corpus.py`
+
 Phase 9 partitioning references introduced by PROMPT_23:
 
 - `lessons/phase-09-partitioning-and-large-table-operations/`

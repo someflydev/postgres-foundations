@@ -189,6 +189,16 @@ Current baseline:
   `docs/admin-track/a5-monitoring-playbook.md`,
   `docs/admin-track/a6-replication-ha-playbook.md`,
   `docs/postmortem-template.md`, and admin A5/A6 plus ops query tests.
+- Extension track E1-E2: PROMPT_34 added
+  `curriculum/extensions/map.json` with E1-E7 anchors (`pg_stat_statements`,
+  `pg_trgm`, PostGIS, pgvector, TimescaleDB, postgres_fdw, pg_cron), plus
+  ltree, pg_partman, and PgBouncer; validator/schema support for the
+  extension map and extension lesson `module_id` directory checks; 13 active lessons under
+  `lessons/extensions/e1-pg-stat-statements/` and
+  `lessons/extensions/e2-pg-trgm/`; 104 exercises under matching
+  `exercises/extensions/` modules; `docs/extension-track/`; a pg_trgm pointer
+  in `docs/search-playbook.md`; `CREATE EXTENSION IF NOT EXISTS pg_trgm;` in
+  `docker/initdb/00-extensions.sql`; and extension map/corpus tests.
 
 Canonical docs:
 
@@ -230,6 +240,9 @@ Canonical docs:
 - `docs/admin-track/a5-monitoring-playbook.md`
 - `docs/admin-track/a6-replication-ha-playbook.md`
 - `docs/postmortem-template.md`
+- `docs/extension-track/README.md`
+- `docs/extension-track/e1-pg-stat-statements.md`
+- `docs/extension-track/e2-pg-trgm.md`
 - `docs/anti-patterns/partition_too_early.md`
 - `capstones/README.md`
 - `docs/learner-workflow.md`
