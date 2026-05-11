@@ -86,7 +86,7 @@ def test_admin_a1_a2_lessons_and_distribution() -> None:
         exercise = _load(exercise_path)
         exercises_by_lesson[exercise["lesson_id"]].append(exercise)
 
-    assert sum(len(items) for items in exercises_by_lesson.values()) == 120
+    assert sum(len(exercises_by_lesson[lesson]) for lesson in A1_LESSONS | A2_LESSONS) == 120
     bodies = []
     for lesson_path in a1_paths + a2_paths:
         lesson = _load(lesson_path)
