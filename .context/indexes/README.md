@@ -224,3 +224,17 @@ Phase 9 partitioning references introduced by PROMPT_23:
 - `docs/indexing-playbook-part2.md`
 - `tests/test_phase9_corpus.py`
 - `tests/test_partitioning_seed.py`
+
+Phase 10 security and federation references introduced by PROMPT_24:
+
+- `lessons/phase-10-roles-rls-replication-and-fdw/`
+- `exercises/phase-10-roles-rls-replication-and-fdw/`
+- `seed-data/packs/saas_multi_tenant/phases/phase-10.sql`
+- `seed-data/packs/modernization_bridge/phases/phase-10.sql`
+- `docker/initdb-replica/00-init.sql`
+- `docker/initdb/20-replication-role.sql`
+- `docs/rls-playbook.md`
+- `docs/logical-replication-playbook.md`
+- `docs/lab.md`
+- `tests/test_phase10_corpus.py`
+- `tests/test_rls_policy_sql.py`

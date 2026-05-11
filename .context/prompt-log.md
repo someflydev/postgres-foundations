@@ -83,7 +83,12 @@ Completed:
   quarterly comparison table, deterministic Phase 9 partition manifest
   generator, `docs/partitioning-playbook.md`, partition-too-early anti-pattern,
   partitioned-index guidance, and Phase 9 corpus/seed tests.
+- PROMPT_24: Phase 10 roles, RLS, logical replication, and FDW; 12 active
+  lessons, 96 exercises, SaaS document/audit RLS seed policies,
+  modernization loopback `postgres_fdw` seed bridge, a replication Docker
+  profile with `pg-replica`, RLS and logical replication playbooks, lab docs,
+  glossary additions, and Phase 10 corpus/RLS policy tests.
 
 Next expected prompt:
 
-- PROMPT_24: Phase 10 roles, row-level security, replication concepts, and FDW.
+- PROMPT_25: Phase F capstones 1 and 2.

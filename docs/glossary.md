@@ -292,6 +292,44 @@ First taught: phase 10, `roles-rls-replication-and-fdw`. Replication of data
 changes by table and publication/subscription semantics rather than by copying
 physical storage blocks.
 
+## Role
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. A PostgreSQL identity
+that can own objects, receive privileges, authenticate when it has `LOGIN`, or
+serve as a group for other roles.
+
+## Group Role
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. A non-login role used
+to collect privileges and grant those privileges to member roles.
+
+## Login Role
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. A role with `LOGIN`
+that can authenticate to PostgreSQL and usually receives privileges through
+membership in group roles.
+
+## Grant
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. A command that gives a
+role privileges on an object or membership in another role.
+
+## Revoke
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. A command that removes
+previously granted object privileges or role membership.
+
+## Ownership
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. The role-level control
+relationship that allows object alteration, privilege delegation, and object
+drop unless ownership is reassigned.
+
+## Default Privileges
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. Rules that apply
+grants to future objects created by a role in a schema.
+
 ## Physical Replication
 
 First taught: phase 10, `roles-rls-replication-and-fdw`. Replication based on
@@ -307,6 +345,18 @@ durable change record PostgreSQL uses for crash recovery and replication.
 First taught: phase 10, `roles-rls-replication-and-fdw`. A server-side marker
 that retains WAL needed by a replication consumer.
 
+## Publication
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. Logical replication
+object on the publisher that names the tables and changes available to
+subscribers.
+
+## Subscription
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. Logical replication
+object on the subscriber that connects to a publisher and consumes one or more
+publications.
+
 ## Row-Level Security
 
 First taught: phase 10, `roles-rls-replication-and-fdw`. PostgreSQL policy
@@ -317,6 +367,12 @@ machinery that filters which rows a role may read or modify.
 First taught: phase 10, `roles-rls-replication-and-fdw`. A row-level security
 rule attached to a table for commands, roles, and row qualifications.
 
+## Forced RLS
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. Table setting that
+forces the table owner to obey row-level security policies instead of bypassing
+them during normal access.
+
 ## Quals
 
 First taught: phase 10, `roles-rls-replication-and-fdw`. Predicate expressions
@@ -326,6 +382,11 @@ PostgreSQL applies to restrict rows, including RLS policy conditions.
 
 First taught: phase 10, `roles-rls-replication-and-fdw`. Foreign data wrapper;
 an interface that lets PostgreSQL query data managed by an external source.
+
+## postgres_fdw
+
+First taught: phase 10, `roles-rls-replication-and-fdw`. PostgreSQL's built-in
+foreign data wrapper for querying tables from another PostgreSQL database.
 
 ## IMPORT FOREIGN SCHEMA
 

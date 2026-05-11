@@ -119,6 +119,13 @@ Current baseline:
   `docs/partitioning-playbook.md`, `docs/anti-patterns/partition_too_early.md`,
   partitioned-table index guidance in `docs/indexing-playbook-part2.md`, and
   Phase 9 corpus/seed tests.
+- Phase 10 roles, RLS, replication, and FDW: PROMPT_24 added security and
+  federation content: 12 active lessons, 96 active exercises, SaaS document and
+  audit tables protected by tenant-scoped RLS policies, a modernization
+  loopback `postgres_fdw` bridge, a `replication` Docker profile with
+  `pg-replica`, `docs/rls-playbook.md`,
+  `docs/logical-replication-playbook.md`, glossary additions, and Phase 10
+  corpus/RLS policy tests.
 
 Canonical docs:
 
@@ -145,6 +152,8 @@ Canonical docs:
 - `docs/anti-patterns/redundant_indexes.md`
 - `docs/search-playbook.md`
 - `docs/partitioning-playbook.md`
+- `docs/rls-playbook.md`
+- `docs/logical-replication-playbook.md`
 - `docs/anti-patterns/partition_too_early.md`
 - `docs/learner-workflow.md`
 - `docs/glossary.md`
@@ -185,6 +194,8 @@ Expected green checks:
 - `uv run pgfound content seed ecommerce --phase 8 --reset --generate`
 - `uv run pgfound content seed event_heavy_ops --phase 9 --reset --generate`
 - `uv run pgfound content seed ecommerce --phase 9 --reset --generate`
+- `uv run pgfound content seed saas_multi_tenant --phase 10 --reset`
+- `uv run pgfound content seed modernization_bridge --phase 10 --reset`
 - `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`
 - `uv run pgfound content validate --include-examples`
 - `uv run pgfound content seed-doctor`
