@@ -1,0 +1,63 @@
+{
+  "id": "extension-posture",
+  "title": "Extension Posture",
+  "applies_to": "capstone",
+  "dimensions": [
+    {
+      "name": "Now versus later",
+      "weight": 0.25,
+      "levels": {
+        "0": "Extension choices are absent or cargo-culted.",
+        "1": "Names extensions but does not separate current needs from future possibilities.",
+        "2": "Identifies at least one deferred extension with limited workload evidence.",
+        "3": "Clearly states enabled, deferred, and rejected extensions with workload signals.",
+        "4": "Defines measurable adoption triggers, core alternatives, rollback concerns, and portability consequences."
+      }
+    },
+    {
+      "name": "Core alternative",
+      "weight": 0.2,
+      "levels": {
+        "0": "Skips the PostgreSQL core option.",
+        "1": "Mentions core features without applying them to the workload.",
+        "2": "Uses a core feature but does not explain its limits.",
+        "3": "Explains why PostgreSQL core is sufficient for the current stage.",
+        "4": "Compares core and extension paths with operational and migration implications."
+      }
+    },
+    {
+      "name": "Operational burden",
+      "weight": 0.2,
+      "levels": {
+        "0": "Ignores operating cost.",
+        "1": "Treats extensions as free once installed.",
+        "2": "Mentions maintenance or hosting constraints generically.",
+        "3": "Names ownership, upgrade, backup, monitoring, and managed-service constraints.",
+        "4": "Connects burden to team capacity and states what must improve before adoption."
+      }
+    },
+    {
+      "name": "Decision evidence",
+      "weight": 0.2,
+      "levels": {
+        "0": "Provides no evidence.",
+        "1": "Uses vague scale claims.",
+        "2": "Gives some volume or latency facts but misses the decisive signal.",
+        "3": "Uses workload volume, query shape, latency, retention, and reliability signals.",
+        "4": "Defines instrumentation that will prove the decision should change."
+      }
+    },
+    {
+      "name": "Portability",
+      "weight": 0.15,
+      "levels": {
+        "0": "Ignores portability.",
+        "1": "Mentions portability without consequences.",
+        "2": "Identifies one hosting or migration concern.",
+        "3": "Explains how the current design remains portable and where it becomes less portable.",
+        "4": "Documents an exit or migration path for every non-core dependency."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}

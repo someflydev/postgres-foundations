@@ -1,0 +1,63 @@
+{
+  "id": "operational-reasoning",
+  "title": "Operational Reasoning",
+  "applies_to": "capstone",
+  "dimensions": [
+    {
+      "name": "Failure modes",
+      "weight": 0.22,
+      "levels": {
+        "0": "No failure modes are named.",
+        "1": "Names generic failures without connecting them to the design.",
+        "2": "Names relevant failures but gives little response guidance.",
+        "3": "Identifies likely failures and the first diagnostic or mitigation step.",
+        "4": "Prioritizes failures by impact and includes prevention, detection, response, and recovery."
+      }
+    },
+    {
+      "name": "Observability",
+      "weight": 0.18,
+      "levels": {
+        "0": "No observability plan is present.",
+        "1": "Mentions logs or metrics generically.",
+        "2": "Names useful signals but does not tie them to decisions.",
+        "3": "Uses query plans, statistics, errors, latency, and workload metrics to guide operations.",
+        "4": "Defines concrete dashboards or checks that validate the design over time."
+      }
+    },
+    {
+      "name": "Maintenance",
+      "weight": 0.2,
+      "levels": {
+        "0": "Maintenance is absent.",
+        "1": "Maintenance is implied but not scheduled or owned.",
+        "2": "Some maintenance tasks are named with unclear cadence.",
+        "3": "Routine maintenance has owners, cadence, lock-risk notes, and verification.",
+        "4": "Maintenance includes dry runs, rollback thinking, and capacity-aware scheduling."
+      }
+    },
+    {
+      "name": "Team tolerance",
+      "weight": 0.2,
+      "levels": {
+        "0": "Team capability is ignored.",
+        "1": "Assumes the team can operate any chosen design.",
+        "2": "Mentions team burden but does not adjust choices.",
+        "3": "Shapes topology, extensions, and maintenance around current team capacity.",
+        "4": "States what skills, automation, or staffing would justify a more complex future design."
+      }
+    },
+    {
+      "name": "Incident path",
+      "weight": 0.2,
+      "levels": {
+        "0": "No incident path exists.",
+        "1": "The incident path is a checklist of vague commands.",
+        "2": "The path handles one common symptom but misses escalation criteria.",
+        "3": "The runbook starts from symptoms, gathers evidence, and gives bounded next actions.",
+        "4": "The runbook prevents thrash by naming stop conditions, owner handoff, and customer impact."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}

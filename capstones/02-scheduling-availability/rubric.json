@@ -6,12 +6,14 @@
     { "rubric_id": "schema-design", "weight": 0.2 },
     { "rubric_id": "concurrency-reasoning", "weight": 0.2 },
     { "rubric_id": "indexing-reasoning", "weight": 0.15 },
-    { "rubric_id": "query-correctness", "weight": 0.15 }
+    { "rubric_id": "query-correctness", "weight": 0.15 },
+    { "rubric_id": "extension-posture", "weight": 0.05 },
+    { "rubric_id": "operational-reasoning", "weight": 0.05 }
   ],
   "own_dimensions": [
     {
       "name": "Operational posture",
-      "weight": 0.1,
+      "weight": 0.05,
       "levels": {
         "0": "No operations plan is present.",
         "1": "The plan ignores booking failures or time-zone support.",
@@ -22,7 +24,7 @@
     },
     {
       "name": "Writeup and defense",
-      "weight": 0.2,
+      "weight": 0.15,
       "levels": {
         "0": "No defensible explanation is submitted.",
         "1": "The explanation is mostly restatement.",
