@@ -70,9 +70,52 @@ open while the second session observes blocking, isolation behavior, or
 deadlock handling. Keeping both sessions on the main `pg` service ensures they
 share the same persisted database and lesson setup.
 
+Phase 10 logical replication labs add a second PostgreSQL 16 service behind the
+`replication` profile:
+
+```sh
+docker compose -f docker/docker-compose.yml --profile replication up -d
+```
+
+The publisher is `pg` on the Compose network. The subscriber target is
+`pg-replica`, exposed on host port 5435. Both services start with
+`wal_level=logical`. The subscriber is an independent PostgreSQL instance used
+for publication/subscription practice; it is not a physical replica.
+
+Minimal publisher/subscriber flow:
+
+```sql
+-- On pg:
+CREATE TABLE IF NOT EXISTS public.replication_lab_events (
+    id bigint PRIMARY KEY,
+    event_name text NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE PUBLICATION phase10_pub FOR TABLE public.replication_lab_events;
+INSERT INTO public.replication_lab_events VALUES (1, 'publisher-ready', now());
+
+-- On pg-replica:
+CREATE TABLE IF NOT EXISTS public.replication_lab_events (
+    id bigint PRIMARY KEY,
+    event_name text NOT NULL,
+    created_at timestamptz NOT NULL
+);
+
+CREATE SUBSCRIPTION phase10_sub
+    CONNECTION 'host=pg port=5432 dbname=pgfound user=pgfound password=pgfound'
+    PUBLICATION phase10_pub;
+
+SELECT * FROM public.replication_lab_events ORDER BY id;
+```
+
+Stop the profile with
+`docker compose -f docker/docker-compose.yml --profile replication down`. Add
+`-v` only when you intentionally want to remove the replication lab volumes.
+
 The lab currently uses a single PostgreSQL superuser role, `pgfound`, for
-simplicity. Role design, least privilege, and operational separation arrive
-later in PROMPT_24 and PROMPT_31.
+simplicity. Phase 10 introduces role design and least-privilege practice;
+deeper operational separation remains part of the later admin track.
 
 If port 55433 is already in use, set `POSTGRES_PORT` in `.env` and restart the
 service. If the sandbox port 55434 is occupied, set `POSTGRES_SANDBOX_PORT`. If
