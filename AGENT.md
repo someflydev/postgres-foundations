@@ -54,6 +54,9 @@ concrete, operational, and PostgreSQL core-first.
 - PgBouncer pooling lab up: `docker compose -f docker/docker-compose.yml --profile pooling up -d`
 - Restore drill: `scripts/restore-drill.sh`
 - Replication lab up: `docker compose -f docker/docker-compose.yml --profile replication up -d`
+- Ops top statements: `uv run pgfound ops query top-by-total-time`
+- Ops blocking chain: `uv run pgfound ops query blocking-chain`
+- Ops replica lag: `uv run pgfound ops query replica-lag`
 - Exercise dry-run: `uv run pgfound exercise run first-select-write-query --dry-run`
 - Exercise check: `uv run pgfound exercise run first-select-write-query --check`
 - Exercise timing check: `uv run pgfound exercise run what-lateral-unlocks-level-c-1 --check --answer exercises/phase-05-expressive-querying/what-lateral-unlocks/level-c/what-lateral-unlocks-level-c-1/solution.sql --no-prompt --timing`

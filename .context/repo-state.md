@@ -4,7 +4,7 @@ Current baseline:
 
 - Python package: `src/pgfound/`
 - CLI entry point: `pgfound = pgfound.cli:main`
-- CLI surface: `pgfound version`, `doctor`, `lab`, `content`, `exercise`,
+- CLI surface: `pgfound version`, `doctor`, `lab`, `ops`, `content`, `exercise`,
   `capstone`, `progress`, `review`, `decision`, and `interview` command
   groups.
 - Test suite: `tests/test_cli.py`, `tests/test_paths.py`,
@@ -180,6 +180,15 @@ Current baseline:
   `docker/hba_overlay/`, `docker/pgbouncer/`, HBA overlay and PgBouncer Compose
   profiles, `scripts/restore-drill.sh`, A3/A4 admin playbooks, and admin
   A3/A4 plus PgBouncer compose tests.
+- Administration track A5-A6: PROMPT_33 added monitoring/performance and
+  replication/HA operations content: 17 active lessons under
+  `lessons/admin/a5-monitoring-and-performance-ops/` and
+  `lessons/admin/a6-replication-and-ha/`, 136 exercises under matching
+  `exercises/admin/` modules, canonical SQL scripts under
+  `scripts/monitoring/`, `pgfound ops query <name>`,
+  `docs/admin-track/a5-monitoring-playbook.md`,
+  `docs/admin-track/a6-replication-ha-playbook.md`,
+  `docs/postmortem-template.md`, and admin A5/A6 plus ops query tests.
 
 Canonical docs:
 
@@ -218,6 +227,9 @@ Canonical docs:
 - `docs/admin-track/a2-schemas-playbook.md`
 - `docs/admin-track/a3-auth-and-pooling-playbook.md`
 - `docs/admin-track/a4-backup-and-upgrades-playbook.md`
+- `docs/admin-track/a5-monitoring-playbook.md`
+- `docs/admin-track/a6-replication-ha-playbook.md`
+- `docs/postmortem-template.md`
 - `docs/anti-patterns/partition_too_early.md`
 - `capstones/README.md`
 - `docs/learner-workflow.md`

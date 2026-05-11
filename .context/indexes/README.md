@@ -111,6 +111,20 @@ Administration track references introduced by PROMPT_32:
 - `tests/test_admin_a3_a4_corpus.py`
 - `tests/test_pgbouncer_compose.py`
 
+Administration track references introduced by PROMPT_33:
+
+- `lessons/admin/a5-monitoring-and-performance-ops/`
+- `lessons/admin/a6-replication-and-ha/`
+- `exercises/admin/a5-monitoring-and-performance-ops/`
+- `exercises/admin/a6-replication-and-ha/`
+- `scripts/monitoring/*.sql`
+- `src/pgfound/ops.py`
+- `docs/admin-track/a5-monitoring-playbook.md`
+- `docs/admin-track/a6-replication-ha-playbook.md`
+- `docs/postmortem-template.md`
+- `tests/test_admin_a5_a6_corpus.py`
+- `tests/test_ops_queries.py`
+
 Exercise authoring references introduced by PROMPT_08:
 
 - `exercises/phase-*/`

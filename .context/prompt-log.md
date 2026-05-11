@@ -125,8 +125,11 @@ Completed:
   admin exercises, optional exercise `restore_drill` metadata, HBA overlay and
   PgBouncer Docker profiles, restore drill script, A3/A4 playbooks, lab docs,
   and admin/compose tests.
+- PROMPT_33: Administration Track A5 and A6; 17 active admin lessons, 136
+  admin exercises, canonical monitoring SQL scripts under `scripts/monitoring/`,
+  `pgfound ops query <name>`, monitoring and replication/HA playbooks,
+  `docs/postmortem-template.md`, and admin/ops query tests.
 
 Next expected prompt:
 
-- PROMPT_33: Administration Track A5 monitoring/performance operations and A6
-  replication/HA operations.
+- PROMPT_34: Extension Mastery track E1 pg_stat_statements deep and E2 pg_trgm.
