@@ -27,6 +27,7 @@ from pgfound.interview import session as interview_session
 from pgfound.lab import compose
 from pgfound.lab import explain as lab_explain
 from pgfound.lab import harness as concurrency_harness
+from pgfound.llm import templates as llm_templates
 from pgfound.review import engine as review_engine
 from pgfound.review.models import EvaluationContext, EvaluationRequest
 from pgfound.review.output import report as review_report
@@ -816,6 +817,8 @@ def exercise_review(
     review_report.render_console(console, result)
     _success(f"markdown: {result.report_paths['markdown']}")
     _success(f"json: {result.report_paths['json']}")
+    if "prompt" in result.report_paths:
+        _success(f"prompt: {result.report_paths['prompt']}")
 
 
 @main.group(help="Run interview simulator sessions.")
@@ -938,6 +941,10 @@ def capstone_evaluate(capstone_id: str, submission_path: Path, mode_full: bool) 
     review_report.render_console(console, result)
     _success(f"markdown: {result.report_paths['markdown']}")
     _success(f"json: {result.report_paths['json']}")
+    if "schema_prompt" in result.report_paths:
+        _success(f"schema prompt: {result.report_paths['schema_prompt']}")
+    if "index_prompt" in result.report_paths:
+        _success(f"index prompt: {result.report_paths['index_prompt']}")
 
 
 def _snapshot_path(name: str) -> Path:
@@ -1009,6 +1016,66 @@ def review_run(
     review_report.render_console(console, result)
     _success(f"markdown: {result.report_paths['markdown']}")
     _success(f"json: {result.report_paths['json']}")
+    for key in ("prompt", "schema_prompt", "index_prompt"):
+        if key in result.report_paths:
+            _success(f"{key}: {result.report_paths[key]}")
+
+
+@main.group(help="Render provider-agnostic LLM prompt templates.")
+def llm() -> None:
+    """Render and inspect LLM prompt templates."""
+
+
+@llm.command("list", help="List training-side LLM templates.")
+def llm_list() -> None:
+    """List templates and their declared consumers."""
+    table = Table(title="pgfound llm templates")
+    table.add_column("ID")
+    table.add_column("Consumed by")
+    table.add_column("Required inputs")
+    for template in llm_templates.list_templates():
+        required = [
+            name for name, spec in template.inputs.items() if bool(spec.get("required", False))
+        ]
+        table.add_row(template.id, ", ".join(template.consumed_by), ", ".join(required))
+    console.print(table)
+
+
+@llm.command("render", help="Render one LLM prompt template.")
+@click.argument("template_id")
+@click.option(
+    "--context",
+    "context_path",
+    type=click.Path(path_type=Path),
+    required=True,
+    help="JSON context object.",
+)
+@click.option(
+    "--var",
+    "var_overrides",
+    multiple=True,
+    help="Override one render variable as key=value. JSON values are accepted.",
+)
+@click.option("--out", "out_path", type=click.Path(path_type=Path), help="Write prompt here.")
+def llm_render(
+    template_id: str,
+    context_path: Path,
+    var_overrides: tuple[str, ...],
+    out_path: Path | None,
+) -> None:
+    """Render one template without calling an LLM."""
+    try:
+        context = llm_templates.load_context(context_path)
+        variables = llm_templates.parse_var_overrides(var_overrides)
+        rendered = llm_templates.render_template(template_id, context, variables=variables)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    if out_path:
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(rendered, encoding="utf-8")
+        _success(f"rendered: {out_path}")
+        return
+    click.echo(rendered, nl=False)
 
 
 @main.group(help="Run decision-engine commands.")

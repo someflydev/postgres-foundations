@@ -1,0 +1,15 @@
+{
+  "exercise_id": "first-select-write-query",
+  "learner_sql": "select id, name from providers where active = true order by name;",
+  "reference_sql": "select id, name from providers where active = true order by name;",
+  "rubric_id": "query-correctness",
+  "findings": [
+    {
+      "severity": "info",
+      "title": "Output matched reference",
+      "detail": "Rows match after normalization."
+    }
+  ],
+  "allowed_concepts": ["select", "where", "order_by"],
+  "not_yet_allowed_concepts": ["join", "cte", "window_function"]
+}

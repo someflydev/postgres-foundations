@@ -9,6 +9,7 @@ from typing import Any
 
 from pgfound import exercise as exercise_runner
 from pgfound import paths
+from pgfound.llm import templates as llm_templates
 from pgfound.review import grading
 from pgfound.review.models import EvaluationRequest, EvaluationResult, Finding, Signal
 from pgfound.review.output import json as json_output
@@ -111,7 +112,12 @@ def evaluate_exercise(request: EvaluationRequest) -> EvaluationResult:
         signals=tuple(signals),
         plan_diffs=tuple(plan_diffs),
     )
-    return _write_reports(result, "exercise", record.id)
+    result = _write_reports(result, "exercise", record.id)
+    if request.mode == "full":
+        prompt_path = _render_exercise_prompt(result, record, answer_path)
+        if prompt_path:
+            result = _with_report_paths(result, {"prompt": _relative(prompt_path)})
+    return result
 
 
 def evaluate_capstone(request: EvaluationRequest) -> EvaluationResult:
@@ -221,7 +227,80 @@ def evaluate_capstone(request: EvaluationRequest) -> EvaluationResult:
         signals=tuple(signals),
         plan_diffs=tuple(plan_diffs),
     )
-    return _write_reports(result, "capstone", str(capstone["id"]))
+    result = _write_reports(result, "capstone", str(capstone["id"]))
+    if request.mode == "full":
+        prompt_paths = _render_capstone_prompts(result, capstone, artifact_dir)
+        if prompt_paths:
+            result = _with_report_paths(
+                result, {key: _relative(path) for key, path in prompt_paths.items()}
+            )
+    return result
+
+
+def _render_exercise_prompt(
+    result: EvaluationResult,
+    record: exercise_runner.ExerciseRecord,
+    answer_path: Path,
+) -> Path | None:
+    if record.solution_path.suffix != ".sql":
+        return None
+    markdown_path = paths.REPO_ROOT / result.report_paths["markdown"]
+    prompt_path = markdown_path.parent / "prompt.md"
+    context = {
+        "exercise_id": record.id,
+        "learner_sql": _read_optional(answer_path),
+        "reference_sql": _read_optional(record.solution_path),
+        "rubric_id": result.rubric_id,
+        "findings": json_output.result_to_dict(result)["findings"],
+        "allowed_concepts": list(record.data.get("allowed_concepts", [])),
+        "not_yet_allowed_concepts": list(record.data.get("not_yet_allowed_concepts", [])),
+    }
+    return llm_templates.render_template_to_path("critique/query-critique", context, prompt_path)
+
+
+def _render_capstone_prompts(
+    result: EvaluationResult,
+    capstone: dict[str, Any],
+    artifact_dir: Path,
+) -> dict[str, Path]:
+    markdown_path = paths.REPO_ROOT / result.report_paths["markdown"]
+    directory = markdown_path.parent
+    capstone_id = str(capstone["id"])
+    findings = json_output.result_to_dict(result)["findings"]
+    allowed_concepts = list(capstone.get("allowed_concepts", []))
+    not_yet_allowed_concepts = list(capstone.get("not_yet_allowed_concepts", []))
+    common = {
+        "capstone_id": capstone_id,
+        "rubric_id": result.rubric_id,
+        "findings": findings,
+        "allowed_concepts": allowed_concepts,
+        "not_yet_allowed_concepts": not_yet_allowed_concepts,
+    }
+    reference_dir = paths.CAPSTONES_DIR / capstone_id / "reference"
+    rendered: dict[str, Path] = {}
+    rendered["schema_prompt"] = llm_templates.render_template_to_path(
+        "critique/schema-critique",
+        {
+            **common,
+            "learner_schema": _read_optional(artifact_dir / "schema.sql"),
+            "reference_schema": _read_optional(reference_dir / "schema.sql"),
+        },
+        directory / "schema-prompt.md",
+    )
+    rendered["index_prompt"] = llm_templates.render_template_to_path(
+        "critique/index-critique",
+        {
+            "learner_index_plan": _read_optional(artifact_dir / "indexes.sql"),
+            "workload_description": _read_optional(paths.CAPSTONES_DIR / capstone_id / "brief.md"),
+            "existing_schema": _read_optional(artifact_dir / "schema.sql"),
+            "query_examples": [_read_optional(artifact_dir / "critical-queries.sql")],
+            "findings": findings,
+            "allowed_concepts": allowed_concepts,
+            "not_yet_allowed_concepts": not_yet_allowed_concepts,
+        },
+        directory / "index-prompt.md",
+    )
+    return rendered
 
 
 def _capstone_posture_signals(artifact_dir: Path) -> list[Signal]:
@@ -283,6 +362,21 @@ def _write_reports(result: EvaluationResult, group: str, target_id: str) -> Eval
         signals=result.signals,
         plan_diffs=result.plan_diffs,
         report_paths={"markdown": _relative(markdown_path), "json": _relative(json_path)},
+    )
+
+
+def _with_report_paths(result: EvaluationResult, extra_paths: dict[str, str]) -> EvaluationResult:
+    return EvaluationResult(
+        target_id=result.target_id,
+        target_kind=result.target_kind,
+        rubric_id=result.rubric_id,
+        dimensions=result.dimensions,
+        overall_score=result.overall_score,
+        passed=result.passed,
+        findings=result.findings,
+        signals=result.signals,
+        plan_diffs=result.plan_diffs,
+        report_paths={**result.report_paths, **extra_paths},
     )
 
 
