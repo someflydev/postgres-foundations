@@ -104,6 +104,13 @@ Writes a custom-format `pg_dump` of the `pgfound` database to
 Restores `tmp/snapshots/<name>.dump` into the `pgfound` database with
 `pg_restore --clean --if-exists --no-owner`.
 
+## `pgfound ops query NAME`
+
+Runs one canonical monitoring SQL script from `scripts/monitoring/` against the
+configured lab database and renders the rowset as a Rich table. Available names
+include `top-by-total-time`, `blocking-chain`, `unused-indexes`, `replica-lag`,
+and `table-sizes`.
+
 ## `pgfound content list`
 
 Lists content IDs, placeholder titles, and file paths.

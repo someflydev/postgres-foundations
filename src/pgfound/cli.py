@@ -13,6 +13,7 @@ from rich.table import Table
 
 import pgfound
 from pgfound import exercise as exercise_runner
+from pgfound import ops as ops_queries
 from pgfound import paths
 from pgfound import progress as progress_store
 from pgfound.content import lint as content_linter
@@ -49,6 +50,22 @@ def main() -> None:
 def version() -> None:
     """Print the pgfound package version."""
     click.echo(pgfound.__version__)
+
+
+@main.group(help="Run operational PostgreSQL lab helpers.")
+def ops() -> None:
+    """Run operational PostgreSQL lab helpers."""
+
+
+@ops.command("query", help="Run a canonical monitoring SQL script against the lab.")
+@click.argument("name")
+def ops_query(name: str) -> None:
+    """Run a monitoring SQL script by name."""
+    try:
+        result = ops_queries.run_query(name)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    ops_queries.render_result(console, result)
 
 
 def _required_paths() -> list[tuple[str, Path]]:
