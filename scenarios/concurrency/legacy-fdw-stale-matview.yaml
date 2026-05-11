@@ -1,0 +1,49 @@
+name: legacy-fdw-stale-matview
+sessions:
+  A: {role: pgfound, database: pgfound}
+  B: {role: pgfound, database: pgfound}
+setup_sql: |
+  DROP SCHEMA IF EXISTS pgfound_legacy_bridge CASCADE;
+  CREATE SCHEMA pgfound_legacy_bridge;
+  CREATE TABLE pgfound_legacy_bridge.legacy_orders (
+      id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+      legacy_customer_id bigint NOT NULL,
+      order_total numeric(12, 2) NOT NULL,
+      ordered_at timestamptz NOT NULL DEFAULT now()
+  );
+  CREATE MATERIALIZED VIEW pgfound_legacy_bridge.cached_customer_totals AS
+  SELECT legacy_customer_id, count(*) AS order_count, sum(order_total) AS lifetime_total
+  FROM pgfound_legacy_bridge.legacy_orders
+  GROUP BY legacy_customer_id;
+  INSERT INTO pgfound_legacy_bridge.legacy_orders (legacy_customer_id, order_total)
+  VALUES (100, 25.00);
+  REFRESH MATERIALIZED VIEW pgfound_legacy_bridge.cached_customer_totals;
+steps:
+  - session: A
+    sql: "SELECT lifetime_total FROM pgfound_legacy_bridge.cached_customer_totals WHERE legacy_customer_id = 100;"
+    expect:
+      rows:
+        - lifetime_total: "25.00"
+  - session: B
+    sql: "INSERT INTO pgfound_legacy_bridge.legacy_orders (legacy_customer_id, order_total) VALUES (100, 40.00);"
+    expect:
+      rowcount: 1
+  - session: A
+    sql: "SELECT sum(order_total) AS direct_total FROM pgfound_legacy_bridge.legacy_orders WHERE legacy_customer_id = 100;"
+    expect:
+      rows:
+        - direct_total: "65.00"
+  - session: A
+    sql: "SELECT lifetime_total FROM pgfound_legacy_bridge.cached_customer_totals WHERE legacy_customer_id = 100;"
+    expect:
+      rows:
+        - lifetime_total: "25.00"
+  - session: A
+    sql: "REFRESH MATERIALIZED VIEW pgfound_legacy_bridge.cached_customer_totals;"
+  - session: A
+    sql: "SELECT lifetime_total FROM pgfound_legacy_bridge.cached_customer_totals WHERE legacy_customer_id = 100;"
+    expect:
+      rows:
+        - lifetime_total: "65.00"
+teardown_sql: |
+  DROP SCHEMA IF EXISTS pgfound_legacy_bridge CASCADE;

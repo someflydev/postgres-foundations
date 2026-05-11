@@ -1,0 +1,61 @@
+{
+  "id": "modernization-bridge-pattern-level-d-3",
+  "title": "Modernization Bridge Pattern Level D3",
+  "lesson_id": "modernization-bridge-pattern",
+  "scaffolding_level": "D",
+  "kind": "critique",
+  "allowed_concepts": [
+    "explain",
+    "foreign_server",
+    "foreign_table",
+    "import_foreign_schema",
+    "logical_replication",
+    "materialized_view",
+    "postgres_fdw",
+    "refresh_materialized_view",
+    "row_level_security",
+    "select",
+    "where"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "legacy_fdw.customers",
+      "legacy_fdw.orders",
+      "new_service.legacy_customer_order_totals"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "modernization_bridge",
+    "max_rows_hint": 5000
+  },
+  "search_path": "new_service, legacy_fdw, public",
+  "expected_output_shape": "multi_session_trace",
+  "sessions": 2,
+  "lab_harness_profile": "legacy-fdw-stale-matview",
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Runs or explains the stale materialized-view scenario.",
+    "Identifies that direct legacy reads can be fresher than the cached aggregate.",
+    "Proposes a refresh policy and user-facing staleness contract.",
+    "Explains why logical replication is a migration step, not an automatic cache fix."
+  ],
+  "time_target_minutes": 45,
+  "rubric_id": "critique-and-repair",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "phase-10",
+    "fdw",
+    "materialized-view",
+    "modernization-bridge-pattern",
+    "d"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "Which read is fresher and why?",
+    "What refresh policy would you choose for a support dashboard?",
+    "When would this bridge graduate to logical replication?"
+  ]
+}

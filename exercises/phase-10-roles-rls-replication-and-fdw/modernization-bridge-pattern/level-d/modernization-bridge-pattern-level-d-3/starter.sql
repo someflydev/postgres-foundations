@@ -1,0 +1,2 @@
+-- Run the scenario:
+-- uv run pgfound lab concurrency run scenarios/concurrency/legacy-fdw-stale-matview.yaml

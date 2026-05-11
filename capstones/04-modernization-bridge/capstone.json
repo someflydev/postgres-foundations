@@ -1,0 +1,33 @@
+{
+  "id": "04-modernization-bridge",
+  "title": "Modernization Bridge",
+  "industry": "modernization_bridge",
+  "summary": "Design a new PostgreSQL 16 service that reads accurate subsets from a legacy database through postgres_fdw, writes local truth safely, and plans migration without pretending a rewrite already has buy-in.",
+  "phases_required": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "deliverables": [
+    { "name": "Schema", "kind": "schema", "path": "capstones/04-modernization-bridge/reference/schema.sql" },
+    { "name": "Indexes", "kind": "indexes", "path": "capstones/04-modernization-bridge/reference/indexes.sql" },
+    { "name": "RLS policies", "kind": "rls_policies", "path": "capstones/04-modernization-bridge/reference/rls-policies.sql" },
+    { "name": "Critical queries", "kind": "queries", "path": "capstones/04-modernization-bridge/reference/critical-queries.sql" },
+    { "name": "Operational runbook", "kind": "operational_runbook", "path": "capstones/04-modernization-bridge/reference/operational-runbook.md" },
+    { "name": "Writeup", "kind": "writeup", "path": "capstones/04-modernization-bridge/reference/writeup.md" }
+  ],
+  "critical_queries": [
+    "Resolve a local customer to the legacy customer row.",
+    "Read a legacy order list through FDW for one mapped customer.",
+    "Join local entitlements to a legacy product.",
+    "Refresh and read a materialized aggregate cache.",
+    "Report unmapped legacy customers.",
+    "Find local writes waiting on legacy identity mapping.",
+    "Audit RLS tenant isolation on new-service rows.",
+    "Explain a foreign query and identify pushdown risks."
+  ],
+  "security_posture": {
+    "tenant_isolation": "RLS on all new-service tenant-owned tables even though legacy tables are not tenant-isolated",
+    "application_context": "current_setting('app.tenant_id', true) for new-service access",
+    "extensions": "postgres_fdw now; logical replication and Citus explicitly deferred"
+  },
+  "operational_notes": "The design must keep legacy reads accurate, local writes correct, cache staleness named, FDW failure modes visible, and the migration path incremental.",
+  "review_rubric_id": "capstone-04-modernization-bridge",
+  "tags": ["capstone", "fdw", "modernization", "rls", "extensions"]
+}

@@ -1,0 +1,38 @@
+{
+  "id": "capstone-04-modernization-bridge",
+  "title": "Capstone 04 Modernization Bridge",
+  "applies_to": "capstone",
+  "extends": [
+    { "rubric_id": "schema-design", "weight": 0.18 },
+    { "rubric_id": "query-correctness", "weight": 0.15 },
+    { "rubric_id": "indexing-reasoning", "weight": 0.12 },
+    { "rubric_id": "extension-posture", "weight": 0.15 },
+    { "rubric_id": "operational-reasoning", "weight": 0.15 }
+  ],
+  "own_dimensions": [
+    {
+      "name": "FDW bridge design",
+      "weight": 0.13,
+      "levels": {
+        "0": "No bridge design is present.",
+        "1": "FDW is named but not wired to useful legacy tables.",
+        "2": "Foreign tables exist but local ownership, cache freshness, or failure handling is weak.",
+        "3": "FDW, IMPORT FOREIGN SCHEMA, local writes, materialized views, and RLS boundaries are coherent.",
+        "4": "The design includes pushdown awareness, stale-cache controls, migration sequencing, and clear ownership boundaries."
+      }
+    },
+    {
+      "name": "Writeup and defense",
+      "weight": 0.12,
+      "levels": {
+        "0": "No defensible explanation is submitted.",
+        "1": "The explanation is mostly restatement.",
+        "2": "The explanation misses a core legacy, RLS, FDW, or migration tradeoff.",
+        "3": "The writeup defends FDW now, logical replication later, Citus not now, cache policy, and local correctness.",
+        "4": "The writeup gives measurable promotion criteria and shows how the bridge can be unwound during migration."
+      }
+    }
+  ],
+  "pass_threshold": 0.8,
+  "notes": "Weights emphasize accurate bridge reads, local correctness, RLS, failure-mode thinking, and extension discipline."
+}

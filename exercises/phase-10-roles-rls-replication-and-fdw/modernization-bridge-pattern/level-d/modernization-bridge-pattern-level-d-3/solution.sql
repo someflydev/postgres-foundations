@@ -1,0 +1,8 @@
+-- The scenario demonstrates that the direct read sees 65.00 after the second
+-- order, while the materialized view still reports 25.00 until refreshed.
+--
+-- A defensible critique should require a stated freshness contract, for example:
+-- refresh every 15 minutes for support dashboards, refresh on demand after
+-- bulk imports, and label totals as cached. Logical replication should wait
+-- until migration ownership, identifiers, lag monitoring, and cutover rules are
+-- settled.

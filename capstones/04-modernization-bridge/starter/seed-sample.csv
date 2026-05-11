@@ -1,0 +1,4 @@
+tenant_code,local_customer_ref,legacy_customer_id
+acme,CUST-100,100
+acme,CUST-101,101
+northwind,CUST-200,200
