@@ -50,8 +50,6 @@ def test_stub_commands_exit_zero_with_prompt_numbers() -> None:
     runner = CliRunner()
 
     cases = [
-        (["review", "run"], "PROMPT_27"),
-        (["capstone", "evaluate", "01-multi-tenant-saas-crm", "--path", "."], "PROMPT_27"),
         (["decision", "run"], "PROMPT_43"),
         (["interview", "start"], "PROMPT_28"),
     ]
@@ -59,6 +57,19 @@ def test_stub_commands_exit_zero_with_prompt_numbers() -> None:
         result = runner.invoke(main, args)
         assert result.exit_code == 0
         assert prompt in result.output
+
+
+def test_review_command_help_surfaces_real_review_engine() -> None:
+    runner = CliRunner()
+
+    for args in (
+        ["exercise", "review", "--help"],
+        ["capstone", "evaluate", "--help"],
+        ["review", "run", "--help"],
+    ):
+        result = runner.invoke(main, args)
+        assert result.exit_code == 0
+        assert "PROMPT_27" not in result.output
 
 
 def test_root_help_lists_command_groups() -> None:

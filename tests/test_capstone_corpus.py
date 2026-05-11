@@ -86,17 +86,13 @@ def test_new_capstones_include_prompt_specific_artifacts() -> None:
     bridge_dir = paths.CAPSTONES_DIR / "04-modernization-bridge"
 
     assert (event_dir / "reference" / "retention.sql").is_file()
-    assert "TimescaleDB" in (event_dir / "reference" / "writeup.md").read_text(
-        encoding="utf-8"
-    )
+    assert "TimescaleDB" in (event_dir / "reference" / "writeup.md").read_text(encoding="utf-8")
     assert "top-N" in (event_dir / "brief.md").read_text(encoding="utf-8") or "Top-N" in (
         event_dir / "capstone.json"
     ).read_text(encoding="utf-8")
 
     assert (bridge_dir / "reference" / "fdw-wiring.sql").is_file()
-    bridge_queries = (bridge_dir / "reference" / "critical-queries.sql").read_text(
-        encoding="utf-8"
-    )
+    bridge_queries = (bridge_dir / "reference" / "critical-queries.sql").read_text(encoding="utf-8")
     assert bridge_queries.count(";") >= 8
     bridge_writeup = (bridge_dir / "reference" / "writeup.md").read_text(encoding="utf-8")
     assert "Promote to logical replication when X" in bridge_writeup

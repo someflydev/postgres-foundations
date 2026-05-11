@@ -2,7 +2,6 @@ import json
 
 from pgfound import paths
 
-
 CAPSTONE_IDS = {
     "01-multi-tenant-saas-crm",
     "02-scheduling-availability",
