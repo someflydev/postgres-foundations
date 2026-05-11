@@ -108,8 +108,12 @@ Completed:
   logging, deterministic interview rubric evaluation, `pgfound interview
   start|review`, interview rubrics, six interview scenarios, dedicated
   interview scenario schema, prompt templates, docs, and tests.
+- PROMPT_29: Training-side LLM prompt templates for coaching, critique,
+  remediation, and the shared trainer persona; Markdown/YAML front-matter
+  template format; Jinja2-backed `pgfound llm list|render`; full exercise
+  review prompt artifacts; full capstone schema/index prompt artifacts; LLM
+  integration docs; and template render/completeness tests.
 
 Next expected prompt:
 
-- PROMPT_29: Training-side LLM prompt templates used by the interview
-  simulator and review engine.
+- PROMPT_30: Interview, oral-defense, and capstone-reviewer LLM prompts.

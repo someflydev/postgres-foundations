@@ -59,6 +59,8 @@ concrete, operational, and PostgreSQL core-first.
 - Capstone evaluation: `uv run pgfound capstone evaluate 01-multi-tenant-saas-crm --path tmp/capstone-work/01-multi-tenant-saas-crm`
 - Capstone full evaluation: `uv run pgfound capstone evaluate 01-multi-tenant-saas-crm --path capstones/01-multi-tenant-saas-crm/reference --full`
 - Review engine: `uv run pgfound review run --exercise-id first-select-write-query --answer tmp/answers/first-select-write-query.sql`
+- LLM prompt list: `uv run pgfound llm list`
+- LLM prompt render: `uv run pgfound llm render critique/query-critique --context tests/fixtures/critique-context.json --out tmp/preview.md`
 - Interview start: `uv run pgfound interview start --scenario senior-backend-saas-rls`
 - Interview review: `uv run pgfound interview review tmp/interviews/<scenario-id>/<timestamp>.md`
 - Capstone scheduling concurrency check: `uv run pgfound lab concurrency run scenarios/concurrency/scheduling-double-booking.yaml`

@@ -66,6 +66,21 @@ Interview simulator references introduced by PROMPT_28:
 - `tests/test_interview_scenarios.py`
 - `tests/test_interview_session_stubbed.py`
 
+Training-side LLM prompt references introduced by PROMPT_29:
+
+- `llm-prompts/README.md`
+- `llm-prompts/template-format.md`
+- `llm-prompts/coaching/*.md`
+- `llm-prompts/critique/*.md`
+- `llm-prompts/remediation/*.md`
+- `llm-prompts/shared/`
+- `src/pgfound/llm/`
+- `docs/llm-usage.md`
+- `docs/llm-integration.md`
+- `tests/test_llm_templates.py`
+- `tests/test_llm_render_cli.py`
+- `tests/test_template_completeness.py`
+
 Exercise authoring references introduced by PROMPT_08:
 
 - `exercises/phase-*/`

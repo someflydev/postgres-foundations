@@ -85,6 +85,5 @@ Interview rubrics live under `rubrics/interview/` and set
 `applies_to: interview`. The current evaluator is deterministic and deliberately
 weak: it looks for transcript signals such as enough explanatory detail,
 because-style justification, tradeoff language, correctness vocabulary, and
-operational/not-yet posture. PROMPT_29/30 can add LLM-assisted review without
-changing the transcript contract.
-
+operational/not-yet posture. PROMPT_30 can add interview-specific rendered
+prompts without changing the transcript contract.

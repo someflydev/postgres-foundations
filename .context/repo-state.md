@@ -154,6 +154,13 @@ Current baseline:
   The interview stage templates are stub templates without PROMPT_29 front
   matter; future LLM-template validation should treat them as interview-stage
   assets until PROMPT_30 replaces or upgrades them.
+- Training-side LLM prompt templates: PROMPT_29 added front-matter Markdown
+  templates under `llm-prompts/coaching/`, `llm-prompts/critique/`,
+  `llm-prompts/remediation/`, and `llm-prompts/shared/`; documented the
+  template format in `llm-prompts/template-format.md`; added Jinja2-backed
+  rendering in `src/pgfound/llm/`; added `pgfound llm list|render`; and writes
+  LLM prompt artifacts from `exercise review --full` and capstone full
+  evaluation.
 
 Canonical docs:
 
@@ -161,6 +168,7 @@ Canonical docs:
 - `docs/architecture.md`
 - `docs/repo-layout.md`
 - `docs/llm-usage.md`
+- `docs/llm-integration.md`
 - `docs/lab.md`
 - `docs/cli.md`
 - `docs/review-engine.md`
