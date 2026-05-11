@@ -113,12 +113,38 @@ Stop the profile with
 `docker compose -f docker/docker-compose.yml --profile replication down`. Add
 `-v` only when you intentionally want to remove the replication lab volumes.
 
+Admin A3 authentication labs include a separate HBA overlay service behind the
+`hba_overlay` profile:
+
+```sh
+docker compose -f docker/docker-compose.yml --profile hba_overlay up -d pg-hba-overlay
+```
+
+It listens on host port 55435 by default and mounts
+`docker/hba_overlay/pg_hba.conf` as the active authentication file. Use it for
+`pg_hba_file_rules` and SCRAM rule-ordering drills without changing the normal
+`pg` service.
+
+Admin A3 pooling labs include PgBouncer behind the `pooling` profile:
+
+```sh
+docker compose -f docker/docker-compose.yml --profile pooling up -d
+psql "postgresql://pgfound:pgfound@localhost:6432/pgfound" -c "SELECT 1;"
+```
+
+The PgBouncer configuration lives under `docker/pgbouncer/` and points at the
+normal `pg` service on the Compose network. It uses transaction pooling so
+learners can observe how session-scoped state differs from a direct PostgreSQL
+connection.
+
 The lab currently uses a single PostgreSQL superuser role, `pgfound`, for
 simplicity. Phase 10 introduces role design and least-privilege practice;
 deeper operational separation remains part of the later admin track.
 
 If port 55433 is already in use, set `POSTGRES_PORT` in `.env` and restart the
 service. If the sandbox port 55434 is occupied, set `POSTGRES_SANDBOX_PORT`. If
+the HBA overlay port 55435 is occupied, set `POSTGRES_HBA_OVERLAY_PORT`. If
+the PgBouncer port 6432 is occupied, set `PGBOUNCER_PORT`. If
 init scripts do not run, confirm you reset with `make lab-nuke`; PostgreSQL
 entrypoint scripts run only when the data directory is empty. If the container
 reports permission issues reading init scripts, check that files under

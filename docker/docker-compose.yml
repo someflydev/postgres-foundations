@@ -33,6 +33,66 @@ services:
     networks:
       - pgfound-net
 
+  pg-hba-overlay:
+    image: postgres:16
+    profiles:
+      - hba_overlay
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pgfound}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pgfound}
+      POSTGRES_DB: ${POSTGRES_DB:-pgfound}
+    ports:
+      - "${POSTGRES_HBA_OVERLAY_PORT:-55435}:5432"
+    volumes:
+      - pgfound-hba-overlay-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+      - ./hba_overlay/pg_hba.conf:/etc/postgresql/pg_hba_overlay.conf:ro
+    command:
+      - postgres
+      - -c
+      - hba_file=/etc/postgresql/pg_hba_overlay.conf
+      - -c
+      - password_encryption=scram-sha-256
+      - -c
+      - wal_level=logical
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - log_min_duration_statement=200
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - pg_stat_statements.track=all
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pgfound -d pgfound"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks:
+      - pgfound-net
+
+  pgbouncer:
+    image: edoburu/pgbouncer:v1.24.1-p0
+    profiles:
+      - pooling
+    depends_on:
+      pg:
+        condition: service_healthy
+    ports:
+      - "${PGBOUNCER_PORT:-6432}:5432"
+    volumes:
+      - ./pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 -U pgfound -d pgfound"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    networks:
+      - pgfound-net
+
   pg-sandbox:
     image: postgres:16
     profiles:
@@ -83,4 +143,5 @@ networks:
 
 volumes:
   pgfound-data:
+  pgfound-hba-overlay-data:
   pgfound-replica-data:
