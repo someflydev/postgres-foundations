@@ -62,9 +62,7 @@ def test_phase8_has_required_lessons_and_exercise_distribution() -> None:
     for lesson_path in lesson_paths:
         lesson = _load_json(lesson_path)
         body = (lesson_path.parent / lesson["body_path"]).read_text(encoding="utf-8")
-        levels = [
-            exercise["scaffolding_level"] for exercise in exercises_by_lesson[lesson["id"]]
-        ]
+        levels = [exercise["scaffolding_level"] for exercise in exercises_by_lesson[lesson["id"]]]
         assert len(WORD_RE.findall(body)) >= 400
         assert levels.count("A") == 2
         assert levels.count("B") == 2
