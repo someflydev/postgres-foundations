@@ -1,0 +1,33 @@
+{
+  "id": "03-event-heavy-ops",
+  "title": "Event-heavy Operations",
+  "industry": "observability_iot",
+  "summary": "Design a PostgreSQL 16 operational analytics store for device events, support dashboards, time-range queries, retention, and a disciplined TimescaleDB-not-yet decision.",
+  "phases_required": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "deliverables": [
+    { "name": "Schema", "kind": "schema", "path": "capstones/03-event-heavy-ops/reference/schema.sql" },
+    { "name": "Indexes", "kind": "indexes", "path": "capstones/03-event-heavy-ops/reference/indexes.sql" },
+    { "name": "RLS policies", "kind": "rls_policies", "path": "capstones/03-event-heavy-ops/reference/rls-policies.sql" },
+    { "name": "Critical queries", "kind": "queries", "path": "capstones/03-event-heavy-ops/reference/critical-queries.sql" },
+    { "name": "Operational runbook", "kind": "operational_runbook", "path": "capstones/03-event-heavy-ops/reference/operational-runbook.md" },
+    { "name": "Writeup", "kind": "writeup", "path": "capstones/03-event-heavy-ops/reference/writeup.md" }
+  ],
+  "critical_queries": [
+    "Last 24 hours by device.",
+    "Anomaly backtrace for a single device over seven days.",
+    "Top-N devices by recent anomaly count.",
+    "Device timeline with status, firmware, and event context.",
+    "Support dashboard by severity and event type.",
+    "Partition-pruning check for recent time windows.",
+    "Retention candidate partition report.",
+    "pg_stat_statements slow-query triage."
+  ],
+  "security_posture": {
+    "tenant_isolation": "device-fleet scoping through account_id and support-role access rules",
+    "application_context": "current_setting('app.account_id', true) for account-scoped readers",
+    "extensions": "pg_stat_statements required; TimescaleDB explicitly deferred"
+  },
+  "operational_notes": "The design must start with core declarative partitioning, BRIN on event_time, per-partition device_id btrees, explicit retention, and observable query triage before considering TimescaleDB.",
+  "review_rubric_id": "capstone-03-event-heavy-ops",
+  "tags": ["capstone", "events", "partitioning", "operations", "extensions"]
+}

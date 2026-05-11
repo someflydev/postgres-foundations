@@ -1,0 +1,4 @@
+device_key,event_time,severity,event_type,reading
+dev-001,2026-03-10T00:01:00Z,info,heartbeat,42.0
+dev-001,2026-03-10T00:05:00Z,anomaly,temp_spike,91.4
+dev-002,2026-03-10T00:07:00Z,warning,battery_low,11.0

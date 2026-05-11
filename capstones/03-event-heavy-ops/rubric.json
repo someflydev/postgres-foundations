@@ -1,0 +1,38 @@
+{
+  "id": "capstone-03-event-heavy-ops",
+  "title": "Capstone 03 Event-heavy Operations",
+  "applies_to": "capstone",
+  "extends": [
+    { "rubric_id": "schema-design", "weight": 0.18 },
+    { "rubric_id": "indexing-reasoning", "weight": 0.17 },
+    { "rubric_id": "query-correctness", "weight": 0.15 },
+    { "rubric_id": "extension-posture", "weight": 0.15 },
+    { "rubric_id": "operational-reasoning", "weight": 0.15 }
+  ],
+  "own_dimensions": [
+    {
+      "name": "Partitioning and retention",
+      "weight": 0.1,
+      "levels": {
+        "0": "No partitioning or retention design is present.",
+        "1": "Partitioning is named but does not match event_time or retention needs.",
+        "2": "Range partitions exist but retention or cold archive handling is weak.",
+        "3": "Monthly range partitioning, pruning checks, detach, and cold archive flow are coherent.",
+        "4": "The design includes maintenance cadence, lock-risk notes, validation, and future partition automation triggers."
+      }
+    },
+    {
+      "name": "Writeup and defense",
+      "weight": 0.1,
+      "levels": {
+        "0": "No defensible explanation is submitted.",
+        "1": "The explanation repeats the prompt without tradeoffs.",
+        "2": "The explanation covers the basics but misses TimescaleDB, replica, or observability tradeoffs.",
+        "3": "The writeup defends partitioning, BRIN, btree, retention, analytics replica posture, and TimescaleDB-later criteria.",
+        "4": "The writeup ties every choice to workload evidence and names the measurement that would change it."
+      }
+    }
+  ],
+  "pass_threshold": 0.8,
+  "notes": "Weights emphasize core partitioning, observable operations, minimal indexes, and explicit TimescaleDB deferral criteria."
+}
