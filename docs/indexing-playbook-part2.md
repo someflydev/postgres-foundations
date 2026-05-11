@@ -82,3 +82,16 @@ ANALYZE ecommerce.orders;
 
 Extended statistics are often the right fix when the planner has the available
 index but misjudges how many rows a combined predicate will produce.
+
+## Partitioned Table Indexes
+
+An index declared on a partitioned parent is a partitioned index definition;
+the physical work happens on child partitions. There is no single global index
+covering all partitions. Design the index around the same workload evidence as
+any other table, then verify each new partition receives the expected child
+index.
+
+For time-series event logs, a BRIN index on the range key can be useful when
+heap order follows time, while B-tree indexes on keys such as `source_id` serve
+selective lookups inside the pruned partitions. Keep uniqueness caveats visible:
+unique constraints on partitioned parents must include the partition key.
