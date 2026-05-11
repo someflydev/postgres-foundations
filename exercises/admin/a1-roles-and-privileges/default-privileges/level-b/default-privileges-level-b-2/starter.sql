@@ -1,0 +1,2 @@
+-- Target state: set future table and sequence grants for objects created by `saas_migrations` in schema `saas`, then separately repair current objects.
+-- Add the catalog query below.

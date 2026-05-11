@@ -1,0 +1,60 @@
+{
+  "id": "granting-on-tables-sequences-functions-schemas",
+  "title": "Granting on Tables Sequences Functions Schemas",
+  "module_id": "a1-roles-and-privileges",
+  "capability_layer": "admin_mastery",
+  "summary": "Apply PostgreSQL privileges at the object type that actually gates the operation, including sequences and function EXECUTE.",
+  "learning_objectives": [
+    "Grant schema USAGE separately from table SELECT or DML.",
+    "Include sequence and function privileges in an access plan.",
+    "Explain why a table grant alone does not make inserts with identity values work."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "grant",
+    "revoke",
+    "sequence_privilege",
+    "function_execute",
+    "schema_usage"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "granting-on-tables-sequences-functions-schemas-level-a-1",
+    "granting-on-tables-sequences-functions-schemas-level-a-2",
+    "granting-on-tables-sequences-functions-schemas-level-b-1",
+    "granting-on-tables-sequences-functions-schemas-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "granting-on-tables-sequences-functions-schemas-level-c-1",
+    "granting-on-tables-sequences-functions-schemas-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "granting-on-tables-sequences-functions-schemas-level-d-1",
+    "granting-on-tables-sequences-functions-schemas-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a1",
+    "granting-on-tables-sequences-functions-schemas"
+  ],
+  "status": "active"
+}

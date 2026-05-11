@@ -1,0 +1,2 @@
+-- Incident: running default privileges after an outage and assuming old tables changed too.
+-- Repair goal: pair default privileges with explicit `GRANT ... ON ALL ... IN SCHEMA` for existing objects.

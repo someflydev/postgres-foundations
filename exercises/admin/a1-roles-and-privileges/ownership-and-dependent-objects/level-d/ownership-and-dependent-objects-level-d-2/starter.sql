@@ -1,0 +1,2 @@
+-- Unsafe state: dropping or renaming roles without accounting for objects and grants that depend on them.
+-- Expected remediation: run an ownership inventory and reassign objects before removing the role.

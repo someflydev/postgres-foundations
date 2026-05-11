@@ -1,0 +1,2 @@
+-- Target state: an insert into `saas.users` can fail after table INSERT is granted because the backing sequence still lacks USAGE.
+-- Add the catalog query below.

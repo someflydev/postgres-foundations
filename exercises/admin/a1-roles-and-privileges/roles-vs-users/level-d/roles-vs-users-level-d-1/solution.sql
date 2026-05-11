@@ -1,0 +1,4 @@
+-- Roles vs Users Level D1
+-- Unsafe state: treating every row in `pg_roles` as a human account and missing NOLOGIN group roles that carry the real permission design.
+-- Remediation: split direct object grants away from login roles and move them to NOLOGIN group roles.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

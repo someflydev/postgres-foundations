@@ -1,0 +1,4 @@
+-- Ownership and Dependent Objects Level D1
+-- Unsafe state: dropping or renaming roles without accounting for objects and grants that depend on them.
+-- Remediation: run an ownership inventory and reassign objects before removing the role.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

@@ -1,0 +1,4 @@
+-- Auditing Privileges and Reviewing Access Level D2
+-- Unsafe state: reviewing only application documentation and never comparing it to catalog evidence.
+-- Remediation: attach catalog query output to a recurring access review and diff it after deployments.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

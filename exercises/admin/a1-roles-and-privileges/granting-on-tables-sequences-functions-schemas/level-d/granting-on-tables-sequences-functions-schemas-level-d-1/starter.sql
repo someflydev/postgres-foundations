@@ -1,0 +1,2 @@
+-- Unsafe state: remembering table privileges but forgetting sequences or functions, then over-correcting with broad grants.
+-- Expected remediation: audit schemas, tables, sequences, and functions as separate rows in the access review.

@@ -1,0 +1,59 @@
+{
+  "id": "least-privilege-patterns",
+  "title": "Least Privilege Patterns",
+  "module_id": "a1-roles-and-privileges",
+  "capability_layer": "admin_mastery",
+  "summary": "Build operational templates for application, migration, read-only BI, and break-glass administrative roles.",
+  "learning_objectives": [
+    "Design a least-privilege role matrix for the saas domain.",
+    "Separate application runtime grants from migration ownership.",
+    "Include break-glass access without making it normal daily access."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "least_privilege",
+    "migration_role",
+    "readonly_role",
+    "break_glass"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "least-privilege-patterns-level-a-1",
+    "least-privilege-patterns-level-a-2",
+    "least-privilege-patterns-level-b-1",
+    "least-privilege-patterns-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "least-privilege-patterns-level-c-1",
+    "least-privilege-patterns-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "least-privilege-patterns-level-d-1",
+    "least-privilege-patterns-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a1",
+    "least-privilege-patterns"
+  ],
+  "status": "active"
+}

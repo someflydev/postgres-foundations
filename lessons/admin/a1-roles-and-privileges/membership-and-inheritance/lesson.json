@@ -1,0 +1,61 @@
+{
+  "id": "membership-and-inheritance",
+  "title": "Membership and Inheritance",
+  "module_id": "a1-roles-and-privileges",
+  "capability_layer": "admin_mastery",
+  "summary": "Role membership, INHERIT, NOINHERIT, SET ROLE, current_user, and session_user control which privileges are active.",
+  "learning_objectives": [
+    "Predict effective privileges for INHERIT and NOINHERIT memberships.",
+    "Use SET ROLE to activate a role deliberately.",
+    "Explain current_user and session_user during role switching."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "role_membership",
+    "inherit",
+    "noinherit",
+    "set_role",
+    "current_user",
+    "session_user"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "membership-and-inheritance-level-a-1",
+    "membership-and-inheritance-level-a-2",
+    "membership-and-inheritance-level-b-1",
+    "membership-and-inheritance-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "membership-and-inheritance-level-c-1",
+    "membership-and-inheritance-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "membership-and-inheritance-level-d-1",
+    "membership-and-inheritance-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a1",
+    "membership-and-inheritance"
+  ],
+  "status": "active"
+}

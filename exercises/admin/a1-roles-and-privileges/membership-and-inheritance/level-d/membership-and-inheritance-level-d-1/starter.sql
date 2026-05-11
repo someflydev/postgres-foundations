@@ -1,0 +1,2 @@
+-- Unsafe state: checking only `session_user` and missing that `current_user` changed after `SET ROLE`.
+-- Expected remediation: document role inheritance posture and require explicit `SET ROLE` for elevated groups.

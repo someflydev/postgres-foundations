@@ -1,0 +1,2 @@
+-- Target state: create `app_api_login LOGIN` for the service process, create `saas_app_readwrite NOLOGIN` for permissions, and grant the group role to the login role.
+-- Add the catalog query below.

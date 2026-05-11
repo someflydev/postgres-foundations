@@ -1,0 +1,4 @@
+-- Least Privilege Patterns Level D2
+-- Unsafe state: using the migration owner as the application runtime role because it makes deployments convenient.
+-- Remediation: write the role matrix first, then make every GRANT trace back to one cell in that matrix.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

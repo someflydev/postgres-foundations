@@ -1,0 +1,2 @@
+-- Target state: a human login can be a member of `saas_break_glass` with NOINHERIT so emergency access requires an explicit role switch.
+-- Add the catalog query below.

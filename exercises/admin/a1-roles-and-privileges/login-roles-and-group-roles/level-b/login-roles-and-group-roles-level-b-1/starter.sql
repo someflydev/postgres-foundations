@@ -1,0 +1,2 @@
+-- Target state: grant `saas_app_readwrite` to `app_api_login`, grant `saas_app_readonly` to `bi_reader_login`, and keep both group roles unable to log in.
+-- Add the catalog query below.

@@ -1,0 +1,61 @@
+{
+  "id": "auditing-privileges-and-reviewing-access-level-c-2",
+  "title": "Auditing Privileges and Reviewing Access Level C2",
+  "lesson_id": "auditing-privileges-and-reviewing-access",
+  "scaffolding_level": "C",
+  "kind": "schema",
+  "allowed_concepts": [
+    "alter_default_privileges",
+    "alter_function",
+    "create_database",
+    "create_role",
+    "create_schema",
+    "grant",
+    "information_schema",
+    "ownership",
+    "pg_catalog",
+    "reassign_owned",
+    "revoke",
+    "search_path",
+    "sequence_privilege",
+    "set_role"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "saas.accounts",
+      "saas.projects",
+      "saas.documents",
+      "saas.audit_events"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "saas_multi_tenant",
+    "max_rows_hint": 5000
+  },
+  "search_path": "saas, public",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Names the actor, object, operation, and boundary being changed or reviewed.",
+    "Uses targeted PostgreSQL GRANT, REVOKE, ALTER DEFAULT PRIVILEGES, ownership, schema, or search_path syntax as appropriate.",
+    "Includes catalog or information_schema evidence suitable for an access review."
+  ],
+  "time_target_minutes": 35,
+  "rubric_id": "schema-design",
+  "solution_path": "solution.sql",
+  "starter_path": "starter.sql",
+  "tags": [
+    "admin",
+    "a1",
+    "auditing-privileges-and-reviewing-access",
+    "c"
+  ],
+  "status": "active",
+  "oral_defense_prompts": [
+    "Which privilege would be dangerous if granted directly to a login role?",
+    "What catalog query proves the repair worked after deployment?"
+  ]
+}

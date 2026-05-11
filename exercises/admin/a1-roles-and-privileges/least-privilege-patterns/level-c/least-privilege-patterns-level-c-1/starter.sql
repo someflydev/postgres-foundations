@@ -1,0 +1,2 @@
+-- Build the role matrix for app runtime, migrations, BI read-only, and break-glass access.
+-- Fill in group roles, memberships, object grants, and review evidence.

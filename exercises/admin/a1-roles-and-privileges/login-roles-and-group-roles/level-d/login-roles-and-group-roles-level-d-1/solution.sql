@@ -1,0 +1,4 @@
+-- Login Roles and Group Roles Level D1
+-- Unsafe state: granting tables directly to each login role until no one can explain the effective access graph.
+-- Remediation: revoke direct grants from login roles and replace them with membership in named group roles.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

@@ -1,0 +1,59 @@
+{
+  "id": "login-roles-and-group-roles",
+  "title": "Login Roles and Group Roles",
+  "module_id": "a1-roles-and-privileges",
+  "capability_layer": "admin_mastery",
+  "summary": "Use NOLOGIN group roles such as app_readwrite and app_readonly, then grant per-service login roles into them.",
+  "learning_objectives": [
+    "Separate login roles from privilege bundles in a service design.",
+    "Grant membership into app_readwrite and app_readonly without over-granting direct object privileges.",
+    "Explain why group roles should normally be NOLOGIN."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "group_role",
+    "grant_role",
+    "login_role",
+    "nologin"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "login-roles-and-group-roles-level-a-1",
+    "login-roles-and-group-roles-level-a-2",
+    "login-roles-and-group-roles-level-b-1",
+    "login-roles-and-group-roles-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "login-roles-and-group-roles-level-c-1",
+    "login-roles-and-group-roles-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "login-roles-and-group-roles-level-d-1",
+    "login-roles-and-group-roles-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a1",
+    "login-roles-and-group-roles"
+  ],
+  "status": "active"
+}

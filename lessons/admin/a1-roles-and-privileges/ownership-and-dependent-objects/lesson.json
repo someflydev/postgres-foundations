@@ -1,0 +1,59 @@
+{
+  "id": "ownership-and-dependent-objects",
+  "title": "Ownership and Dependent Objects",
+  "module_id": "a1-roles-and-privileges",
+  "capability_layer": "admin_mastery",
+  "summary": "Ownership is not the same as use permission, and dependent objects make role retirement an operational procedure.",
+  "learning_objectives": [
+    "Distinguish owner powers from granted privileges.",
+    "Use REASSIGN OWNED and DROP OWNED in the right order.",
+    "Audit dependent objects before retiring a role."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "ownership",
+    "reassign_owned",
+    "drop_owned",
+    "dependent_objects"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "ownership-and-dependent-objects-level-a-1",
+    "ownership-and-dependent-objects-level-a-2",
+    "ownership-and-dependent-objects-level-b-1",
+    "ownership-and-dependent-objects-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "ownership-and-dependent-objects-level-c-1",
+    "ownership-and-dependent-objects-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "ownership-and-dependent-objects-level-d-1",
+    "ownership-and-dependent-objects-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a1",
+    "ownership-and-dependent-objects"
+  ],
+  "status": "active"
+}

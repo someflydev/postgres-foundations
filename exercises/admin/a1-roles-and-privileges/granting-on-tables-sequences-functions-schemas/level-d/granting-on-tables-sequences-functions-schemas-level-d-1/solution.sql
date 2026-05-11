@@ -1,0 +1,4 @@
+-- Granting on Tables Sequences Functions Schemas Level D1
+-- Unsafe state: remembering table privileges but forgetting sequences or functions, then over-correcting with broad grants.
+-- Remediation: audit schemas, tables, sequences, and functions as separate rows in the access review.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

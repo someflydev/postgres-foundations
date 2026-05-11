@@ -1,0 +1,59 @@
+{
+  "id": "roles-vs-users",
+  "title": "Roles vs Users",
+  "module_id": "a1-roles-and-privileges",
+  "capability_layer": "admin_mastery",
+  "summary": "PostgreSQL uses one object kind, the role. LOGIN and NOLOGIN decide whether a role can start a session.",
+  "learning_objectives": [
+    "Explain why users and groups are both roles in PostgreSQL.",
+    "Use CREATE ROLE attributes to separate login ability from privilege grouping.",
+    "Audit a role list without assuming every role is a human user."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "role",
+    "create_role",
+    "login_role",
+    "nologin"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "roles-vs-users-level-a-1",
+    "roles-vs-users-level-a-2",
+    "roles-vs-users-level-b-1",
+    "roles-vs-users-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "roles-vs-users-level-c-1",
+    "roles-vs-users-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "roles-vs-users-level-d-1",
+    "roles-vs-users-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a1",
+    "roles-vs-users"
+  ],
+  "status": "active"
+}

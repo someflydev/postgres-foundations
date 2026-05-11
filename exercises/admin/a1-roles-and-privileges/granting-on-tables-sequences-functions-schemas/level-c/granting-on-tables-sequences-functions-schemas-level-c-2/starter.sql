@@ -1,0 +1,2 @@
+-- Incident: remembering table privileges but forgetting sequences or functions, then over-correcting with broad grants.
+-- Repair goal: audit schemas, tables, sequences, and functions as separate rows in the access review.

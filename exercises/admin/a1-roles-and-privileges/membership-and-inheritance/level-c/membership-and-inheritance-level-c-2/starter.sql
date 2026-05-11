@@ -1,0 +1,2 @@
+-- Incident: checking only `session_user` and missing that `current_user` changed after `SET ROLE`.
+-- Repair goal: document role inheritance posture and require explicit `SET ROLE` for elevated groups.

@@ -1,0 +1,2 @@
+-- Unsafe state: reviewing only application documentation and never comparing it to catalog evidence.
+-- Expected remediation: attach catalog query output to a recurring access review and diff it after deployments.

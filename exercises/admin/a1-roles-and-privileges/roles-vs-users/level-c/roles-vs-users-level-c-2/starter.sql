@@ -1,0 +1,2 @@
+-- Incident: treating every row in `pg_roles` as a human account and missing NOLOGIN group roles that carry the real permission design.
+-- Repair goal: split direct object grants away from login roles and move them to NOLOGIN group roles.

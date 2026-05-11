@@ -1,0 +1,4 @@
+-- Membership and Inheritance Level D1
+-- Unsafe state: checking only `session_user` and missing that `current_user` changed after `SET ROLE`.
+-- Remediation: document role inheritance posture and require explicit `SET ROLE` for elevated groups.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

@@ -1,0 +1,59 @@
+{
+  "id": "auditing-privileges-and-reviewing-access",
+  "title": "Auditing Privileges and Reviewing Access",
+  "module_id": "a1-roles-and-privileges",
+  "capability_layer": "admin_mastery",
+  "summary": "Use information_schema and pg_catalog queries to prove what roles can do and run recurring access reviews.",
+  "learning_objectives": [
+    "Query catalog views for table, schema, sequence, function, and membership grants.",
+    "Find over-grants such as direct table grants to login roles.",
+    "Produce a repeatable access-review artifact."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "access_review",
+    "information_schema",
+    "pg_catalog",
+    "privilege_audit"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "auditing-privileges-and-reviewing-access-level-a-1",
+    "auditing-privileges-and-reviewing-access-level-a-2",
+    "auditing-privileges-and-reviewing-access-level-b-1",
+    "auditing-privileges-and-reviewing-access-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "auditing-privileges-and-reviewing-access-level-c-1",
+    "auditing-privileges-and-reviewing-access-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "auditing-privileges-and-reviewing-access-level-d-1",
+    "auditing-privileges-and-reviewing-access-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a1",
+    "auditing-privileges-and-reviewing-access"
+  ],
+  "status": "active"
+}

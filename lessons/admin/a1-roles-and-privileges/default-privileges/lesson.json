@@ -1,0 +1,58 @@
+{
+  "id": "default-privileges",
+  "title": "Default Privileges",
+  "module_id": "a1-roles-and-privileges",
+  "capability_layer": "admin_mastery",
+  "summary": "ALTER DEFAULT PRIVILEGES changes future objects only, so existing tables, sequences, and functions still need explicit repair.",
+  "learning_objectives": [
+    "Use ALTER DEFAULT PRIVILEGES for future object grants.",
+    "Identify existing objects that default privileges did not touch.",
+    "Document the owning role and target schema for a default privilege rule."
+  ],
+  "prerequisites": [
+    "operational-checklist"
+  ],
+  "concepts_introduced": [
+    "default_privileges",
+    "alter_default_privileges",
+    "future_objects"
+  ],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "default-privileges-level-a-1",
+    "default-privileges-level-a-2",
+    "default-privileges-level-b-1",
+    "default-privileges-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "default-privileges-level-c-1",
+    "default-privileges-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "default-privileges-level-d-1",
+    "default-privileges-level-d-2"
+  ],
+  "reflection_prompts": [
+    "Which permission would you remove first if this role were leaked?",
+    "What SQL evidence would you attach to an access review?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "rls-playbook",
+      "why": "Phase 10 tenant isolation prerequisite."
+    },
+    {
+      "kind": "doc",
+      "slug": "admin-track",
+      "why": "Administration track overview."
+    }
+  ],
+  "tags": [
+    "admin",
+    "a1",
+    "default-privileges"
+  ],
+  "status": "active"
+}

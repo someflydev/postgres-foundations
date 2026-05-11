@@ -1,0 +1,2 @@
+-- Incident: dropping or renaming roles without accounting for objects and grants that depend on them.
+-- Repair goal: run an ownership inventory and reassign objects before removing the role.

@@ -1,0 +1,2 @@
+-- Target state: the saas domain gets `saas_app_readwrite`, `saas_migrations`, `saas_app_readonly`, and `saas_break_glass`, each with a separate reason to exist.
+-- Add the catalog query below.

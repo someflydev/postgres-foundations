@@ -1,0 +1,2 @@
+-- Incident: granting tables directly to each login role until no one can explain the effective access graph.
+-- Repair goal: revoke direct grants from login roles and replace them with membership in named group roles.

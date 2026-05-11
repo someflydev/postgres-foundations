@@ -1,0 +1,4 @@
+-- Default Privileges Level D1
+-- Unsafe state: running default privileges after an outage and assuming old tables changed too.
+-- Remediation: pair default privileges with explicit `GRANT ... ON ALL ... IN SCHEMA` for existing objects.
+-- Use targeted REVOKE or ALTER statements instead of broad superuser access.

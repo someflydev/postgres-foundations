@@ -1,0 +1,2 @@
+-- Target state: run membership, schema ACL, table privilege, sequence ACL, and function ACL queries after every privilege change.
+-- Add the catalog query below.

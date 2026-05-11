@@ -1,0 +1,2 @@
+-- Target state: before dropping a migration role, inspect owned tables, sequences, and functions, then use `REASSIGN OWNED` and `DROP OWNED` deliberately.
+-- Add the catalog query below.
