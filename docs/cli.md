@@ -304,8 +304,18 @@ uv run pgfound review run --capstone-id 01-multi-tenant-saas-crm --path capstone
 
 ## `pgfound decision run`
 
-Stub command that exits 0 and reports that the decision engine lands in
-`PROMPT_43`.
+Validates a decision-engine intake JSON document, loads the current catalog and
+rule directories, and writes `report.json` plus `report.md`.
+
+```bash
+uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json
+uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json --out-dir tmp/my-report
+```
+
+The prompt-39 implementation is intentionally conservative: catalogs and rules
+are not authored yet, so valid intakes produce an empty valid report with
+warnings that the catalog and rule data is not yet available. Validation errors
+exit non-zero and print the failing schema paths.
 
 ## `pgfound interview start`
 

@@ -23,6 +23,8 @@ from pgfound.content import scaffold as content_scaffold
 from pgfound.content import seed as content_seed
 from pgfound.content import seed_doctor as content_seed_doctor
 from pgfound.content import validate as content_validator
+from pgfound.decision import engine as decision_engine
+from pgfound.decision import report_writer as decision_report_writer
 from pgfound.interview import rubric as interview_rubric
 from pgfound.interview import scenario as interview_scenario
 from pgfound.interview import session as interview_session
@@ -1189,7 +1191,24 @@ def decision() -> None:
     """Run decision-engine commands."""
 
 
-@decision.command("run", help="Run the decision engine; implemented in PROMPT_43.")
-def decision_run() -> None:
-    """Run the decision engine; implemented in PROMPT_43."""
-    _success("decision engine lands in PROMPT_43")
+@decision.command("run", help="Validate an intake and write decision-engine reports.")
+@click.argument("intake_json", type=click.Path(path_type=Path))
+@click.option(
+    "--out-dir",
+    type=click.Path(path_type=Path),
+    help="Report output directory. Defaults to tmp/decision-reports/<intake-id>/<timestamp>/.",
+)
+def decision_run(intake_json: Path, out_dir: Path | None) -> None:
+    """Validate a decision intake and write JSON plus Markdown reports."""
+    try:
+        report = decision_engine.run_decision(intake_json)
+    except decision_engine.DecisionValidationError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    if out_dir is None:
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        out_dir = paths.TMP_DIR / "decision-reports" / report["intake_id"] / timestamp
+
+    json_path, markdown_path = decision_report_writer.write_report(report, out_dir)
+    _success(f"wrote decision report: {json_path}")
+    _success(f"wrote decision report: {markdown_path}")
