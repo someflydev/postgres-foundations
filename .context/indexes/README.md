@@ -125,6 +125,34 @@ Administration track references introduced by PROMPT_33:
 - `tests/test_admin_a5_a6_corpus.py`
 - `tests/test_ops_queries.py`
 
+Extension track references introduced by PROMPT_34:
+
+- `curriculum/extensions/map.json`
+- `lessons/extensions/e1-pg-stat-statements/`
+- `lessons/extensions/e2-pg-trgm/`
+- `exercises/extensions/e1-pg-stat-statements/`
+- `exercises/extensions/e2-pg-trgm/`
+- `docs/extension-track/README.md`
+- `docs/extension-track/e1-pg-stat-statements.md`
+- `docs/extension-track/e2-pg-trgm.md`
+- `tests/test_extension_map.py`
+- `tests/test_extension_e1_e2_corpus.py`
+
+Extension track references introduced by PROMPT_35:
+
+- `lessons/extensions/e3-postgis/`
+- `lessons/extensions/e4-pgvector/`
+- `exercises/extensions/e3-postgis/`
+- `exercises/extensions/e4-pgvector/`
+- `seed-data/packs/logistics_geo/`
+- `docs/extension-track/e3-postgis.md`
+- `docs/extension-track/e4-pgvector.md`
+- `docs/anti-patterns/geo_logic_without_postgis.md`
+- `docs/anti-patterns/vector_before_lexical.md`
+- `tests/test_postgis_profile.py`
+- `tests/test_pgvector_profile.py`
+- `tests/test_extension_e3_e4_corpus.py`
+
 Exercise authoring references introduced by PROMPT_08:
 
 - `exercises/phase-*/`

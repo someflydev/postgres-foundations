@@ -135,7 +135,15 @@ Completed:
   lessons and 104 exercises for deep `pg_stat_statements` and `pg_trgm`;
   extension-map validation support; `pg_trgm` lab initialization;
   extension-track docs; and E1/E2 corpus tests.
+- PROMPT_35: Extension Mastery track E3 and E4; optional Docker Compose
+  profiles for PostGIS (`postgis/postgis:16-3.4`) and pgvector
+  (`pgvector/pgvector:pg16`), doctor checks for those profiles, 19 active
+  lessons and 152 exercises for PostGIS and pgvector, a `logistics_geo`
+  PostGIS seed pack, optional deterministic fake embeddings in the
+  `document_search` seed when pgvector is available, PostGIS/pgvector
+  extension-track docs, geo/vector anti-pattern docs, search-playbook updates,
+  and E3/E4 corpus/profile tests.
 
 Next expected prompt:
 
-- PROMPT_35: Extension Mastery track E3 PostGIS and E4 pgvector.
+- PROMPT_36: Extension Mastery track E5 TimescaleDB and E6 postgres_fdw.

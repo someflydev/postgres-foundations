@@ -43,6 +43,7 @@ concrete, operational, and PostgreSQL core-first.
 - Seed scheduling lab data: `uv run pgfound content seed scheduling --phase 7a --reset --generate`
 - Seed event indexing lab data: `uv run pgfound content seed event_heavy_ops --phase 7b --reset`
 - Seed document FTS lab data: `uv run pgfound content seed document_search --phase 8 --reset --generate`
+- Seed logistics geo lab data: `PGFOUND_DB_URL=postgresql://pgfound:pgfound@localhost:5436/pgfound uv run pgfound content seed logistics_geo --phase 1 --reset`
 - Seed ecommerce FTS lab data: `uv run pgfound content seed ecommerce --phase 8 --reset --generate`
 - Seed event partitioning lab data: `uv run pgfound content seed event_heavy_ops --phase 9 --reset --generate`
 - Seed ecommerce partitioning lab data: `uv run pgfound content seed ecommerce --phase 9 --reset --generate`
@@ -54,6 +55,8 @@ concrete, operational, and PostgreSQL core-first.
 - PgBouncer pooling lab up: `docker compose -f docker/docker-compose.yml --profile pooling up -d`
 - Restore drill: `scripts/restore-drill.sh`
 - Replication lab up: `docker compose -f docker/docker-compose.yml --profile replication up -d`
+- PostGIS lab up: `docker compose -f docker/docker-compose.yml --profile postgis up -d postgis`
+- pgvector lab up: `docker compose -f docker/docker-compose.yml --profile pgvector up -d pgvector`
 - Ops top statements: `uv run pgfound ops query top-by-total-time`
 - Ops blocking chain: `uv run pgfound ops query blocking-chain`
 - Ops replica lag: `uv run pgfound ops query replica-lag`

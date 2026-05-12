@@ -199,6 +199,17 @@ Current baseline:
   `exercises/extensions/` modules; `docs/extension-track/`; a pg_trgm pointer
   in `docs/search-playbook.md`; `CREATE EXTENSION IF NOT EXISTS pg_trgm;` in
   `docker/initdb/00-extensions.sql`; and extension map/corpus tests.
+- Extension track E3-E4: PROMPT_35 added optional PostGIS and pgvector Docker
+  Compose profiles while keeping the main `pg` service on plain
+  `postgres:16`; doctor now reports those profile definitions; 10 PostGIS
+  lessons and 80 exercises under `lessons/extensions/e3-postgis/` and
+  `exercises/extensions/e3-postgis/`; 9 pgvector lessons and 72 exercises
+  under `lessons/extensions/e4-pgvector/` and
+  `exercises/extensions/e4-pgvector/`; `seed-data/packs/logistics_geo/` with
+  checked-in GeoJSON service zones loaded through `ST_GeomFromGeoJSON`; optional
+  deterministic fake embeddings in `document_search` phase 08 when `vector` is
+  available; E3/E4 extension docs; geo/vector anti-pattern docs; and
+  PostGIS/pgvector profile plus E3/E4 corpus tests.
 
 Canonical docs:
 
