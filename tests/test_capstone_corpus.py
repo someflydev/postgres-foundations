@@ -14,7 +14,13 @@ CAPSTONE_IDS = (
     "02-scheduling-availability",
     "03-event-heavy-ops",
     "04-modernization-bridge",
+    "05-geo-logistics-platform",
+    "06-ai-knowledge-platform",
+    "07-observability-event-analytics",
+    "08-modernization-bridge-extensions",
 )
+
+CORE_CAPSTONE_IDS = CAPSTONE_IDS[:4]
 
 
 def test_capstone_metadata_and_composed_rubrics_validate() -> None:
@@ -26,7 +32,7 @@ def test_capstone_metadata_and_composed_rubrics_validate() -> None:
     )
 
     assert report.ok, [issue.message for issue in report.errors]
-    assert report.by_kind["capstone"] == 4
+    assert report.by_kind["capstone"] == 8
     assert report.by_kind["rubric"] >= 8
 
 
@@ -112,7 +118,7 @@ def test_reference_schema_applies_when_psql_is_available(tmp_path: Path) -> None
     if not _database_available():
         pytest.skip("lab database is not available")
 
-    for capstone_id in CAPSTONE_IDS:
+    for capstone_id in CORE_CAPSTONE_IDS:
         schema_name = f"capstone_test_{capstone_id.replace('-', '_')}"
         reference_dir = paths.CAPSTONES_DIR / capstone_id / "reference"
         command = [

@@ -7,10 +7,14 @@ CAPSTONE_IDS = {
     "02-scheduling-availability",
     "03-event-heavy-ops",
     "04-modernization-bridge",
+    "05-geo-logistics-platform",
+    "06-ai-knowledge-platform",
+    "07-observability-event-analytics",
+    "08-modernization-bridge-extensions",
 }
 
 
-def test_all_four_capstones_are_listed_and_have_balanced_rubrics() -> None:
+def test_all_capstones_are_listed_and_have_balanced_rubrics() -> None:
     actual_ids = {path.parent.name for path in paths.CAPSTONES_DIR.glob("*/capstone.json")}
     assert actual_ids == CAPSTONE_IDS
 
