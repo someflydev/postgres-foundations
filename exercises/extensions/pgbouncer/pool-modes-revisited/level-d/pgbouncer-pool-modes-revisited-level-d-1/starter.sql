@@ -1,0 +1,1 @@
+-- Transaction-pooling breaks session-scoped LISTEN/NOTIFY; diagnose the failure and propose alternatives such as moving LISTEN connections to a non-pooled path.

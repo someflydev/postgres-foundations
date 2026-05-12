@@ -1,0 +1,52 @@
+{
+  "id": "pgbouncer-pool-modes-revisited-level-a-1",
+  "title": "Pool Modes Revisited Level A1",
+  "lesson_id": "pgbouncer-pool-modes-revisited",
+  "scaffolding_level": "A",
+  "kind": "query",
+  "allowed_concepts": [
+    "pgbouncer",
+    "session_pooling",
+    "transaction_pooling",
+    "statement_pooling",
+    "scram",
+    "prepared_statements",
+    "show_commands",
+    "not_yet_logic"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 10,
+    "tables": [
+      "public.accounts"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 100000
+  },
+  "search_path": "public",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses PostgreSQL evidence rather than unsupported assertion.",
+    "Names the core-first alternative or not-yet boundary.",
+    "Includes a verification step tied to the workload signal."
+  ],
+  "time_target_minutes": 15,
+  "rubric_id": "extension-posture",
+  "solution_path": "solution.sql",
+  "tags": [
+    "extensions",
+    "pgbouncer",
+    "pool-modes-revisited",
+    "a"
+  ],
+  "status": "active",
+  "starter_path": "starter.sql",
+  "hints": [
+    "Start with the core PostgreSQL behavior and name the missing capability.",
+    "Keep the verification query small enough to explain in a deploy review."
+  ]
+}

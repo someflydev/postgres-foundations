@@ -1,0 +1,60 @@
+{
+  "id": "pgbouncer-pgbouncer-config-surface",
+  "title": "Pgbouncer Config Surface",
+  "module_id": "pgbouncer",
+  "capability_layer": "extension_mastery",
+  "summary": "PgBouncer extension-track lesson for the ini file, authentication modes, listen addresses, and the admin console, with core-first posture and operational verification.",
+  "learning_objectives": [
+    "Explain when PgBouncer is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-04-modeling-and-relationships"
+  ],
+  "concepts_introduced": [
+    "not_yet_logic",
+    "pgbouncer",
+    "pgbouncer_config_surface",
+    "prepared_statements",
+    "scram",
+    "session_pooling",
+    "show_commands",
+    "statement_pooling",
+    "transaction_pooling"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "pgbouncer-pgbouncer-config-surface-level-a-1",
+    "pgbouncer-pgbouncer-config-surface-level-a-2",
+    "pgbouncer-pgbouncer-config-surface-level-b-1",
+    "pgbouncer-pgbouncer-config-surface-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "pgbouncer-pgbouncer-config-surface-level-c-1",
+    "pgbouncer-pgbouncer-config-surface-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "pgbouncer-pgbouncer-config-surface-level-d-1",
+    "pgbouncer-pgbouncer-config-surface-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-pgbouncer",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "pgbouncer",
+    "pgbouncer-config-surface"
+  ],
+  "status": "active"
+}

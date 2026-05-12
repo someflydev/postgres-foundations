@@ -1,0 +1,1 @@
+Use PgBouncer evidence for SHOW commands and metrics export for pooler operations. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

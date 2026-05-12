@@ -1,0 +1,1 @@
+Use PgBouncer evidence for Postgres 14 and newer behavior for transaction pooling and named prepared statements. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.
