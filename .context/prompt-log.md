@@ -176,8 +176,14 @@ Completed:
   catalogs; upgraded their schemas from slug placeholders to entry schemas;
   added catalog list/check CLI commands with cross-catalog integrity checks;
   and added catalog validation tests.
+- PROMPT_41: Decision-engine core feature, extension, index-pattern,
+  topology-pattern, and anti-pattern catalogs; upgraded Prompt 39 placeholder
+  schemas for those catalogs to full entry schemas; added cross-link checks for
+  extension, index, topology, module, and anti-pattern doc references; added
+  missing anti-pattern docs and extension catalog sync docs; enforced Prompt 41
+  prose-depth and extension not-yet trigger requirements in tests; and added
+  catalog validation plus cross-link tests.
 
 Next expected prompt:
 
-- PROMPT_41: Core feature, extension, index pattern, topology pattern, and
-  anti-pattern catalogs.
+- PROMPT_42: Rules schema and the initial rule pack.

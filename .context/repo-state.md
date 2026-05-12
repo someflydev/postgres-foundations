@@ -26,6 +26,12 @@ Current baseline:
   data shapes, and workload patterns under `decision-engine/catalogs/`,
   upgraded their schemas to full entry validation, and added
   `pgfound decision catalog list|check` with cross-catalog integrity checks.
+- Decision engine catalog completion: PROMPT_41 added authored catalogs for
+  PostgreSQL core features, extensions and operational tools, index patterns,
+  topology patterns, and anti-patterns; expanded their schemas to full entry
+  validation; added explicit extension not-yet trigger requirements plus
+  extension/index/topology/module/doc cross-link checks; and added
+  `docs/extension-catalog-sync.md`.
 - Content validation: PROMPT_05 added draft 2020-12 JSON Schemas under
   `content-schemas/`, one valid example per kind under
   `content-schemas/examples/`, and a real `pgfound content validate` command
@@ -316,6 +322,8 @@ Expected green checks:
 - `uv run pgfound content list`
 - `uv run pgfound content validate`
 - `uv run pgfound content lint`
+- `uv run pgfound decision catalog check`
+- `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json`
 - `uv run pgfound content seed ecommerce --phase 4a --reset`
 - `uv run pgfound content seed scheduling --phase 4a --reset`
 - `uv run pgfound content seed saas_multi_tenant --phase 4a --reset`

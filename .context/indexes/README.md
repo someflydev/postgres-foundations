@@ -105,6 +105,32 @@ Decision-engine catalog references introduced by PROMPT_40:
 - `tests/test_catalogs_data_shapes.py`
 - `tests/test_catalogs_workload_patterns.py`
 
+Decision-engine catalog references introduced by PROMPT_41:
+
+- `decision-engine/catalogs/postgres_core_features.json`
+- `decision-engine/catalogs/extensions.json`
+- `decision-engine/catalogs/index_patterns.json`
+- `decision-engine/catalogs/topology_patterns.json`
+- `decision-engine/catalogs/anti_patterns.json`
+- `decision-engine/schemas/core-feature.schema.json`
+- `decision-engine/schemas/extension.schema.json`
+- `decision-engine/schemas/index-pattern.schema.json`
+- `decision-engine/schemas/topology-pattern.schema.json`
+- `decision-engine/schemas/anti-pattern.schema.json`
+- `docs/extension-catalog-sync.md`
+- `docs/anti-patterns/no_restore_drills.md`
+- `docs/anti-patterns/no_pooling_high_connections.md`
+- `docs/anti-patterns/replica_as_performance_bandage.md`
+- `docs/anti-patterns/vacuum_starvation_by_long_txn.md`
+- `docs/anti-patterns/naive_wall_clock_timestamp.md`
+- `docs/anti-patterns/fdw_without_pushdown_verification.md`
+- `tests/test_catalogs_core_features.py`
+- `tests/test_catalogs_extensions.py`
+- `tests/test_catalogs_index_patterns.py`
+- `tests/test_catalogs_topology_patterns.py`
+- `tests/test_catalogs_anti_patterns.py`
+- `tests/test_catalog_cross_links.py`
+
 Administration track references introduced by PROMPT_31:
 
 - `curriculum/admin/map.json`
