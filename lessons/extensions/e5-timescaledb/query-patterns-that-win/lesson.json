@@ -1,0 +1,61 @@
+{
+  "id": "e5-timescaledb-query-patterns-that-win",
+  "title": "Query Patterns That Win",
+  "module_id": "e5-timescaledb",
+  "capability_layer": "extension_mastery",
+  "summary": "TimescaleDB extension lesson for planner behavior where Timescale can win, where it loses, and how to prove either outcome.",
+  "learning_objectives": [
+    "Explain when TimescaleDB is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-09-partitioning-large-table-operations"
+  ],
+  "concepts_introduced": [
+    "chunk_interval",
+    "compression_policy",
+    "continuous_aggregate",
+    "hypertable",
+    "not_yet_logic",
+    "partitioning",
+    "query_patterns_that_win",
+    "retention_policy",
+    "timescaledb"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "e5-timescaledb-query-patterns-that-win-level-a-1",
+    "e5-timescaledb-query-patterns-that-win-level-a-2",
+    "e5-timescaledb-query-patterns-that-win-level-b-1",
+    "e5-timescaledb-query-patterns-that-win-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "e5-timescaledb-query-patterns-that-win-level-c-1",
+    "e5-timescaledb-query-patterns-that-win-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "e5-timescaledb-query-patterns-that-win-level-d-1",
+    "e5-timescaledb-query-patterns-that-win-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-e5-timescaledb",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "e5",
+    "timescaledb",
+    "query-patterns-that-win"
+  ],
+  "status": "active"
+}

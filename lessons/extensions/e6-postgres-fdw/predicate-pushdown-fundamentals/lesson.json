@@ -1,0 +1,61 @@
+{
+  "id": "e6-postgres-fdw-predicate-pushdown-fundamentals",
+  "title": "Predicate Pushdown Fundamentals",
+  "module_id": "e6-postgres-fdw",
+  "capability_layer": "extension_mastery",
+  "summary": "postgres_fdw deep extension lesson for which predicates push to a foreign server, which do not, and how operator and type choices affect remote SQL.",
+  "learning_objectives": [
+    "Explain when postgres_fdw is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-10-security-federation"
+  ],
+  "concepts_introduced": [
+    "aggregate_pushdown",
+    "async_append",
+    "foreign_table_statistics",
+    "join_pushdown",
+    "not_yet_logic",
+    "postgres_fdw",
+    "predicate_pushdown",
+    "predicate_pushdown_fundamentals",
+    "user_mapping"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "e6-postgres-fdw-predicate-pushdown-fundamentals-level-a-1",
+    "e6-postgres-fdw-predicate-pushdown-fundamentals-level-a-2",
+    "e6-postgres-fdw-predicate-pushdown-fundamentals-level-b-1",
+    "e6-postgres-fdw-predicate-pushdown-fundamentals-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "e6-postgres-fdw-predicate-pushdown-fundamentals-level-c-1",
+    "e6-postgres-fdw-predicate-pushdown-fundamentals-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "e6-postgres-fdw-predicate-pushdown-fundamentals-level-d-1",
+    "e6-postgres-fdw-predicate-pushdown-fundamentals-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-e6-postgres-fdw",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "e6",
+    "postgres-fdw",
+    "predicate-pushdown-fundamentals"
+  ],
+  "status": "active"
+}

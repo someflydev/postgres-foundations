@@ -1,0 +1,61 @@
+{
+  "id": "e5-timescaledb-timescale-what-it-is",
+  "title": "Timescale What It Is",
+  "module_id": "e5-timescaledb",
+  "capability_layer": "extension_mastery",
+  "summary": "TimescaleDB extension lesson for hypertables as automated range partitioning plus chunk management, with an explicit comparison to core partitioning.",
+  "learning_objectives": [
+    "Explain when TimescaleDB is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-09-partitioning-large-table-operations"
+  ],
+  "concepts_introduced": [
+    "chunk_interval",
+    "compression_policy",
+    "continuous_aggregate",
+    "hypertable",
+    "not_yet_logic",
+    "partitioning",
+    "retention_policy",
+    "timescale_what_it_is",
+    "timescaledb"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "e5-timescaledb-timescale-what-it-is-level-a-1",
+    "e5-timescaledb-timescale-what-it-is-level-a-2",
+    "e5-timescaledb-timescale-what-it-is-level-b-1",
+    "e5-timescaledb-timescale-what-it-is-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "e5-timescaledb-timescale-what-it-is-level-c-1",
+    "e5-timescaledb-timescale-what-it-is-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "e5-timescaledb-timescale-what-it-is-level-d-1",
+    "e5-timescaledb-timescale-what-it-is-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-e5-timescaledb",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "e5",
+    "timescaledb",
+    "timescale-what-it-is"
+  ],
+  "status": "active"
+}
