@@ -1,0 +1,36 @@
+{
+  "intake_id": "saas-multi-tenant-minimal",
+  "as_of_date": "2026-05-12",
+  "organization": {
+    "industry": "saas_multi_tenant",
+    "team_size_engineers": 12,
+    "operational_tolerance": "low",
+    "managed_service_requirement": "mandatory",
+    "portability_constraints": ["aws_rds", "azure_pg"]
+  },
+  "data_shapes": ["relational_core", "semi_structured_jsonb", "append_only_events"],
+  "workload_patterns": ["oltp_heavy", "read_heavy", "strong_tenant_locality"],
+  "scale_signals": {
+    "row_counts_largest_tables": {
+      "accounts": 1200000,
+      "activities": 45000000
+    },
+    "write_throughput_rows_per_sec": 180,
+    "read_throughput_qps": 2400,
+    "concurrent_connections_peak": 260,
+    "largest_object_bytes": 262144,
+    "growth_rate_month_over_month": 0.11
+  },
+  "tenancy_model": "multi_tenant_shared_schema",
+  "security_constraints": ["rls_required", "audit_required", "pii_in_scope", "gdpr_dsr"],
+  "migration_or_federation_needs": {
+    "has_legacy_postgres_source": false,
+    "has_legacy_non_postgres_source": false,
+    "requires_zero_downtime_migration": false,
+    "requires_federation_via_fdw": false
+  },
+  "explicit_bias_against": [],
+  "explicit_bias_for": [],
+  "existing_postgres_topology": "single_primary",
+  "free_form_notes": "Shared-schema SaaS with strict tenant isolation and limited operations staffing."
+}

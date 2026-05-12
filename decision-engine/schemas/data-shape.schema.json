@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/data-shape.schema.json",
+  "title": "Data shape slug",
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
+    }
+  },
+  "$ref": "#/$defs/slug"
+}

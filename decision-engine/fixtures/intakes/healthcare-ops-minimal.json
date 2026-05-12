@@ -1,0 +1,40 @@
+{
+  "intake_id": "healthcare-ops-minimal",
+  "as_of_date": "2026-05-12",
+  "organization": {
+    "industry": "healthcare_ops",
+    "team_size_engineers": 9,
+    "operational_tolerance": "low",
+    "managed_service_requirement": "mandatory",
+    "portability_constraints": ["gcp_cloud_sql", "any_managed"]
+  },
+  "data_shapes": ["relational_core", "ranges_windows", "append_only_events", "foreign_postgres_access"],
+  "workload_patterns": ["oltp_heavy", "read_heavy", "migration_bridge"],
+  "scale_signals": {
+    "row_counts_largest_tables": {
+      "appointments": 9000000,
+      "audit_log": 60000000
+    },
+    "write_throughput_rows_per_sec": 95,
+    "read_throughput_qps": 1100,
+    "concurrent_connections_peak": 160,
+    "growth_rate_month_over_month": 0.07
+  },
+  "tenancy_model": "multi_tenant_database_per_tenant",
+  "security_constraints": ["audit_required", "pii_in_scope", "hipaa"],
+  "migration_or_federation_needs": {
+    "has_legacy_postgres_source": true,
+    "has_legacy_non_postgres_source": true,
+    "requires_zero_downtime_migration": false,
+    "requires_federation_via_fdw": true
+  },
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "postgres_fdw",
+      "reason": "Short-lived read-only access is needed for legacy scheduling data during cutover."
+    }
+  ],
+  "existing_postgres_topology": "primary_with_read_replicas",
+  "free_form_notes": "Healthcare operations system with legacy bridge needs and low operational tolerance."
+}

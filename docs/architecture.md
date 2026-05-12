@@ -137,6 +137,10 @@ evaluator; and a report generator. It also includes the four-layer
 decision-engine prompt pack that supports structured planning conversations
 and review.
 
+The detailed subsystem architecture, intake contract, processing model, and
+honesty constraints are maintained in
+[`decision-engine/architecture.md`](../decision-engine/architecture.md).
+
 Its inputs are structured workload descriptions, catalog data, rules, scoring
 weights, anti-pattern definitions, and prompt templates under
 `decision-engine/prompts/`. Its outputs are human-readable reports, ranked

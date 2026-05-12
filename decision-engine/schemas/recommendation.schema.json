@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/recommendation.schema.json",
+  "title": "Decision recommendation",
+  "type": "object",
+  "required": [
+    "kind",
+    "target_slug",
+    "verdict",
+    "confidence",
+    "why_now",
+    "why_not_yet",
+    "triggers_for_next_stage",
+    "sources"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "enum": ["core_feature", "extension", "index_pattern", "topology_pattern", "anti_pattern_warning"]
+    },
+    "target_slug": { "$ref": "#/$defs/slug" },
+    "verdict": {
+      "enum": ["recommend_now", "candidate_later", "not_enough_evidence", "avoid_for_now"]
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "why_now": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "why_not_yet": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "triggers_for_next_stage": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "contribution"],
+        "additionalProperties": false,
+        "properties": {
+          "rule_id": { "$ref": "#/$defs/slug" },
+          "contribution": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
+    }
+  }
+}

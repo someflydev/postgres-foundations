@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/rule.schema.json",
+  "title": "Decision rule",
+  "type": "object",
+  "required": ["rule_id", "target_kind", "target_slug", "conditions"],
+  "additionalProperties": false,
+  "properties": {
+    "rule_id": { "$ref": "#/$defs/slug" },
+    "target_kind": {
+      "enum": ["core_feature", "extension", "index_pattern", "topology_pattern", "anti_pattern_warning"]
+    },
+    "target_slug": { "$ref": "#/$defs/slug" },
+    "conditions": { "type": "array", "items": { "type": "object" } },
+    "weight": { "type": "number", "minimum": 0, "maximum": 1 }
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
+    }
+  }
+}

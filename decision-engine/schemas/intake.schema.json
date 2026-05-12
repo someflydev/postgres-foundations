@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/intake.schema.json",
+  "title": "Decision engine intake",
+  "type": "object",
+  "required": [
+    "intake_id",
+    "as_of_date",
+    "organization",
+    "data_shapes",
+    "workload_patterns",
+    "scale_signals",
+    "tenancy_model",
+    "security_constraints",
+    "migration_or_federation_needs",
+    "explicit_bias_against",
+    "explicit_bias_for",
+    "existing_postgres_topology",
+    "free_form_notes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "intake_id": { "$ref": "#/$defs/slug" },
+    "as_of_date": { "type": "string", "format": "date" },
+    "organization": {
+      "type": "object",
+      "required": [
+        "industry",
+        "team_size_engineers",
+        "operational_tolerance",
+        "managed_service_requirement",
+        "portability_constraints"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "industry": { "$ref": "industry.schema.json#/$defs/slug" },
+        "team_size_engineers": { "type": "integer", "minimum": 0 },
+        "operational_tolerance": { "enum": ["low", "medium", "high"] },
+        "managed_service_requirement": {
+          "enum": ["none", "strongly_preferred", "mandatory"]
+        },
+        "portability_constraints": {
+          "type": "array",
+          "items": {
+            "enum": ["aws_rds", "azure_pg", "gcp_cloud_sql", "any_managed", "none"]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "data_shapes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "data-shape.schema.json#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "workload_patterns": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "workload-pattern.schema.json#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "scale_signals": {
+      "type": "object",
+      "required": [
+        "row_counts_largest_tables",
+        "write_throughput_rows_per_sec",
+        "read_throughput_qps",
+        "concurrent_connections_peak",
+        "growth_rate_month_over_month"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "row_counts_largest_tables": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "write_throughput_rows_per_sec": { "type": "number", "minimum": 0 },
+        "read_throughput_qps": { "type": "number", "minimum": 0 },
+        "concurrent_connections_peak": { "type": "integer", "minimum": 0 },
+        "largest_object_bytes": { "type": "integer", "minimum": 0 },
+        "growth_rate_month_over_month": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "tenancy_model": {
+      "enum": [
+        "single_tenant",
+        "multi_tenant_shared_schema",
+        "multi_tenant_schema_per_tenant",
+        "multi_tenant_database_per_tenant"
+      ]
+    },
+    "security_constraints": {
+      "type": "array",
+      "items": {
+        "enum": ["rls_required", "audit_required", "pii_in_scope", "hipaa", "pci", "gdpr_dsr"]
+      },
+      "uniqueItems": true
+    },
+    "migration_or_federation_needs": {
+      "type": "object",
+      "required": [
+        "has_legacy_postgres_source",
+        "has_legacy_non_postgres_source",
+        "requires_zero_downtime_migration",
+        "requires_federation_via_fdw"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "has_legacy_postgres_source": { "type": "boolean" },
+        "has_legacy_non_postgres_source": { "type": "boolean" },
+        "requires_zero_downtime_migration": { "type": "boolean" },
+        "requires_federation_via_fdw": { "type": "boolean" }
+      }
+    },
+    "explicit_bias_against": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/extension_bias" }
+    },
+    "explicit_bias_for": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/extension_bias" }
+    },
+    "existing_postgres_topology": {
+      "enum": [
+        "none",
+        "single_primary",
+        "primary_with_read_replicas",
+        "logical_replication_pair",
+        "citus_cluster",
+        "other"
+      ]
+    },
+    "free_form_notes": { "type": "string", "maxLength": 4000 }
+  },
+  "$defs": {
+    "extension_bias": {
+      "type": "object",
+      "required": ["extension_slug", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "extension_slug": { "$ref": "extension.schema.json#/$defs/slug" },
+        "reason": { "type": "string", "minLength": 1, "maxLength": 1000 }
+      }
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://postgres-foundations/schema/report.schema.json",
+  "title": "Decision report",
+  "type": "object",
+  "required": [
+    "intake_id",
+    "generated_at",
+    "engine_version",
+    "recommendations",
+    "score_breakdown",
+    "warnings",
+    "followup_questions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "intake_id": { "$ref": "#/$defs/slug" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "engine_version": { "type": "string", "minLength": 1 },
+    "recommendations": {
+      "type": "array",
+      "items": { "$ref": "recommendation.schema.json" }
+    },
+    "score_breakdown": {
+      "type": "object",
+      "required": [
+        "domain_fit",
+        "data_shape_fit",
+        "workload_fit",
+        "operational_feasibility",
+        "growth_urgency",
+        "portability_penalty",
+        "complexity_penalty"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "domain_fit": { "$ref": "#/$defs/score" },
+        "data_shape_fit": { "$ref": "#/$defs/score" },
+        "workload_fit": { "$ref": "#/$defs/score" },
+        "operational_feasibility": { "$ref": "#/$defs/score" },
+        "growth_urgency": { "$ref": "#/$defs/score" },
+        "portability_penalty": { "$ref": "#/$defs/score" },
+        "complexity_penalty": { "$ref": "#/$defs/score" }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["anti_pattern_slug", "message"],
+        "additionalProperties": false,
+        "properties": {
+          "anti_pattern_slug": { "$ref": "#/$defs/slug" },
+          "message": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "followup_questions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
+    }
+  }
+}

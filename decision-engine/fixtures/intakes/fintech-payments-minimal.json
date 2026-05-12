@@ -1,0 +1,41 @@
+{
+  "intake_id": "fintech-payments-minimal",
+  "as_of_date": "2026-05-12",
+  "organization": {
+    "industry": "fintech_payments",
+    "team_size_engineers": 18,
+    "operational_tolerance": "medium",
+    "managed_service_requirement": "strongly_preferred",
+    "portability_constraints": ["aws_rds", "any_managed"]
+  },
+  "data_shapes": ["relational_core", "append_only_events", "time_series_metrics"],
+  "workload_patterns": ["oltp_heavy", "append_heavy", "analytics_adjacent"],
+  "scale_signals": {
+    "row_counts_largest_tables": {
+      "ledger_entries": 85000000,
+      "payment_events": 140000000
+    },
+    "write_throughput_rows_per_sec": 900,
+    "read_throughput_qps": 3500,
+    "concurrent_connections_peak": 420,
+    "largest_object_bytes": 1048576,
+    "growth_rate_month_over_month": 0.18
+  },
+  "tenancy_model": "multi_tenant_shared_schema",
+  "security_constraints": ["audit_required", "pii_in_scope", "pci"],
+  "migration_or_federation_needs": {
+    "has_legacy_postgres_source": true,
+    "has_legacy_non_postgres_source": false,
+    "requires_zero_downtime_migration": true,
+    "requires_federation_via_fdw": false
+  },
+  "explicit_bias_against": [
+    {
+      "extension_slug": "citus",
+      "reason": "The team cannot operate distributed transactions until reconciliation tooling matures."
+    }
+  ],
+  "explicit_bias_for": [],
+  "existing_postgres_topology": "primary_with_read_replicas",
+  "free_form_notes": "Payments workload with strong auditability and managed service preference."
+}
