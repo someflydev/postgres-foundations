@@ -20,6 +20,11 @@ CATALOG_KINDS = {
     "industry": ("industries.json", "industry.schema.json"),
     "data_shape": ("data_shapes.json", "data-shape.schema.json"),
     "workload_pattern": ("workload_patterns.json", "workload-pattern.schema.json"),
+    "core_feature": ("postgres_core_features.json", "core-feature.schema.json"),
+    "extension": ("extensions.json", "extension.schema.json"),
+    "index_pattern": ("index_patterns.json", "index-pattern.schema.json"),
+    "topology_pattern": ("topology_patterns.json", "topology-pattern.schema.json"),
+    "anti_pattern": ("anti_patterns.json", "anti-pattern.schema.json"),
 }
 CATALOG_DIR = paths.DECISION_ENGINE_DIR / "catalogs"
 
@@ -145,6 +150,11 @@ def check_catalogs() -> CatalogCheckResult:
 
     data_shape_ids = set(catalogs["data_shape"])
     workload_ids = set(catalogs["workload_pattern"])
+    core_feature_ids = set(catalogs["core_feature"])
+    extension_ids = set(catalogs["extension"])
+    index_pattern_ids = set(catalogs["index_pattern"])
+    topology_pattern_ids = set(catalogs["topology_pattern"])
+    anti_pattern_ids = set(catalogs["anti_pattern"])
     referenced_data_shapes: set[str] = set()
     referenced_workloads: set[str] = set()
 
@@ -174,25 +184,98 @@ def check_catalogs() -> CatalogCheckResult:
     for slug in sorted(workload_ids - referenced_workloads):
         warnings.append(f"workload_pattern:{slug} is not referenced by any industry")
 
-    anti_pattern_path = CATALOG_DIR / "anti_patterns.json"
-    anti_pattern_ids: set[str] = set()
-    if anti_pattern_path.is_file():
-        raw = _load_json(anti_pattern_path)
-        if isinstance(raw, list):
-            anti_pattern_ids = {str(entry.get("id")) for entry in raw if isinstance(entry, dict)}
-        else:
-            errors.append("anti_patterns.json must be a JSON array")
-
     for kind in ("data_shape", "workload_pattern"):
         for entry in catalogs[kind].values():
-            for slug in entry.get("anti_patterns_to_watch", []):
-                if anti_pattern_path.is_file() and slug not in anti_pattern_ids:
-                    errors.append(f"{kind}:{entry['id']} references missing anti_pattern:{slug}")
-                elif not anti_pattern_path.is_file():
-                    warnings.append(
-                        f"{kind}:{entry['id']} anti-pattern reference {slug} "
-                        "cannot be checked until PROMPT_41"
+            for slug in entry.get("core_features_that_apply", []):
+                if slug not in core_feature_ids:
+                    errors.append(f"{kind}:{entry['id']} references missing core_feature:{slug}")
+            for slug in entry.get("extensions_that_apply", []):
+                if slug not in extension_ids:
+                    errors.append(f"{kind}:{entry['id']} references missing extension:{slug}")
+            for slug in entry.get("index_patterns_that_apply", []):
+                if slug not in index_pattern_ids:
+                    errors.append(f"{kind}:{entry['id']} references missing index_pattern:{slug}")
+            for slug in entry.get("topology_patterns_that_apply", []):
+                if slug not in topology_pattern_ids:
+                    errors.append(
+                        f"{kind}:{entry['id']} references missing topology_pattern:{slug}"
                     )
+            for slug in entry.get("anti_patterns_to_watch", []):
+                if slug not in anti_pattern_ids:
+                    errors.append(f"{kind}:{entry['id']} references missing anti_pattern:{slug}")
+
+    for core_feature in catalogs["core_feature"].values():
+        for slug in core_feature["applies_to_data_shapes"]:
+            if slug not in data_shape_ids:
+                errors.append(
+                    f"core_feature:{core_feature['id']} references missing data_shape:{slug}"
+                )
+        for slug in core_feature["applies_to_workload_patterns"]:
+            if slug not in workload_ids:
+                errors.append(
+                    f"core_feature:{core_feature['id']} references missing workload_pattern:{slug}"
+                )
+
+    for extension in catalogs["extension"].values():
+        for slug in extension["adoption_triggers"]:
+            if slug not in workload_ids:
+                errors.append(
+                    f"extension:{extension['id']} references missing adoption trigger:{slug}"
+                )
+        for slug in extension["avoidance_triggers"]:
+            if slug not in workload_ids and slug not in anti_pattern_ids:
+                errors.append(
+                    f"extension:{extension['id']} references missing avoidance trigger:{slug}"
+                )
+        for slug in extension["prereq_extensions"]:
+            if slug not in extension_ids:
+                errors.append(f"extension:{extension['id']} references missing prereq:{slug}")
+        for slug in extension["anti_patterns"]:
+            if slug not in anti_pattern_ids:
+                errors.append(f"extension:{extension['id']} references missing anti_pattern:{slug}")
+
+    module_ids: set[str] = set()
+    extension_map_path = paths.CURRICULUM_DIR / "extensions" / "map.json"
+    if extension_map_path.is_file():
+        extension_map = _load_json(extension_map_path)
+        module_ids.update(str(module["id"]) for module in extension_map.get("modules", []))
+    module_ids.update(
+        path.parent.name for path in (paths.LESSONS_DIR).glob("phase-*/*/*/lesson.json")
+    )
+    for extension in catalogs["extension"].values():
+        module_slug = extension["module_slug"]
+        if module_slug not in module_ids:
+            errors.append(
+                f"extension:{extension['id']} references missing module_slug:{module_slug}"
+            )
+
+    for index_pattern in catalogs["index_pattern"].values():
+        for slug in index_pattern["applies_to_data_shapes"]:
+            if slug not in data_shape_ids:
+                errors.append(
+                    f"index_pattern:{index_pattern['id']} references missing data_shape:{slug}"
+                )
+        for slug in index_pattern["applies_to_workload_patterns"]:
+            if slug not in workload_ids:
+                errors.append(
+                    f"index_pattern:{index_pattern['id']} "
+                    f"references missing workload_pattern:{slug}"
+                )
+
+    for topology_pattern in catalogs["topology_pattern"].values():
+        for slug in topology_pattern["applies_to_workload_patterns"]:
+            if slug not in workload_ids:
+                errors.append(
+                    f"topology_pattern:{topology_pattern['id']} "
+                    f"references missing workload_pattern:{slug}"
+                )
+
+    for anti_pattern in catalogs["anti_pattern"].values():
+        for reference in anti_pattern["references"]:
+            if not (paths.REPO_ROOT / reference).is_file():
+                errors.append(
+                    f"anti_pattern:{anti_pattern['id']} references missing doc:{reference}"
+                )
 
     return CatalogCheckResult(errors=errors, warnings=warnings)
 

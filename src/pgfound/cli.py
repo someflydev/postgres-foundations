@@ -1199,7 +1199,7 @@ def catalog() -> None:
 @catalog.command("list", help="List decision-engine catalog entries.")
 @click.option(
     "--kind",
-    type=click.Choice(["industry", "data_shape", "workload_pattern"]),
+    type=click.Choice(sorted(decision_engine.CATALOG_KINDS)),
     help="Restrict output to one catalog kind.",
 )
 def decision_catalog_list(kind: str | None) -> None:
