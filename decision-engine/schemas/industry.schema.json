@@ -1,12 +1,74 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://postgres-foundations/schema/industry.schema.json",
-  "title": "Industry slug",
+  "title": "Decision engine industry catalog entry",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "summary",
+    "typical_data_shapes",
+    "typical_workload_patterns",
+    "typical_security_constraints",
+    "typical_tenancy_models",
+    "typical_scale_signals",
+    "typical_operational_concerns",
+    "failure_modes_to_watch",
+    "references"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "$ref": "#/$defs/slug" },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "typical_data_shapes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "typical_workload_patterns": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "typical_security_constraints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "typical_tenancy_models": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "typical_scale_signals": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "typical_operational_concerns": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "failure_modes_to_watch": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "references": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
   "$defs": {
     "slug": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
     }
-  },
-  "$ref": "#/$defs/slug"
+  }
 }

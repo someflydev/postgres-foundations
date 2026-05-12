@@ -1,12 +1,47 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://postgres-foundations/schema/data-shape.schema.json",
-  "title": "Data shape slug",
+  "title": "Decision engine data shape catalog entry",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "summary",
+    "core_features_that_apply",
+    "extensions_that_apply",
+    "index_patterns_that_apply",
+    "anti_patterns_to_watch"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "$ref": "#/$defs/slug" },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "core_features_that_apply": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "extensions_that_apply": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "index_patterns_that_apply": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "anti_patterns_to_watch": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    }
+  },
   "$defs": {
     "slug": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
     }
-  },
-  "$ref": "#/$defs/slug"
+  }
 }

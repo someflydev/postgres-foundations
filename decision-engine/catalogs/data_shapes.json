@@ -1,0 +1,110 @@
+[
+  {
+    "id": "relational_core",
+    "title": "Relational Core",
+    "summary": "Structured entity and relationship data belongs in normalized tables with explicit keys, constraints, and transactional boundaries. This shape is the default for PostgreSQL because it lets the planner, constraints, joins, and indexes carry the design instead of application convention.",
+    "core_features_that_apply": ["constraints"],
+    "extensions_that_apply": [],
+    "index_patterns_that_apply": ["btree_equality", "btree_composite_equality_then_range", "btree_covering_include"],
+    "anti_patterns_to_watch": ["jsonb_everything"]
+  },
+  {
+    "id": "semi_structured_jsonb",
+    "title": "Semi-structured JSONB",
+    "summary": "JSONB is useful for sparse attributes, external payload snapshots, and metadata that changes faster than stable business entities. It should supplement relational structure, not replace columns that need constraints, joins, or routine filtering.",
+    "core_features_that_apply": ["jsonb", "generated_columns", "constraints", "expression_indexes"],
+    "extensions_that_apply": ["pg_trgm"],
+    "index_patterns_that_apply": ["gin_jsonb_containment", "expression_index_for_normalization", "partial_index_for_skew"],
+    "anti_patterns_to_watch": ["jsonb_everything"]
+  },
+  {
+    "id": "arrays_small_sets",
+    "title": "Arrays for Small Sets",
+    "summary": "PostgreSQL arrays work well for small, bounded sets such as tags, flags, or denormalized read helpers. They are a poor fit when each element has identity, relationships, audit history, or high-cardinality filtering needs.",
+    "core_features_that_apply": ["arrays", "constraints"],
+    "extensions_that_apply": [],
+    "index_patterns_that_apply": ["gin_array_membership", "partial_index_for_skew"],
+    "anti_patterns_to_watch": ["arrays_over_child_tables"]
+  },
+  {
+    "id": "ranges_windows",
+    "title": "Ranges and Windows",
+    "summary": "Range types model time spans, numeric windows, and booking intervals directly in PostgreSQL. They become especially valuable with exclusion constraints when overlapping state must be prevented by the database rather than detected after the fact.",
+    "core_features_that_apply": ["ranges", "exclusion_constraints", "constraints"],
+    "extensions_that_apply": [],
+    "index_patterns_that_apply": ["gist_range_exclusion"],
+    "anti_patterns_to_watch": ["naive_wall_clock_timestamp"]
+  },
+  {
+    "id": "multiranges_availability",
+    "title": "Multiranges for Availability",
+    "summary": "Multiranges represent sets of available or blocked intervals without expanding each span into many rows. They are useful for scheduling and capacity windows when the canonical question is containment or overlap.",
+    "core_features_that_apply": ["multiranges", "ranges", "exclusion_constraints"],
+    "extensions_that_apply": [],
+    "index_patterns_that_apply": ["gist_range_exclusion"],
+    "anti_patterns_to_watch": ["naive_wall_clock_timestamp"]
+  },
+  {
+    "id": "hierarchy_paths",
+    "title": "Hierarchy Paths",
+    "summary": "Hierarchy path data covers trees such as categories, org units, folders, and access scopes. PostgreSQL can model it with adjacency lists, recursive CTEs, materialized paths, or ltree when path search becomes a first-class workload.",
+    "core_features_that_apply": ["constraints", "materialized_views"],
+    "extensions_that_apply": ["ltree"],
+    "index_patterns_that_apply": ["btree_equality"],
+    "anti_patterns_to_watch": []
+  },
+  {
+    "id": "full_text_docs",
+    "title": "Full-text Documents",
+    "summary": "Documents that need lexical matching, ranking, stemming, or phrase-aware search should use PostgreSQL full-text search before reaching for a separate search system. Generated tsvector columns and GIN indexes keep the behavior inspectable and close to transactional data.",
+    "core_features_that_apply": ["full_text_search", "generated_columns", "materialized_views"],
+    "extensions_that_apply": ["unaccent", "pg_trgm"],
+    "index_patterns_that_apply": ["gin_trgm_similarity", "partial_index_for_skew"],
+    "anti_patterns_to_watch": ["vector_before_lexical"]
+  },
+  {
+    "id": "geospatial",
+    "title": "Geospatial",
+    "summary": "Location, route, zone, and proximity data require spatial types and operators once bounding boxes or distance calculations are part of normal product behavior. Core PostgreSQL can store coordinates, but PostGIS is the operationally honest choice for serious spatial predicates.",
+    "core_features_that_apply": ["constraints", "generated_columns"],
+    "extensions_that_apply": ["postgis"],
+    "index_patterns_that_apply": ["gist_geospatial", "expression_index_for_normalization"],
+    "anti_patterns_to_watch": ["geo_logic_without_postgis"]
+  },
+  {
+    "id": "append_only_events",
+    "title": "Append-only Events",
+    "summary": "Append-only event tables capture audits, state transitions, activity streams, and integration facts. They usually need immutable inserts, retention policy, partitioning signals, and carefully chosen indexes for replay and investigation paths.",
+    "core_features_that_apply": ["partitioning", "logical_replication", "constraints"],
+    "extensions_that_apply": ["pg_partman"],
+    "index_patterns_that_apply": ["brin_append_only_chronological", "btree_composite_equality_then_range", "partial_index_for_skew"],
+    "anti_patterns_to_watch": ["partition_too_early", "no_restore_drills"]
+  },
+  {
+    "id": "time_series_metrics",
+    "title": "Time-series Metrics",
+    "summary": "Metrics and sensor readings are high-volume time-keyed facts with retention, rollup, and recent-window access patterns. PostgreSQL core partitioning and BRIN often cover moderate scale, while TimescaleDB becomes relevant when hypertable ergonomics and compression solve measured pain.",
+    "core_features_that_apply": ["partitioning", "materialized_views"],
+    "extensions_that_apply": ["timescaledb", "pg_partman"],
+    "index_patterns_that_apply": ["brin_append_only_chronological", "btree_composite_equality_then_range", "partial_index_for_skew"],
+    "anti_patterns_to_watch": ["partition_too_early"]
+  },
+  {
+    "id": "embeddings_vectors",
+    "title": "Embeddings and Vectors",
+    "summary": "Embedding vectors support semantic retrieval, recommendations, and similarity search. They should be paired with lexical filters, tenant filters, and freshness controls so vector search does not bypass the facts that make a result useful.",
+    "core_features_that_apply": ["full_text_search", "generated_columns", "materialized_views"],
+    "extensions_that_apply": ["pgvector"],
+    "index_patterns_that_apply": ["hnsw_vector_anns", "ivfflat_vector_anns", "btree_composite_equality_then_range"],
+    "anti_patterns_to_watch": ["vector_before_lexical"]
+  },
+  {
+    "id": "foreign_postgres_access",
+    "title": "Foreign PostgreSQL Access",
+    "summary": "Foreign PostgreSQL access is a bridge for migration, coexistence, and read-through integration. It should be treated as an operational boundary with latency, ownership, and failure behavior, not as a permanent substitute for clear data ownership.",
+    "core_features_that_apply": ["postgres_fdw", "materialized_views"],
+    "extensions_that_apply": ["postgres_fdw"],
+    "index_patterns_that_apply": ["btree_equality", "btree_covering_include"],
+    "anti_patterns_to_watch": ["fdw_without_pushdown_verification"]
+  }
+]

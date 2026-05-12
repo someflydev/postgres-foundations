@@ -1,0 +1,170 @@
+[
+  {
+    "id": "saas_multi_tenant",
+    "title": "SaaS Multi-tenant",
+    "summary": "Shared-schema SaaS systems usually succeed or fail on tenant isolation, predictable OLTP behavior, and disciplined data modeling. PostgreSQL is a strong fit when tenant identity is carried through keys, indexes, RLS policy tests, and audit paths instead of being treated as an application-only convention. JSONB can absorb account-specific settings, but the billing, identity, permission, and activity spine should stay relational. Extension choices should be conservative because small operations teams often need managed-service portability more than specialized capability.",
+    "typical_data_shapes": ["relational_core", "semi_structured_jsonb", "append_only_events", "full_text_docs", "hierarchy_paths"],
+    "typical_workload_patterns": ["oltp_heavy", "read_heavy", "strong_tenant_locality", "search_heavy", "analytics_adjacent"],
+    "typical_security_constraints": ["rls_required", "audit_required", "pii_in_scope", "gdpr_dsr"],
+    "typical_tenancy_models": ["multi_tenant_shared_schema", "multi_tenant_schema_per_tenant"],
+    "typical_scale_signals": {
+      "tenant_tables": "Core tenant-scoped tables commonly reach 1M-100M rows by year 2.",
+      "activity_stream": "Activity or audit tables often grow 10x faster than account tables.",
+      "connections": "Connection pressure appears before data size when every tenant-facing worker opens its own pool."
+    },
+    "typical_operational_concerns": ["tenant_isolation", "managed_service_portability", "strict_rto_rpo", "connection_pooling", "audit_retention"],
+    "failure_modes_to_watch": [
+      "A query omits tenant scope and scans or leaks cross-tenant data.",
+      "RLS policies are added without tests that exercise attacker-shaped sessions.",
+      "Read replicas are used to hide missing tenant-leading indexes."
+    ],
+    "references": ["docs/rls-playbook.md", "capstones/01-multi-tenant-saas-crm", "lessons/phase-10-security-and-replication"]
+  },
+  {
+    "id": "fintech_payments",
+    "title": "Fintech Payments",
+    "summary": "Payment platforms are ledger, reconciliation, and audit systems before they are dashboards. PostgreSQL core transactions, constraints, immutable append tables, and explicit idempotency keys are central to correctness. Replication and analytics can help downstream consumers, but the primary write path must stay understandable under failure and replay. Specialized topology should wait until reconciliation, retention, and write pressure create measurable limits.",
+    "typical_data_shapes": ["relational_core", "append_only_events", "time_series_metrics", "semi_structured_jsonb", "foreign_postgres_access"],
+    "typical_workload_patterns": ["oltp_heavy", "append_heavy", "analytics_adjacent", "replication_fanout", "migration_bridge"],
+    "typical_security_constraints": ["pci", "audit_required", "pii_in_scope"],
+    "typical_tenancy_models": ["single_tenant", "multi_tenant_shared_schema", "multi_tenant_database_per_tenant"],
+    "typical_scale_signals": {
+      "ledger_entries": "Ledger and payment-event tables often reach 50M-500M rows quickly.",
+      "write_rate": "Sustained ingest from payment processors can range from hundreds to thousands of rows/sec.",
+      "reconciliation": "Reconciliation jobs commonly scan hot recent partitions plus sampled historical windows."
+    },
+    "typical_operational_concerns": ["strict_rto_rpo", "audit_retention", "replication_slot_monitoring", "idempotency", "managed_service_portability"],
+    "failure_modes_to_watch": [
+      "Fintech reconciliation lag grows when logical replication slots fall behind.",
+      "A mutable audit log lets corrected payments erase evidence of the original event.",
+      "Citus or sharding is introduced before transaction and reconciliation boundaries are clear."
+    ],
+    "references": ["docs/logical-replication-playbook.md", "docs/partitioning-playbook.md", "capstones/03-event-heavy-ops"]
+  },
+  {
+    "id": "healthcare_ops",
+    "title": "Healthcare Operations",
+    "summary": "Healthcare operations systems combine appointment windows, patient or member records, audit trails, and integrations with older systems. PostgreSQL fits when privacy, audit, scheduling correctness, and migration boundaries are modeled explicitly. Range constraints are often more important than exotic extensions because double booking and authorization errors are business incidents. Operational tolerance is usually low, so managed-service compatibility and clear restore procedures matter.",
+    "typical_data_shapes": ["relational_core", "ranges_windows", "multiranges_availability", "append_only_events", "foreign_postgres_access", "semi_structured_jsonb"],
+    "typical_workload_patterns": ["oltp_heavy", "read_heavy", "migration_bridge", "strong_tenant_locality", "analytics_adjacent"],
+    "typical_security_constraints": ["hipaa", "audit_required", "pii_in_scope", "rls_required"],
+    "typical_tenancy_models": ["multi_tenant_database_per_tenant", "multi_tenant_schema_per_tenant", "single_tenant"],
+    "typical_scale_signals": {
+      "appointments": "Scheduling tables may sit in the 5M-50M row range while audit grows much faster.",
+      "legacy_bridge": "Cutovers commonly require weeks or months of read-only legacy access.",
+      "availability": "Availability windows are smaller than event logs but correctness-sensitive."
+    },
+    "typical_operational_concerns": ["regional_data_residency", "strict_rto_rpo", "audit_retention", "low_operational_tolerance", "legacy_cutover"],
+    "failure_modes_to_watch": [
+      "Application-only overlap checks allow concurrent appointment double booking.",
+      "FDW bridge queries become permanent hot paths with unclear ownership.",
+      "Audit tables are partitioned or retained without legal and clinical review."
+    ],
+    "references": ["docs/concurrency-playbook.md", "docs/rls-playbook.md", "capstones/02-scheduling-availability"]
+  },
+  {
+    "id": "ecommerce_marketplace",
+    "title": "Ecommerce Marketplace",
+    "summary": "Marketplace systems mix catalog browsing, orders, inventory, search, seller operations, and event trails. PostgreSQL works well when order correctness stays relational, catalog flexibility is contained to JSONB where it belongs, and search is built from full-text or trigram evidence before a separate search platform is added. Inventory and checkout paths need transaction design more than eventual repair jobs. Analytics should be routed through rollups or replicas so merchandising reports do not damage checkout latency.",
+    "typical_data_shapes": ["relational_core", "semi_structured_jsonb", "full_text_docs", "append_only_events", "arrays_small_sets"],
+    "typical_workload_patterns": ["oltp_heavy", "search_heavy", "read_heavy", "append_heavy", "analytics_adjacent"],
+    "typical_security_constraints": ["pci", "audit_required", "pii_in_scope", "gdpr_dsr"],
+    "typical_tenancy_models": ["multi_tenant_shared_schema", "single_tenant"],
+    "typical_scale_signals": {
+      "orders": "Orders can grow from 10M-200M rows as marketplace adoption matures.",
+      "catalog": "Catalog and offer rows often exceed order rows and require text plus attribute filtering.",
+      "events": "Click, inventory, and fulfillment events can exceed transactional tables by 10x-100x."
+    },
+    "typical_operational_concerns": ["checkout_latency", "inventory_correctness", "search_relevance", "retention_policy", "seasonal_burst_capacity"],
+    "failure_modes_to_watch": [
+      "Catalog attributes move entirely to JSONB and lose constraints needed by checkout.",
+      "LIKE-based search becomes the bottleneck while PostgreSQL FTS and trigram options are unused.",
+      "Inventory decrements are implemented without row locks or idempotency."
+    ],
+    "references": ["docs/search-playbook.md", "docs/indexing-playbook-part2.md", "seed-data/packs/ecommerce"]
+  },
+  {
+    "id": "logistics_geo",
+    "title": "Logistics and Geospatial Operations",
+    "summary": "Logistics systems center on orders, assets, locations, service zones, routes, and status events. PostgreSQL core is enough for many dispatch and status workflows, but PostGIS becomes justified when spatial predicates define the product. The model should keep business state relational while using geometry for true spatial work. Time windows and geospatial filters often combine, so indexes must reflect how dispatchers and automation actually query the data.",
+    "typical_data_shapes": ["relational_core", "geospatial", "ranges_windows", "append_only_events", "time_series_metrics"],
+    "typical_workload_patterns": ["oltp_heavy", "geo_query_heavy", "append_heavy", "read_heavy", "analytics_adjacent"],
+    "typical_security_constraints": ["pii_in_scope", "audit_required", "regional_data_residency"],
+    "typical_tenancy_models": ["single_tenant", "multi_tenant_shared_schema"],
+    "typical_scale_signals": {
+      "location_events": "Vehicle or package events commonly reach 100M-1B rows.",
+      "zones": "Service-zone row counts may be modest, but polygon complexity can dominate query cost.",
+      "dispatch": "Hot dispatch queries often combine tenant, status, time window, and spatial predicates."
+    },
+    "typical_operational_concerns": ["spatial_index_maintenance", "retention_policy", "regional_data_residency", "route_query_latency", "mobile_sync"],
+    "failure_modes_to_watch": [
+      "Latitude and longitude columns are filtered without spatial indexes or coordinate validation.",
+      "PostGIS is added for display-only maps with no spatial workload signal.",
+      "Event retention is postponed until ingest volume makes maintenance unsafe."
+    ],
+    "references": ["docs/extension-track/e3-postgis.md", "capstones/05-geo-logistics", "seed-data/packs/logistics_geo"]
+  },
+  {
+    "id": "observability_iot",
+    "title": "Observability and IoT",
+    "summary": "Observability and IoT workloads are ingest-heavy, time-keyed, and retention-driven. PostgreSQL can handle moderate event and metric pipelines with partitioning, BRIN indexes, COPY-friendly ingest, and rollups. TimescaleDB or pg_partman can be appropriate, but only when measured retention, compression, and maintenance pain justify the additional operational surface. Query patterns should separate recent operational views from long-range analysis.",
+    "typical_data_shapes": ["append_only_events", "time_series_metrics", "semi_structured_jsonb", "relational_core"],
+    "typical_workload_patterns": ["append_heavy", "analytics_adjacent", "read_heavy", "replication_fanout"],
+    "typical_security_constraints": ["audit_required", "regional_data_residency"],
+    "typical_tenancy_models": ["multi_tenant_shared_schema", "single_tenant"],
+    "typical_scale_signals": {
+      "ingest": "Metrics and events may arrive at 1000-50000 rows/sec depending on device or service count.",
+      "retention": "Hot retention may be days while cold retention is months or years.",
+      "rollups": "Dashboard queries should target rollups once raw scans affect ingest or vacuum."
+    },
+    "typical_operational_concerns": ["retention_policy", "partition_maintenance", "write_amplification", "compression_tradeoffs", "replication_slot_monitoring"],
+    "failure_modes_to_watch": [
+      "Every dashboard query scans raw unbounded event tables.",
+      "TimescaleDB is adopted before core partitioning and BRIN limits are measured.",
+      "Ingest tables carry too many secondary indexes and stall writes."
+    ],
+    "references": ["docs/partitioning-playbook.md", "docs/extension-track/e5-timescaledb.md", "capstones/07-observability-event-analytics"]
+  },
+  {
+    "id": "knowledge_ai",
+    "title": "Knowledge and AI Retrieval",
+    "summary": "Knowledge systems store documents, chunks, metadata, permissions, lexical search vectors, and optional embeddings. PostgreSQL is useful because access control, freshness, search, and metadata filters can remain near the source of truth. pgvector should complement full-text search rather than replace it, especially when tenant or permission filters decide whether a result is usable. The strongest designs make embedding refresh, ranking, and deletion behavior explicit.",
+    "typical_data_shapes": ["full_text_docs", "embeddings_vectors", "semi_structured_jsonb", "relational_core", "hierarchy_paths"],
+    "typical_workload_patterns": ["search_heavy", "semantic_retrieval", "read_heavy", "strong_tenant_locality"],
+    "typical_security_constraints": ["rls_required", "audit_required", "pii_in_scope", "gdpr_dsr"],
+    "typical_tenancy_models": ["multi_tenant_shared_schema", "multi_tenant_schema_per_tenant"],
+    "typical_scale_signals": {
+      "documents": "Document and chunk tables commonly range from 100000 to 100M rows.",
+      "embeddings": "Embedding storage can become the largest object class before relational rows look large.",
+      "refresh": "Index and embedding refresh lag becomes visible when source documents change hourly or faster."
+    },
+    "typical_operational_concerns": ["access_control_correctness", "embedding_refresh", "search_relevance", "delete_propagation", "managed_service_portability"],
+    "failure_modes_to_watch": [
+      "Vector search is launched before lexical search, tenant filters, and permission filters are correct.",
+      "Embeddings are not refreshed or deleted when source documents change.",
+      "Large vector indexes are built without a measured latency and recall target."
+    ],
+    "references": ["docs/search-playbook.md", "docs/extension-track/e4-pgvector.md", "capstones/06-ai-knowledge-search"]
+  },
+  {
+    "id": "modernization_bridge",
+    "title": "Modernization Bridge",
+    "summary": "Modernization bridge work connects PostgreSQL to legacy PostgreSQL, non-PostgreSQL systems, or transitional schemas while a cutover plan matures. The database design should make temporary integration visible through views, materialized caches, replication paths, and runbooks. postgres_fdw is valuable for controlled read bridges, but it is not a substitute for ownership, backfill validation, or exit criteria. The safest posture is to treat the bridge as a migration product with observability and rollback.",
+    "typical_data_shapes": ["foreign_postgres_access", "relational_core", "append_only_events", "semi_structured_jsonb", "full_text_docs"],
+    "typical_workload_patterns": ["migration_bridge", "read_heavy", "replication_fanout", "analytics_adjacent"],
+    "typical_security_constraints": ["audit_required", "pii_in_scope", "regional_data_residency"],
+    "typical_tenancy_models": ["single_tenant", "multi_tenant_database_per_tenant", "multi_tenant_schema_per_tenant"],
+    "typical_scale_signals": {
+      "legacy_rows": "Legacy source tables often range from 10M-500M rows and need staged backfill.",
+      "bridge_duration": "Any bridge lasting more than one release cycle needs owner, monitor, and exit criteria.",
+      "validation": "Dual-read or dual-write validation volume should be sampled and reconciled explicitly."
+    },
+    "typical_operational_concerns": ["legacy_cutover", "fdw_latency", "rollback_plan", "data_ownership", "schema_drift"],
+    "failure_modes_to_watch": [
+      "FDW cross-database joins become latency-critical application paths.",
+      "The cutover plan validates row counts but not constraints or business invariants.",
+      "Bridge credentials receive broader privileges than the migration path requires."
+    ],
+    "references": ["docs/logical-replication-playbook.md", "docs/extension-track/e6-postgres-fdw.md", "capstones/08-modernization-bridge-extension-decisions"]
+  }
+]

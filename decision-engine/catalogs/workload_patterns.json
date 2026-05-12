@@ -1,0 +1,142 @@
+[
+  {
+    "id": "oltp_heavy",
+    "title": "OLTP Heavy",
+    "summary": "OLTP-heavy systems need many short transactions with predictable indexes, tight constraints, and clear lock behavior. The first answer is usually schema discipline, transaction boundaries, and connection control rather than distributed topology.",
+    "scale_signals_threshold": {
+      "write_throughput": "Sustained writes above 100 rows/sec or bursts above 1000 rows/sec.",
+      "latency": "User-facing p95 query latency target below 100 ms."
+    },
+    "core_features_that_apply": ["constraints"],
+    "extensions_that_apply": ["pg_stat_statements"],
+    "index_patterns_that_apply": ["btree_composite_equality_then_range", "btree_covering_include", "partial_index_for_skew"],
+    "topology_patterns_that_apply": ["single_primary", "pgbouncer_in_front"],
+    "anti_patterns_to_watch": ["replica_as_performance_bandage", "no_pooling_high_connections"]
+  },
+  {
+    "id": "search_heavy",
+    "title": "Search Heavy",
+    "summary": "Search-heavy workloads repeatedly filter and rank text, names, descriptions, or documents. PostgreSQL full-text search and trigram indexes should be evaluated before adding a separate search tier.",
+    "scale_signals_threshold": {
+      "read_throughput": "Search endpoints exceed 500 qps or dominate p95 latency.",
+      "corpus_size": "Searchable rows above 1 million with user-visible ranking needs."
+    },
+    "core_features_that_apply": ["full_text_search", "generated_columns", "materialized_views"],
+    "extensions_that_apply": ["pg_trgm", "unaccent"],
+    "index_patterns_that_apply": ["gin_trgm_similarity", "partial_index_for_skew"],
+    "topology_patterns_that_apply": ["single_primary", "primary_with_read_replicas"],
+    "anti_patterns_to_watch": ["vector_before_lexical"]
+  },
+  {
+    "id": "read_heavy",
+    "title": "Read Heavy",
+    "summary": "Read-heavy systems need careful query shapes, indexes, caching boundaries, and sometimes replicas. Replicas help isolate read traffic, but they do not fix missing indexes, bad joins, or stale-read intolerance.",
+    "scale_signals_threshold": {
+      "read_throughput": "Sustained read traffic above 1000 qps.",
+      "read_write_ratio": "Read operations exceed writes by at least 20 to 1."
+    },
+    "core_features_that_apply": ["materialized_views"],
+    "extensions_that_apply": ["pg_stat_statements"],
+    "index_patterns_that_apply": ["btree_covering_include", "btree_composite_equality_then_range", "partial_index_for_skew"],
+    "topology_patterns_that_apply": ["primary_with_read_replicas", "pgbouncer_in_front"],
+    "anti_patterns_to_watch": ["replica_as_performance_bandage"]
+  },
+  {
+    "id": "append_heavy",
+    "title": "Append Heavy",
+    "summary": "Append-heavy workloads write many immutable facts, usually events, metrics, logs, or ledger entries. They need retention, partitioning thresholds, vacuum awareness, and indexes that do not punish every insert.",
+    "scale_signals_threshold": {
+      "write_throughput": "Sustained inserts above 500 rows/sec or daily ingest above 50 million rows.",
+      "retention": "Retention policy differs between hot and cold data."
+    },
+    "core_features_that_apply": ["partitioning", "logical_replication"],
+    "extensions_that_apply": ["pg_partman", "timescaledb"],
+    "index_patterns_that_apply": ["brin_append_only_chronological", "btree_composite_equality_then_range", "partial_index_for_skew"],
+    "topology_patterns_that_apply": ["single_primary", "logical_replication_pair"],
+    "anti_patterns_to_watch": ["partition_too_early", "unused_indexes", "redundant_indexes"]
+  },
+  {
+    "id": "analytics_adjacent",
+    "title": "Analytics Adjacent",
+    "summary": "Analytics-adjacent workloads run operational reporting near transactional data without turning PostgreSQL into a warehouse. The design should separate hot OLTP paths from aggregates, rollups, and replica-friendly reporting.",
+    "scale_signals_threshold": {
+      "query_shape": "Reports scan more than 5 percent of large tables during business hours.",
+      "freshness": "Reporting tolerates seconds to minutes of lag."
+    },
+    "core_features_that_apply": ["materialized_views", "partitioning"],
+    "extensions_that_apply": ["pg_stat_statements"],
+    "index_patterns_that_apply": ["brin_append_only_chronological", "btree_covering_include"],
+    "topology_patterns_that_apply": ["primary_with_read_replicas", "logical_replication_to_analytics_replica"],
+    "anti_patterns_to_watch": ["replica_as_performance_bandage"]
+  },
+  {
+    "id": "replication_fanout",
+    "title": "Replication Fanout",
+    "summary": "Replication fanout appears when downstream services, analytics systems, or regional readers consume PostgreSQL changes. Slot lag, publication scope, schema drift, and replay behavior must be treated as product reliability concerns.",
+    "scale_signals_threshold": {
+      "consumers": "More than two downstream consumers need database changes.",
+      "lag": "Consumer lag above 60 seconds affects user or reconciliation workflows."
+    },
+    "core_features_that_apply": ["logical_replication"],
+    "extensions_that_apply": [],
+    "index_patterns_that_apply": ["btree_equality"],
+    "topology_patterns_that_apply": ["logical_replication_pair", "primary_with_read_replicas"],
+    "anti_patterns_to_watch": ["no_restore_drills"]
+  },
+  {
+    "id": "migration_bridge",
+    "title": "Migration Bridge",
+    "summary": "Migration-bridge workloads connect old and new systems during cutover, backfill, validation, or coexistence. The bridge should have an exit plan and clear ownership boundaries from the start.",
+    "scale_signals_threshold": {
+      "cutover": "Legacy and target systems must coexist for more than one release cycle.",
+      "join_path": "Application paths need temporary cross-system reads."
+    },
+    "core_features_that_apply": ["postgres_fdw", "materialized_views", "logical_replication"],
+    "extensions_that_apply": ["postgres_fdw"],
+    "index_patterns_that_apply": ["btree_equality", "btree_covering_include"],
+    "topology_patterns_that_apply": ["postgres_fdw_federation", "blue_green_upgrade_via_logical_replication"],
+    "anti_patterns_to_watch": ["fdw_without_pushdown_verification"]
+  },
+  {
+    "id": "geo_query_heavy",
+    "title": "Geo Query Heavy",
+    "summary": "Geo-heavy workloads ask location questions such as within-zone, nearest-neighbor, route coverage, or service radius. PostGIS and spatial indexes are justified when these predicates are core behavior rather than occasional display metadata.",
+    "scale_signals_threshold": {
+      "query_shape": "Spatial predicates appear on user-facing hot paths.",
+      "data_size": "Spatial rows exceed 100000 or polygon complexity affects latency."
+    },
+    "core_features_that_apply": ["constraints", "generated_columns"],
+    "extensions_that_apply": ["postgis"],
+    "index_patterns_that_apply": ["gist_geospatial"],
+    "topology_patterns_that_apply": ["single_primary", "primary_with_read_replicas"],
+    "anti_patterns_to_watch": ["geo_logic_without_postgis"]
+  },
+  {
+    "id": "semantic_retrieval",
+    "title": "Semantic Retrieval",
+    "summary": "Semantic retrieval combines embeddings with filters, lexical search, freshness, and ranking rules. pgvector is useful when vector distance is a measured retrieval need, not when the team only wants an AI label on a search feature.",
+    "scale_signals_threshold": {
+      "corpus_size": "Embeddable documents exceed 100000 or refresh work becomes visible.",
+      "latency": "Similarity search has a p95 target below 300 ms after tenant and access filters."
+    },
+    "core_features_that_apply": ["full_text_search", "materialized_views", "generated_columns"],
+    "extensions_that_apply": ["pgvector"],
+    "index_patterns_that_apply": ["hnsw_vector_anns", "ivfflat_vector_anns", "btree_composite_equality_then_range"],
+    "topology_patterns_that_apply": ["single_primary", "primary_with_read_replicas"],
+    "anti_patterns_to_watch": ["vector_before_lexical"]
+  },
+  {
+    "id": "strong_tenant_locality",
+    "title": "Strong Tenant Locality",
+    "summary": "Strong tenant locality means most access is scoped to one tenant and isolation mistakes are high impact. The design should use tenant-leading indexes, RLS where appropriate, and operational paths that preserve tenant boundaries.",
+    "scale_signals_threshold": {
+      "tenancy": "More than 95 percent of queries include tenant scope.",
+      "growth": "Largest tenants are at least 10 times the median tenant size."
+    },
+    "core_features_that_apply": ["row_level_security", "partitioning"],
+    "extensions_that_apply": ["pg_stat_statements"],
+    "index_patterns_that_apply": ["btree_composite_equality_then_range", "partial_index_for_skew"],
+    "topology_patterns_that_apply": ["single_primary"],
+    "anti_patterns_to_watch": ["no_restore_drills"]
+  }
+]
