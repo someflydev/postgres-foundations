@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import click
+import yaml
 from rich.console import Console
 from rich.table import Table
 
@@ -35,6 +36,11 @@ from pgfound.review.models import EvaluationContext, EvaluationRequest
 from pgfound.review.output import report as review_report
 
 console = Console()
+
+COMPOSE_PROFILE_EXPECTATIONS = {
+    "postgis": ("postgis/postgis:16-3.4", "${POSTGIS_PORT:-5436}:5432"),
+    "pgvector": ("pgvector/pgvector:pg16", "${PGVECTOR_PORT:-5437}:5432"),
+}
 
 
 def _success(message: str) -> None:
@@ -84,6 +90,27 @@ def _required_paths() -> list[tuple[str, Path]]:
     ]
 
 
+def _compose_profile_checks() -> list[tuple[str, bool, str]]:
+    compose_path = paths.DOCKER_DIR / "docker-compose.yml"
+    try:
+        data = yaml.safe_load(compose_path.read_text(encoding="utf-8")) or {}
+    except (OSError, yaml.YAMLError) as exc:
+        return [("Docker Compose extension profiles", False, str(exc))]
+
+    services = data.get("services", {})
+    checks: list[tuple[str, bool, str]] = []
+    for service_name, (image, port) in COMPOSE_PROFILE_EXPECTATIONS.items():
+        service = services.get(service_name, {})
+        ok = (
+            service.get("image") == image
+            and service.get("profiles") == [service_name]
+            and port in service.get("ports", [])
+        )
+        detail = f"{service_name}: {service.get('image', 'missing')} on {port}"
+        checks.append((f"Compose profile: {service_name}", ok, detail))
+    return checks
+
+
 @main.command(help="Check local prerequisites and repository paths.")
 def doctor() -> None:
     """Check local prerequisites and repository paths."""
@@ -115,6 +142,8 @@ def doctor() -> None:
             checks.append((f"path: {label}", True, str(path)))
         except FileNotFoundError as exc:
             checks.append((f"path: {label}", False, str(exc)))
+
+    checks.extend(_compose_profile_checks())
 
     compose_ok = False
     compose_detail = "skipped because docker CLI is unavailable"

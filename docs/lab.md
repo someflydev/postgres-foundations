@@ -137,6 +137,36 @@ normal `pg` service on the Compose network. It uses transaction pooling so
 learners can observe how session-scoped state differs from a direct PostgreSQL
 connection.
 
+Extension-track labs keep specialized images out of the normal `pg` service.
+PostGIS runs behind the `postgis` profile with a pinned
+`postgis/postgis:16-3.4` image:
+
+```sh
+docker compose -f docker/docker-compose.yml --profile postgis up -d postgis
+psql "postgresql://pgfound:pgfound@localhost:5436/pgfound" \
+  -c "CREATE EXTENSION IF NOT EXISTS postgis; SELECT PostGIS_Version();"
+```
+
+Seed the PostGIS logistics domain against that profile with:
+
+```sh
+PGFOUND_DB_URL=postgresql://pgfound:pgfound@localhost:5436/pgfound \
+  uv run pgfound content seed logistics_geo --phase 1 --reset
+```
+
+pgvector runs behind the `pgvector` profile with a pinned
+`pgvector/pgvector:pg16` image:
+
+```sh
+docker compose -f docker/docker-compose.yml --profile pgvector up -d pgvector
+psql "postgresql://pgfound:pgfound@localhost:5437/pgfound" \
+  -c "CREATE EXTENSION IF NOT EXISTS vector; SELECT '[1,0,0]'::vector <-> '[0,1,0]'::vector;"
+```
+
+The `document_search` phase 08 seed adds deterministic fake embeddings only
+when the `vector` extension is available. Those vectors are placeholders for
+pgvector mechanics, not meaningful semantic embeddings.
+
 The lab currently uses a single PostgreSQL superuser role, `pgfound`, for
 simplicity. Phase 10 introduces role design and least-privilege practice;
 deeper operational separation remains part of the later admin track.
@@ -144,11 +174,12 @@ deeper operational separation remains part of the later admin track.
 If port 55433 is already in use, set `POSTGRES_PORT` in `.env` and restart the
 service. If the sandbox port 55434 is occupied, set `POSTGRES_SANDBOX_PORT`. If
 the HBA overlay port 55435 is occupied, set `POSTGRES_HBA_OVERLAY_PORT`. If
-the PgBouncer port 6432 is occupied, set `PGBOUNCER_PORT`. If
-init scripts do not run, confirm you reset with `make lab-nuke`; PostgreSQL
-entrypoint scripts run only when the data directory is empty. If the container
-reports permission issues reading init scripts, check that files under
-`docker/initdb/` are readable by Docker. Tail logs with:
+the PgBouncer port 6432 is occupied, set `PGBOUNCER_PORT`. If the PostGIS port
+5436 is occupied, set `POSTGIS_PORT`. If the pgvector port 5437 is occupied,
+set `PGVECTOR_PORT`. If init scripts do not run, confirm you reset with
+`make lab-nuke`; PostgreSQL entrypoint scripts run only when the data directory
+is empty. If the container reports permission issues reading init scripts,
+check that files under `docker/initdb/` are readable by Docker. Tail logs with:
 
 ```sh
 make lab-logs

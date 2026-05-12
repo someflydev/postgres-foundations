@@ -93,6 +93,50 @@ services:
     networks:
       - pgfound-net
 
+  postgis:
+    image: postgis/postgis:16-3.4
+    profiles:
+      - postgis
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pgfound}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pgfound}
+      POSTGRES_DB: ${POSTGRES_DB:-pgfound}
+    ports:
+      - "${POSTGIS_PORT:-5436}:5432"
+    volumes:
+      - pgfound-postgis-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pgfound -d pgfound"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks:
+      - pgfound-net
+
+  pgvector:
+    image: pgvector/pgvector:pg16
+    profiles:
+      - pgvector
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pgfound}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pgfound}
+      POSTGRES_DB: ${POSTGRES_DB:-pgfound}
+    ports:
+      - "${PGVECTOR_PORT:-5437}:5432"
+    volumes:
+      - pgfound-pgvector-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pgfound -d pgfound"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks:
+      - pgfound-net
+
   pg-sandbox:
     image: postgres:16
     profiles:
@@ -144,4 +188,6 @@ networks:
 volumes:
   pgfound-data:
   pgfound-hba-overlay-data:
+  pgfound-postgis-data:
+  pgfound-pgvector-data:
   pgfound-replica-data:
