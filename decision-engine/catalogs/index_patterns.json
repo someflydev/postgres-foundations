@@ -1,0 +1,132 @@
+[
+  {
+    "id": "btree_equality",
+    "title": "B-tree Equality",
+    "summary": "Use a btree index for exact lookup, foreign-key joins, and ordered scans on scalar columns. This is the default index pattern for stable relational predicates.",
+    "underlying_index_type": "btree",
+    "applies_to_data_shapes": ["relational_core", "hierarchy_paths", "foreign_postgres_access"],
+    "applies_to_workload_patterns": ["oltp_heavy", "replication_fanout", "migration_bridge"],
+    "tradeoffs": ["Excellent default for equality and ordering, but not a fix for low-selectivity predicates."],
+    "references": ["lessons/phase-07-indexing", "docs/indexing-playbook-part1.md"]
+  },
+  {
+    "id": "btree_composite_equality_then_range",
+    "title": "Composite Equality Then Range",
+    "summary": "Put equality columns first and the range or ordering column after them. Reach for this when tenant, status, or account filters narrow the rows before time or amount ranges.",
+    "underlying_index_type": "btree",
+    "applies_to_data_shapes": ["relational_core", "append_only_events", "time_series_metrics", "embeddings_vectors"],
+    "applies_to_workload_patterns": ["oltp_heavy", "read_heavy", "append_heavy", "strong_tenant_locality"],
+    "tradeoffs": ["Column order is workload-specific and can become redundant with nearby indexes."],
+    "references": ["lessons/phase-07-indexing", "docs/indexing-playbook-part1.md"]
+  },
+  {
+    "id": "btree_covering_include",
+    "title": "Covering B-tree With INCLUDE",
+    "summary": "Use INCLUDE columns when a hot query can be served from an index without widening the search key. It fits read paths where a few projected columns dominate latency.",
+    "underlying_index_type": "btree",
+    "applies_to_data_shapes": ["relational_core", "foreign_postgres_access"],
+    "applies_to_workload_patterns": ["oltp_heavy", "read_heavy", "analytics_adjacent", "migration_bridge"],
+    "tradeoffs": ["Covering indexes reduce heap visits but add write cost and can duplicate other indexes."],
+    "references": ["lessons/phase-07-indexing", "docs/indexing-playbook-part1.md"]
+  },
+  {
+    "id": "partial_index_for_skew",
+    "title": "Partial Index for Skew",
+    "summary": "Index only active, pending, recent, or otherwise skewed rows when hot queries use that predicate. This keeps high-value indexes small and cheaper to maintain.",
+    "underlying_index_type": "btree",
+    "applies_to_data_shapes": ["semi_structured_jsonb", "arrays_small_sets", "append_only_events", "time_series_metrics"],
+    "applies_to_workload_patterns": ["oltp_heavy", "read_heavy", "append_heavy", "search_heavy", "strong_tenant_locality"],
+    "tradeoffs": ["The query predicate must match the index predicate closely or the planner cannot use it."],
+    "references": ["lessons/phase-07-indexing", "docs/indexing-playbook-part1.md"]
+  },
+  {
+    "id": "expression_index_for_normalization",
+    "title": "Expression Index for Normalization",
+    "summary": "Index deterministic expressions such as lower(email) or extracted JSONB keys when queries use the same expression. Reach for this when normalization belongs near the data.",
+    "underlying_index_type": "btree",
+    "applies_to_data_shapes": ["semi_structured_jsonb", "geospatial"],
+    "applies_to_workload_patterns": ["oltp_heavy", "search_heavy", "geo_query_heavy"],
+    "tradeoffs": ["Expression drift between application code and SQL can silently miss the index."],
+    "references": ["lessons/phase-07-indexing", "docs/indexing-playbook-part1.md"]
+  },
+  {
+    "id": "gin_jsonb_containment",
+    "title": "GIN JSONB Containment",
+    "summary": "Use GIN when JSONB containment predicates are a proven hot path. It is best for selective document-key queries that remain valid JSONB use cases.",
+    "underlying_index_type": "gin",
+    "applies_to_data_shapes": ["semi_structured_jsonb"],
+    "applies_to_workload_patterns": ["oltp_heavy", "search_heavy"],
+    "tradeoffs": ["GIN indexes are write-heavy and do not rescue facts that should be typed columns."],
+    "references": ["lessons/phase-07-indexing", "docs/indexing-playbook-part2.md"]
+  },
+  {
+    "id": "gin_trgm_similarity",
+    "title": "GIN Trigram Similarity",
+    "summary": "Use trigram GIN indexes for fuzzy names, titles, support search, and substring matching. Reach for it after exact lookup and full-text search have been separated from typo tolerance.",
+    "underlying_index_type": "gin",
+    "applies_to_data_shapes": ["full_text_docs", "semi_structured_jsonb"],
+    "applies_to_workload_patterns": ["search_heavy"],
+    "tradeoffs": ["Large text columns and frequent writes can make trigram indexes expensive."],
+    "references": ["lessons/phase-07-indexing", "docs/indexing-playbook-part2.md", "docs/extension-track/e2-pg-trgm.md"]
+  },
+  {
+    "id": "gin_array_membership",
+    "title": "GIN Array Membership",
+    "summary": "Use GIN for containment and membership checks on small bounded arrays. It fits tags and flags, not arrays pretending to be child tables.",
+    "underlying_index_type": "gin",
+    "applies_to_data_shapes": ["arrays_small_sets"],
+    "applies_to_workload_patterns": ["oltp_heavy", "search_heavy"],
+    "tradeoffs": ["Element-level lifecycle or joins should move the model to relational child rows."],
+    "references": ["lessons/phase-07-indexing", "docs/indexing-playbook-part2.md"]
+  },
+  {
+    "id": "gist_range_exclusion",
+    "title": "GiST Range Exclusion",
+    "summary": "Use GiST with range operators and exclusion constraints to prevent overlaps. This is the natural pattern for booking, availability, and validity-window correctness.",
+    "underlying_index_type": "gist",
+    "applies_to_data_shapes": ["ranges_windows", "multiranges_availability"],
+    "applies_to_workload_patterns": ["oltp_heavy"],
+    "tradeoffs": ["Concurrent write behavior must be tested because the index enforces business conflicts."],
+    "references": ["lessons/phase-07-indexing", "docs/concurrency-playbook.md"]
+  },
+  {
+    "id": "gist_geospatial",
+    "title": "GiST Geospatial",
+    "summary": "Use GiST for PostGIS geometry and geography predicates such as intersects, contains, and distance prefilters. Reach for it when spatial predicates are part of the workload.",
+    "underlying_index_type": "gist",
+    "applies_to_data_shapes": ["geospatial"],
+    "applies_to_workload_patterns": ["geo_query_heavy"],
+    "tradeoffs": ["Spatial indexes need coordinate-system discipline and query shapes that expose spatial operators."],
+    "references": ["lessons/phase-07-indexing", "docs/extension-track/e3-postgis.md"]
+  },
+  {
+    "id": "brin_append_only_chronological",
+    "title": "BRIN for Append-only Time",
+    "summary": "Use BRIN on large append-only chronological tables where physical order correlates with time. It is compact and effective for recent-window or range scans.",
+    "underlying_index_type": "brin",
+    "applies_to_data_shapes": ["append_only_events", "time_series_metrics"],
+    "applies_to_workload_patterns": ["append_heavy", "analytics_adjacent"],
+    "tradeoffs": ["BRIN is approximate and weak when rows are not physically correlated with the indexed value."],
+    "references": ["lessons/phase-07-indexing", "docs/indexing-playbook-part2.md"]
+  },
+  {
+    "id": "hnsw_vector_anns",
+    "title": "HNSW Vector ANN",
+    "summary": "Use HNSW for pgvector approximate nearest-neighbor search when recall and latency requirements justify memory-heavy indexes. It fits serving paths that need strong interactive retrieval.",
+    "underlying_index_type": "hnsw",
+    "applies_to_data_shapes": ["embeddings_vectors"],
+    "applies_to_workload_patterns": ["semantic_retrieval"],
+    "tradeoffs": ["HNSW can be memory-intensive and must be tested with tenant and permission filters."],
+    "references": ["lessons/phase-07-indexing", "docs/extension-track/e4-pgvector.md"]
+  },
+  {
+    "id": "ivfflat_vector_anns",
+    "title": "IVFFlat Vector ANN",
+    "summary": "Use IVFFlat for pgvector approximate nearest-neighbor search when training and list tuning are acceptable. It can be cheaper than HNSW for some bulk workloads.",
+    "underlying_index_type": "ivfflat",
+    "applies_to_data_shapes": ["embeddings_vectors"],
+    "applies_to_workload_patterns": ["semantic_retrieval"],
+    "tradeoffs": ["Recall depends on list and probe tuning, and indexes should be rebuilt after major data distribution changes."],
+    "references": ["lessons/phase-07-indexing", "docs/extension-track/e4-pgvector.md"]
+  }
+]

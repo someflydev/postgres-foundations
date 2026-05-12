@@ -1,0 +1,114 @@
+[
+  {
+    "id": "jsonb_everything",
+    "title": "JSONB Everything",
+    "summary": "Stable business facts are hidden in JSONB instead of typed columns. The design loses constraints, joins, planner visibility, and schema review.",
+    "triggered_when": ["Relational entities store status, tenant, amount, or timestamps only inside documents."],
+    "recommended_alternative": "Keep constrained, joined, sorted, and filtered facts in columns; reserve JSONB for sparse or provider-shaped details.",
+    "references": ["docs/anti-patterns/jsonb_everything.md"]
+  },
+  {
+    "id": "partition_too_early",
+    "title": "Partition Too Early",
+    "summary": "Partitioning is introduced before table size, retention, or maintenance pressure justifies it. The team pays routing and uniqueness complexity without operational benefit.",
+    "triggered_when": ["A table is partitioned because it may be large someday, with no retention or pruning workload."],
+    "recommended_alternative": "Start with clear indexes and retention signals, then partition when pruning, maintenance, or archive needs are measured.",
+    "references": ["docs/anti-patterns/partition_too_early.md"]
+  },
+  {
+    "id": "vector_before_lexical",
+    "title": "Vector Before Lexical",
+    "summary": "Semantic search is adopted before exact terms, filters, permissions, and full-text ranking are understood. The result is expensive retrieval with weak explainability.",
+    "triggered_when": ["A search feature jumps to embeddings while users still need phrases, names, categories, or access filters."],
+    "recommended_alternative": "Build lexical search, metadata filters, and ranking first; add pgvector only when semantic distance solves measured misses.",
+    "references": ["docs/anti-patterns/vector_before_lexical.md"]
+  },
+  {
+    "id": "shard_without_distribution_key",
+    "title": "Shard Without Distribution Key",
+    "summary": "A distributed cluster is proposed without a distribution key that appears on hot reads and writes. Cross-shard work replaces the expected scale-out benefit.",
+    "triggered_when": ["The workload cannot name a tenant, account, or entity key that scopes most hot queries."],
+    "recommended_alternative": "Stay single-primary or partitioned until locality is proven, then test a distribution key against real query traces.",
+    "references": ["docs/anti-patterns/shard_without_distribution_key.md"]
+  },
+  {
+    "id": "replica_as_performance_bandage",
+    "title": "Replica as Performance Bandage",
+    "summary": "Read replicas are added to hide missing indexes, bad query shapes, or excessive application chatter. The root problem remains and now includes lag.",
+    "triggered_when": ["Slow primary queries are routed to replicas before plans, indexes, and freshness needs are reviewed."],
+    "recommended_alternative": "Tune query shape and indexes first; add replicas for isolation or availability when stale reads are acceptable.",
+    "references": ["docs/anti-patterns/replica_as_performance_bandage.md"]
+  },
+  {
+    "id": "no_pooling_high_connections",
+    "title": "No Pooling With High Connections",
+    "summary": "Application worker growth is handled by raising max_connections instead of controlling concurrency. PostgreSQL spends memory and scheduling effort on sessions rather than useful work.",
+    "triggered_when": ["Autoscaled services create hundreds of mostly idle database sessions without PgBouncer or disciplined pools."],
+    "recommended_alternative": "Use bounded application pools and PgBouncer where connection churn or session count is the measured bottleneck.",
+    "references": ["docs/anti-patterns/no_pooling_high_connections.md"]
+  },
+  {
+    "id": "geo_logic_without_postgis",
+    "title": "Geo Logic Without PostGIS",
+    "summary": "Spatial product behavior is implemented with loose latitude and longitude math. Correctness, indexing, and coordinate semantics become application folklore.",
+    "triggered_when": ["Queries ask within, intersects, nearest, or service-zone questions without spatial types and indexes."],
+    "recommended_alternative": "Use PostGIS when spatial predicates are product behavior; keep core numeric coordinates only for display metadata.",
+    "references": ["docs/anti-patterns/geo_logic_without_postgis.md"]
+  },
+  {
+    "id": "no_restore_drills",
+    "title": "No Restore Drills",
+    "summary": "Backups exist but are not restored on a schedule. The team has no evidence that RTO, RPO, extensions, and runbooks work under pressure.",
+    "triggered_when": ["Operational plans mention backups but have no recent restore timestamp, owner, or validation query."],
+    "recommended_alternative": "Schedule restore drills that prove data, extensions, permissions, and application smoke checks on a fresh target.",
+    "references": ["docs/anti-patterns/no_restore_drills.md"]
+  },
+  {
+    "id": "arrays_over_child_tables",
+    "title": "Arrays Over Child Tables",
+    "summary": "Arrays are used for values that need identity, constraints, joins, or audit. The model looks compact while application code grows special cases.",
+    "triggered_when": ["Array elements need per-element metadata, ownership, history, or frequent filtering."],
+    "recommended_alternative": "Use child tables for entities and relationships; keep arrays for small bounded sets read as a unit.",
+    "references": ["docs/anti-patterns/arrays_over_child_tables.md"]
+  },
+  {
+    "id": "unused_indexes",
+    "title": "Unused Indexes",
+    "summary": "Indexes remain after query paths change or were created speculatively. They slow writes, consume storage, and lengthen restore or rebuild windows.",
+    "triggered_when": ["pg_stat_user_indexes shows sustained zero scans for non-constraint indexes across representative traffic."],
+    "recommended_alternative": "Review evidence, drop unused indexes carefully, and keep workload-backed indexes tied to known query shapes.",
+    "references": ["docs/anti-patterns/unused_indexes.md"]
+  },
+  {
+    "id": "redundant_indexes",
+    "title": "Redundant Indexes",
+    "summary": "Multiple indexes cover the same leading keys or predicates without distinct workload value. The write path pays for all of them.",
+    "triggered_when": ["A table has overlapping btree indexes such as (tenant_id) and (tenant_id, created_at) without a proven reason."],
+    "recommended_alternative": "Consolidate indexes around real query predicates, uniqueness requirements, and covering needs.",
+    "references": ["docs/anti-patterns/redundant_indexes.md"]
+  },
+  {
+    "id": "vacuum_starvation_by_long_txn",
+    "title": "Vacuum Starvation by Long Transaction",
+    "summary": "Long transactions hold old snapshots and prevent vacuum from reclaiming dead tuples. Bloat and wraparound risk grow while the root blocker may look idle.",
+    "triggered_when": ["Autovacuum is running but dead tuples grow because old transactions or replication slots hold xmin back."],
+    "recommended_alternative": "Bound transaction duration, monitor xmin blockers, and separate batch/reporting work from OLTP sessions.",
+    "references": ["docs/anti-patterns/vacuum_starvation_by_long_txn.md"]
+  },
+  {
+    "id": "naive_wall_clock_timestamp",
+    "title": "Naive Wall Clock Timestamp",
+    "summary": "Local wall-clock timestamps are stored where event time or schedule semantics need explicit timezone handling. Ambiguous times create reporting and booking errors.",
+    "triggered_when": ["The model stores local timestamp without timezone for cross-region events, audits, or daylight-saving-sensitive schedules."],
+    "recommended_alternative": "Use timestamptz for instants and model local schedule intent separately with timezone or range semantics.",
+    "references": ["docs/anti-patterns/naive_wall_clock_timestamp.md"]
+  },
+  {
+    "id": "fdw_without_pushdown_verification",
+    "title": "FDW Without Pushdown Verification",
+    "summary": "Foreign tables become hot paths without checking whether filters, joins, and limits execute remotely. Network transfer replaces local planning.",
+    "triggered_when": ["EXPLAIN output for FDW queries is not reviewed before production traffic depends on the bridge."],
+    "recommended_alternative": "Use EXPLAIN VERBOSE to confirm remote SQL, constrain FDW to bounded paths, and create an exit plan.",
+    "references": ["docs/anti-patterns/fdw_without_pushdown_verification.md"]
+  }
+]

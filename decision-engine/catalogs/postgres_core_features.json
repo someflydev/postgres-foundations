@@ -1,0 +1,162 @@
+[
+  {
+    "id": "constraints",
+    "title": "Constraints",
+    "summary": "Primary keys, foreign keys, unique constraints, and check constraints are the first place PostgreSQL should enforce business truth. They belong on the write boundary where concurrent sessions, bulk imports, background jobs, and application releases all meet the same data. Use them when identity, ownership, valid status, positive amounts, referential integrity, or tenant scoping must not depend on one application code path behaving well. Constraints also make later recommendations easier to explain because the engine can assume the model has explicit invariants instead of soft convention. They are not a substitute for thoughtful modeling: a check that encodes unclear business policy will still be brittle, and foreign keys on the wrong ownership boundary can couple services that should exchange events. The failure mode to watch is application-only validation, especially in OLTP systems where race conditions create duplicates or orphaned rows before review sees the bug.",
+    "introduced_in_phase": 3,
+    "applies_to_data_shapes": ["relational_core", "semi_structured_jsonb", "arrays_small_sets", "geospatial", "append_only_events"],
+    "applies_to_workload_patterns": ["oltp_heavy", "geo_query_heavy"],
+    "failure_modes": ["Missing constraints allow duplicate identities, orphaned rows, and invalid states under concurrency."],
+    "references": ["docs/constraints-cookbook.md", "lessons/phase-03-relational-foundations"]
+  },
+  {
+    "id": "jsonb",
+    "title": "JSONB",
+    "summary": "JSONB is PostgreSQL core storage for document-shaped values that still need transactions, backups, SQL access, and optional indexing near relational data. It fits sparse provider payloads, external snapshots, audit context, feature metadata, and attributes whose shape changes faster than the durable entity model. The core-first posture is to keep hot facts in typed columns and let JSONB hold cold or variable detail. When a key becomes filtered, joined, sorted, constrained, or reported every day, promote it deliberately with a column, backfill, validation query, and writer migration. JSONB should not be recommended just because the team wants schema flexibility; it can hide misspellings, mixed types, missing keys, and costly expression filters. The failure mode is JSONB-everything modeling, where tenant, status, amount, email, and timestamps disappear from relational review until production queries become slow and correctness depends on application extraction code.",
+    "introduced_in_phase": 4,
+    "applies_to_data_shapes": ["semi_structured_jsonb"],
+    "applies_to_workload_patterns": ["oltp_heavy", "search_heavy"],
+    "failure_modes": ["Hot facts hidden inside JSONB lose type checks, planner visibility, and schema review."],
+    "references": ["docs/anti-patterns/jsonb_everything.md", "lessons/phase-04-postgresql-data-modeling"]
+  },
+  {
+    "id": "arrays",
+    "title": "Arrays",
+    "summary": "Arrays are useful when a value is a small, bounded set that is usually read or written as a unit. Tags, flags, compact denormalized helpers, and display-oriented lists can be reasonable array uses when the elements do not need independent identity. They keep simple models simple and can be indexed for containment or membership when the workload proves it. The core-first caution is that arrays are not child tables. If each element needs permissions, audit, timestamps, relationships, deduplication rules, or frequent joins, the relational model should surface that element as a row. Arrays also need honest cardinality expectations; an array that grows without bound can become an update hotspot and a query-shape trap. The failure mode is arrays-over-child-tables, where compact DDL hides a many-to-many relationship and forces application code to reinvent constraints that PostgreSQL already handles well.",
+    "introduced_in_phase": 4,
+    "applies_to_data_shapes": ["arrays_small_sets"],
+    "applies_to_workload_patterns": ["oltp_heavy", "search_heavy"],
+    "failure_modes": ["Growing arrays can hide many-to-many relationships and make element-level constraints impossible."],
+    "references": ["docs/anti-patterns/arrays_over_child_tables.md", "lessons/phase-04-postgresql-data-modeling"]
+  },
+  {
+    "id": "ranges",
+    "title": "Ranges",
+    "summary": "Range types model intervals directly instead of spreading interval semantics across loosely related start and end columns. They are a strong fit for bookings, validity windows, price bands, measurement limits, and scheduling rules where containment, overlap, adjacency, and bound handling are central questions. Ranges make SQL clearer because operators such as overlap and contains express business intent directly, and they pair naturally with GiST indexes and exclusion constraints. The core-first recommendation is to use ranges before inventing ad hoc interval logic in application code. They still require careful domain decisions: inclusive and exclusive bounds, timezone policy, empty ranges, and canonicalization must match the product rule. The failure mode is naive wall-clock or timestamp-pair modeling, especially when concurrent scheduling checks run outside the database and allow overlapping reservations that the database could have rejected deterministically.",
+    "introduced_in_phase": 4,
+    "applies_to_data_shapes": ["ranges_windows", "multiranges_availability"],
+    "applies_to_workload_patterns": ["oltp_heavy"],
+    "failure_modes": ["Naive timestamp pairs often permit overlaps, invalid bounds, and timezone confusion."],
+    "references": ["docs/concurrency-playbook.md", "lessons/phase-04-postgresql-data-modeling"]
+  },
+  {
+    "id": "multiranges",
+    "title": "Multiranges",
+    "summary": "Multiranges represent sets of intervals as one value, which is useful when the business question is availability, blackout windows, or coverage rather than the lifecycle of each segment. They avoid expanding every interval into many rows while preserving range operators for containment and overlap. Scheduling systems can use them to describe available blocks, blocked periods, or capacity windows when the set is naturally owned by one entity. The core-first caution is to separate compact representation from missing entities. If each interval needs its own audit record, source, approval state, or conflict history, rows are clearer and easier to govern. Multiranges also inherit the same bound and timezone decisions as ranges. The failure mode is over-compressing operational facts into a multirange and later discovering that support, compliance, or reconciliation needs to explain exactly which interval changed and why.",
+    "introduced_in_phase": 4,
+    "applies_to_data_shapes": ["multiranges_availability", "ranges_windows"],
+    "applies_to_workload_patterns": ["oltp_heavy"],
+    "failure_modes": ["They become hard to reason about when each segment needs its own lifecycle or audit trail."],
+    "references": ["docs/concurrency-playbook.md", "lessons/phase-04-postgresql-data-modeling"]
+  },
+  {
+    "id": "partitioning",
+    "title": "Declarative Partitioning",
+    "summary": "Declarative partitioning splits one logical table into smaller physical partitions by a stable key such as time, tenant, or region. It is a core PostgreSQL answer to retention, maintenance windows, bulk detach or archive operations, and planner pruning on large tables. The right trigger is measured pressure: table size makes vacuum or index maintenance expensive, retention differs between hot and cold data, or most queries naturally target a narrow partition range. Partitioning is not a generic performance switch. It changes uniqueness rules, foreign-key expectations, migration work, monitoring, and operational procedures. It can also create many small indexes that are harder to reason about than one ordinary table. The failure mode is partitioning too early, where a team adopts the complexity before retention or pruning pays for it and then spends future prompts repairing a premature physical design.",
+    "introduced_in_phase": 9,
+    "applies_to_data_shapes": ["append_only_events", "time_series_metrics"],
+    "applies_to_workload_patterns": ["append_heavy", "analytics_adjacent", "strong_tenant_locality"],
+    "failure_modes": ["Early partitioning adds routing, uniqueness, and maintenance complexity before it pays for itself."],
+    "references": ["docs/partitioning-playbook.md", "docs/anti-patterns/partition_too_early.md"]
+  },
+  {
+    "id": "full_text_search",
+    "title": "Full-text Search",
+    "summary": "PostgreSQL full-text search provides tokenization, dictionaries, lexemes, ranking, snippets, and GIN-backed lexical retrieval inside the same transactional database as the documents and permissions. It should be evaluated before pgvector or a separate search system when users need words, phrases, names, categories, filters, and explainable ranking. Generated tsvector columns and targeted indexes make the behavior inspectable, testable, and close to data freshness rules. Full-text search is not a universal search product: typo tolerance may need pg_trgm, deep language analysis may need specialized tooling, and semantic retrieval may eventually need embeddings. The core-first rule is to prove lexical behavior first because it establishes exact-term expectations and access filters. The failure mode is vector-before-lexical design, where an expensive semantic layer bypasses the ordinary facts that make search useful and auditable.",
+    "introduced_in_phase": 8,
+    "applies_to_data_shapes": ["full_text_docs", "embeddings_vectors"],
+    "applies_to_workload_patterns": ["search_heavy", "semantic_retrieval"],
+    "failure_modes": ["Skipping lexical search often produces opaque semantic retrieval that misses exact terms and permission filters."],
+    "references": ["docs/search-playbook.md", "docs/anti-patterns/vector_before_lexical.md"]
+  },
+  {
+    "id": "row_level_security",
+    "title": "Row-level Security",
+    "summary": "Row-level security moves tenant or access predicates into PostgreSQL policy so tables carry a common enforcement layer across application queries, admin tooling, and future code paths. It fits shared-schema multi-tenant systems, sensitive document platforms, and workloads where missing tenant scope is a high-impact incident. RLS works best when sessions set identity deliberately, policies are small and reviewable, and tests exercise attacker-shaped sessions rather than only happy paths. It is not a checkbox substitute for data modeling or application authorization. Operational paths such as migrations, background jobs, support access, and reporting need explicit roles and bypass decisions. The failure mode is adding policies without tests or session discipline, which can create false confidence, surprising denials, or gaps where a privileged maintenance path accidentally becomes the real application access pattern.",
+    "introduced_in_phase": 10,
+    "applies_to_data_shapes": ["relational_core"],
+    "applies_to_workload_patterns": ["strong_tenant_locality", "oltp_heavy"],
+    "failure_modes": ["Untested policies can create false confidence or block maintenance paths unexpectedly."],
+    "references": ["docs/rls-playbook.md", "lessons/phase-10-security-and-replication"]
+  },
+  {
+    "id": "physical_replication",
+    "title": "Physical Replication",
+    "summary": "Physical replication keeps byte-for-byte standby servers that can support high availability, disaster recovery posture, and read isolation for workloads that tolerate lag. It is core PostgreSQL infrastructure rather than a modeling feature, so it should be recommended from operational requirements: recovery objectives, maintenance windows, failover posture, and known read isolation needs. Physical replicas do not make writes scale horizontally and do not fix inefficient primary queries. They also introduce lag, routing, promotion, monitoring, and rehearsal obligations. A read replica serving product traffic needs a freshness contract because users may observe stale data after writes. The failure mode is using replicas as a performance bandage before query plans, indexes, and connection behavior have been reviewed. That adds topology complexity while preserving the root query or modeling problem.",
+    "introduced_in_phase": 10,
+    "applies_to_data_shapes": ["relational_core", "append_only_events", "time_series_metrics"],
+    "applies_to_workload_patterns": ["read_heavy", "analytics_adjacent", "replication_fanout"],
+    "failure_modes": ["Replicas used as a performance bandage hide root-cause query and index problems."],
+    "references": ["docs/logical-replication-playbook.md", "docs/admin-track/a6-replication-ha-playbook.md"]
+  },
+  {
+    "id": "logical_replication",
+    "title": "Logical Replication",
+    "summary": "Logical replication publishes selected table changes so PostgreSQL can support migrations, downstream consumers, blue-green upgrades, and coexistence between systems. It is useful when the data movement boundary is explicit: which tables publish, which columns matter, how schema changes are coordinated, and what lag means for users. Logical replication is not a backup replacement or a general distributed transaction system. Publications, subscriptions, replication slots, identity columns, conflict expectations, and DDL drift all need ownership. It pairs well with append-heavy facts and modernization bridges where consumers can tolerate replay semantics. The failure mode is creating replication fanout without slot monitoring or restore drills, allowing WAL retention, lag, or schema mismatch to become a primary-database incident. A good recommendation includes operational checks, not only topology enthusiasm.",
+    "introduced_in_phase": 10,
+    "applies_to_data_shapes": ["append_only_events", "foreign_postgres_access"],
+    "applies_to_workload_patterns": ["replication_fanout", "migration_bridge", "append_heavy"],
+    "failure_modes": ["Unmonitored slots can retain WAL until the primary is under storage pressure."],
+    "references": ["docs/logical-replication-playbook.md", "docs/admin-track/a6-replication-ha-playbook.md"]
+  },
+  {
+    "id": "postgres_fdw",
+    "title": "postgres_fdw",
+    "summary": "postgres_fdw is a core contrib extension for querying remote PostgreSQL servers through foreign tables. In the core feature catalog it represents PostgreSQL's built-in federation bridge, while the extension catalog covers the managed-service and operational posture in more detail. It fits migrations, coexistence, validation reads, and bounded read-through access when two PostgreSQL systems must overlap temporarily. The right design names the remote owner, credentials, latency expectations, pushdown behavior, and exit plan. It is not a way to avoid data ownership decisions or make remote joins feel local. Hot-path FDW queries can transfer large row sets if predicates do not push down, and local backups do not contain remote data. The failure mode is FDW without pushdown verification, where an apparently simple SQL query hides network, planner, and ownership complexity.",
+    "introduced_in_phase": 10,
+    "applies_to_data_shapes": ["foreign_postgres_access"],
+    "applies_to_workload_patterns": ["migration_bridge"],
+    "failure_modes": ["Permanent hot-path FDW joins can hide network latency and weak remote filtering."],
+    "references": ["docs/extension-track/e6-postgres-fdw.md", "docs/anti-patterns/fdw_without_pushdown_verification.md"]
+  },
+  {
+    "id": "materialized_views",
+    "title": "Materialized Views",
+    "summary": "Materialized views cache derived query results in PostgreSQL so expensive joins, rollups, search helpers, or bridge reads can be refreshed on a deliberate cadence. They fit analytics-adjacent reporting, read-heavy dashboards, derived hierarchy views, and foreign-data snapshots when users can accept defined staleness. A materialized view recommendation should always name freshness, refresh cost, indexes on the materialized result, and ownership of failed refreshes. It is not a transparent cache; consumers read old data until refresh completes, and concurrent refresh has requirements of its own. Materialized views can reduce primary query pressure, but they can also create a second source of confusion if the refresh process is not observable. The failure mode is using a materialized view to hide unclear data ownership or slow queries without explaining when the cached result is valid.",
+    "introduced_in_phase": 6,
+    "applies_to_data_shapes": ["hierarchy_paths", "full_text_docs", "time_series_metrics", "embeddings_vectors", "foreign_postgres_access"],
+    "applies_to_workload_patterns": ["read_heavy", "analytics_adjacent", "search_heavy"],
+    "failure_modes": ["Undefined refresh cadence creates stale dashboards or refresh jobs that compete with OLTP traffic."],
+    "references": ["docs/indexing-playbook-part2.md", "lessons/phase-06-query-composition"]
+  },
+  {
+    "id": "partial_indexes",
+    "title": "Partial Indexes",
+    "summary": "Partial indexes index only rows matching a predicate, which makes them valuable for skewed states such as active, pending, unprocessed, recent, or tenant-specific subsets. They are a core indexing answer when the workload repeatedly asks for a small, meaningful slice of a much larger table. The predicate must be stable and present in the important query shapes; otherwise the planner cannot use the index and the write path still pays maintenance cost. Partial indexes are especially useful for OLTP and append-heavy tables where full indexes would be too large or too expensive. They should be chosen from query evidence, not from every status value a team can imagine. The failure mode is speculative indexing: a partial index with a clever predicate that production queries do not actually use becomes unused-index overhead and can mislead future tuning.",
+    "introduced_in_phase": 7,
+    "applies_to_data_shapes": ["semi_structured_jsonb", "arrays_small_sets", "append_only_events", "time_series_metrics"],
+    "applies_to_workload_patterns": ["oltp_heavy", "read_heavy", "append_heavy", "strong_tenant_locality"],
+    "failure_modes": ["A partial index with a predicate the application does not use becomes invisible write overhead."],
+    "references": ["docs/indexing-playbook-part1.md", "lessons/phase-07-indexing"]
+  },
+  {
+    "id": "expression_indexes",
+    "title": "Expression Indexes",
+    "summary": "Expression indexes make deterministic computed predicates indexable without duplicating normalized values in application-managed columns. Common examples include lower(email), normalized external identifiers, date buckets, generated search support, and selected JSONB extraction when a key has become hot. They fit when the expression is stable, repeatable, and appears consistently in queries or uniqueness rules. Expression indexes are a core-first tool because they keep normalization logic visible in DDL and query plans. They can still fail quietly if the application uses a different expression, collation, cast, or function than the index definition. They also add write cost like any other index. The failure mode is semantic drift: the database indexes one normalization rule while application code filters by another, producing slow queries or inconsistent uniqueness behavior.",
+    "introduced_in_phase": 7,
+    "applies_to_data_shapes": ["semi_structured_jsonb", "geospatial"],
+    "applies_to_workload_patterns": ["search_heavy", "oltp_heavy"],
+    "failure_modes": ["Different application expressions can miss the index and create inconsistent semantics."],
+    "references": ["docs/indexing-playbook-part1.md", "lessons/phase-07-indexing"]
+  },
+  {
+    "id": "exclusion_constraints",
+    "title": "Exclusion Constraints",
+    "summary": "Exclusion constraints prevent incompatible rows from existing together by combining operators with index support, most commonly GiST over range values. They are the database-native answer for overlapping appointments, room reservations, validity windows, and any rule where concurrent writes must not create conflicts. The core-first posture is to enforce the conflict where concurrency actually happens: inside PostgreSQL. Application pre-checks can still improve user messages, but the exclusion constraint is the final authority. They require careful operator choice, bound semantics, and test coverage for realistic concurrent sessions. They may also require scoped predicates, such as excluding overlap only for active rows or only within the same resource. The failure mode is application-only overlap detection, where two sessions both see an available interval and then commit a double booking.",
+    "introduced_in_phase": 4,
+    "applies_to_data_shapes": ["ranges_windows", "multiranges_availability"],
+    "applies_to_workload_patterns": ["oltp_heavy"],
+    "failure_modes": ["Application-only overlap checks can pass in parallel sessions and create double bookings."],
+    "references": ["docs/concurrency-playbook.md", "lessons/phase-04-postgresql-data-modeling"]
+  },
+  {
+    "id": "generated_columns",
+    "title": "Generated Columns",
+    "summary": "Generated columns store deterministic values derived from other columns, which makes repeated extraction or normalization part of the database contract. They fit generated search vectors, normalized emails, date buckets, extracted JSONB keys, spatial helpers, and other values that should be indexed or inspected without trusting every writer to calculate them identically. They are a core feature that can turn a formerly ad hoc expression into a visible schema element. The recommendation should still ask whether the derived value is truly mechanical; business workflow state should usually be modeled directly, not hidden in a generated expression. Generated columns add storage and write-time calculation, and changing the expression is a migration. The failure mode is using generated values to paper over an unclear model, especially when the expression becomes a second place where business policy is encoded.",
+    "introduced_in_phase": 4,
+    "applies_to_data_shapes": ["semi_structured_jsonb", "full_text_docs", "geospatial", "embeddings_vectors"],
+    "applies_to_workload_patterns": ["search_heavy", "semantic_retrieval", "geo_query_heavy"],
+    "failure_modes": ["Generated values can become misleading if the expression hides business logic that should be modeled directly."],
+    "references": ["docs/search-playbook.md", "docs/domain-conventions.md"]
+  }
+]
