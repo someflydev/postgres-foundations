@@ -40,6 +40,7 @@ console = Console()
 COMPOSE_PROFILE_EXPECTATIONS = {
     "postgis": ("postgis/postgis:16-3.4", "${POSTGIS_PORT:-5436}:5432"),
     "pgvector": ("pgvector/pgvector:pg16", "${PGVECTOR_PORT:-5437}:5432"),
+    "timescale": ("timescale/timescaledb:2.15.3-pg16", "${TIMESCALE_PORT:-5438}:5432"),
 }
 
 
