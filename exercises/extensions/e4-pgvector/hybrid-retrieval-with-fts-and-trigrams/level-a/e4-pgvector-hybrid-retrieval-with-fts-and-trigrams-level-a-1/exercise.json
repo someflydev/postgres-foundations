@@ -1,0 +1,54 @@
+{
+  "id": "e4-pgvector-hybrid-retrieval-with-fts-and-trigrams-level-a-1",
+  "title": "Hybrid Retrieval with FTS and Trigrams Level A1",
+  "lesson_id": "e4-pgvector-hybrid-retrieval-with-fts-and-trigrams",
+  "scaffolding_level": "A",
+  "kind": "query",
+  "allowed_concepts": [
+    "btree_index",
+    "embeddings",
+    "fts",
+    "full_text_search",
+    "hnsw",
+    "hybrid_search",
+    "not_yet_logic",
+    "pgvector",
+    "semantic_retrieval"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 8,
+    "tables": [
+      "documents.docs",
+      "documents.doc_categories"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "document_search",
+    "max_rows_hint": 5000
+  },
+  "search_path": "documents, public",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses PostgreSQL evidence rather than unsupported assertion.",
+    "Names the core-first alternative or not-yet boundary.",
+    "Includes a verification step tied to the workload signal."
+  ],
+  "time_target_minutes": 15,
+  "rubric_id": "extension-posture",
+  "solution_path": "solution.sql",
+  "tags": [
+    "extensions",
+    "e4",
+    "hybrid-retrieval-with-fts-and-trigrams",
+    "a"
+  ],
+  "status": "active",
+  "starter_path": "starter.sql",
+  "hints": [
+    "Start with the core PostgreSQL behavior and name the missing capability.",
+    "Keep the verification query small enough to explain in a deploy review."
+  ]
+}

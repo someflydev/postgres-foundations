@@ -16,6 +16,10 @@ Use lexical FTS when exact words, stems, titles, bodies, tags, authors, and cate
 
 `pgvector` is useful when users need meaning similarity rather than lexical overlap: related concepts, paraphrases, recommendations, or embedding-backed retrieval. It is deliberately later, in Phase E4, PROMPT_35. Do not use vector search to skip basic lexical evidence.
 
+The extension deep-dive is `docs/extension-track/e4-pgvector.md`, with authored lessons under `lessons/extensions/e4-pgvector/`. Treat vector search as one retrieval signal, not as a replacement for filters, ranking, or lexical diagnostics. Hybrid designs should keep core FTS and trigram evidence visible, then add vector distance only where semantic recall changes the product outcome.
+
+The lab seed uses deterministic fake embeddings when the `vector` extension is available. They are placeholders for mechanics: column type, distance operator, exact search, HNSW index, and recall experiments. They are not meaningful semantic vectors and should not be used as evidence that a production embedding model will behave the same way.
+
 ## Not Yet Logic
 
 Stay with core FTS when the workload is explainable as words in documents, ranking by fields, snippets, and ordinary filters. Reach for `pg_trgm` when typo tolerance is the missing capability. Reach for `pgvector` when meaning similarity is the requirement. Consider an external engine only when operators need search-specific scaling, analyzers, relevance controls, or multi-index operations that PostgreSQL cannot carry without becoming the wrong bottleneck.

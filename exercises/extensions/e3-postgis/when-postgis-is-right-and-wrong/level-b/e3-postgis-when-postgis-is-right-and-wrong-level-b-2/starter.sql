@@ -1,0 +1,2 @@
+-- Start from the workload signal for When PostGIS Is Right and Wrong.
+-- Replace this with the smallest query that proves or rejects the extension need.

@@ -1,0 +1,59 @@
+{
+  "id": "e3-postgis-raster-preview",
+  "title": "Raster Preview",
+  "module_id": "e3-postgis",
+  "capability_layer": "extension_mastery",
+  "summary": "Deep extension lesson for raster support as a specialized domain rather than a casual add-on.",
+  "learning_objectives": [
+    "Explain when PostGIS is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-04-data-modeling-and-relational-design"
+  ],
+  "concepts_introduced": [
+    "geography",
+    "geometry",
+    "gist_index",
+    "postgis",
+    "raster_preview",
+    "spatial_predicates",
+    "srid"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "e3-postgis-raster-preview-level-a-1",
+    "e3-postgis-raster-preview-level-a-2",
+    "e3-postgis-raster-preview-level-b-1",
+    "e3-postgis-raster-preview-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "e3-postgis-raster-preview-level-c-1",
+    "e3-postgis-raster-preview-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "e3-postgis-raster-preview-level-d-1",
+    "e3-postgis-raster-preview-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-e3-postgis",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "e3",
+    "postgis",
+    "raster-preview"
+  ],
+  "status": "active"
+}

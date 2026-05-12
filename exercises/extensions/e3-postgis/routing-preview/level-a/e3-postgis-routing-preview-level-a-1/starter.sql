@@ -1,0 +1,2 @@
+-- Start from the workload signal for Routing Preview.
+-- Replace this with the smallest query that proves or rejects the extension need.

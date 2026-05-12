@@ -1,0 +1,3 @@
+# Solution
+
+Argue from evidence. Name the core PostgreSQL alternative, the workload signal that is missing, the PostGIS capability being considered, and the operational cost. End with a verification query and a not-yet condition that would stop the rollout.
