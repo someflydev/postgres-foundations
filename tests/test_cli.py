@@ -39,6 +39,8 @@ def test_doctor_runs_without_real_docker() -> None:
     assert "Docker version 27.0.0" in result.output
     assert "Compose profile: postgis" in result.output
     assert "Compose profile: pgvector" in result.output
+    assert "Compose profile: citus" in result.output
+    assert "Compose profile: pgpartman" in result.output
 
 
 def test_content_list_lesson_shows_scaffolded_draft() -> None:

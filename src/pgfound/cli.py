@@ -38,9 +38,15 @@ from pgfound.review.output import report as review_report
 console = Console()
 
 COMPOSE_PROFILE_EXPECTATIONS = {
-    "postgis": ("postgis/postgis:16-3.4", "${POSTGIS_PORT:-5436}:5432"),
-    "pgvector": ("pgvector/pgvector:pg16", "${PGVECTOR_PORT:-5437}:5432"),
-    "timescale": ("timescale/timescaledb:2.15.3-pg16", "${TIMESCALE_PORT:-5438}:5432"),
+    "postgis": ("postgis", "postgis/postgis:16-3.4", "${POSTGIS_PORT:-5436}:5432"),
+    "pgvector": ("pgvector", "pgvector/pgvector:pg16", "${PGVECTOR_PORT:-5437}:5432"),
+    "timescale": (
+        "timescale",
+        "timescale/timescaledb:2.15.3-pg16",
+        "${TIMESCALE_PORT:-5438}:5432",
+    ),
+    "citus": ("citus-coordinator", "citusdata/citus:12.1", "${CITUS_PORT:-5439}:5432"),
+    "pgpartman": ("pgpartman", "build: ./pg-with-partman", "${PGPARTMAN_PORT:-5440}:5432"),
 }
 
 
@@ -100,15 +106,26 @@ def _compose_profile_checks() -> list[tuple[str, bool, str]]:
 
     services = data.get("services", {})
     checks: list[tuple[str, bool, str]] = []
-    for service_name, (image, port) in COMPOSE_PROFILE_EXPECTATIONS.items():
+    for profile_name, (service_name, image, port) in COMPOSE_PROFILE_EXPECTATIONS.items():
         service = services.get(service_name, {})
+        actual_image = service.get("image")
+        if image.startswith("build: "):
+            expected_build = image.removeprefix("build: ")
+            build = service.get("build", {})
+            if isinstance(build, dict):
+                actual_image = f"build: {build.get('context')}"
+            else:
+                actual_image = f"build: {build}"
+            image_ok = actual_image == f"build: {expected_build}"
+        else:
+            image_ok = actual_image == image
         ok = (
-            service.get("image") == image
-            and service.get("profiles") == [service_name]
+            image_ok
+            and service.get("profiles") == [profile_name]
             and port in service.get("ports", [])
         )
-        detail = f"{service_name}: {service.get('image', 'missing')} on {port}"
-        checks.append((f"Compose profile: {service_name}", ok, detail))
+        detail = f"{service_name}: {actual_image or 'missing'} on {port}"
+        checks.append((f"Compose profile: {profile_name}", ok, detail))
     return checks
 
 

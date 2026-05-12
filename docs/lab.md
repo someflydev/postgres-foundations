@@ -178,6 +178,35 @@ psql "postgresql://pgfound:pgfound@localhost:5438/pgfound" \
   -c "CREATE TABLE metrics(ts timestamptz NOT NULL, value numeric); SELECT create_hypertable('metrics', by_range('ts')); INSERT INTO metrics VALUES (now(), 1); SELECT count(*) FROM metrics;"
 ```
 
+Citus runs behind the `citus` profile with one coordinator and two worker
+containers, all pinned to `citusdata/citus:12.1`. The coordinator listens on
+host port 5439 and the init script registers both workers:
+
+```sh
+docker compose -f docker/docker-compose.yml --profile citus up -d \
+  citus-coordinator citus-worker-1 citus-worker-2
+psql "postgresql://pgfound:pgfound@localhost:5439/pgfound" \
+  -c "SELECT * FROM citus_get_active_worker_nodes();"
+```
+
+Use this profile only for extension-track Citus labs. Keep ordinary partition,
+index, and tenant-design drills on the normal single-node lab until a prompt or
+exercise explicitly asks for distributed tables.
+
+pg_partman runs behind the `pgpartman` profile. It builds
+`docker/pg-with-partman/Dockerfile`, exposes PostgreSQL on host port 5440, and
+preloads the pg_partman background worker alongside `pg_stat_statements`:
+
+```sh
+docker compose -f docker/docker-compose.yml --profile pgpartman up -d pgpartman
+psql "postgresql://pgfound:pgfound@localhost:5440/pgfound" \
+  -c "SELECT extname FROM pg_extension WHERE extname = 'pg_partman';"
+```
+
+Use this profile for partition maintenance labs that need `partman.create_parent`,
+`partman.run_maintenance_proc`, premake windows, and retention checks. The
+normal `pg` service remains the baseline for manual Phase 9 partitioning.
+
 Use this profile only for extension-track E5 labs. Phase 9 partitioning labs
 continue to run against the normal PostgreSQL service so learners can compare
 core partitioning with TimescaleDB rather than mixing the two environments.

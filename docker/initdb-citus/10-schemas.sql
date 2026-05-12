@@ -1,0 +1,7 @@
+\connect pgfound
+
+CREATE SCHEMA IF NOT EXISTS pgfound AUTHORIZATION pgfound;
+CREATE SCHEMA IF NOT EXISTS _admin AUTHORIZATION pgfound;
+
+GRANT USAGE ON SCHEMA pgfound TO pgfound;
+GRANT USAGE ON SCHEMA _admin TO pgfound;

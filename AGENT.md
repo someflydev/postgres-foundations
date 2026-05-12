@@ -58,6 +58,8 @@ concrete, operational, and PostgreSQL core-first.
 - PostGIS lab up: `docker compose -f docker/docker-compose.yml --profile postgis up -d postgis`
 - pgvector lab up: `docker compose -f docker/docker-compose.yml --profile pgvector up -d pgvector`
 - TimescaleDB lab up: `docker compose -f docker/docker-compose.yml --profile timescale up -d timescale`
+- Citus lab up: `docker compose -f docker/docker-compose.yml --profile citus up -d citus-coordinator citus-worker-1 citus-worker-2`
+- pg_partman lab up: `docker compose -f docker/docker-compose.yml --profile pgpartman up -d pgpartman`
 - Ops top statements: `uv run pgfound ops query top-by-total-time`
 - Ops blocking chain: `uv run pgfound ops query blocking-chain`
 - Ops replica lag: `uv run pgfound ops query replica-lag`
