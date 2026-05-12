@@ -10,8 +10,8 @@
     "portability_requirements": "prefer_core_postgresql",
     "operational_tolerance": "low"
   },
-  "data_shapes": ["tenant_owned_records"],
-  "workload_patterns": ["account_dashboard_reads"],
+  "data_shapes": ["relational_core"],
+  "workload_patterns": ["read_heavy"],
   "suggested_lessons": ["phase0-select-basics"],
   "suggested_exercises": ["phase0-select-one"],
   "suggested_capstone_id": "starter-saas-capstone",

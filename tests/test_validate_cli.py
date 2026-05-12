@@ -49,7 +49,9 @@ def test_content_validate_reports_valid_and_invalid_temp_content(tmp_path: Path)
 
 
 def test_content_validate_strict_turns_warnings_into_errors(tmp_path: Path) -> None:
-    _write_json(tmp_path / "scenarios" / "scenario.json", _example("scenario"))
+    scenario = _example("scenario")
+    scenario["data_shapes"] = ["unknown_shape"]
+    _write_json(tmp_path / "scenarios" / "scenario.json", scenario)
 
     result = CliRunner().invoke(
         main,
@@ -57,4 +59,4 @@ def test_content_validate_strict_turns_warnings_into_errors(tmp_path: Path) -> N
     )
 
     assert result.exit_code != 0
-    assert "decision-engine catalog missing" in result.output
+    assert "data_shapes slug 'unknown_shape' is not present" in result.output

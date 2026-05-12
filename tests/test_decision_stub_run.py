@@ -22,5 +22,4 @@ def test_decision_run_writes_empty_valid_report(tmp_path) -> None:
     validate_report(report)
     assert report["intake_id"] == "saas-multi-tenant-minimal"
     assert report["recommendations"] == []
-    assert any("catalogs not yet authored" in warning["message"] for warning in report["warnings"])
     assert any("rules not yet authored" in warning["message"] for warning in report["warnings"])
