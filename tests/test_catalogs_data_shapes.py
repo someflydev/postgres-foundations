@@ -34,8 +34,8 @@ def test_data_shapes_catalog_validates_and_has_required_entries() -> None:
         assert decision_engine._sentence_count(entry["summary"]) >= 2
 
 
-def test_data_shape_references_are_warnings_until_anti_patterns_catalog_lands() -> None:
+def test_data_shape_references_resolve_after_prompt_41_catalogs_land() -> None:
     result = decision_engine.check_catalogs()
 
     assert result["errors"] == []
-    assert any("cannot be checked until PROMPT_41" in warning for warning in result["warnings"])
+    assert result["warnings"] == []
