@@ -1,0 +1,61 @@
+{
+  "id": "ltree-when-not-to-use-ltree",
+  "title": "When Not To Use Ltree",
+  "module_id": "ltree",
+  "capability_layer": "extension_mastery",
+  "summary": "ltree extension-track lesson for why most hierarchies are not deep enough to justify a specialized path type, with core-first posture and operational verification.",
+  "learning_objectives": [
+    "Explain when ltree is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-04-modeling-and-relationships"
+  ],
+  "concepts_introduced": [
+    "closure_table",
+    "gin_index",
+    "gist_index",
+    "lquery",
+    "ltree",
+    "ltxtquery",
+    "materialized_path",
+    "not_yet_logic",
+    "recursive_cte",
+    "when_not_to_use_ltree"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "ltree-when-not-to-use-ltree-level-a-1",
+    "ltree-when-not-to-use-ltree-level-a-2",
+    "ltree-when-not-to-use-ltree-level-b-1",
+    "ltree-when-not-to-use-ltree-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "ltree-when-not-to-use-ltree-level-c-1",
+    "ltree-when-not-to-use-ltree-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "ltree-when-not-to-use-ltree-level-d-1",
+    "ltree-when-not-to-use-ltree-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-ltree",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "ltree",
+    "when-not-to-use-ltree"
+  ],
+  "status": "active"
+}

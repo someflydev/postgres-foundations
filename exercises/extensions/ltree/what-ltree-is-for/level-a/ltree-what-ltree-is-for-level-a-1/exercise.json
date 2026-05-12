@@ -1,0 +1,54 @@
+{
+  "id": "ltree-what-ltree-is-for-level-a-1",
+  "title": "What Ltree Is For Level A1",
+  "lesson_id": "ltree-what-ltree-is-for",
+  "scaffolding_level": "A",
+  "kind": "query",
+  "allowed_concepts": [
+    "ltree",
+    "materialized_path",
+    "gist_index",
+    "gin_index",
+    "lquery",
+    "ltxtquery",
+    "recursive_cte",
+    "closure_table",
+    "not_yet_logic"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 4,
+    "tables": [
+      "ecommerce.products",
+      "ecommerce.categories"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 100000
+  },
+  "search_path": "ecommerce, public",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses PostgreSQL evidence rather than unsupported assertion.",
+    "Names the core-first alternative or not-yet boundary.",
+    "Includes a verification step tied to the workload signal."
+  ],
+  "time_target_minutes": 15,
+  "rubric_id": "extension-posture",
+  "solution_path": "solution.sql",
+  "tags": [
+    "extensions",
+    "ltree",
+    "what-ltree-is-for",
+    "a"
+  ],
+  "status": "active",
+  "starter_path": "starter.sql",
+  "hints": [
+    "Start with the core PostgreSQL behavior and name the missing capability.",
+    "Keep the verification query small enough to explain in a deploy review."
+  ]
+}

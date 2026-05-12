@@ -1,0 +1,1 @@
+-- Use ltree evidence for materialized-path hierarchies for category trees, org charts, and nested comment threads. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

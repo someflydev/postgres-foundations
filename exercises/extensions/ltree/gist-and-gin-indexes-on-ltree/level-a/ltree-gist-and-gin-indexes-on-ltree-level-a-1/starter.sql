@@ -1,0 +1,1 @@
+-- Use ltree evidence for GiST and GIN index choices for ltree containment and query patterns. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

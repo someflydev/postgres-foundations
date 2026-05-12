@@ -1,0 +1,1 @@
+Build a categories tree for ecommerce products with ltree paths, then query ancestors and descendants with @>, <@, lquery, and an indexed path lookup.
