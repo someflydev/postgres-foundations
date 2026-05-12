@@ -166,7 +166,13 @@ Completed:
   added capstone posture review signals for PostGIS, pgvector, Citus, and
   TimescaleDB deficiencies; documented those signals; and added extension
   capstone plus posture-signal tests.
+- PROMPT_39: Decision-engine architecture and intake schema; added
+  `decision-engine/` documentation, draft-2020-12 schemas for intakes,
+  catalog slugs, rules, recommendations, and reports; added realistic minimal
+  intake fixtures; implemented `pgfound decision run <intake.json>` with JSON
+  and Markdown report output; and added schema/CLI tests for the validating
+  stub.
 
 Next expected prompt:
 
-- PROMPT_39: Decision-engine architecture and intake schema.
+- PROMPT_40: Industries, data-shapes, and workload-pattern catalogs.

@@ -34,6 +34,7 @@ concrete, operational, and PostgreSQL core-first.
 - Lint: `uv run ruff check .`
 - Test: `uv run pytest -q`
 - CLI smoke: `uv run pgfound --help`
+- Decision stub run: `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json`
 - Content validate: `uv run pgfound content validate`
 - Content examples validate: `uv run pgfound content validate --include-examples`
 - Content lint: `uv run pgfound content lint`

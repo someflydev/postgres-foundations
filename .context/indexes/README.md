@@ -81,6 +81,17 @@ Training-side LLM prompt references introduced by PROMPT_29:
 - `tests/test_llm_render_cli.py`
 - `tests/test_template_completeness.py`
 
+Decision-engine skeleton references introduced by PROMPT_39:
+
+- `decision-engine/README.md`
+- `decision-engine/architecture.md`
+- `decision-engine/schemas/*.schema.json`
+- `decision-engine/fixtures/intakes/*.json`
+- `src/pgfound/decision/`
+- `docs/cli.md`
+- `tests/test_intake_schema.py`
+- `tests/test_decision_stub_run.py`
+
 Administration track references introduced by PROMPT_31:
 
 - `curriculum/admin/map.json`

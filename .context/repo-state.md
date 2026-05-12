@@ -18,6 +18,10 @@ Current baseline:
 - Platform package: PROMPT_04 added config/path helpers, placeholder content
   dataclasses/loaders, Docker Compose wrappers, psql argv building, review and
   decision scaffolds, and `docs/cli.md`.
+- Decision engine architecture: PROMPT_39 replaced the decision stub with
+  `pgfound decision run <intake.json>`, added decision-engine schemas,
+  architecture docs, intake fixtures, JSON/Markdown report writing, and tests
+  for empty-but-valid reports while catalogs/rules are pending.
 - Content validation: PROMPT_05 added draft 2020-12 JSON Schemas under
   `content-schemas/`, one valid example per kind under
   `content-schemas/examples/`, and a real `pgfound content validate` command
