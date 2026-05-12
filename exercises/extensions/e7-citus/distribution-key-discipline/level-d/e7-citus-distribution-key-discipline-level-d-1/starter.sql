@@ -1,0 +1,1 @@
+-- Use Citus evidence for picking a distribution key that aligns with workload locality and understanding the cost of getting it wrong. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

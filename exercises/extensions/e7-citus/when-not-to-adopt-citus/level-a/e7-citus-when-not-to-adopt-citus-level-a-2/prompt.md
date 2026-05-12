@@ -1,0 +1,1 @@
+Use Citus evidence for anti-patterns such as sharding without a distribution key, performance insurance, and avoiding indexing. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

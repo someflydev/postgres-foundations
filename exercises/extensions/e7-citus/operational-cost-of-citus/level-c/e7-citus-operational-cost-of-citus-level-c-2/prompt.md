@@ -1,0 +1,1 @@
+Use Citus evidence for failover, backups, upgrades, and the distributed-system reality behind Citus. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

@@ -1,0 +1,1 @@
+-- Use Citus evidence for when Citus fits tenant isolation and when schemas or RLS in plain PostgreSQL remain the better answer. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

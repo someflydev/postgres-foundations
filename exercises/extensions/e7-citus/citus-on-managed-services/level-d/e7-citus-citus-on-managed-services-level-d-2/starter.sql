@@ -1,0 +1,1 @@
+-- Use Citus evidence for managed Citus posture, with Azure Cosmos DB for PostgreSQL as the primary managed story. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

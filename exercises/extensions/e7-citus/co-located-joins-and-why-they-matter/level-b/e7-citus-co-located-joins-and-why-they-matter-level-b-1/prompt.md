@@ -1,0 +1,1 @@
+Use Citus evidence for why joins are cheap only when rows that must meet live on the same shard. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

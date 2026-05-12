@@ -1,0 +1,1 @@
+-- Diagnose a distributed table joined against a local non-distributed table producing a broadcast that explodes, then propose a reference table or co-location repair.

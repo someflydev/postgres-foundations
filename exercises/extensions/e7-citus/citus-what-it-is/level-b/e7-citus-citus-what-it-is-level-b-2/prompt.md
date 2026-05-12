@@ -1,0 +1,1 @@
+Use Citus evidence for distributed Postgres with a coordinator, workers, distributed tables, reference tables, and local tables. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

@@ -1,0 +1,60 @@
+{
+  "id": "e7-citus-multi-tenant-via-citus",
+  "title": "Multi Tenant Via Citus",
+  "module_id": "e7-citus",
+  "capability_layer": "extension_mastery",
+  "summary": "Citus extension-track lesson for when Citus fits tenant isolation and when schemas or RLS in plain PostgreSQL remain the better answer, with core-first posture and operational verification.",
+  "learning_objectives": [
+    "Explain when Citus is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-09-partitioning-large-table-operations"
+  ],
+  "concepts_introduced": [
+    "citus",
+    "co_location",
+    "coordinator",
+    "distributed_table",
+    "distribution_key",
+    "multi_tenant_via_citus",
+    "not_yet_logic",
+    "reference_table",
+    "worker"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "e7-citus-multi-tenant-via-citus-level-a-1",
+    "e7-citus-multi-tenant-via-citus-level-a-2",
+    "e7-citus-multi-tenant-via-citus-level-b-1",
+    "e7-citus-multi-tenant-via-citus-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "e7-citus-multi-tenant-via-citus-level-c-1",
+    "e7-citus-multi-tenant-via-citus-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "e7-citus-multi-tenant-via-citus-level-d-1",
+    "e7-citus-multi-tenant-via-citus-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-e7-citus",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "e7-citus",
+    "multi-tenant-via-citus"
+  ],
+  "status": "active"
+}

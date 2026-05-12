@@ -1,0 +1,54 @@
+{
+  "id": "e7-citus-multi-tenant-via-citus-level-b-1",
+  "title": "Multi Tenant Via Citus Level B1",
+  "lesson_id": "e7-citus-multi-tenant-via-citus",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "citus",
+    "distributed_table",
+    "reference_table",
+    "distribution_key",
+    "co_location",
+    "coordinator",
+    "worker",
+    "not_yet_logic"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 9,
+    "tables": [
+      "ecommerce.orders",
+      "ecommerce.order_items",
+      "ecommerce.customers"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "ecommerce",
+    "max_rows_hint": 100000
+  },
+  "search_path": "ecommerce, public",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses PostgreSQL evidence rather than unsupported assertion.",
+    "Names the core-first alternative or not-yet boundary.",
+    "Includes a verification step tied to the workload signal."
+  ],
+  "time_target_minutes": 15,
+  "rubric_id": "extension-posture",
+  "solution_path": "solution.sql",
+  "tags": [
+    "extensions",
+    "e7-citus",
+    "multi-tenant-via-citus",
+    "b"
+  ],
+  "status": "active",
+  "starter_path": "starter.sql",
+  "hints": [
+    "Start with the core PostgreSQL behavior and name the missing capability.",
+    "Keep the verification query small enough to explain in a deploy review."
+  ]
+}

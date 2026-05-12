@@ -1,0 +1,1 @@
+Use Citus evidence for the migration cost, timeline, and rollout discipline when leaving a single node. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

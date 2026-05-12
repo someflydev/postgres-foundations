@@ -1,0 +1,1 @@
+-- Use Citus evidence for read-heavy analytics patterns that benefit from distributed execution. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.
