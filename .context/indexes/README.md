@@ -92,6 +92,19 @@ Decision-engine skeleton references introduced by PROMPT_39:
 - `tests/test_intake_schema.py`
 - `tests/test_decision_stub_run.py`
 
+Decision-engine catalog references introduced by PROMPT_40:
+
+- `decision-engine/catalogs/README.md`
+- `decision-engine/catalogs/industries.json`
+- `decision-engine/catalogs/data_shapes.json`
+- `decision-engine/catalogs/workload_patterns.json`
+- `src/pgfound/decision/engine.py`
+- `src/pgfound/cli.py`
+- `tests/test_catalog_forward_refs.py`
+- `tests/test_catalogs_industries.py`
+- `tests/test_catalogs_data_shapes.py`
+- `tests/test_catalogs_workload_patterns.py`
+
 Administration track references introduced by PROMPT_31:
 
 - `curriculum/admin/map.json`

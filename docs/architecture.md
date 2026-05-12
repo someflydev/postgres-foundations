@@ -150,10 +150,14 @@ core PostgreSQL features or extension choices.
 
 The main artifacts live under `decision-engine/catalogs/`,
 `decision-engine/rules/`, `decision-engine/prompts/`, and future evaluator and
-reporting modules in `src/`. Catalogs are JSON-first so they can be validated,
-diffed, tested, and reused by both the planning engine and the learning
-materials. YAML may be tolerated only where human ergonomics clearly justify
-it, but JSON is the default for content and decision data.
+reporting modules in `src/`. The authored industry, data-shape, and workload
+pattern catalogs are shared vocabulary between the planning engine and the
+extension track: they connect workload signals to PostgreSQL core features,
+extension candidates, index patterns, topology patterns, and anti-patterns.
+Catalogs are JSON-first so they can be validated, diffed, tested, and reused
+by both the planning engine and the learning materials. YAML may be tolerated
+only where human ergonomics clearly justify it, but JSON is the default for
+content and decision data.
 
 The architect or planner flow starts with workload facts: domain, data shape,
 read/write pattern, latency needs, retention, search behavior, geography,

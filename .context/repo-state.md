@@ -22,6 +22,10 @@ Current baseline:
   `pgfound decision run <intake.json>`, added decision-engine schemas,
   architecture docs, intake fixtures, JSON/Markdown report writing, and tests
   for empty-but-valid reports while catalogs/rules are pending.
+- Decision engine catalogs: PROMPT_40 added authored catalogs for industries,
+  data shapes, and workload patterns under `decision-engine/catalogs/`,
+  upgraded their schemas to full entry validation, and added
+  `pgfound decision catalog list|check` with cross-catalog integrity checks.
 - Content validation: PROMPT_05 added draft 2020-12 JSON Schemas under
   `content-schemas/`, one valid example per kind under
   `content-schemas/examples/`, and a real `pgfound content validate` command

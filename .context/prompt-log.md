@@ -172,7 +172,12 @@ Completed:
   intake fixtures; implemented `pgfound decision run <intake.json>` with JSON
   and Markdown report output; and added schema/CLI tests for the validating
   stub.
+- PROMPT_40: Decision-engine industry, data-shape, and workload-pattern
+  catalogs; upgraded their schemas from slug placeholders to entry schemas;
+  added catalog list/check CLI commands with cross-catalog integrity checks;
+  and added catalog validation tests.
 
 Next expected prompt:
 
-- PROMPT_40: Industries, data-shapes, and workload-pattern catalogs.
+- PROMPT_41: Core feature, extension, index pattern, topology pattern, and
+  anti-pattern catalogs.
