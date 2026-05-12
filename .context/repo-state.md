@@ -220,6 +220,17 @@ Current baseline:
   `exercises/extensions/e6-postgres-fdw/`; E5/E6 extension docs; the
   `timescale_too_early` anti-pattern referencing Phase 9 partitioning; and
   Timescale profile plus E5/E6 corpus tests.
+- Extension track E7 and remaining modules: PROMPT_37 replaced the old
+  `e7-pg-cron` placeholder with `e7-citus`; added a Citus Compose profile
+  (`citusdata/citus:12.1`) with a coordinator on port 5439, two workers, and
+  Citus-specific coordinator/worker init directories;
+  added a `pgpartman` profile backed by `docker/pg-with-partman/Dockerfile`
+  on port 5440; extended doctor profile checks; authored 26 active lessons
+  and 208 exercises across `lessons/extensions/e7-citus/`,
+  `lessons/extensions/ltree/`, `lessons/extensions/pg-partman/`, and
+  `lessons/extensions/pgbouncer/`; added corresponding extension docs and the
+  `shard_without_distribution_key` anti-pattern; and added Citus/profile plus
+  E7/misc corpus tests.
 
 Canonical docs:
 

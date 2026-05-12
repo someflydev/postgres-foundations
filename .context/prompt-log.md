@@ -151,8 +151,14 @@ Completed:
   and 64 exercises under `lessons/extensions/e6-postgres-fdw/` and
   `exercises/extensions/e6-postgres-fdw/`; E5/E6 extension docs; a
   Timescale-too-early anti-pattern; and E5/E6 corpus/profile tests.
+- PROMPT_37: Extension Mastery track E7 Citus plus ltree, pg_partman, and
+  PgBouncer deep operations; the extension map now uses `e7-citus`; optional
+  Docker Compose profiles for Citus (`citusdata/citus:12.1` coordinator plus
+  two workers on port 5439) and pg_partman (custom `pg-with-partman` image on
+  port 5440) with doctor checks; 26 active lessons and 208 exercises under the
+  four remaining extension modules; Citus, ltree, pg_partman, PgBouncer, and
+  shard-without-distribution-key docs; and E7/misc corpus/profile tests.
 
 Next expected prompt:
 
-- PROMPT_37: Extension Mastery track E7 Citus and the remaining operational
-  extensions.
+- PROMPT_38: Extension-oriented capstones.

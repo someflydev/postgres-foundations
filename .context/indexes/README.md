@@ -166,6 +166,28 @@ Extension track references introduced by PROMPT_36:
 - `tests/test_timescale_profile.py`
 - `tests/test_extension_e5_e6_corpus.py`
 
+Extension track references introduced by PROMPT_37:
+
+- `lessons/extensions/e7-citus/`
+- `lessons/extensions/ltree/`
+- `lessons/extensions/pg-partman/`
+- `lessons/extensions/pgbouncer/`
+- `exercises/extensions/e7-citus/`
+- `exercises/extensions/ltree/`
+- `exercises/extensions/pg-partman/`
+- `exercises/extensions/pgbouncer/`
+- `docker/initdb-citus/`
+- `docker/initdb-citus-worker/`
+- `docker/initdb-pgpartman/`
+- `docker/pg-with-partman/`
+- `docs/extension-track/e7-citus.md`
+- `docs/extension-track/ltree.md`
+- `docs/extension-track/pg_partman.md`
+- `docs/extension-track/pgbouncer.md`
+- `docs/anti-patterns/shard_without_distribution_key.md`
+- `tests/test_citus_profile.py`
+- `tests/test_extension_e7_misc_corpus.py`
+
 Exercise authoring references introduced by PROMPT_08:
 
 - `exercises/phase-*/`
