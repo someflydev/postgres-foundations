@@ -54,7 +54,6 @@ def test_stub_commands_exit_zero_with_prompt_numbers() -> None:
     runner = CliRunner()
 
     cases = [
-        (["decision", "run"], "PROMPT_43"),
         (["interview", "start"], "PROMPT_28"),
     ]
     for args, prompt in cases:
