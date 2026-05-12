@@ -231,6 +231,17 @@ Current baseline:
   `lessons/extensions/pgbouncer/`; added corresponding extension docs and the
   `shard_without_distribution_key` anti-pattern; and added Citus/profile plus
   E7/misc corpus tests.
+- Extension-oriented capstones: PROMPT_38 added capstones
+  `05-geo-logistics-platform`, `06-ai-knowledge-platform`,
+  `07-observability-event-analytics`, and
+  `08-modernization-bridge-extensions` with starter/reference layouts,
+  composed rubrics, extension-posture-heavy assessment, critical queries,
+  operational runbooks, and 2500-3500 word reference writeups. It also added
+  deterministic capstone posture signals for insufficient PostGIS
+  justification, pgvector without lexical baseline, Citus without
+  distribution-key justification, and TimescaleDB without partitioning
+  comparison; these feed the extension-posture rubric and are documented in
+  `docs/capstone-posture-signals.md`.
 
 Canonical docs:
 
@@ -244,6 +255,7 @@ Canonical docs:
 - `docs/cli.md`
 - `docs/review-engine.md`
 - `docs/rubric-signals.md`
+- `docs/capstone-posture-signals.md`
 - `docs/interview-simulator.md`
 - `docs/authoring.md`
 - `docs/authoring-lessons.md`

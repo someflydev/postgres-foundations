@@ -425,3 +425,15 @@ Review engine references introduced by PROMPT_27:
 - `tests/test_review_engine_exercise.py`
 - `tests/test_review_engine_capstone.py`
 - `tests/test_plan_diff.py`
+
+Extension capstone references introduced by PROMPT_38:
+
+- `capstones/05-geo-logistics-platform/`
+- `capstones/06-ai-knowledge-platform/`
+- `capstones/07-observability-event-analytics/`
+- `capstones/08-modernization-bridge-extensions/`
+- `docs/capstone-posture-signals.md`
+- `src/pgfound/review/engine.py`
+- `rubrics/default/extension-posture.rubric.json`
+- `tests/test_capstones_extension.py`
+- `tests/test_extension_posture_signals.py`

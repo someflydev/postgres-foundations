@@ -158,7 +158,15 @@ Completed:
   port 5440) with doctor checks; 26 active lessons and 208 exercises under the
   four remaining extension modules; Citus, ltree, pg_partman, PgBouncer, and
   shard-without-distribution-key docs; and E7/misc corpus/profile tests.
+- PROMPT_38: Extension-oriented capstones; added capstones 05-08 for
+  geo-logistics, AI knowledge search, observability event analytics, and
+  modernization bridge extension decisions; each includes starter/reference
+  artifacts, composed rubrics with extension-posture weight of at least 20%,
+  2500-3500 word reference writeups, and prompt-specific SQL/runbook material;
+  added capstone posture review signals for PostGIS, pgvector, Citus, and
+  TimescaleDB deficiencies; documented those signals; and added extension
+  capstone plus posture-signal tests.
 
 Next expected prompt:
 
-- PROMPT_38: Extension-oriented capstones.
+- PROMPT_39: Decision-engine architecture and intake schema.
