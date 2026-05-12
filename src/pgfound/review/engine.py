@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -193,7 +194,9 @@ def evaluate_capstone(request: EvaluationRequest) -> EvaluationResult:
     signals.extend(writeup_signals)
     findings.extend(writeup_findings)
 
-    signals.extend(_capstone_posture_signals(artifact_dir))
+    posture_signals, posture_findings = _capstone_posture_signals(artifact_dir)
+    signals.extend(posture_signals)
+    findings.extend(posture_findings)
     plan_diffs: list[dict[str, Any]] = []
     if request.mode == "full":
         reference_dir = capstone_dir / "reference"
@@ -369,11 +372,13 @@ def _render_capstone_prompts(
     return rendered
 
 
-def _capstone_posture_signals(artifact_dir: Path) -> list[Signal]:
+def _capstone_posture_signals(artifact_dir: Path) -> tuple[list[Signal], list[Finding]]:
+    schema_text = _read_optional(artifact_dir / "schema.sql").lower()
     rls_text = _read_optional(artifact_dir / "rls-policies.sql").lower()
     indexes_text = _read_optional(artifact_dir / "indexes.sql").lower()
     writeup_text = _read_optional(artifact_dir / "writeup.md").lower()
-    return [
+    combined_sql = "\n".join((schema_text, indexes_text))
+    signals = [
         Signal(
             "rls_policies_present",
             "present_and_strict"
@@ -401,6 +406,100 @@ def _capstone_posture_signals(artifact_dir: Path) -> list[Signal]:
             _relative(artifact_dir / "writeup.md"),
         ),
     ]
+    findings: list[Finding] = []
+    extension_section_words = _extension_posture_word_count(writeup_text)
+    extension_checks = [
+        (
+            "postgis_without_justification",
+            "postgis" in combined_sql,
+            extension_section_words < 200,
+            "PostGIS is enabled without enough extension-posture justification",
+            (
+                "Add at least 200 words in the extension-posture section explaining "
+                "why PostGIS is needed now, what core alternatives cannot cover, "
+                "and what would make the decision change."
+            ),
+        ),
+        (
+            "pgvector_without_lexical_baseline",
+            _uses_pgvector(combined_sql),
+            not (
+                ("pg_trgm" in writeup_text or "trigram" in writeup_text)
+                and ("fts" in writeup_text or "full-text" in writeup_text)
+            ),
+            "pgvector is enabled without a lexical baseline comparison",
+            (
+                "Compare vector retrieval with PostgreSQL full-text search and "
+                "pg_trgm, then state which queries need semantic retrieval."
+            ),
+        ),
+        (
+            "citus_without_distribution_key_justification",
+            "citus" in combined_sql or "citus" in writeup_text,
+            "distribution key" not in writeup_text and "distributed by" not in writeup_text,
+            "Citus is proposed without distribution-key justification",
+            (
+                "Name the distribution key, co-location implications, tenant or "
+                "time locality, and why single-node PostgreSQL is insufficient."
+            ),
+        ),
+        (
+            "timescale_without_partition_comparison",
+            (
+                "timescaledb" in combined_sql
+                or "hypertable" in combined_sql
+                or "timescaledb" in writeup_text
+            ),
+            "partition" not in writeup_text and "pg_partman" not in writeup_text,
+            "TimescaleDB is proposed without partitioning comparison",
+            (
+                "Compare TimescaleDB with core partitioning and pg_partman, "
+                "including retention, compression, query shape, and operational "
+                "ownership."
+            ),
+        ),
+    ]
+    for key, enabled, deficient, title, detail in extension_checks:
+        fires = enabled and deficient
+        signals.append(
+            Signal(
+                key,
+                "present" if fires else "absent",
+                detail if fires else "No deficient extension posture detected.",
+                _relative(artifact_dir / "writeup.md"),
+            )
+        )
+        if fires:
+            findings.append(
+                Finding(
+                    "warning",
+                    title,
+                    detail,
+                    _relative(artifact_dir / "writeup.md"),
+                    "Extension Posture: Now versus later",
+                )
+            )
+    return signals, findings
+
+
+def _extension_posture_word_count(text: str) -> int:
+    match = re.search(
+        r"^#{1,6}\s+extension posture\b(?P<body>.*?)(?=^#{1,6}\s+|\Z)",
+        text,
+        re.M | re.S,
+    )
+    if not match:
+        return 0
+    return len(re.findall(r"[a-z0-9_']+", match.group("body")))
+
+
+def _uses_pgvector(sql_text: str) -> bool:
+    return (
+        "create extension vector" in sql_text
+        or "create extension if not exists vector" in sql_text
+        or "pgvector" in sql_text
+        or re.search(r"\bvector\s*\(", sql_text) is not None
+    )
 
 
 def _write_reports(result: EvaluationResult, group: str, target_id: str) -> EvaluationResult:

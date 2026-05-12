@@ -14,7 +14,11 @@
         "4": "Defines measurable adoption triggers, core alternatives, rollback concerns, and portability consequences."
       },
       "signals": [
-        { "pattern": "extension_posture_not_yet", "levels": { "missing": 1, "present": 4 } }
+        { "pattern": "extension_posture_not_yet", "levels": { "missing": 1, "present": 4 } },
+        { "pattern": "postgis_without_justification", "levels": { "present": 1, "absent": 4 } },
+        { "pattern": "pgvector_without_lexical_baseline", "levels": { "present": 1, "absent": 4 } },
+        { "pattern": "citus_without_distribution_key_justification", "levels": { "present": 1, "absent": 4 } },
+        { "pattern": "timescale_without_partition_comparison", "levels": { "present": 1, "absent": 4 } }
       ]
     },
     {
