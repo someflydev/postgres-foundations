@@ -1,12 +1,46 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://postgres-foundations/schema/core-feature.schema.json",
-  "title": "Core PostgreSQL feature slug",
+  "title": "Core PostgreSQL feature",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "summary",
+    "introduced_in_phase",
+    "applies_to_data_shapes",
+    "applies_to_workload_patterns",
+    "failure_modes",
+    "references"
+  ],
+  "properties": {
+    "id": { "$ref": "#/$defs/slug" },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "introduced_in_phase": { "type": "integer", "minimum": 0 },
+    "applies_to_data_shapes": { "$ref": "#/$defs/slug_array" },
+    "applies_to_workload_patterns": { "$ref": "#/$defs/slug_array" },
+    "failure_modes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    },
+    "references": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    }
+  },
   "$defs": {
     "slug": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
+    },
+    "slug_array": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
     }
-  },
-  "$ref": "#/$defs/slug"
+  }
 }

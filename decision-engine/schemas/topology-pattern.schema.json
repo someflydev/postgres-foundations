@@ -1,12 +1,44 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://postgres-foundations/schema/topology-pattern.schema.json",
-  "title": "Topology pattern slug",
+  "title": "Topology pattern",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "summary",
+    "applies_to_workload_patterns",
+    "operational_cost",
+    "failure_modes",
+    "references"
+  ],
+  "properties": {
+    "id": { "$ref": "#/$defs/slug" },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "applies_to_workload_patterns": { "$ref": "#/$defs/slug_array" },
+    "operational_cost": { "type": "string", "minLength": 1 },
+    "failure_modes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    },
+    "references": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    }
+  },
   "$defs": {
     "slug": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
+    },
+    "slug_array": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
     }
-  },
-  "$ref": "#/$defs/slug"
+  }
 }

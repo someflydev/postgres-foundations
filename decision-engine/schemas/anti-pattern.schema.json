@@ -1,12 +1,37 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://postgres-foundations/schema/anti-pattern.schema.json",
-  "title": "Anti-pattern slug",
+  "title": "Anti-pattern",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "summary",
+    "triggered_when",
+    "recommended_alternative",
+    "references"
+  ],
+  "properties": {
+    "id": { "$ref": "#/$defs/slug" },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "triggered_when": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    },
+    "recommended_alternative": { "type": "string", "minLength": 1 },
+    "references": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^docs/anti-patterns/[a-z0-9_]+\\.md$" },
+      "minItems": 1
+    }
+  },
   "$defs": {
     "slug": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
     }
-  },
-  "$ref": "#/$defs/slug"
+  }
 }

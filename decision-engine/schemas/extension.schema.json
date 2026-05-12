@@ -1,12 +1,65 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://postgres-foundations/schema/extension.schema.json",
-  "title": "Extension slug",
+  "title": "PostgreSQL extension or operational tool",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "kind",
+    "summary",
+    "why_it_exists",
+    "when_core_is_enough",
+    "workload_fit",
+    "operational_cost",
+    "replication_backup_implications",
+    "managed_service_availability",
+    "adoption_triggers",
+    "avoidance_triggers",
+    "not_yet_triggers",
+    "prereq_extensions",
+    "module_slug",
+    "anti_patterns"
+  ],
+  "properties": {
+    "id": { "$ref": "#/$defs/slug" },
+    "title": { "type": "string", "minLength": 1 },
+    "kind": { "enum": ["extension", "operational_tool"] },
+    "summary": { "type": "string", "minLength": 1 },
+    "why_it_exists": { "type": "string", "minLength": 1 },
+    "when_core_is_enough": { "type": "string", "minLength": 1 },
+    "workload_fit": { "type": "string", "minLength": 1 },
+    "operational_cost": { "type": "string", "minLength": 1 },
+    "replication_backup_implications": { "type": "string", "minLength": 1 },
+    "managed_service_availability": {
+      "enum": ["broadly_available", "limited", "rare", "self_managed_only"]
+    },
+    "adoption_triggers": { "$ref": "#/$defs/slug_array" },
+    "avoidance_triggers": { "$ref": "#/$defs/slug_array" },
+    "not_yet_triggers": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "prereq_extensions": { "$ref": "#/$defs/slug_array" },
+    "module_slug": { "$ref": "#/$defs/module_slug" },
+    "anti_patterns": { "$ref": "#/$defs/slug_array" }
+  },
   "$defs": {
     "slug": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
+    },
+    "module_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "slug_array": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
     }
-  },
-  "$ref": "#/$defs/slug"
+  }
 }
