@@ -907,7 +907,7 @@ def _extension_map_errors(item: LoadedContent) -> list[ValidationIssue]:
         "e4-pgvector",
         "e5-timescaledb",
         "e6-postgres-fdw",
-        "e7-pg-cron",
+        "e7-citus",
         "ltree",
         "pg-partman",
         "pgbouncer",

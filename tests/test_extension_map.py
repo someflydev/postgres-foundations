@@ -12,7 +12,7 @@ EXTENSION_MODULES = [
     "e4-pgvector",
     "e5-timescaledb",
     "e6-postgres-fdw",
-    "e7-pg-cron",
+    "e7-citus",
     "ltree",
     "pg-partman",
     "pgbouncer",

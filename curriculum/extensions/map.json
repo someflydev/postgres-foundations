@@ -140,26 +140,26 @@
       "managed_service_availability": "broadly available"
     },
     {
-      "id": "e7-pg-cron",
-      "title": "pg_cron",
+      "id": "e7-citus",
+      "title": "Citus",
       "capability_layer": "extension_mastery",
       "prerequisites": [
         {
-          "admin_module": "a4-maintenance-and-lifecycle"
+          "phase": 9
         }
       ],
       "goals": [
-        "Identify the workload signal that makes pg_cron worth considering.",
+        "Identify the workload signal that makes Citus worth considering.",
         "Compare the PostgreSQL core alternative before adding operational burden.",
         "Account for backup, replication, upgrade, and portability consequences."
       ],
       "exit_competencies": [
-        "Explain where pg_cron fits and where not yet is the better answer.",
-        "Design a small proof that measures benefit and operating cost.",
-        "Document managed-service constraints before committing to production use."
+        "Pick a distribution key from workload locality evidence.",
+        "Explain reference tables, distributed tables, and co-located joins.",
+        "Reject sharding when the proposal lacks a proven locality model."
       ],
-      "replaces_or_complements_core": "complements",
-      "managed_service_availability": "varies by managed service"
+      "replaces_or_complements_core": "external",
+      "managed_service_availability": "narrow; Azure Cosmos DB for PostgreSQL is the primary managed Citus story"
     },
     {
       "id": "ltree",
