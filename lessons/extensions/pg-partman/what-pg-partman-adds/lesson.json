@@ -1,0 +1,59 @@
+{
+  "id": "pg-partman-what-pg-partman-adds",
+  "title": "What Pg_Partman Adds",
+  "module_id": "pg-partman",
+  "capability_layer": "extension_mastery",
+  "summary": "pg_partman extension-track lesson for automated partition creation, retention, and maintenance on top of core partitioning, with core-first posture and operational verification.",
+  "learning_objectives": [
+    "Explain when pg_partman is justified by workload evidence.",
+    "Compare the extension behavior to the PostgreSQL core alternative.",
+    "State the operational cost, caveats, and verification path."
+  ],
+  "prerequisites": [
+    "phase-09-partitioning-large-table-operations"
+  ],
+  "concepts_introduced": [
+    "create_parent",
+    "not_yet_logic",
+    "partition_maintenance",
+    "partitioning",
+    "pg_partman",
+    "premake",
+    "retention",
+    "what_pg_partman_adds"
+  ],
+  "concepts_not_yet_allowed": [],
+  "body_path": "body.md",
+  "guided_exercise_ids": [
+    "pg-partman-what-pg-partman-adds-level-a-1",
+    "pg-partman-what-pg-partman-adds-level-a-2",
+    "pg-partman-what-pg-partman-adds-level-b-1",
+    "pg-partman-what-pg-partman-adds-level-b-2"
+  ],
+  "independent_exercise_ids": [
+    "pg-partman-what-pg-partman-adds-level-c-1",
+    "pg-partman-what-pg-partman-adds-level-c-2"
+  ],
+  "critique_exercise_ids": [
+    "pg-partman-what-pg-partman-adds-level-d-1",
+    "pg-partman-what-pg-partman-adds-level-d-2"
+  ],
+  "reflection_prompts": [
+    "What evidence would justify this extension instead of a core-only design?",
+    "What would make not yet the more responsible recommendation?"
+  ],
+  "estimated_time_minutes": 55,
+  "references": [
+    {
+      "kind": "doc",
+      "slug": "extension-track-pg-partman",
+      "why": "Extension track module guide."
+    }
+  ],
+  "tags": [
+    "extensions",
+    "pg-partman",
+    "what-pg-partman-adds"
+  ],
+  "status": "active"
+}

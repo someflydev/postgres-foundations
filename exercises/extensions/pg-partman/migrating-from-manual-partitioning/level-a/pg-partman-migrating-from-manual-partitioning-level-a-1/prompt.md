@@ -1,0 +1,1 @@
+Use pg_partman evidence for moving a Phase 9 manual partitioning scheme onto pg_partman without losing data. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

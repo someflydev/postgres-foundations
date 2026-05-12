@@ -1,0 +1,1 @@
+-- Use pg_partman evidence for automated partition creation, retention, and maintenance on top of core partitioning. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

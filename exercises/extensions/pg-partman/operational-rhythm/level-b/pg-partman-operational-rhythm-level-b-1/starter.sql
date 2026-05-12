@@ -1,0 +1,1 @@
+-- Use pg_partman evidence for scheduled maintenance and habits that make partition operations boring. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

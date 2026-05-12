@@ -1,0 +1,1 @@
+Use pg_partman evidence for where pg_partman fits compared with Timescale retention and compression policies. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.

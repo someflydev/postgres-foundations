@@ -1,0 +1,51 @@
+{
+  "id": "pg-partman-what-pg-partman-adds-level-b-2",
+  "title": "What Pg_Partman Adds Level B2",
+  "lesson_id": "pg-partman-what-pg-partman-adds",
+  "scaffolding_level": "B",
+  "kind": "query",
+  "allowed_concepts": [
+    "pg_partman",
+    "create_parent",
+    "retention",
+    "premake",
+    "partition_maintenance",
+    "partitioning",
+    "not_yet_logic"
+  ],
+  "not_yet_allowed_concepts": [],
+  "schema_scope": {
+    "phase": 9,
+    "tables": [
+      "events.event_log_partitioned"
+    ]
+  },
+  "dataset": {
+    "seed_pack_id": "event_heavy_ops",
+    "max_rows_hint": 100000
+  },
+  "search_path": "events, public",
+  "expected_output_shape": "rowset",
+  "sessions": 1,
+  "output_comparison": "unordered",
+  "success_criteria": [
+    "Uses PostgreSQL evidence rather than unsupported assertion.",
+    "Names the core-first alternative or not-yet boundary.",
+    "Includes a verification step tied to the workload signal."
+  ],
+  "time_target_minutes": 15,
+  "rubric_id": "extension-posture",
+  "solution_path": "solution.sql",
+  "tags": [
+    "extensions",
+    "pg-partman",
+    "what-pg-partman-adds",
+    "b"
+  ],
+  "status": "active",
+  "starter_path": "starter.sql",
+  "hints": [
+    "Start with the core PostgreSQL behavior and name the missing capability.",
+    "Keep the verification query small enough to explain in a deploy review."
+  ]
+}

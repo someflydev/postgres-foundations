@@ -1,0 +1,1 @@
+Use pg_partman evidence for create_parent, retention, premake, and the configuration table surface. Name the core PostgreSQL alternative, the missing workload signal, the verification step, and the not-yet boundary.
