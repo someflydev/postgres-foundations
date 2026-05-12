@@ -1,4 +1,4 @@
-"""Decision engine stub implementation."""
+"""Decision engine implementation and catalog validation."""
 
 from __future__ import annotations
 
@@ -16,10 +16,20 @@ Report = dict[str, Any]
 
 ENGINE_VERSION = "0.1.0-prompt39"
 SCHEMA_URI_BASE = "https://postgres-foundations/schema/"
+CATALOG_KINDS = {
+    "industry": ("industries.json", "industry.schema.json"),
+    "data_shape": ("data_shapes.json", "data-shape.schema.json"),
+    "workload_pattern": ("workload_patterns.json", "workload-pattern.schema.json"),
+}
+CATALOG_DIR = paths.DECISION_ENGINE_DIR / "catalogs"
 
 
 class DecisionValidationError(ValueError):
     """Raised when a decision-engine document fails schema validation."""
+
+
+class CatalogCheckResult(dict[str, list[str]]):
+    """Container for catalog check errors and warnings."""
 
 
 def _load_json(path: Path) -> Any:
@@ -59,10 +69,7 @@ def _format_validation_errors(schema_name: str, errors: list[ValidationError]) -
 
 def _catalog_and_rule_warnings() -> list[str]:
     warnings: list[str] = []
-    for label, directory in (
-        ("catalogs", paths.DECISION_ENGINE_DIR / "catalogs"),
-        ("rules", paths.DECISION_ENGINE_DIR / "rules"),
-    ):
+    for label, directory in (("rules", paths.DECISION_ENGINE_DIR / "rules"),):
         authored_files = [
             path
             for path in directory.glob("*.json")
@@ -71,6 +78,145 @@ def _catalog_and_rule_warnings() -> list[str]:
         if not authored_files:
             warnings.append(f"{label} not yet authored; decision output is intentionally empty")
     return warnings
+
+
+def _catalog_path(kind: str) -> Path:
+    try:
+        filename, _ = CATALOG_KINDS[kind]
+    except KeyError as exc:
+        expected = ", ".join(sorted(CATALOG_KINDS))
+        msg = f"unknown catalog kind {kind!r}; expected one of: {expected}"
+        raise DecisionValidationError(msg) from exc
+    return CATALOG_DIR / filename
+
+
+def _catalog_present(kind: str) -> bool:
+    return _catalog_path(kind).is_file()
+
+
+def load_catalog(kind: str) -> list[dict[str, Any]]:
+    """Load and schema-validate one authored catalog."""
+    path = _catalog_path(kind)
+    if not path.is_file():
+        return []
+    catalog = _load_json(path)
+    if not isinstance(catalog, list):
+        raise DecisionValidationError(f"{path} must be a JSON array")
+
+    _, schema_name = CATALOG_KINDS[kind]
+    for entry in catalog:
+        _validate(entry, schema_name)
+    return catalog
+
+
+def load_catalog_index(kind: str) -> dict[str, dict[str, Any]]:
+    """Return a catalog keyed by slug, rejecting duplicate ids."""
+    entries = load_catalog(kind)
+    index: dict[str, dict[str, Any]] = {}
+    duplicates: list[str] = []
+    for entry in entries:
+        slug = str(entry["id"])
+        if slug in index:
+            duplicates.append(slug)
+        index[slug] = entry
+    if duplicates:
+        raise DecisionValidationError(
+            f"{kind} catalog has duplicate ids: {', '.join(sorted(set(duplicates)))}"
+        )
+    return index
+
+
+def _sentence_count(text: str) -> int:
+    return sum(1 for chunk in text.replace("?", ".").replace("!", ".").split(".") if chunk.strip())
+
+
+def check_catalogs() -> CatalogCheckResult:
+    """Run cross-catalog and authoring sanity checks."""
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    catalogs: dict[str, dict[str, dict[str, Any]]] = {}
+    for kind in CATALOG_KINDS:
+        try:
+            catalogs[kind] = load_catalog_index(kind)
+        except DecisionValidationError as exc:
+            errors.append(str(exc))
+            catalogs[kind] = {}
+
+    data_shape_ids = set(catalogs["data_shape"])
+    workload_ids = set(catalogs["workload_pattern"])
+    referenced_data_shapes: set[str] = set()
+    referenced_workloads: set[str] = set()
+
+    for kind, entries in catalogs.items():
+        for entry in entries.values():
+            title = str(entry.get("title", "")).strip()
+            summary = str(entry.get("summary", "")).strip()
+            if not title:
+                errors.append(f"{kind}:{entry.get('id', '<missing>')} has an empty title")
+            if _sentence_count(summary) < 2:
+                entry_id = entry.get("id", "<missing>")
+                errors.append(f"{kind}:{entry_id} summary must have >= 2 sentences")
+
+    for industry in catalogs["industry"].values():
+        industry_id = industry["id"]
+        for slug in industry["typical_data_shapes"]:
+            referenced_data_shapes.add(slug)
+            if slug not in data_shape_ids:
+                errors.append(f"industry:{industry_id} references missing data_shape:{slug}")
+        for slug in industry["typical_workload_patterns"]:
+            referenced_workloads.add(slug)
+            if slug not in workload_ids:
+                errors.append(f"industry:{industry_id} references missing workload_pattern:{slug}")
+
+    for slug in sorted(data_shape_ids - referenced_data_shapes):
+        warnings.append(f"data_shape:{slug} is not referenced by any industry")
+    for slug in sorted(workload_ids - referenced_workloads):
+        warnings.append(f"workload_pattern:{slug} is not referenced by any industry")
+
+    anti_pattern_path = CATALOG_DIR / "anti_patterns.json"
+    anti_pattern_ids: set[str] = set()
+    if anti_pattern_path.is_file():
+        raw = _load_json(anti_pattern_path)
+        if isinstance(raw, list):
+            anti_pattern_ids = {str(entry.get("id")) for entry in raw if isinstance(entry, dict)}
+        else:
+            errors.append("anti_patterns.json must be a JSON array")
+
+    for kind in ("data_shape", "workload_pattern"):
+        for entry in catalogs[kind].values():
+            for slug in entry.get("anti_patterns_to_watch", []):
+                if anti_pattern_path.is_file() and slug not in anti_pattern_ids:
+                    errors.append(f"{kind}:{entry['id']} references missing anti_pattern:{slug}")
+                elif not anti_pattern_path.is_file():
+                    warnings.append(
+                        f"{kind}:{entry['id']} anti-pattern reference {slug} "
+                        "cannot be checked until PROMPT_41"
+                    )
+
+    return CatalogCheckResult(errors=errors, warnings=warnings)
+
+
+def validate_intake_references(intake: dict[str, Any]) -> None:
+    """Enforce intake slugs against authored catalogs."""
+    errors: list[str] = []
+    if _catalog_present("industry"):
+        industries = load_catalog_index("industry")
+        industry = intake["organization"]["industry"]
+        if industry not in industries:
+            errors.append(f"intake references missing industry:{industry}")
+    if _catalog_present("data_shape"):
+        data_shapes = load_catalog_index("data_shape")
+        for slug in intake["data_shapes"]:
+            if slug not in data_shapes:
+                errors.append(f"intake references missing data_shape:{slug}")
+    if _catalog_present("workload_pattern"):
+        workloads = load_catalog_index("workload_pattern")
+        for slug in intake["workload_patterns"]:
+            if slug not in workloads:
+                errors.append(f"intake references missing workload_pattern:{slug}")
+    if errors:
+        raise DecisionValidationError("\n".join(errors))
 
 
 def validate_report(report: Report) -> None:
@@ -83,6 +229,7 @@ def run_decision(intake_path: str | Path) -> Report:
     intake_file = Path(intake_path)
     intake = _load_json(intake_file)
     _validate(intake, "intake.schema.json")
+    validate_intake_references(intake)
 
     report: Report = {
         "intake_id": intake["intake_id"],

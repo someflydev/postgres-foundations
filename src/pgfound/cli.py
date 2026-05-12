@@ -1191,6 +1191,57 @@ def decision() -> None:
     """Run decision-engine commands."""
 
 
+@decision.group(help="Inspect and validate decision-engine catalogs.")
+def catalog() -> None:
+    """Inspect and validate decision-engine catalogs."""
+
+
+@catalog.command("list", help="List decision-engine catalog entries.")
+@click.option(
+    "--kind",
+    type=click.Choice(["industry", "data_shape", "workload_pattern"]),
+    help="Restrict output to one catalog kind.",
+)
+def decision_catalog_list(kind: str | None) -> None:
+    """Print catalog entries in Rich tables."""
+    kinds = [kind] if kind else list(decision_engine.CATALOG_KINDS)
+    try:
+        catalogs = [
+            (catalog_kind, decision_engine.load_catalog(catalog_kind)) for catalog_kind in kinds
+        ]
+    except decision_engine.DecisionValidationError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    for catalog_kind, entries in catalogs:
+        table = Table(title=f"decision catalog: {catalog_kind}")
+        table.add_column("Slug")
+        table.add_column("Title")
+        table.add_column("Summary")
+        for entry in entries:
+            table.add_row(entry["id"], entry["title"], entry["summary"])
+        console.print(table)
+
+
+@catalog.command("check", help="Run decision-engine catalog integrity checks.")
+def decision_catalog_check() -> None:
+    """Run catalog integrity checks and print errors plus warnings."""
+    result = decision_engine.check_catalogs()
+
+    table = Table(title="decision catalog check")
+    table.add_column("Severity")
+    table.add_column("Message")
+    for message in result["errors"]:
+        table.add_row("error", message)
+    for message in result["warnings"]:
+        table.add_row("warning", message)
+    if not result["errors"] and not result["warnings"]:
+        table.add_row("ok", "no catalog issues found")
+    console.print(table)
+
+    if result["errors"]:
+        raise click.ClickException("decision catalog check found errors")
+
+
 @decision.command("run", help="Validate an intake and write decision-engine reports.")
 @click.argument("intake_json", type=click.Path(path_type=Path))
 @click.option(
