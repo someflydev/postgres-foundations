@@ -17,5 +17,5 @@
   "depends_on_extensions": [
     "unaccent"
   ],
-  "notes": "Documents, authors, and tags support text filtering, JSON boundaries, full-text search, ranking, and capstone knowledge workflows."
+  "notes": "Documents, authors, and tags support text filtering, JSON boundaries, full-text search, ranking, and capstone knowledge workflows. Phase 08 also adds deterministic fake embeddings when the vector extension is available."
 }

@@ -1,0 +1,107 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "zone_code": "chi-loop",
+        "zone_name": "Chicago Loop"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.645,
+              41.872
+            ],
+            [
+              -87.61,
+              41.872
+            ],
+            [
+              -87.61,
+              41.895
+            ],
+            [
+              -87.645,
+              41.895
+            ],
+            [
+              -87.645,
+              41.872
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "zone_code": "nyc-midtown",
+        "zone_name": "NYC Midtown"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -73.995,
+              40.744
+            ],
+            [
+              -73.955,
+              40.744
+            ],
+            [
+              -73.955,
+              40.77
+            ],
+            [
+              -73.995,
+              40.77
+            ],
+            [
+              -73.995,
+              40.744
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "zone_code": "sf-soma",
+        "zone_name": "San Francisco SoMa"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -122.415,
+              37.772
+            ],
+            [
+              -122.39,
+              37.772
+            ],
+            [
+              -122.39,
+              37.79
+            ],
+            [
+              -122.415,
+              37.79
+            ],
+            [
+              -122.415,
+              37.772
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

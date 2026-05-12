@@ -2,6 +2,7 @@ from click.testing import CliRunner
 
 from pgfound import paths
 from pgfound.cli import main
+from pgfound.content import seed
 
 DOMAINS = [
     "ecommerce",
@@ -37,3 +38,18 @@ def test_seed_cli_dry_run_respects_phase_limit() -> None:
     assert result.exit_code == 0, result.output
     assert "seed-data/packs/ecommerce/phases/phase-01.sql" in result.output
     assert "seed-data/packs/ecommerce/phases/phase-02.sql" not in result.output
+
+
+def test_logistics_geo_seed_dry_run_and_reset_schema_mapping() -> None:
+    runner = CliRunner()
+
+    result = runner.invoke(
+        main,
+        ["content", "seed", "logistics_geo", "--phase", "1", "--dry-run"],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "seed-data/packs/logistics_geo/phases/phase-01.sql" in result.output
+    assert seed.reset_schema_sql("logistics_geo") == (
+        'DROP SCHEMA IF EXISTS "logistics" CASCADE; CREATE SCHEMA "logistics";'
+    )

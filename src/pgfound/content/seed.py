@@ -21,6 +21,7 @@ SCHEMA_BY_DOMAIN = {
     "event_heavy_ops": "events",
     "document_search": "documents",
     "modernization_bridge": "legacy",
+    "logistics_geo": "logistics",
 }
 
 

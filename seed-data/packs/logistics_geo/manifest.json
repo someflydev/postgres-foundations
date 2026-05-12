@@ -1,0 +1,16 @@
+{
+  "domain": "logistics_geo",
+  "phases_covered": [
+    1
+  ],
+  "planned_phases": [
+    1,
+    4,
+    7,
+    8
+  ],
+  "depends_on_extensions": [
+    "postgis"
+  ],
+  "notes": "Service-zone polygons and event points support PostGIS containment, distance, SRID, and spatial-indexing drills."
+}

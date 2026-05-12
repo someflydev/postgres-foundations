@@ -149,3 +149,32 @@ CREATE TABLE IF NOT EXISTS documents.docs (
 
     COMMENT ON FUNCTION documents.docs_search_vec_trigger() IS
         'Lesson variant only: use this on a trigger-maintained copy of docs, not on the generated-column table.';
+
+CREATE OR REPLACE FUNCTION documents.fake_embedding_text(input text)
+RETURNS text
+LANGUAGE sql
+IMMUTABLE
+PARALLEL SAFE
+AS $$
+    SELECT '[' || string_agg(
+        to_char((((('x' || substr(md5(coalesce(input, '') || ':' || dim::text), 1, 8))::bit(32)::bigint % 2001) - 1000)::numeric / 1000), 'FM0.000'),
+        ',' ORDER BY dim
+    ) || ']'
+    FROM generate_series(1, 16) AS dims(dim)
+$$;
+
+COMMENT ON FUNCTION documents.fake_embedding_text(text) IS
+    'Deterministic placeholder vector text for pgvector mechanics. These values are not semantic embeddings.';
+
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_available_extensions WHERE name = 'vector') THEN
+        CREATE EXTENSION IF NOT EXISTS vector;
+        EXECUTE 'ALTER TABLE documents.docs ADD COLUMN IF NOT EXISTS fake_embedding vector(16)';
+        EXECUTE 'UPDATE documents.docs SET fake_embedding = documents.fake_embedding_text(title || '' '' || body)::vector WHERE fake_embedding IS NULL';
+        EXECUTE 'CREATE INDEX IF NOT EXISTS docs_fake_embedding_hnsw_idx ON documents.docs USING hnsw (fake_embedding vector_cosine_ops)';
+        COMMENT ON COLUMN documents.docs.fake_embedding IS
+            'Deterministic fake embedding for pgvector labs only; not a meaningful semantic vector.';
+    END IF;
+END;
+$$;
