@@ -1,0 +1,25 @@
+{
+  "id": "06-ai-knowledge-platform",
+  "title": "Internal AI Knowledge Platform",
+  "industry": "knowledge_ai",
+  "summary": "Design an internal engineering knowledge-search system with lexical, fuzzy, semantic, and hybrid retrieval on portable managed PostgreSQL.",
+  "phases_required": [0, 1, 2, 3, 4, 5, 6, 7, 8, 10],
+  "deliverables": [
+    { "name": "Schema", "kind": "schema", "path": "capstones/06-ai-knowledge-platform/reference/schema.sql" },
+    { "name": "Indexes", "kind": "indexes", "path": "capstones/06-ai-knowledge-platform/reference/indexes.sql" },
+    { "name": "RLS policies", "kind": "rls_policies", "path": "capstones/06-ai-knowledge-platform/reference/rls-policies.sql" },
+    { "name": "Critical queries", "kind": "queries", "path": "capstones/06-ai-knowledge-platform/reference/critical-queries.sql" },
+    { "name": "Operational runbook", "kind": "operational_runbook", "path": "capstones/06-ai-knowledge-platform/reference/operational-runbook.md" },
+    { "name": "Writeup", "kind": "writeup", "path": "capstones/06-ai-knowledge-platform/reference/writeup.md" }
+  ],
+  "critical_queries": ["Lexical FTS search", "Trigram fuzzy search", "Semantic vector search", "Hybrid RRF retrieval"],
+  "critical_queries_path": "critical-queries.sql",
+  "writeup_required_sections": ["Modeling", "Indexes", "Hybrid ranking", "Operations", "Extension posture", "Not yet"],
+  "security_posture": {
+    "access": "Document visibility is modeled explicitly for internal teams.",
+    "extensions": "Core FTS, pg_trgm, and pgvector now; TimescaleDB and Citus rejected."
+  },
+  "operational_notes": "The design must include embedding refresh, HNSW maintenance, reindex posture when models change, and managed-service portability.",
+  "review_rubric_id": "capstone-06-ai-knowledge-platform",
+  "tags": ["capstone", "fts", "pg_trgm", "pgvector", "hybrid-search"]
+}

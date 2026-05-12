@@ -1,0 +1,3 @@
+title,body
+Runbook,Restart the worker after draining the queue.
+Design Note,The API gateway owns request authentication.

@@ -1,0 +1,31 @@
+{
+  "id": "05-geo-logistics-platform",
+  "title": "Geo-enabled Logistics Platform",
+  "industry": "logistics_geo",
+  "summary": "Design the PostgreSQL data system for a regional on-demand logistics platform that owns courier, vehicle, delivery, service-zone, breadcrumb, and SLA data while dispatch remains off-platform.",
+  "phases_required": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "deliverables": [
+    { "name": "Schema", "kind": "schema", "path": "capstones/05-geo-logistics-platform/reference/schema.sql" },
+    { "name": "Indexes", "kind": "indexes", "path": "capstones/05-geo-logistics-platform/reference/indexes.sql" },
+    { "name": "RLS policies", "kind": "rls_policies", "path": "capstones/05-geo-logistics-platform/reference/rls-policies.sql" },
+    { "name": "Critical queries", "kind": "queries", "path": "capstones/05-geo-logistics-platform/reference/critical-queries.sql" },
+    { "name": "Operational runbook", "kind": "operational_runbook", "path": "capstones/05-geo-logistics-platform/reference/operational-runbook.md" },
+    { "name": "Writeup", "kind": "writeup", "path": "capstones/05-geo-logistics-platform/reference/writeup.md" }
+  ],
+  "critical_queries": [
+    "Find top-N eligible couriers inside a service zone.",
+    "Report daily SLA performance by zone.",
+    "Replay courier breadcrumbs for a bounded time window.",
+    "Search delivery notes with core full-text search.",
+    "Identify breadcrumb partitions that are ready for retention action."
+  ],
+  "critical_queries_path": "critical-queries.sql",
+  "writeup_required_sections": ["Modeling", "Partitioning", "Indexes", "Operations", "Extension posture", "Not yet"],
+  "security_posture": {
+    "tenant_isolation": "Regional operator data is separated by region_id and service-zone ownership.",
+    "extensions": "PostGIS and pg_partman now; pgvector explicitly rejected for this workload."
+  },
+  "operational_notes": "The design must justify PostGIS, pg_partman-managed breadcrumb partitions, GiST spatial indexes, core FTS, and pg_stat_statements triage.",
+  "review_rubric_id": "capstone-05-geo-logistics-platform",
+  "tags": ["capstone", "postgis", "pg_partman", "logistics", "fts"]
+}

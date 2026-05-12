@@ -1,0 +1,25 @@
+{
+  "id": "08-modernization-bridge-extensions",
+  "title": "Modernization Bridge with Extension Decisions",
+  "industry": "modernization_bridge",
+  "summary": "Extend the modernization bridge with search, deep postgres_fdw usage, logical replication to BI, materialized views, and an explicit Citus decision.",
+  "phases_required": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "deliverables": [
+    { "name": "Schema", "kind": "schema", "path": "capstones/08-modernization-bridge-extensions/reference/schema.sql" },
+    { "name": "Indexes", "kind": "indexes", "path": "capstones/08-modernization-bridge-extensions/reference/indexes.sql" },
+    { "name": "RLS policies", "kind": "rls_policies", "path": "capstones/08-modernization-bridge-extensions/reference/rls-policies.sql" },
+    { "name": "Critical queries", "kind": "queries", "path": "capstones/08-modernization-bridge-extensions/reference/critical-queries.sql" },
+    { "name": "Operational runbook", "kind": "operational_runbook", "path": "capstones/08-modernization-bridge-extensions/reference/operational-runbook.md" },
+    { "name": "Writeup", "kind": "writeup", "path": "capstones/08-modernization-bridge-extensions/reference/writeup.md" }
+  ],
+  "critical_queries": ["Search local records", "Read legacy data through FDW", "Refresh BI materialized views", "Explain Citus decision"],
+  "critical_queries_path": "critical-queries.sql",
+  "writeup_required_sections": ["Modeling", "FDW", "Indexes", "Operations", "Extension posture", "Not yet"],
+  "security_posture": {
+    "tenant_isolation": "RLS applies to new-service rows; legacy access is constrained through FDW user mappings and views.",
+    "extensions": "postgres_fdw, pg_trgm, and FTS now; Citus is explicit now/later/avoid decision."
+  },
+  "operational_notes": "The design must address FDW pushdown, async append, pg_stat_statements on both sides, logical replication to BI, and materialized view refresh.",
+  "review_rubric_id": "capstone-08-modernization-bridge-extensions",
+  "tags": ["capstone", "fdw", "pg_trgm", "logical-replication", "citus"]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "07-observability-event-analytics",
+  "title": "Observability Event Analytics",
+  "industry": "observability_iot",
+  "summary": "Design a PostgreSQL-backed internal observability event store for 500 services, 300M events per day, hot retention, cold retention, and incident backtrace queries.",
+  "phases_required": [0, 1, 2, 3, 4, 5, 6, 7, 9, 10],
+  "deliverables": [
+    { "name": "Schema", "kind": "schema", "path": "capstones/07-observability-event-analytics/reference/schema.sql" },
+    { "name": "Indexes", "kind": "indexes", "path": "capstones/07-observability-event-analytics/reference/indexes.sql" },
+    { "name": "RLS policies", "kind": "rls_policies", "path": "capstones/07-observability-event-analytics/reference/rls-policies.sql" },
+    { "name": "Critical queries", "kind": "queries", "path": "capstones/07-observability-event-analytics/reference/critical-queries.sql" },
+    { "name": "Operational runbook", "kind": "operational_runbook", "path": "capstones/07-observability-event-analytics/reference/operational-runbook.md" },
+    { "name": "Writeup", "kind": "writeup", "path": "capstones/07-observability-event-analytics/reference/writeup.md" }
+  ],
+  "critical_queries": ["Recent events by service", "Percentiles over a window", "Cross-service incident trace"],
+  "critical_queries_path": "critical-queries.sql",
+  "writeup_required_sections": ["Modeling", "Partitioning", "Indexes", "Operations", "Extension posture", "Not yet"],
+  "security_posture": {
+    "scope": "Internal service telemetry with service ownership boundaries.",
+    "extensions": "pg_partman now; TimescaleDB decision must be defended."
+  },
+  "operational_notes": "The design must define retention, downsampling, BRIN, pg_partman automation, pg_stat_statements triage, and analytics replica posture.",
+  "review_rubric_id": "capstone-07-observability-event-analytics",
+  "tags": ["capstone", "partitioning", "brin", "pg_partman", "timescaledb"]
+}

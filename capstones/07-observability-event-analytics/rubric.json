@@ -1,0 +1,26 @@
+{
+  "id": "capstone-07-observability-event-analytics",
+  "title": "Capstone 07 Observability Event Analytics",
+  "applies_to": "capstone",
+  "extends": [
+    { "rubric_id": "schema-design", "weight": 0.15 },
+    { "rubric_id": "indexing-reasoning", "weight": 0.15 },
+    { "rubric_id": "query-correctness", "weight": 0.15 },
+    { "rubric_id": "extension-posture", "weight": 0.25 },
+    { "rubric_id": "operational-reasoning", "weight": 0.15 }
+  ],
+  "own_dimensions": [
+    {
+      "name": "Retention and analytics posture",
+      "weight": 0.15,
+      "levels": {
+        "0": "No retention or analytics posture.",
+        "1": "Mentions retention without an executable partition plan.",
+        "2": "Provides partitions but weak downsampling or replica reasoning.",
+        "3": "Connects partitioning, BRIN, rollups, and incident queries.",
+        "4": "Adds measured TimescaleDB and replica progression triggers."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}

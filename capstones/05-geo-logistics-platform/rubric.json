@@ -1,0 +1,26 @@
+{
+  "id": "capstone-05-geo-logistics-platform",
+  "title": "Capstone 05 Geo Logistics Platform",
+  "applies_to": "capstone",
+  "extends": [
+    { "rubric_id": "schema-design", "weight": 0.18 },
+    { "rubric_id": "indexing-reasoning", "weight": 0.17 },
+    { "rubric_id": "query-correctness", "weight": 0.15 },
+    { "rubric_id": "extension-posture", "weight": 0.25 },
+    { "rubric_id": "operational-reasoning", "weight": 0.10 }
+  ],
+  "own_dimensions": [
+    {
+      "name": "Spatial and partition fit",
+      "weight": 0.15,
+      "levels": {
+        "0": "No coherent spatial or partitioning plan.",
+        "1": "Uses spatial or partitioning features superficially.",
+        "2": "Models the domain but misses key access paths or retention.",
+        "3": "Connects PostGIS, pg_partman, indexes, and queries to the workload.",
+        "4": "Provides an operationally complete design with clear failure and progression signals."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}

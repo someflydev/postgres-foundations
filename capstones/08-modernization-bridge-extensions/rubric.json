@@ -1,0 +1,26 @@
+{
+  "id": "capstone-08-modernization-bridge-extensions",
+  "title": "Capstone 08 Modernization Bridge Extensions",
+  "applies_to": "capstone",
+  "extends": [
+    { "rubric_id": "schema-design", "weight": 0.15 },
+    { "rubric_id": "indexing-reasoning", "weight": 0.12 },
+    { "rubric_id": "query-correctness", "weight": 0.13 },
+    { "rubric_id": "extension-posture", "weight": 0.25 },
+    { "rubric_id": "operational-reasoning", "weight": 0.15 }
+  ],
+  "own_dimensions": [
+    {
+      "name": "Bridge extension judgment",
+      "weight": 0.20,
+      "levels": {
+        "0": "No coherent bridge extension judgment.",
+        "1": "Names FDW or Citus without operational reasoning.",
+        "2": "Implements pieces but misses pushdown, BI, or distribution-key concerns.",
+        "3": "Connects FDW, search, logical replication, and Citus decision to workload.",
+        "4": "Provides measured progression triggers and rollback posture for every extension."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}

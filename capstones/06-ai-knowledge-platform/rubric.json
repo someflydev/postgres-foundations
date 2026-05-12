@@ -1,0 +1,26 @@
+{
+  "id": "capstone-06-ai-knowledge-platform",
+  "title": "Capstone 06 AI Knowledge Platform",
+  "applies_to": "capstone",
+  "extends": [
+    { "rubric_id": "schema-design", "weight": 0.15 },
+    { "rubric_id": "indexing-reasoning", "weight": 0.15 },
+    { "rubric_id": "query-correctness", "weight": 0.15 },
+    { "rubric_id": "extension-posture", "weight": 0.25 },
+    { "rubric_id": "operational-reasoning", "weight": 0.10 }
+  ],
+  "own_dimensions": [
+    {
+      "name": "Hybrid retrieval design",
+      "weight": 0.20,
+      "levels": {
+        "0": "No hybrid retrieval design.",
+        "1": "Mentions hybrid search without executable ranking.",
+        "2": "Combines channels but misses baseline comparisons.",
+        "3": "Provides lexical, fuzzy, semantic, and fused retrieval.",
+        "4": "Adds model-change operations, portability, and quality evaluation."
+      }
+    }
+  ],
+  "pass_threshold": 0.75
+}

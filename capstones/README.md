@@ -31,3 +31,30 @@ uses `postgres_fdw` to read selected legacy data, writes local truth safely,
 enforces RLS on the new side, caches a legacy aggregate with a stated freshness
 contract, and explains when logical replication becomes the right migration
 step.
+
+## 05 Geo-enabled Logistics Platform
+
+[05-geo-logistics-platform](05-geo-logistics-platform/) asks for a regional
+delivery data system with PostGIS service zones, pg_partman-managed breadcrumb
+partitioning, core full-text search over delivery notes, spatial indexes, SLA
+queries, and a clear rejection of pgvector for the current workload.
+
+## 06 Internal AI Knowledge Platform
+
+[06-ai-knowledge-platform](06-ai-knowledge-platform/) asks for portable managed
+PostgreSQL search with core FTS, pg_trgm fuzzy matching, pgvector semantic
+retrieval, HNSW indexing, and hybrid ranking with an explicit lexical baseline.
+
+## 07 Observability Event Analytics
+
+[07-observability-event-analytics](07-observability-event-analytics/) asks for
+an internal event analytics store using core partitioning, BRIN, pg_partman,
+retention and downsampling strategy, pg_stat_statements triage, and a defended
+TimescaleDB now/later/avoid decision.
+
+## 08 Modernization Bridge with Extension Decisions
+
+[08-modernization-bridge-extensions](08-modernization-bridge-extensions/) asks
+for a modernization bridge with FTS, pg_trgm, deep postgres_fdw usage, logical
+replication posture for BI, materialized views, and a Citus decision grounded in
+distribution-key reasoning.
