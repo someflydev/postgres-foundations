@@ -210,6 +210,16 @@ Current baseline:
   deterministic fake embeddings in `document_search` phase 08 when `vector` is
   available; E3/E4 extension docs; geo/vector anti-pattern docs; and
   PostGIS/pgvector profile plus E3/E4 corpus tests.
+- Extension track E5-E6: PROMPT_36 added an optional TimescaleDB Docker Compose
+  profile on port 5438 using `timescale/timescaledb:2.15.3-pg16` and a
+  Timescale-specific init script while keeping the main `pg` service plain;
+  doctor now reports the Timescale profile definition; 9 TimescaleDB lessons
+  and 72 exercises under `lessons/extensions/e5-timescaledb/` and
+  `exercises/extensions/e5-timescaledb/`; 8 deep postgres_fdw lessons and 64
+  exercises under `lessons/extensions/e6-postgres-fdw/` and
+  `exercises/extensions/e6-postgres-fdw/`; E5/E6 extension docs; the
+  `timescale_too_early` anti-pattern referencing Phase 9 partitioning; and
+  Timescale profile plus E5/E6 corpus tests.
 
 Canonical docs:
 

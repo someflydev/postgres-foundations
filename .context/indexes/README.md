@@ -153,6 +153,19 @@ Extension track references introduced by PROMPT_35:
 - `tests/test_pgvector_profile.py`
 - `tests/test_extension_e3_e4_corpus.py`
 
+Extension track references introduced by PROMPT_36:
+
+- `lessons/extensions/e5-timescaledb/`
+- `lessons/extensions/e6-postgres-fdw/`
+- `exercises/extensions/e5-timescaledb/`
+- `exercises/extensions/e6-postgres-fdw/`
+- `docker/initdb-timescale/`
+- `docs/extension-track/e5-timescaledb.md`
+- `docs/extension-track/e6-postgres-fdw.md`
+- `docs/anti-patterns/timescale_too_early.md`
+- `tests/test_timescale_profile.py`
+- `tests/test_extension_e5_e6_corpus.py`
+
 Exercise authoring references introduced by PROMPT_08:
 
 - `exercises/phase-*/`

@@ -143,7 +143,16 @@ Completed:
   `document_search` seed when pgvector is available, PostGIS/pgvector
   extension-track docs, geo/vector anti-pattern docs, search-playbook updates,
   and E3/E4 corpus/profile tests.
+- PROMPT_36: Extension Mastery track E5 and E6; optional Docker Compose
+  profile for TimescaleDB (`timescale/timescaledb:2.15.3-pg16`) with a
+  Timescale-specific init script and doctor check; 9 active TimescaleDB lessons
+  and 72 exercises under `lessons/extensions/e5-timescaledb/` and
+  `exercises/extensions/e5-timescaledb/`; 8 active deep postgres_fdw lessons
+  and 64 exercises under `lessons/extensions/e6-postgres-fdw/` and
+  `exercises/extensions/e6-postgres-fdw/`; E5/E6 extension docs; a
+  Timescale-too-early anti-pattern; and E5/E6 corpus/profile tests.
 
 Next expected prompt:
 
-- PROMPT_36: Extension Mastery track E5 TimescaleDB and E6 postgres_fdw.
+- PROMPT_37: Extension Mastery track E7 Citus and the remaining operational
+  extensions.
