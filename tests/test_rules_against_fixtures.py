@@ -1,7 +1,7 @@
 import json
 
 from pgfound import paths
-from pgfound.decision import engine
+from pgfound.decision import engine, rules
 
 
 def _run_fixture(name: str) -> dict:
@@ -22,9 +22,7 @@ def test_each_fixture_produces_recommendations_with_valid_confidence() -> None:
 def test_saas_fixture_triggers_rls_rule() -> None:
     report = _run_fixture("saas-multi-tenant-minimal")
     rls = next(
-        item
-        for item in report["recommendations"]
-        if item["target_slug"] == "row_level_security"
+        item for item in report["recommendations"] if item["target_slug"] == "row_level_security"
     )
 
     assert rls["verdict"] == "recommend_now"
@@ -53,3 +51,25 @@ def test_golden_reports_match_current_engine_shape() -> None:
             (report_dir / f"{report['intake_id']}.report.json").read_text(encoding="utf-8")
         )
         assert report == golden
+
+
+def test_free_form_notes_contains_is_case_insensitive_and_tokenized() -> None:
+    intake = {
+        "organization": {
+            "industry": "saas_multi_tenant",
+            "portability_constraints": [],
+            "operational_tolerance": "medium",
+        },
+        "data_shapes": [],
+        "workload_patterns": [],
+        "scale_signals": {},
+        "tenancy_model": "single_tenant",
+        "security_constraints": [],
+        "migration_or_federation_needs": {},
+        "explicit_bias_for": [],
+        "explicit_bias_against": [],
+        "existing_postgres_topology": "single_primary",
+        "free_form_notes": "AI-adjacent roadmap mentions Semantic, vector-style retrieval.",
+    }
+
+    assert rules.predicate_matches({"free_form_notes_contains": "semantic vector"}, intake)
