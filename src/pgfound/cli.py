@@ -28,6 +28,7 @@ from pgfound.decision import engine as decision_engine
 from pgfound.decision import prompts as decision_prompts
 from pgfound.decision import report_writer as decision_report_writer
 from pgfound.decision import rules as decision_rules
+from pgfound.decision import scenarios as decision_scenarios
 from pgfound.interview import rubric as interview_rubric
 from pgfound.interview import scenario as interview_scenario
 from pgfound.interview import session as interview_session
@@ -1325,6 +1326,36 @@ def decision_prompt_render(
         _success(f"rendered: {out_path}")
         return
     click.echo(rendered, nl=False)
+
+
+@decision.group(help="Inspect decision-engine scenario fixtures.")
+def scenarios() -> None:
+    """Inspect decision-engine scenario fixtures."""
+
+
+@scenarios.command("audit", help="Count extension recommendation coverage across scenarios.")
+def decision_scenarios_audit() -> None:
+    """Print extension recommendation coverage across industry scenarios."""
+    try:
+        rows = decision_scenarios.extension_coverage()
+    except decision_engine.DecisionValidationError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    table = Table(title="decision scenario extension coverage")
+    table.add_column("Extension")
+    table.add_column("Now", justify="right")
+    table.add_column("Later", justify="right")
+    table.add_column("Need info", justify="right")
+    table.add_column("Avoid", justify="right")
+    for row in rows:
+        table.add_row(
+            row.extension_slug,
+            str(row.recommend_now),
+            str(row.candidate_later),
+            str(row.not_enough_evidence),
+            str(row.avoid_for_now),
+        )
+    console.print(table)
 
 
 @decision.command("run", help="Validate an intake and write decision-engine reports.")
