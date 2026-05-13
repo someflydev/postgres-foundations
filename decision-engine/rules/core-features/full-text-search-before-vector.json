@@ -1,0 +1,41 @@
+{
+  "id": "rule-full-text-search-before-vector",
+  "title": "Prefer core full-text search before vectors",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "full_text_docs"
+      },
+      {
+        "workload_pattern_present": "search_heavy"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "core_feature",
+      "target_slug": "full_text_search",
+      "verdict": "recommend_now",
+      "confidence": 0.82,
+      "why_now": [
+        "Document search should first establish lexical parsing, ranking, filters, and explainable relevance."
+      ],
+      "why_not_yet": [
+        "Core FTS may not solve semantic recall, typo tolerance, or multilingual normalization alone."
+      ],
+      "triggers_for_next_stage": [
+        "Evaluate pg_trgm for fuzzy lexical misses and pgvector only after lexical baselines plateau."
+      ],
+      "scoring": {
+        "domain_fit": 0.75,
+        "data_shape_fit": 0.9,
+        "workload_fit": 0.85,
+        "operational_feasibility": 0.88,
+        "growth_urgency": 0.45,
+        "portability_penalty": 0.01,
+        "complexity_penalty": 0.14
+      }
+    }
+  ]
+}

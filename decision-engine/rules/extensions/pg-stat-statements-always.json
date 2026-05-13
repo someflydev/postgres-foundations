@@ -1,0 +1,45 @@
+{
+  "id": "rule-pg-stat-statements-for-real-workloads",
+  "title": "Enable pg_stat_statements for real workloads",
+  "status": "active",
+  "when": {
+    "if_any": [
+      {
+        "workload_pattern_present": "oltp_heavy"
+      },
+      {
+        "workload_pattern_present": "read_heavy"
+      },
+      {
+        "workload_pattern_present": "analytics_adjacent"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "pg_stat_statements",
+      "verdict": "recommend_now",
+      "confidence": 0.9,
+      "why_now": [
+        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
+        "pg_stat_statements is low-risk and broadly available."
+      ],
+      "why_not_yet": [
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
+      ],
+      "triggers_for_next_stage": [
+        "Use top total time and calls to justify the next index, schema, or topology recommendation."
+      ],
+      "scoring": {
+        "domain_fit": 0.86,
+        "data_shape_fit": 0.7,
+        "workload_fit": 0.9,
+        "operational_feasibility": 0.9,
+        "growth_urgency": 0.55,
+        "portability_penalty": 0.03,
+        "complexity_penalty": 0.08
+      }
+    }
+  ]
+}

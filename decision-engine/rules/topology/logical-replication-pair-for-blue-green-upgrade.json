@@ -1,0 +1,41 @@
+{
+  "id": "rule-logical-replication-pair-for-blue-green-upgrade",
+  "title": "Use a logical replication pair for blue-green upgrade",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "migration_need": "requires_zero_downtime_migration"
+      },
+      {
+        "migration_need": "has_legacy_postgres_source"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "topology_pattern",
+      "target_slug": "logical_replication_pair",
+      "verdict": "recommend_now",
+      "confidence": 0.78,
+      "why_now": [
+        "A logical replication pair supports validation and controlled cutover for PostgreSQL migrations."
+      ],
+      "why_not_yet": [
+        "DDL drift, sequences, replication lag, and fallback criteria must be owned."
+      ],
+      "triggers_for_next_stage": [
+        "Move to blue-green once cutover gates and reverse-plan are written."
+      ],
+      "scoring": {
+        "domain_fit": 0.76,
+        "data_shape_fit": 0.66,
+        "workload_fit": 0.82,
+        "operational_feasibility": 0.68,
+        "growth_urgency": 0.68,
+        "portability_penalty": 0.1,
+        "complexity_penalty": 0.3
+      }
+    }
+  ]
+}

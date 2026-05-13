@@ -1,0 +1,44 @@
+{
+  "id": "rule-physical-replication-for-read-isolation",
+  "title": "Use physical replicas for read isolation when reads dominate",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "workload_pattern_present": "read_heavy"
+      },
+      {
+        "scale_signal_gte": {
+          "key": "read_throughput_qps",
+          "value": 1000
+        }
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "core_feature",
+      "target_slug": "physical_replication",
+      "verdict": "candidate_later",
+      "confidence": 0.7,
+      "why_now": [
+        "Read-heavy systems can isolate reporting and expensive reads with replicas."
+      ],
+      "why_not_yet": [
+        "A replica does not fix bad queries, missing indexes, or write bottlenecks on the primary."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and failover behavior are documented."
+      ],
+      "scoring": {
+        "domain_fit": 0.68,
+        "data_shape_fit": 0.62,
+        "workload_fit": 0.8,
+        "operational_feasibility": 0.7,
+        "growth_urgency": 0.55,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.22
+      }
+    }
+  ]
+}

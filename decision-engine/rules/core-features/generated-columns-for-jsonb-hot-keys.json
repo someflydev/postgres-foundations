@@ -1,0 +1,68 @@
+{
+  "id": "rule-generated-columns-for-jsonb-hot-keys",
+  "title": "Use generated columns for hot JSONB keys",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "semi_structured_jsonb"
+      },
+      {
+        "workload_pattern_any_of": [
+          "oltp_heavy",
+          "read_heavy"
+        ]
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "core_feature",
+      "target_slug": "generated_columns",
+      "verdict": "candidate_later",
+      "confidence": 0.66,
+      "why_now": [
+        "Generated columns make repeatedly queried JSONB keys visible to constraints and indexes."
+      ],
+      "why_not_yet": [
+        "Wait until the hot keys are known; generated columns should not mirror every JSON attribute."
+      ],
+      "triggers_for_next_stage": [
+        "Promote keys when query traces show stable filters, joins, uniqueness, or validation needs."
+      ],
+      "scoring": {
+        "domain_fit": 0.64,
+        "data_shape_fit": 0.82,
+        "workload_fit": 0.72,
+        "operational_feasibility": 0.8,
+        "growth_urgency": 0.4,
+        "portability_penalty": 0.02,
+        "complexity_penalty": 0.15
+      }
+    },
+    {
+      "kind": "core_feature",
+      "target_slug": "expression_indexes",
+      "verdict": "candidate_later",
+      "confidence": 0.61,
+      "why_now": [
+        "Expression indexes can support normalized lookup while keeping the base model compact."
+      ],
+      "why_not_yet": [
+        "They depend on exact expression matching and should be tied to specific query shapes."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt once normalized email, SKU, phone, or JSON extraction filters repeat."
+      ],
+      "scoring": {
+        "domain_fit": 0.62,
+        "data_shape_fit": 0.74,
+        "workload_fit": 0.7,
+        "operational_feasibility": 0.76,
+        "growth_urgency": 0.35,
+        "portability_penalty": 0.02,
+        "complexity_penalty": 0.13
+      }
+    }
+  ]
+}

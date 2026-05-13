@@ -1,0 +1,47 @@
+{
+  "id": "rule-btree-composite-for-hot-filter-sort",
+  "title": "Use composite btree indexes for hot equality plus range queries",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "workload_pattern_any_of": [
+          "oltp_heavy",
+          "read_heavy"
+        ]
+      },
+      {
+        "scale_signal_gte": {
+          "key": "read_throughput_qps",
+          "value": 1000
+        }
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "index_pattern",
+      "target_slug": "btree_composite_equality_then_range",
+      "verdict": "candidate_later",
+      "confidence": 0.72,
+      "why_now": [
+        "Hot OLTP and read-heavy filters often need equality columns before range or sort columns."
+      ],
+      "why_not_yet": [
+        "Column order must come from real predicates, not generic indexing instinct."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt after pg_stat_statements identifies repeated tenant/status/time or account/time access paths."
+      ],
+      "scoring": {
+        "domain_fit": 0.72,
+        "data_shape_fit": 0.7,
+        "workload_fit": 0.84,
+        "operational_feasibility": 0.82,
+        "growth_urgency": 0.5,
+        "portability_penalty": 0.02,
+        "complexity_penalty": 0.12
+      }
+    }
+  ]
+}

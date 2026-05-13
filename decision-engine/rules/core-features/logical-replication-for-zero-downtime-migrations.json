@@ -1,0 +1,65 @@
+{
+  "id": "rule-logical-replication-for-zero-downtime-migrations",
+  "title": "Use logical replication for PostgreSQL zero-downtime migration",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "migration_need": "requires_zero_downtime_migration"
+      },
+      {
+        "migration_need": "has_legacy_postgres_source"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "core_feature",
+      "target_slug": "logical_replication",
+      "verdict": "recommend_now",
+      "confidence": 0.82,
+      "why_now": [
+        "A PostgreSQL source plus zero-downtime migration need is a direct fit for publication/subscription cutover."
+      ],
+      "why_not_yet": [
+        "Logical replication still needs primary keys, DDL choreography, sequence handling, and rollback planning."
+      ],
+      "triggers_for_next_stage": [
+        "Move to a blue-green topology once replication lag, cutover checks, and write-freeze windows are defined."
+      ],
+      "scoring": {
+        "domain_fit": 0.78,
+        "data_shape_fit": 0.7,
+        "workload_fit": 0.84,
+        "operational_feasibility": 0.72,
+        "growth_urgency": 0.7,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.28
+      }
+    },
+    {
+      "kind": "topology_pattern",
+      "target_slug": "blue_green_upgrade_via_logical_replication",
+      "verdict": "candidate_later",
+      "confidence": 0.74,
+      "why_now": [
+        "Blue-green cutover is plausible when logical replication is already part of migration planning."
+      ],
+      "why_not_yet": [
+        "Do not promise near-zero downtime until lag monitoring and reverse-cutover criteria are written."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt when dual-write avoidance, validation queries, and rollback owners are agreed."
+      ],
+      "scoring": {
+        "domain_fit": 0.76,
+        "data_shape_fit": 0.68,
+        "workload_fit": 0.82,
+        "operational_feasibility": 0.68,
+        "growth_urgency": 0.68,
+        "portability_penalty": 0.1,
+        "complexity_penalty": 0.32
+      }
+    }
+  ]
+}

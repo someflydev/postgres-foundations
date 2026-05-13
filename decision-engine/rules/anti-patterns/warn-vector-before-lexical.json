@@ -1,0 +1,67 @@
+{
+  "id": "rule-warn-vector-before-lexical",
+  "title": "Warn on vector search before lexical baseline",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "workload_pattern_present": "semantic_retrieval"
+      }
+    ],
+    "if_not": [
+      {
+        "data_shape_present": "embeddings_vectors"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "anti_pattern_warning",
+      "target_slug": "vector_before_lexical",
+      "verdict": "avoid_for_now",
+      "confidence": 0.74,
+      "why_now": [
+        "Semantic retrieval is mentioned without embedding data shape evidence."
+      ],
+      "why_not_yet": [
+        "Vector search should follow document modeling, lexical baseline, permissions, and evaluation sets."
+      ],
+      "triggers_for_next_stage": [
+        "Revisit when embeddings, refresh cadence, and lexical failure cases are documented."
+      ],
+      "scoring": {
+        "domain_fit": 0.48,
+        "data_shape_fit": 0.62,
+        "workload_fit": 0.72,
+        "operational_feasibility": 0.76,
+        "growth_urgency": 0.32,
+        "portability_penalty": 0.06,
+        "complexity_penalty": 0.3
+      }
+    },
+    {
+      "kind": "extension",
+      "target_slug": "pgvector",
+      "verdict": "candidate_later",
+      "confidence": 0.52,
+      "why_now": [
+        "pgvector may become relevant if semantic retrieval requirements survive lexical baselines."
+      ],
+      "why_not_yet": [
+        "No embedding volume, refresh process, or recall target is present yet."
+      ],
+      "triggers_for_next_stage": [
+        "Add embeddings_vectors data shape and representative evaluation queries."
+      ],
+      "scoring": {
+        "domain_fit": 0.5,
+        "data_shape_fit": 0.6,
+        "workload_fit": 0.68,
+        "operational_feasibility": 0.7,
+        "growth_urgency": 0.3,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.32
+      }
+    }
+  ]
+}

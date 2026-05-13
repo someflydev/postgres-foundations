@@ -1,0 +1,44 @@
+{
+  "id": "rule-btree-covering-for-read-heavy",
+  "title": "Use covering btree indexes for stable read-heavy projections",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "workload_pattern_present": "read_heavy"
+      },
+      {
+        "scale_signal_gte": {
+          "key": "read_throughput_qps",
+          "value": 1000
+        }
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "index_pattern",
+      "target_slug": "btree_covering_include",
+      "verdict": "candidate_later",
+      "confidence": 0.64,
+      "why_now": [
+        "Read-heavy stable projections may benefit from INCLUDE columns and index-only scans."
+      ],
+      "why_not_yet": [
+        "Covering indexes add write and storage cost, so projections must be stable and valuable."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt when visibility map health and EXPLAIN show index-only scan potential."
+      ],
+      "scoring": {
+        "domain_fit": 0.62,
+        "data_shape_fit": 0.66,
+        "workload_fit": 0.78,
+        "operational_feasibility": 0.74,
+        "growth_urgency": 0.45,
+        "portability_penalty": 0.02,
+        "complexity_penalty": 0.18
+      }
+    }
+  ]
+}

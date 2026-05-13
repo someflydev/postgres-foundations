@@ -1,0 +1,46 @@
+{
+  "id": "rule-ltree-for-deep-hierarchy",
+  "title": "Use ltree for hot hierarchy path search",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "hierarchy_paths"
+      }
+    ],
+    "if_any": [
+      {
+        "workload_pattern_present": "read_heavy"
+      },
+      {
+        "workload_pattern_present": "search_heavy"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "ltree",
+      "verdict": "candidate_later",
+      "confidence": 0.68,
+      "why_now": [
+        "Hierarchy path search can benefit from native ancestor, descendant, and subtree operators."
+      ],
+      "why_not_yet": [
+        "Recursive CTEs, adjacency lists, or closure tables may be enough for shallow or metadata-rich trees."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt when subtree reads or permission-scope path checks are frequent and path labels are stable."
+      ],
+      "scoring": {
+        "domain_fit": 0.7,
+        "data_shape_fit": 0.86,
+        "workload_fit": 0.72,
+        "operational_feasibility": 0.76,
+        "growth_urgency": 0.38,
+        "portability_penalty": 0.05,
+        "complexity_penalty": 0.2
+      }
+    }
+  ]
+}

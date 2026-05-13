@@ -1,0 +1,41 @@
+{
+  "id": "rule-pgbouncer-in-front-when-many-short-connections",
+  "title": "Put PgBouncer in front for many short connections",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "scale_signal_gte": {
+          "key": "concurrent_connections_peak",
+          "value": 200
+        }
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "topology_pattern",
+      "target_slug": "pgbouncer_in_front",
+      "verdict": "recommend_now",
+      "confidence": 0.74,
+      "why_now": [
+        "Many concurrent sessions call for an explicit pooling layer in front of PostgreSQL."
+      ],
+      "why_not_yet": [
+        "Pool mode can break session-state assumptions and should be tested with the application."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt after transaction duration, idle sessions, and prepared-statement behavior are measured."
+      ],
+      "scoring": {
+        "domain_fit": 0.72,
+        "data_shape_fit": 0.58,
+        "workload_fit": 0.76,
+        "operational_feasibility": 0.7,
+        "growth_urgency": 0.58,
+        "portability_penalty": 0.12,
+        "complexity_penalty": 0.26
+      }
+    }
+  ]
+}

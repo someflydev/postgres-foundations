@@ -1,0 +1,70 @@
+{
+  "id": "rule-pgvector-for-semantic-retrieval",
+  "title": "Use pgvector when semantic retrieval is explicit",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "embeddings_vectors"
+      },
+      {
+        "workload_pattern_present": "semantic_retrieval"
+      }
+    ],
+    "if_not": [
+      {
+        "explicit_bias_against_contains": "pgvector"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "pgvector",
+      "verdict": "recommend_now",
+      "confidence": 0.78,
+      "why_now": [
+        "Embeddings plus semantic retrieval are direct evidence for vector distance search inside PostgreSQL."
+      ],
+      "why_not_yet": [
+        "Keep lexical search, metadata filters, tenant permissions, and deletion behavior in the retrieval plan."
+      ],
+      "triggers_for_next_stage": [
+        "Choose HNSW or IVFFlat after recall, latency, memory, and refresh tests are measured."
+      ],
+      "scoring": {
+        "domain_fit": 0.78,
+        "data_shape_fit": 0.92,
+        "workload_fit": 0.86,
+        "operational_feasibility": 0.66,
+        "growth_urgency": 0.6,
+        "portability_penalty": 0.1,
+        "complexity_penalty": 0.36
+      }
+    },
+    {
+      "kind": "index_pattern",
+      "target_slug": "hnsw_vector_anns",
+      "verdict": "candidate_later",
+      "confidence": 0.66,
+      "why_now": [
+        "HNSW is a likely default when recall and latency beat sequential vector scans."
+      ],
+      "why_not_yet": [
+        "Do not build ANN indexes before embedding volume and recall targets are known."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt when an offline evaluation set proves recall and p95 latency."
+      ],
+      "scoring": {
+        "domain_fit": 0.74,
+        "data_shape_fit": 0.88,
+        "workload_fit": 0.82,
+        "operational_feasibility": 0.58,
+        "growth_urgency": 0.58,
+        "portability_penalty": 0.1,
+        "complexity_penalty": 0.4
+      }
+    }
+  ]
+}

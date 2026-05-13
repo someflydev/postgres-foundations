@@ -3,21 +3,177 @@
   "$id": "https://postgres-foundations/schema/rule.schema.json",
   "title": "Decision rule",
   "type": "object",
-  "required": ["rule_id", "target_kind", "target_slug", "conditions"],
+  "required": ["id", "title", "status", "when", "then"],
   "additionalProperties": false,
   "properties": {
-    "rule_id": { "$ref": "#/$defs/slug" },
-    "target_kind": {
-      "enum": ["core_feature", "extension", "index_pattern", "topology_pattern", "anti_pattern_warning"]
+    "id": { "$ref": "#/$defs/slug" },
+    "title": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["draft", "active", "deprecated"] },
+    "when": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "if_all": { "$ref": "#/$defs/predicates" },
+        "if_any": { "$ref": "#/$defs/predicates" },
+        "if_not": { "$ref": "#/$defs/predicates" }
+      }
     },
-    "target_slug": { "$ref": "#/$defs/slug" },
-    "conditions": { "type": "array", "items": { "type": "object" } },
-    "weight": { "type": "number", "minimum": 0, "maximum": 1 }
+    "then": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/action" }
+    }
   },
   "$defs": {
     "slug": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
-    }
+    },
+    "predicates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/predicate" }
+    },
+    "predicate": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "industry_is": { "$ref": "#/$defs/slug" },
+        "industry_in": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/slug" },
+          "uniqueItems": true
+        },
+        "data_shape_present": { "$ref": "#/$defs/slug" },
+        "data_shape_any_of": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/slug" },
+          "uniqueItems": true
+        },
+        "data_shape_all_of": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/slug" },
+          "uniqueItems": true
+        },
+        "workload_pattern_present": { "$ref": "#/$defs/slug" },
+        "workload_pattern_any_of": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/slug" },
+          "uniqueItems": true
+        },
+        "scale_signal_gte": { "$ref": "#/$defs/scale_predicate" },
+        "scale_signal_lt": { "$ref": "#/$defs/scale_predicate" },
+        "tenancy_model_is": { "$ref": "#/$defs/slug" },
+        "tenancy_model_in": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/slug" },
+          "uniqueItems": true
+        },
+        "security_constraint_present": { "$ref": "#/$defs/slug" },
+        "portability_constraint_present": { "$ref": "#/$defs/slug" },
+        "operational_tolerance_is": { "enum": ["low", "medium", "high"] },
+        "existing_topology_is": { "$ref": "#/$defs/slug" },
+        "migration_need": {
+          "enum": [
+            "has_legacy_postgres_source",
+            "has_legacy_non_postgres_source",
+            "requires_zero_downtime_migration",
+            "requires_federation_via_fdw"
+          ]
+        },
+        "free_form_notes_contains": { "type": "string", "minLength": 1 },
+        "explicit_bias_for_contains": { "$ref": "#/$defs/slug" },
+        "explicit_bias_against_contains": { "$ref": "#/$defs/slug" }
+      }
+    },
+    "scale_predicate": {
+      "type": "object",
+      "required": ["key", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "enum": [
+            "write_throughput_rows_per_sec",
+            "read_throughput_qps",
+            "concurrent_connections_peak",
+            "largest_object_bytes",
+            "growth_rate_month_over_month",
+            "largest_table_rows"
+          ]
+        },
+        "value": { "type": "number", "minimum": 0 }
+      }
+    },
+    "action": {
+      "type": "object",
+      "required": [
+        "kind",
+        "target_slug",
+        "verdict",
+        "confidence",
+        "why_now",
+        "why_not_yet",
+        "triggers_for_next_stage"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "core_feature",
+            "extension",
+            "index_pattern",
+            "topology_pattern",
+            "anti_pattern_warning"
+          ]
+        },
+        "target_slug": { "$ref": "#/$defs/slug" },
+        "verdict": {
+          "enum": [
+            "recommend_now",
+            "candidate_later",
+            "not_enough_evidence",
+            "avoid_for_now",
+            "request_more_information"
+          ]
+        },
+        "confidence": { "type": "number", "minimum": 0.4, "maximum": 0.95 },
+        "why_now": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "why_not_yet": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "triggers_for_next_stage": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "followup_questions": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "scoring": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "domain_fit": { "$ref": "#/$defs/score" },
+            "data_shape_fit": { "$ref": "#/$defs/score" },
+            "workload_fit": { "$ref": "#/$defs/score" },
+            "operational_feasibility": { "$ref": "#/$defs/score" },
+            "growth_urgency": { "$ref": "#/$defs/score" },
+            "portability_penalty": { "$ref": "#/$defs/score" },
+            "complexity_penalty": { "$ref": "#/$defs/score" }
+          }
+        }
+      }
+    },
+    "score": { "type": "number", "minimum": 0, "maximum": 1 }
   }
 }

@@ -1,0 +1,38 @@
+{
+  "id": "rule-gist-for-range-overlap",
+  "title": "Use GiST for range overlap search",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "ranges_windows"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "index_pattern",
+      "target_slug": "gist_range_exclusion",
+      "verdict": "recommend_now",
+      "confidence": 0.76,
+      "why_now": [
+        "Range-window workloads need overlap operators and index support."
+      ],
+      "why_not_yet": [
+        "Avoid if intervals are rare metadata and not queried or constrained."
+      ],
+      "triggers_for_next_stage": [
+        "Pair with exclusion constraints for correctness-critical scheduling paths."
+      ],
+      "scoring": {
+        "domain_fit": 0.7,
+        "data_shape_fit": 0.88,
+        "workload_fit": 0.72,
+        "operational_feasibility": 0.78,
+        "growth_urgency": 0.4,
+        "portability_penalty": 0.03,
+        "complexity_penalty": 0.17
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "id": "rule-exclusion-constraints-for-overlap-windows",
+  "title": "Prefer exclusion constraints for overlapping ranges",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_any_of": [
+          "ranges_windows",
+          "multiranges_availability"
+        ]
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "core_feature",
+      "target_slug": "exclusion_constraints",
+      "verdict": "recommend_now",
+      "confidence": 0.82,
+      "why_now": [
+        "Scheduling, booking, and availability windows need overlap prevention at write time.",
+        "Exclusion constraints keep race conditions out of application-only checks."
+      ],
+      "why_not_yet": [
+        "If overlapping rows are allowed by business policy, model the exception first instead of forcing a generic constraint."
+      ],
+      "triggers_for_next_stage": [
+        "Escalate to GiST range indexes and concurrency scenarios when double-booking risk is on a hot path."
+      ],
+      "scoring": {
+        "domain_fit": 0.78,
+        "data_shape_fit": 0.9,
+        "workload_fit": 0.72,
+        "operational_feasibility": 0.82,
+        "growth_urgency": 0.45,
+        "portability_penalty": 0.03,
+        "complexity_penalty": 0.17
+      }
+    },
+    {
+      "kind": "index_pattern",
+      "target_slug": "gist_range_exclusion",
+      "verdict": "recommend_now",
+      "confidence": 0.78,
+      "why_now": [
+        "GiST range indexing supports overlap checks and range predicates for availability data."
+      ],
+      "why_not_yet": [
+        "Avoid broad GiST indexes when range predicates are rare or the range column is not selective."
+      ],
+      "triggers_for_next_stage": [
+        "Add representative concurrent insert tests before relying on the design."
+      ],
+      "scoring": {
+        "domain_fit": 0.78,
+        "data_shape_fit": 0.88,
+        "workload_fit": 0.72,
+        "operational_feasibility": 0.78,
+        "growth_urgency": 0.45,
+        "portability_penalty": 0.04,
+        "complexity_penalty": 0.18
+      }
+    }
+  ]
+}

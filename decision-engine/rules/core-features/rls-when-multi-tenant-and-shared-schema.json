@@ -1,0 +1,50 @@
+{
+  "id": "rule-rls-when-multi-tenant-and-shared-schema",
+  "title": "Use RLS for shared-schema tenant isolation",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "tenancy_model_is": "multi_tenant_shared_schema"
+      }
+    ],
+    "if_any": [
+      {
+        "security_constraint_present": "rls_required"
+      },
+      {
+        "security_constraint_present": "pii_in_scope"
+      },
+      {
+        "workload_pattern_present": "strong_tenant_locality"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "core_feature",
+      "target_slug": "row_level_security",
+      "verdict": "recommend_now",
+      "confidence": 0.88,
+      "why_now": [
+        "Shared-schema tenancy puts tenant isolation inside every query path.",
+        "RLS gives the database a backstop when application filters are missed."
+      ],
+      "why_not_yet": [
+        "RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline."
+      ],
+      "triggers_for_next_stage": [
+        "Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters."
+      ],
+      "scoring": {
+        "domain_fit": 0.86,
+        "data_shape_fit": 0.82,
+        "workload_fit": 0.84,
+        "operational_feasibility": 0.76,
+        "growth_urgency": 0.5,
+        "portability_penalty": 0.03,
+        "complexity_penalty": 0.25
+      }
+    }
+  ]
+}

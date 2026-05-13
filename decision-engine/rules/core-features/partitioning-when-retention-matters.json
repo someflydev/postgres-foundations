@@ -1,0 +1,74 @@
+{
+  "id": "rule-partitioning-when-retention-matters",
+  "title": "Use partitioning when append volume and retention matter",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_any_of": [
+          "append_only_events",
+          "time_series_metrics"
+        ]
+      },
+      {
+        "workload_pattern_present": "append_heavy"
+      },
+      {
+        "scale_signal_gte": {
+          "key": "largest_table_rows",
+          "value": 50000000
+        }
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "core_feature",
+      "target_slug": "partitioning",
+      "verdict": "recommend_now",
+      "confidence": 0.8,
+      "why_now": [
+        "Large append-heavy tables need bounded maintenance, retention, and pruning strategy."
+      ],
+      "why_not_yet": [
+        "Partitioning is premature when tables are modest, retention is vague, or queries do not prune by partition key."
+      ],
+      "triggers_for_next_stage": [
+        "Escalate to pg_partman only after manual partition operations become a recurring operational risk."
+      ],
+      "scoring": {
+        "domain_fit": 0.76,
+        "data_shape_fit": 0.86,
+        "workload_fit": 0.84,
+        "operational_feasibility": 0.7,
+        "growth_urgency": 0.78,
+        "portability_penalty": 0.04,
+        "complexity_penalty": 0.3
+      }
+    },
+    {
+      "kind": "index_pattern",
+      "target_slug": "brin_append_only_chronological",
+      "verdict": "recommend_now",
+      "confidence": 0.76,
+      "why_now": [
+        "BRIN is a low-maintenance fit for large chronological append-only tables."
+      ],
+      "why_not_yet": [
+        "It is weak when data is not physically correlated with time or queries need point lookup."
+      ],
+      "triggers_for_next_stage": [
+        "Add btree companion indexes only for proven tenant, status, or id filters."
+      ],
+      "scoring": {
+        "domain_fit": 0.72,
+        "data_shape_fit": 0.84,
+        "workload_fit": 0.8,
+        "operational_feasibility": 0.86,
+        "growth_urgency": 0.7,
+        "portability_penalty": 0.02,
+        "complexity_penalty": 0.12
+      }
+    }
+  ]
+}

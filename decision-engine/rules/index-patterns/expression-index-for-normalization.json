@@ -1,0 +1,52 @@
+{
+  "id": "rule-expression-index-for-normalization",
+  "title": "Use expression indexes for normalized lookup",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "workload_pattern_any_of": [
+          "oltp_heavy",
+          "search_heavy"
+        ]
+      }
+    ],
+    "if_any": [
+      {
+        "free_form_notes_contains": "email"
+      },
+      {
+        "free_form_notes_contains": "case-insensitive"
+      },
+      {
+        "free_form_notes_contains": "sku"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "index_pattern",
+      "target_slug": "expression_index_for_normalization",
+      "verdict": "candidate_later",
+      "confidence": 0.62,
+      "why_now": [
+        "Normalized lookup benefits from matching the indexed expression to application predicates."
+      ],
+      "why_not_yet": [
+        "Expression indexes are fragile when SQL does not consistently use the same expression."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt after query review confirms stable lower, unaccent, or extracted-key predicates."
+      ],
+      "scoring": {
+        "domain_fit": 0.62,
+        "data_shape_fit": 0.68,
+        "workload_fit": 0.72,
+        "operational_feasibility": 0.78,
+        "growth_urgency": 0.3,
+        "portability_penalty": 0.02,
+        "complexity_penalty": 0.12
+      }
+    }
+  ]
+}

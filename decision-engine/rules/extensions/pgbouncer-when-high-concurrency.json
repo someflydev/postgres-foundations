@@ -1,0 +1,73 @@
+{
+  "id": "rule-pgbouncer-when-high-concurrency",
+  "title": "Use PgBouncer for high connection pressure",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "scale_signal_gte": {
+          "key": "concurrent_connections_peak",
+          "value": 200
+        }
+      }
+    ],
+    "if_any": [
+      {
+        "workload_pattern_present": "oltp_heavy"
+      },
+      {
+        "workload_pattern_present": "read_heavy"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "pgbouncer",
+      "verdict": "recommend_now",
+      "confidence": 0.8,
+      "why_now": [
+        "High peak connections on OLTP/read-heavy traffic should not map one application worker to one backend."
+      ],
+      "why_not_yet": [
+        "Confirm application compatibility with transaction pooling, prepared statements, and session settings."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt once pool sizing, failover routing, and idle-session behavior are documented."
+      ],
+      "scoring": {
+        "domain_fit": 0.76,
+        "data_shape_fit": 0.62,
+        "workload_fit": 0.82,
+        "operational_feasibility": 0.72,
+        "growth_urgency": 0.6,
+        "portability_penalty": 0.12,
+        "complexity_penalty": 0.28
+      }
+    },
+    {
+      "kind": "topology_pattern",
+      "target_slug": "pgbouncer_in_front",
+      "verdict": "recommend_now",
+      "confidence": 0.76,
+      "why_now": [
+        "Putting PgBouncer in front makes connection admission a topology concern."
+      ],
+      "why_not_yet": [
+        "It cannot compensate for long transactions or inefficient queries."
+      ],
+      "triggers_for_next_stage": [
+        "Test failover target changes and pool draining in maintenance runbooks."
+      ],
+      "scoring": {
+        "domain_fit": 0.76,
+        "data_shape_fit": 0.6,
+        "workload_fit": 0.8,
+        "operational_feasibility": 0.68,
+        "growth_urgency": 0.6,
+        "portability_penalty": 0.12,
+        "complexity_penalty": 0.3
+      }
+    }
+  ]
+}

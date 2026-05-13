@@ -1,0 +1,47 @@
+{
+  "id": "rule-hnsw-default-for-pgvector",
+  "title": "Prefer HNSW as first pgvector ANN candidate",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "embeddings_vectors"
+      },
+      {
+        "workload_pattern_present": "semantic_retrieval"
+      },
+      {
+        "scale_signal_gte": {
+          "key": "largest_table_rows",
+          "value": 1000000
+        }
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "index_pattern",
+      "target_slug": "hnsw_vector_anns",
+      "verdict": "candidate_later",
+      "confidence": 0.64,
+      "why_now": [
+        "HNSW is the likely first ANN candidate for sizeable vector retrieval."
+      ],
+      "why_not_yet": [
+        "It needs memory, recall, build-time, and refresh testing before recommendation-now."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt when sequential vector scans miss p95 targets and recall tests pass."
+      ],
+      "scoring": {
+        "domain_fit": 0.66,
+        "data_shape_fit": 0.88,
+        "workload_fit": 0.8,
+        "operational_feasibility": 0.52,
+        "growth_urgency": 0.58,
+        "portability_penalty": 0.1,
+        "complexity_penalty": 0.42
+      }
+    }
+  ]
+}

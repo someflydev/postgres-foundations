@@ -1,0 +1,71 @@
+{
+  "id": "rule-postgis-for-geo-query-heavy",
+  "title": "Use PostGIS for spatial predicates",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "geospatial"
+      },
+      {
+        "workload_pattern_present": "geo_query_heavy"
+      }
+    ],
+    "if_not": [
+      {
+        "explicit_bias_against_contains": "postgis"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "postgis",
+      "verdict": "recommend_now",
+      "confidence": 0.88,
+      "why_now": [
+        "Geo-query-heavy workloads need spatial types, predicates, and indexes rather than latitude/longitude conventions.",
+        "PostGIS keeps spatial decisions close to transactional state."
+      ],
+      "why_not_yet": [
+        "PostGIS is not needed for display-only coordinates or rare exports with no spatial predicates."
+      ],
+      "triggers_for_next_stage": [
+        "Add geometry validity, coordinate-system rules, and restore validation before production rollout."
+      ],
+      "scoring": {
+        "domain_fit": 0.9,
+        "data_shape_fit": 0.94,
+        "workload_fit": 0.9,
+        "operational_feasibility": 0.76,
+        "growth_urgency": 0.55,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.28
+      }
+    },
+    {
+      "kind": "index_pattern",
+      "target_slug": "gist_geospatial",
+      "verdict": "recommend_now",
+      "confidence": 0.8,
+      "why_now": [
+        "GiST spatial indexes are the expected access path for containment, intersection, and distance predicates."
+      ],
+      "why_not_yet": [
+        "Index choice should wait if the product only stores points for display."
+      ],
+      "triggers_for_next_stage": [
+        "Benchmark representative bounding-box and nearest-neighbor queries."
+      ],
+      "scoring": {
+        "domain_fit": 0.86,
+        "data_shape_fit": 0.9,
+        "workload_fit": 0.86,
+        "operational_feasibility": 0.76,
+        "growth_urgency": 0.5,
+        "portability_penalty": 0.06,
+        "complexity_penalty": 0.22
+      }
+    }
+  ]
+}

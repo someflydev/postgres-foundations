@@ -1,0 +1,38 @@
+{
+  "id": "rule-materialized-views-for-adjacent-analytics",
+  "title": "Use materialized views for adjacent analytics before topology changes",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "workload_pattern_present": "analytics_adjacent"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "core_feature",
+      "target_slug": "materialized_views",
+      "verdict": "candidate_later",
+      "confidence": 0.67,
+      "why_now": [
+        "Adjacent analytics often needs precomputed read models before replicas or distributed systems."
+      ],
+      "why_not_yet": [
+        "Refresh cadence, staleness tolerance, and locking behavior must be known first."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt when repeated aggregate queries dominate total time and stale-enough answers are acceptable."
+      ],
+      "scoring": {
+        "domain_fit": 0.66,
+        "data_shape_fit": 0.66,
+        "workload_fit": 0.74,
+        "operational_feasibility": 0.8,
+        "growth_urgency": 0.48,
+        "portability_penalty": 0.02,
+        "complexity_penalty": 0.16
+      }
+    }
+  ]
+}

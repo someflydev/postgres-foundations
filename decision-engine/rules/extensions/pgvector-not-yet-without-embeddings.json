@@ -1,0 +1,42 @@
+{
+  "id": "rule-pgvector-not-yet-without-embeddings",
+  "title": "Defer pgvector when semantic retrieval lacks embedding evidence",
+  "status": "active",
+  "when": {
+    "if_any": [
+      { "free_form_notes_contains": "semantic" },
+      { "free_form_notes_contains": "AI" },
+      { "free_form_notes_contains": "vector" }
+    ],
+    "if_not": [
+      { "data_shape_present": "embeddings_vectors" }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "pgvector",
+      "verdict": "not_enough_evidence",
+      "confidence": 0.56,
+      "why_now": [
+        "The intake mentions semantic or vector-style search, so pgvector should stay visible as a possible later option."
+      ],
+      "why_not_yet": [
+        "There is no embeddings_vectors data shape, embedding refresh plan, recall target, or permission-aware retrieval design yet.",
+        "For geo-heavy logistics, PostGIS answers spatial distance and containment questions more directly than vector search."
+      ],
+      "triggers_for_next_stage": [
+        "Revisit pgvector after an embedding corpus, offline evaluation set, and lexical or spatial baseline gaps are documented."
+      ],
+      "scoring": {
+        "domain_fit": 0.45,
+        "data_shape_fit": 0.4,
+        "workload_fit": 0.5,
+        "operational_feasibility": 0.72,
+        "growth_urgency": 0.25,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.32
+      }
+    }
+  ]
+}

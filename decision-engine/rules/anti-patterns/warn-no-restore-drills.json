@@ -1,0 +1,49 @@
+{
+  "id": "rule-warn-no-restore-drills",
+  "title": "Warn when low tolerance meets complex extensions",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "operational_tolerance_is": "low"
+      }
+    ],
+    "if_any": [
+      {
+        "data_shape_present": "time_series_metrics"
+      },
+      {
+        "data_shape_present": "embeddings_vectors"
+      },
+      {
+        "workload_pattern_present": "migration_bridge"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "anti_pattern_warning",
+      "target_slug": "no_restore_drills",
+      "verdict": "avoid_for_now",
+      "confidence": 0.68,
+      "why_now": [
+        "Low operational tolerance plus complex data or bridge needs requires restore proof before adopting more moving parts."
+      ],
+      "why_not_yet": [
+        "Simple core features can still proceed with modest runbooks."
+      ],
+      "triggers_for_next_stage": [
+        "Require restore drills for extension objects, remote definitions, partition metadata, and large indexes."
+      ],
+      "scoring": {
+        "domain_fit": 0.48,
+        "data_shape_fit": 0.66,
+        "workload_fit": 0.68,
+        "operational_feasibility": 0.58,
+        "growth_urgency": 0.38,
+        "portability_penalty": 0.14,
+        "complexity_penalty": 0.34
+      }
+    }
+  ]
+}

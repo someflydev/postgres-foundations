@@ -1,0 +1,50 @@
+{
+  "id": "rule-pg-partman-when-partitioning-managed-manually",
+  "title": "Use pg_partman after partitioning maintenance becomes routine",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_any_of": [
+          "append_only_events",
+          "time_series_metrics"
+        ]
+      },
+      {
+        "workload_pattern_present": "append_heavy"
+      },
+      {
+        "scale_signal_gte": {
+          "key": "largest_table_rows",
+          "value": 100000000
+        }
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "pg_partman",
+      "verdict": "candidate_later",
+      "confidence": 0.62,
+      "why_now": [
+        "Recurring time-based partition creation and retention can justify pg_partman automation."
+      ],
+      "why_not_yet": [
+        "The table must already deserve partitioning; pg_partman is not the reason to partition."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt when future partition creation or retention jobs become reviewed operational toil."
+      ],
+      "scoring": {
+        "domain_fit": 0.64,
+        "data_shape_fit": 0.82,
+        "workload_fit": 0.74,
+        "operational_feasibility": 0.58,
+        "growth_urgency": 0.72,
+        "portability_penalty": 0.2,
+        "complexity_penalty": 0.38
+      }
+    }
+  ]
+}

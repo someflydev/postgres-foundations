@@ -1,0 +1,68 @@
+{
+  "id": "rule-citus-only-with-distribution-key",
+  "title": "Keep Citus for proven distribution-key workloads",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "workload_pattern_present": "strong_tenant_locality"
+      },
+      {
+        "scale_signal_gte": {
+          "key": "largest_table_rows",
+          "value": 100000000
+        }
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "citus",
+      "verdict": "candidate_later",
+      "confidence": 0.6,
+      "why_now": [
+        "Strong tenant locality and large tables may eventually justify distributed PostgreSQL."
+      ],
+      "why_not_yet": [
+        "Do not adopt Citus until hot reads and writes consistently include a stable distribution key."
+      ],
+      "triggers_for_next_stage": [
+        "Revisit after single-primary tuning, partitioning, read replicas, and tenant-local query traces are exhausted."
+      ],
+      "scoring": {
+        "domain_fit": 0.66,
+        "data_shape_fit": 0.7,
+        "workload_fit": 0.76,
+        "operational_feasibility": 0.42,
+        "growth_urgency": 0.76,
+        "portability_penalty": 0.28,
+        "complexity_penalty": 0.55
+      }
+    },
+    {
+      "kind": "topology_pattern",
+      "target_slug": "citus_distributed_cluster",
+      "verdict": "candidate_later",
+      "confidence": 0.56,
+      "why_now": [
+        "The topology is plausible only if co-location and cluster operations are explicit."
+      ],
+      "why_not_yet": [
+        "Cluster backup, restore, rebalancing, and query-plan review are substantial operating costs."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt only with cluster-aware restore drills and clear shard-key ownership."
+      ],
+      "scoring": {
+        "domain_fit": 0.64,
+        "data_shape_fit": 0.68,
+        "workload_fit": 0.72,
+        "operational_feasibility": 0.38,
+        "growth_urgency": 0.74,
+        "portability_penalty": 0.3,
+        "complexity_penalty": 0.6
+      }
+    }
+  ]
+}

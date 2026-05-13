@@ -1,0 +1,41 @@
+{
+  "id": "rule-brin-for-append-heavy-chronological",
+  "title": "Use BRIN for chronological append-heavy tables",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "append_only_events"
+      },
+      {
+        "workload_pattern_present": "append_heavy"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "index_pattern",
+      "target_slug": "brin_append_only_chronological",
+      "verdict": "candidate_later",
+      "confidence": 0.7,
+      "why_now": [
+        "Append-heavy chronological data often gets useful pruning from small BRIN indexes."
+      ],
+      "why_not_yet": [
+        "BRIN depends on physical correlation and does not replace point-lookup btrees."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt when time-window scans dominate and table ordering remains correlated."
+      ],
+      "scoring": {
+        "domain_fit": 0.68,
+        "data_shape_fit": 0.86,
+        "workload_fit": 0.74,
+        "operational_feasibility": 0.88,
+        "growth_urgency": 0.55,
+        "portability_penalty": 0.01,
+        "complexity_penalty": 0.1
+      }
+    }
+  ]
+}

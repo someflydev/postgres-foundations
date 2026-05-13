@@ -1,0 +1,85 @@
+{
+  "id": "rule-pg-trgm-for-fuzzy-support-ui",
+  "title": "Use pg_trgm for fuzzy lexical search",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "full_text_docs"
+      },
+      {
+        "workload_pattern_present": "search_heavy"
+      }
+    ],
+    "if_any": [
+      {
+        "free_form_notes_contains": "typo"
+      },
+      {
+        "free_form_notes_contains": "fuzzy"
+      },
+      {
+        "free_form_notes_contains": "support"
+      },
+      {
+        "explicit_bias_for_contains": "pg_trgm"
+      }
+    ],
+    "if_not": [
+      {
+        "explicit_bias_against_contains": "pg_trgm"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "pg_trgm",
+      "verdict": "recommend_now",
+      "confidence": 0.75,
+      "why_now": [
+        "Fuzzy lexical matching is the cheapest next step beyond core FTS for typo-tolerant search.",
+        "pg_trgm is broadly available on managed PostgreSQL."
+      ],
+      "why_not_yet": [
+        "Do not index every text column; scope it to product fields with measured fuzzy-search value."
+      ],
+      "triggers_for_next_stage": [
+        "If lexical similarity plateaus below product goals, evaluate pgvector for semantic retrieval."
+      ],
+      "scoring": {
+        "domain_fit": 0.7,
+        "data_shape_fit": 0.9,
+        "workload_fit": 0.8,
+        "operational_feasibility": 0.88,
+        "growth_urgency": 0.45,
+        "portability_penalty": 0.04,
+        "complexity_penalty": 0.12
+      }
+    },
+    {
+      "kind": "index_pattern",
+      "target_slug": "gin_trgm_similarity",
+      "verdict": "candidate_later",
+      "confidence": 0.68,
+      "why_now": [
+        "GIN trigram indexes support targeted similarity and substring search paths."
+      ],
+      "why_not_yet": [
+        "Wait until the searched columns and acceptable false-positive rate are known."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt after EXPLAIN confirms sequential scans or slow ILIKE paths on target columns."
+      ],
+      "scoring": {
+        "domain_fit": 0.68,
+        "data_shape_fit": 0.86,
+        "workload_fit": 0.78,
+        "operational_feasibility": 0.78,
+        "growth_urgency": 0.45,
+        "portability_penalty": 0.04,
+        "complexity_penalty": 0.16
+      }
+    }
+  ]
+}

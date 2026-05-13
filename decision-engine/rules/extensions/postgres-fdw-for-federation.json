@@ -1,0 +1,66 @@
+{
+  "id": "rule-postgres-fdw-for-federation",
+  "title": "Use postgres_fdw for bounded PostgreSQL federation",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "foreign_postgres_access"
+      },
+      {
+        "migration_need": "requires_federation_via_fdw"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "postgres_fdw",
+      "verdict": "recommend_now",
+      "confidence": 0.8,
+      "why_now": [
+        "The intake names remote PostgreSQL access and an FDW federation need.",
+        "postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded."
+      ],
+      "why_not_yet": [
+        "FDW should not become a hidden permanent hot path without pushdown verification and retirement planning."
+      ],
+      "triggers_for_next_stage": [
+        "Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads."
+      ],
+      "scoring": {
+        "domain_fit": 0.78,
+        "data_shape_fit": 0.8,
+        "workload_fit": 0.78,
+        "operational_feasibility": 0.68,
+        "growth_urgency": 0.5,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.3
+      }
+    },
+    {
+      "kind": "topology_pattern",
+      "target_slug": "postgres_fdw_federation",
+      "verdict": "recommend_now",
+      "confidence": 0.76,
+      "why_now": [
+        "A federation topology makes ownership and remote failure modes explicit."
+      ],
+      "why_not_yet": [
+        "Avoid broad cross-database joins until latency and remote-owner behavior are understood."
+      ],
+      "triggers_for_next_stage": [
+        "Document credentials, remote health monitoring, and fallback behavior."
+      ],
+      "scoring": {
+        "domain_fit": 0.78,
+        "data_shape_fit": 0.76,
+        "workload_fit": 0.74,
+        "operational_feasibility": 0.64,
+        "growth_urgency": 0.48,
+        "portability_penalty": 0.1,
+        "complexity_penalty": 0.32
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "id": "rule-jsonb-hybrid-columns-for-semi-structured",
+  "title": "Use JSONB as a hybrid model when shape varies",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "semi_structured_jsonb"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "core_feature",
+      "target_slug": "jsonb",
+      "verdict": "candidate_later",
+      "confidence": 0.71,
+      "why_now": [
+        "JSONB can carry variable attributes while stable identifiers and lifecycle columns stay relational."
+      ],
+      "why_not_yet": [
+        "Do not make the whole entity JSONB when keys are frequently filtered, joined, constrained, or audited."
+      ],
+      "triggers_for_next_stage": [
+        "Promote hot JSON keys to generated or ordinary columns once query pressure and invariants are visible."
+      ],
+      "scoring": {
+        "domain_fit": 0.65,
+        "data_shape_fit": 0.85,
+        "workload_fit": 0.62,
+        "operational_feasibility": 0.78,
+        "growth_urgency": 0.35,
+        "portability_penalty": 0.03,
+        "complexity_penalty": 0.18
+      }
+    }
+  ]
+}

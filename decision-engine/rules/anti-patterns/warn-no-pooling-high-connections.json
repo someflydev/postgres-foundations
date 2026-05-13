@@ -1,0 +1,46 @@
+{
+  "id": "rule-warn-no-pooling-high-connections",
+  "title": "Warn when high connections lack pooling evidence",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "scale_signal_gte": {
+          "key": "concurrent_connections_peak",
+          "value": 300
+        }
+      }
+    ],
+    "if_not": [
+      {
+        "explicit_bias_for_contains": "pgbouncer"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "anti_pattern_warning",
+      "target_slug": "no_pooling_high_connections",
+      "verdict": "avoid_for_now",
+      "confidence": 0.76,
+      "why_now": [
+        "High peak connections without pooling evidence risks backend exhaustion and idle-session waste."
+      ],
+      "why_not_yet": [
+        "Application pools may be enough if limits and transaction duration are already disciplined."
+      ],
+      "triggers_for_next_stage": [
+        "Add pool sizing, transaction duration, and session-state compatibility checks."
+      ],
+      "scoring": {
+        "domain_fit": 0.56,
+        "data_shape_fit": 0.58,
+        "workload_fit": 0.78,
+        "operational_feasibility": 0.7,
+        "growth_urgency": 0.6,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.28
+      }
+    }
+  ]
+}

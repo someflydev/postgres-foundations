@@ -1,0 +1,41 @@
+{
+  "id": "rule-warn-replica-as-performance-bandage",
+  "title": "Warn against replicas as a query-tuning substitute",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "explicit_bias_for_contains": "pg_stat_statements"
+      },
+      {
+        "existing_topology_is": "primary_with_read_replicas"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "anti_pattern_warning",
+      "target_slug": "replica_as_performance_bandage",
+      "verdict": "avoid_for_now",
+      "confidence": 0.62,
+      "why_now": [
+        "Existing replicas plus performance focus can hide missing query and index work."
+      ],
+      "why_not_yet": [
+        "Replicas isolate reads but do not fix inefficient SQL, poor plans, or write bottlenecks."
+      ],
+      "triggers_for_next_stage": [
+        "Use pg_stat_statements to rank query pain before adding more replicas."
+      ],
+      "scoring": {
+        "domain_fit": 0.52,
+        "data_shape_fit": 0.58,
+        "workload_fit": 0.72,
+        "operational_feasibility": 0.72,
+        "growth_urgency": 0.38,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.2
+      }
+    }
+  ]
+}

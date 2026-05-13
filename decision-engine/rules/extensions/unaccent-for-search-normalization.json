@@ -1,0 +1,46 @@
+{
+  "id": "rule-unaccent-for-search-normalization",
+  "title": "Use unaccent for accent-insensitive search requirements",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "workload_pattern_present": "search_heavy"
+      }
+    ],
+    "if_any": [
+      {
+        "free_form_notes_contains": "accent"
+      },
+      {
+        "free_form_notes_contains": "multilingual"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "unaccent",
+      "verdict": "candidate_later",
+      "confidence": 0.62,
+      "why_now": [
+        "Accent folding can improve search recall when multilingual or accent-insensitive matching is intended."
+      ],
+      "why_not_yet": [
+        "It changes text semantics and should not be enabled without product examples."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt after representative terms prove accent-insensitive matching improves results."
+      ],
+      "scoring": {
+        "domain_fit": 0.62,
+        "data_shape_fit": 0.72,
+        "workload_fit": 0.7,
+        "operational_feasibility": 0.88,
+        "growth_urgency": 0.3,
+        "portability_penalty": 0.03,
+        "complexity_penalty": 0.08
+      }
+    }
+  ]
+}

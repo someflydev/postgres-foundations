@@ -1,0 +1,46 @@
+{
+  "id": "rule-warn-geo-logic-without-postgis",
+  "title": "Warn against homegrown geo predicates",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "geospatial"
+      },
+      {
+        "workload_pattern_present": "geo_query_heavy"
+      }
+    ],
+    "if_not": [
+      {
+        "explicit_bias_for_contains": "postgis"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "anti_pattern_warning",
+      "target_slug": "geo_logic_without_postgis",
+      "verdict": "avoid_for_now",
+      "confidence": 0.82,
+      "why_now": [
+        "Geo-heavy logic without PostGIS evidence risks incorrect distance, containment, and indexing behavior."
+      ],
+      "why_not_yet": [
+        "PostGIS can wait for display-only coordinates, but this intake has geo-query-heavy workload signals."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt spatial types and validation rules before encoding geometry in ad hoc numeric columns."
+      ],
+      "scoring": {
+        "domain_fit": 0.5,
+        "data_shape_fit": 0.88,
+        "workload_fit": 0.86,
+        "operational_feasibility": 0.7,
+        "growth_urgency": 0.42,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.3
+      }
+    }
+  ]
+}

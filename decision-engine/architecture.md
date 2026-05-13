@@ -20,12 +20,11 @@ the extra operating surface. "Not yet" is a first-class output because many
 premature architecture decisions are expensive precisely because they solve a
 future problem before the present system can measure it.
 
-The subsystem starts in this prompt with its architecture, directory layout,
-schema contracts, example intakes, and an empty validating runner. Later prompts
-author catalogs, rules, report goldens, and prompt packs. That sequencing matters:
-schema and engine boundaries should be stable before catalog content starts to
-accumulate. The early stub therefore validates intakes and writes an empty but
-valid report with clear warnings that catalogs and rules are not yet authored.
+The subsystem now has catalog-backed rules and a validating runner. Catalogs
+define the vocabulary, rules bind intake evidence to recommendations, and the
+runner emits machine-readable and human-readable reports. The scoring model is
+still intentionally simple until the next prompt replaces it with a fuller
+weighted model.
 
 ## Inputs
 
@@ -50,20 +49,40 @@ playbooks, and failure modes. This lets the engine explain why a capability is
 relevant instead of merely naming it.
 
 The third input class is rules. Rules connect intake signals and catalog entries
-to recommendations. They express conditions, weights, confidence effects,
+to recommendations. They express conditions, confidence, explanation text,
 thresholds, and anti-pattern checks. Rules should be small, auditable, and
-testable. A future reviewer should be able to inspect a recommendation, trace it
-to rule IDs, and decide whether the rule overreached or whether the intake is
-missing important facts.
+testable. A reviewer can inspect a recommendation, trace it to rule IDs, and
+decide whether the rule overreached or whether the intake is missing important
+facts.
+
+Rule predicates use this vocabulary:
+
+- `industry_is` and `industry_in`
+- `data_shape_present`, `data_shape_any_of`, and `data_shape_all_of`
+- `workload_pattern_present` and `workload_pattern_any_of`
+- `scale_signal_gte` and `scale_signal_lt`
+- `tenancy_model_is` and `tenancy_model_in`
+- `security_constraint_present`
+- `portability_constraint_present`
+- `operational_tolerance_is`
+- `existing_topology_is`
+- `migration_need`
+- `free_form_notes_contains`
+- `explicit_bias_for_contains`
+- `explicit_bias_against_contains`
+
+The scale predicates accept observed intake scale fields and the derived key
+`largest_table_rows`, which is the maximum value from
+`row_counts_largest_tables`.
 
 ## Processing Model
 
 The processing pipeline begins with schema validation. An invalid intake stops
 the run because downstream reasoning needs a trustworthy shape. Once the intake
-is valid, the engine loads catalogs and rules. In the prompt-39 stub these
-directories are expected to be empty, so missing catalog and rule data produce
-warnings rather than hard failures. After the authoring prompts land, missing or
-malformed catalog data should become a normal validation problem.
+is valid, the engine validates catalog references, loads every rule file, and
+validates each rule against `rule.schema.json`. Rule linting also checks catalog
+targets, duplicate rule IDs, known predicate operators, simple contradictory
+conditions, and extension catalog coverage.
 
 The first real reasoning stage is rule matching. A rule can match industry,
 data-shape, workload-pattern, scale, tenancy, security, migration, topology, and

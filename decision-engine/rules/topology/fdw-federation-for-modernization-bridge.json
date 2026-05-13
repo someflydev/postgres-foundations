@@ -1,0 +1,41 @@
+{
+  "id": "rule-fdw-federation-for-modernization-bridge",
+  "title": "Use FDW topology for modernization bridge",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "workload_pattern_present": "migration_bridge"
+      },
+      {
+        "migration_need": "requires_federation_via_fdw"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "topology_pattern",
+      "target_slug": "postgres_fdw_federation",
+      "verdict": "recommend_now",
+      "confidence": 0.74,
+      "why_now": [
+        "Migration-bridge workloads need explicit remote-source boundaries and owner-visible failure modes."
+      ],
+      "why_not_yet": [
+        "Avoid broad permanent federation without pushdown checks and decommission criteria."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt once remote credentials, latency SLOs, and fallback behavior are documented."
+      ],
+      "scoring": {
+        "domain_fit": 0.74,
+        "data_shape_fit": 0.7,
+        "workload_fit": 0.76,
+        "operational_feasibility": 0.62,
+        "growth_urgency": 0.48,
+        "portability_penalty": 0.1,
+        "complexity_penalty": 0.32
+      }
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "rule-warn-jsonb-everything",
+  "title": "Warn when JSONB is likely replacing relational modeling",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "semi_structured_jsonb"
+      }
+    ],
+    "if_any": [
+      {
+        "free_form_notes_contains": "everything json"
+      },
+      {
+        "free_form_notes_contains": "schemaless"
+      },
+      {
+        "free_form_notes_contains": "flexible schema"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "anti_pattern_warning",
+      "target_slug": "jsonb_everything",
+      "verdict": "avoid_for_now",
+      "confidence": 0.78,
+      "why_now": [
+        "The intake language suggests JSONB may be used as a replacement for relational modeling."
+      ],
+      "why_not_yet": [
+        "JSONB is useful for variable attributes, not for hiding core entities, constraints, or tenant keys."
+      ],
+      "triggers_for_next_stage": [
+        "Extract hot keys and invariants once filters, joins, or audit rules repeat."
+      ],
+      "scoring": {
+        "domain_fit": 0.55,
+        "data_shape_fit": 0.78,
+        "workload_fit": 0.62,
+        "operational_feasibility": 0.78,
+        "growth_urgency": 0.3,
+        "portability_penalty": 0.02,
+        "complexity_penalty": 0.24
+      }
+    }
+  ]
+}

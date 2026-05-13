@@ -1,0 +1,47 @@
+{
+  "id": "rule-read-replica-when-reporting-needs-isolation",
+  "title": "Use read replicas for reporting isolation",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "workload_pattern_any_of": [
+          "read_heavy",
+          "analytics_adjacent"
+        ]
+      },
+      {
+        "scale_signal_gte": {
+          "key": "read_throughput_qps",
+          "value": 1000
+        }
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "topology_pattern",
+      "target_slug": "primary_with_read_replicas",
+      "verdict": "candidate_later",
+      "confidence": 0.7,
+      "why_now": [
+        "Reporting or read-heavy traffic may need isolation from primary write latency."
+      ],
+      "why_not_yet": [
+        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
+      ],
+      "scoring": {
+        "domain_fit": 0.7,
+        "data_shape_fit": 0.62,
+        "workload_fit": 0.82,
+        "operational_feasibility": 0.68,
+        "growth_urgency": 0.55,
+        "portability_penalty": 0.1,
+        "complexity_penalty": 0.24
+      }
+    }
+  ]
+}

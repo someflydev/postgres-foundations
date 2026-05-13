@@ -1,0 +1,47 @@
+{
+  "id": "rule-timescaledb-when-centrally-time-series",
+  "title": "Consider TimescaleDB for mature central time series",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "time_series_metrics"
+      },
+      {
+        "workload_pattern_present": "append_heavy"
+      },
+      {
+        "scale_signal_gte": {
+          "key": "largest_table_rows",
+          "value": 100000000
+        }
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "timescaledb",
+      "verdict": "candidate_later",
+      "confidence": 0.64,
+      "why_now": [
+        "Very large time-series metrics may benefit from hypertable lifecycle, compression, and retention ergonomics."
+      ],
+      "why_not_yet": [
+        "Core partitioning, BRIN, materialized views, and scheduled retention should be measured first."
+      ],
+      "triggers_for_next_stage": [
+        "Revisit when compression, chunk maintenance, and retention automation are measured pain."
+      ],
+      "scoring": {
+        "domain_fit": 0.68,
+        "data_shape_fit": 0.86,
+        "workload_fit": 0.76,
+        "operational_feasibility": 0.52,
+        "growth_urgency": 0.78,
+        "portability_penalty": 0.22,
+        "complexity_penalty": 0.42
+      }
+    }
+  ]
+}

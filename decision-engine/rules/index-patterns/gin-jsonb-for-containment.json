@@ -1,0 +1,44 @@
+{
+  "id": "rule-gin-jsonb-for-containment",
+  "title": "Use GIN JSONB indexes for proven containment queries",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "semi_structured_jsonb"
+      },
+      {
+        "workload_pattern_any_of": [
+          "read_heavy",
+          "search_heavy"
+        ]
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "index_pattern",
+      "target_slug": "gin_jsonb_containment",
+      "verdict": "candidate_later",
+      "confidence": 0.66,
+      "why_now": [
+        "GIN JSONB can support containment queries on flexible attributes."
+      ],
+      "why_not_yet": [
+        "It is costly when the application does not use containment or filters too broadly."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt after EXPLAIN shows repeated @> predicates with selective keys."
+      ],
+      "scoring": {
+        "domain_fit": 0.64,
+        "data_shape_fit": 0.82,
+        "workload_fit": 0.72,
+        "operational_feasibility": 0.7,
+        "growth_urgency": 0.38,
+        "portability_penalty": 0.03,
+        "complexity_penalty": 0.22
+      }
+    }
+  ]
+}
