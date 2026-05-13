@@ -189,8 +189,11 @@ Completed:
   implemented rule loading, matching, aggregation, linting, `--rules`, and
   `--explain`; added a logistics geo intake plus golden JSON/Markdown reports;
   and added rule schema and fixture evaluation tests.
+- PROMPT_43: Decision-engine weighted scoring, evaluator integration, Jinja2
+  Markdown reports, score-aware CLI formats, report diffing, grouped follow-up
+  questions, tokenized free-form note matching, golden report regeneration, and
+  scoring/report/golden tests.
 
 Next expected prompt:
 
-- PROMPT_43: Scoring model, full evaluator integration, and report generator
-  polish.
+- PROMPT_44: 4-layer decision-engine prompt pack.

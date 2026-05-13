@@ -35,6 +35,10 @@ concrete, operational, and PostgreSQL core-first.
 - Test: `uv run pytest -q`
 - CLI smoke: `uv run pgfound --help`
 - Decision run: `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json`
+- Decision run JSON stdout: `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json --format json`
+- Decision run Markdown scores: `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json --format markdown --show-scores`
+- Decision report diff: `uv run pgfound decision diff decision-engine/fixtures/reports/saas-multi-tenant-minimal.report.md decision-engine/fixtures/reports/logistics-geo-minimal.report.md`
+- Decision golden update: `scripts/update-decision-goldens.sh --confirm`
 - Decision catalog list: `uv run pgfound decision catalog list --kind industry`
 - Decision catalog check: `uv run pgfound decision catalog check`
 - Decision rules lint: `uv run pgfound decision rules lint`

@@ -38,6 +38,13 @@ Current baseline:
   `src/pgfound/decision/`, added `pgfound decision rules lint`, `decision run
   --rules`, and `--explain`, and generated golden fixture reports under
   `decision-engine/fixtures/reports/`.
+- Decision engine scoring/reporting: PROMPT_43 added configurable weighted
+  scoring via `decision-engine/scoring-weights.json`, per-recommendation score
+  breakdowns and class rollups, score-based verdict downgrades, grouped
+  follow-up questions, Jinja2 Markdown report templates, `decision run
+  --format json|markdown|both`, `--show-scores`, `decision diff`, tokenized
+  free-form note matching, a guarded golden regeneration script, and
+  `docs/decision-engine-usage.md`.
 - Content validation: PROMPT_05 added draft 2020-12 JSON Schemas under
   `content-schemas/`, one valid example per kind under
   `content-schemas/examples/`, and a real `pgfound content validate` command

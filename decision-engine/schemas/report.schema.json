@@ -7,20 +7,75 @@
     "intake_id",
     "generated_at",
     "engine_version",
+    "intake_summary",
     "recommendations",
     "score_breakdown",
+    "overall",
     "warnings",
-    "followup_questions"
+    "followup_questions",
+    "followup_question_groups",
+    "full_intake"
   ],
   "additionalProperties": false,
   "properties": {
     "intake_id": { "$ref": "#/$defs/slug" },
     "generated_at": { "type": "string", "format": "date-time" },
     "engine_version": { "type": "string", "minLength": 1 },
+    "intake_summary": {
+      "type": "object",
+      "required": ["industry", "industry_title", "tenancy_model", "operational_tolerance"],
+      "additionalProperties": false,
+      "properties": {
+        "industry": { "$ref": "#/$defs/slug" },
+        "industry_title": { "type": "string", "minLength": 1 },
+        "tenancy_model": { "$ref": "#/$defs/slug" },
+        "operational_tolerance": { "enum": ["low", "medium", "high"] }
+      }
+    },
     "recommendations": {
       "type": "array",
       "items": { "$ref": "recommendation.schema.json" }
     },
+    "score_breakdown": {
+      "$ref": "#/$defs/score_breakdown"
+    },
+    "overall": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recommend_now": { "$ref": "#/$defs/overall_group" },
+        "candidate_later": { "$ref": "#/$defs/overall_group" },
+        "not_enough_evidence": { "$ref": "#/$defs/overall_group" },
+        "avoid_for_now": { "$ref": "#/$defs/overall_group" }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["anti_pattern_slug", "message"],
+        "additionalProperties": false,
+        "properties": {
+          "anti_pattern_slug": { "$ref": "#/$defs/slug" },
+          "message": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "followup_questions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "followup_question_groups": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 }
+      }
+    },
+    "full_intake": { "type": "object" }
+  },
+  "$defs": {
+    "score": { "type": "number", "minimum": 0, "maximum": 1 },
     "score_breakdown": {
       "type": "object",
       "required": [
@@ -43,25 +98,15 @@
         "complexity_penalty": { "$ref": "#/$defs/score" }
       }
     },
-    "warnings": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["anti_pattern_slug", "message"],
-        "additionalProperties": false,
-        "properties": {
-          "anti_pattern_slug": { "$ref": "#/$defs/slug" },
-          "message": { "type": "string", "minLength": 1 }
-        }
+    "overall_group": {
+      "type": "object",
+      "required": ["score", "count"],
+      "additionalProperties": false,
+      "properties": {
+        "score": { "$ref": "#/$defs/score" },
+        "count": { "type": "integer", "minimum": 1 }
       }
     },
-    "followup_questions": {
-      "type": "array",
-      "items": { "type": "string", "minLength": 1 }
-    }
-  },
-  "$defs": {
-    "score": { "type": "number", "minimum": 0, "maximum": 1 },
     "slug": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"

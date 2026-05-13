@@ -7,10 +7,15 @@
     "kind",
     "target_slug",
     "verdict",
+    "original_verdict",
+    "recommendation_class",
     "confidence",
+    "recommendation_score",
+    "score_breakdown",
     "why_now",
     "why_not_yet",
     "triggers_for_next_stage",
+    "followup_questions",
     "sources"
   ],
   "additionalProperties": false,
@@ -22,13 +27,27 @@
     "verdict": {
       "enum": ["recommend_now", "candidate_later", "not_enough_evidence", "avoid_for_now"]
     },
+    "original_verdict": {
+      "enum": ["recommend_now", "candidate_later", "not_enough_evidence", "avoid_for_now"]
+    },
+    "recommendation_class": {
+      "enum": ["recommend_now", "candidate_later", "not_enough_evidence", "avoid_for_now"]
+    },
     "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "recommendation_score": { "$ref": "#/$defs/score" },
+    "score_breakdown": { "$ref": "#/$defs/score_breakdown" },
     "why_now": { "type": "array", "items": { "type": "string", "minLength": 1 } },
     "why_not_yet": { "type": "array", "items": { "type": "string", "minLength": 1 } },
     "triggers_for_next_stage": {
       "type": "array",
       "items": { "type": "string", "minLength": 1 }
     },
+    "followup_questions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "module_slug": { "type": ["string", "null"], "minLength": 1 },
     "sources": {
       "type": "array",
       "items": {
@@ -43,6 +62,29 @@
     }
   },
   "$defs": {
+    "score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "score_breakdown": {
+      "type": "object",
+      "required": [
+        "domain_fit",
+        "data_shape_fit",
+        "workload_fit",
+        "operational_feasibility",
+        "growth_urgency",
+        "portability_penalty",
+        "complexity_penalty"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "domain_fit": { "$ref": "#/$defs/score" },
+        "data_shape_fit": { "$ref": "#/$defs/score" },
+        "workload_fit": { "$ref": "#/$defs/score" },
+        "operational_feasibility": { "$ref": "#/$defs/score" },
+        "growth_urgency": { "$ref": "#/$defs/score" },
+        "portability_penalty": { "$ref": "#/$defs/score" },
+        "complexity_penalty": { "$ref": "#/$defs/score" }
+      }
+    },
     "slug": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"

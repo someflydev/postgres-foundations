@@ -20,11 +20,12 @@ the extra operating surface. "Not yet" is a first-class output because many
 premature architecture decisions are expensive precisely because they solve a
 future problem before the present system can measure it.
 
-The subsystem now has catalog-backed rules and a validating runner. Catalogs
-define the vocabulary, rules bind intake evidence to recommendations, and the
-runner emits machine-readable and human-readable reports. The scoring model is
-still intentionally simple until the next prompt replaces it with a fuller
-weighted model.
+The subsystem now has catalog-backed rules, weighted scoring, and a validating
+runner. Catalogs define the vocabulary, rules bind intake evidence to
+recommendations, and the runner emits machine-readable and human-readable
+reports. The Markdown report is the primary human artifact because it groups the
+recommendations into adopt-now, candidate-later, not-enough-evidence, and
+avoid-for-now sections that can be reviewed without reading JSON first.
 
 ## Inputs
 
@@ -105,12 +106,39 @@ tenant isolation and auditability. A "candidate later" verdict for Citus should
 explain what is missing now and which measurable scale or distribution signals
 would change the answer.
 
-The third stage scores the overall fit. The report schema reserves score slots
-for domain fit, data-shape fit, workload fit, operational feasibility, growth
-urgency, portability penalty, and complexity penalty. Scores are intentionally
-separated so that a high workload fit can be offset by weak operational
-feasibility or a strong portability penalty. This keeps the engine from hiding a
-tradeoff in a single opaque number.
+The third stage scores each non-warning recommendation. The rule action provides
+baseline scoring hints for domain fit, data-shape fit, workload fit,
+operational feasibility, growth urgency, portability penalty, and complexity
+penalty. The scorer adjusts those hints with intake scale signals, team size,
+operational tolerance, portability constraints, and catalog metadata such as
+operational cost and managed-service availability.
+
+The default aggregate model is configured in
+`decision-engine/scoring-weights.json`:
+
+```json
+{
+  "domain_fit": 0.2,
+  "data_shape_fit": 0.2,
+  "workload_fit": 0.2,
+  "operational_feasibility": 0.15,
+  "growth_urgency": 0.1,
+  "portability_penalty": -0.1,
+  "complexity_penalty": -0.05
+}
+```
+
+Scores are intentionally separated so that a high workload fit can be offset by
+weak operational feasibility or a strong portability penalty. Penalty dimensions
+are represented as positive values in the report and subtracted by their
+negative weights.
+
+Recommendation class boundaries are applied after scoring. A rule that says
+`recommend_now` remains recommend-now only when the aggregate score is at least
+0.7. If the score is at least 0.4 but below 0.7, the verdict is downgraded to
+`candidate_later` and the report surfaces why-not-yet text. If the score is
+below 0.4, the verdict becomes `not_enough_evidence` and follow-up questions are
+added. Anti-pattern warnings are not scored; they are surfaced regardless.
 
 The fourth stage runs anti-pattern checks. Anti-patterns are warnings, not
 automatic vetoes. They catch common mistakes such as adding distributed
@@ -122,20 +150,20 @@ report.
 
 ## Outputs
 
-The primary output is `report.json`, a machine-readable document that validates
+The machine-readable output is `report.json`, a document that validates
 against `report.schema.json`. It contains the intake ID, generation timestamp,
-engine version, recommendations, score breakdown, warnings, and follow-up
-questions. The recommendation entries include target kind, target slug, verdict,
-confidence, explanation arrays, next-stage triggers, and rule-source
-contributions. Later prompts will use these reports as golden fixtures for
-regression tests.
+engine version, intake summary, recommendations, per-recommendation score
+breakdowns, class-level overall scores, warnings, grouped follow-up questions,
+and the full intake appendix. The recommendation entries include target kind,
+target slug, verdict, original verdict, recommendation class, confidence,
+aggregate score, explanation arrays, next-stage triggers, and rule-source
+contributions.
 
-The secondary output is `report.md`, a human-readable sibling. Markdown is not
-the source of truth, but it is the artifact a learner, reviewer, or architect can
-read quickly. It should preserve the same structure as the JSON: what the engine
-recommends now, what remains a candidate, what should be avoided for now, which
-warnings matter, and what questions a human should answer before committing to a
-design.
+The primary human output is `report.md`. It preserves the same reasoning as the
+JSON but is organized for review: summary, recommend-now items,
+candidate-later items, not-enough-evidence items, avoid-for-now warnings, score
+breakdown, cited rules, next steps, notes, follow-up questions, and the full
+intake appendix.
 
 ## Composition with Training and Interviews
 

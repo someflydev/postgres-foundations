@@ -148,6 +148,16 @@ Decision-engine rule references introduced by PROMPT_42:
 - `tests/test_rule_schema.py`
 - `tests/test_rules_against_fixtures.py`
 
+Decision-engine scoring and report references introduced by PROMPT_43:
+
+- `decision-engine/scoring-weights.json`
+- `docs/decision-engine-usage.md`
+- `scripts/update-decision-goldens.sh`
+- `src/pgfound/decision/templates/decision_report.md.j2`
+- `tests/test_scoring.py`
+- `tests/test_report_writer.py`
+- `tests/test_decision_golden.py`
+
 Administration track references introduced by PROMPT_31:
 
 - `curriculum/admin/map.json`
