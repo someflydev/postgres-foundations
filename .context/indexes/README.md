@@ -131,6 +131,23 @@ Decision-engine catalog references introduced by PROMPT_41:
 - `tests/test_catalogs_anti_patterns.py`
 - `tests/test_catalog_cross_links.py`
 
+Decision-engine rule references introduced by PROMPT_42:
+
+- `decision-engine/rules/README.md`
+- `decision-engine/rules/core-features/*.json`
+- `decision-engine/rules/extensions/*.json`
+- `decision-engine/rules/index-patterns/*.json`
+- `decision-engine/rules/topology/*.json`
+- `decision-engine/rules/anti-patterns/*.json`
+- `decision-engine/fixtures/intakes/logistics-geo-minimal.json`
+- `decision-engine/fixtures/reports/*.report.json`
+- `decision-engine/fixtures/reports/*.report.md`
+- `src/pgfound/decision/rules.py`
+- `src/pgfound/decision/evaluator.py`
+- `src/pgfound/decision/scoring.py`
+- `tests/test_rule_schema.py`
+- `tests/test_rules_against_fixtures.py`
+
 Administration track references introduced by PROMPT_31:
 
 - `curriculum/admin/map.json`

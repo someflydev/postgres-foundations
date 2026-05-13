@@ -37,6 +37,7 @@ concrete, operational, and PostgreSQL core-first.
 - Decision run: `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json`
 - Decision catalog list: `uv run pgfound decision catalog list --kind industry`
 - Decision catalog check: `uv run pgfound decision catalog check`
+- Decision rules lint: `uv run pgfound decision rules lint`
 - Content validate: `uv run pgfound content validate`
 - Content examples validate: `uv run pgfound content validate --include-examples`
 - Content lint: `uv run pgfound content lint`

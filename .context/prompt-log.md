@@ -183,7 +183,14 @@ Completed:
   missing anti-pattern docs and extension catalog sync docs; enforced Prompt 41
   prose-depth and extension not-yet trigger requirements in tests; and added
   catalog validation plus cross-link tests.
+- PROMPT_42: Decision-engine rule schema and initial rule pack; added
+  declarative predicate vocabulary, 40+ catalog-backed rules across core
+  features, extensions, indexes, topology patterns, and anti-pattern warnings;
+  implemented rule loading, matching, aggregation, linting, `--rules`, and
+  `--explain`; added a logistics geo intake plus golden JSON/Markdown reports;
+  and added rule schema and fixture evaluation tests.
 
 Next expected prompt:
 
-- PROMPT_42: Rules schema and the initial rule pack.
+- PROMPT_43: Scoring model, full evaluator integration, and report generator
+  polish.

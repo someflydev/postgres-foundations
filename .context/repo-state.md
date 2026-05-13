@@ -32,6 +32,12 @@ Current baseline:
   validation; added explicit extension not-yet trigger requirements plus
   extension/index/topology/module/doc cross-link checks; and added
   `docs/extension-catalog-sync.md`.
+- Decision engine rules: PROMPT_42 replaced the placeholder rule schema with
+  declarative rules, added `decision-engine/rules/` authoring docs and 40+
+  active rule files, implemented rule matching/aggregation/linting under
+  `src/pgfound/decision/`, added `pgfound decision rules lint`, `decision run
+  --rules`, and `--explain`, and generated golden fixture reports under
+  `decision-engine/fixtures/reports/`.
 - Content validation: PROMPT_05 added draft 2020-12 JSON Schemas under
   `content-schemas/`, one valid example per kind under
   `content-schemas/examples/`, and a real `pgfound content validate` command

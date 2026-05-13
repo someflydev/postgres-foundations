@@ -8,14 +8,23 @@ and explicit triggers for later adoption.
 - `architecture.md` describes the subsystem boundaries and processing model.
 - `schemas/` contains draft-2020-12 JSON Schemas for intakes, catalogs, rules,
   recommendations, and reports.
-- `catalogs/` will hold authored catalog data in PROMPT_40 and PROMPT_41.
-- `rules/` will hold matching and scoring rules in PROMPT_42.
+- `catalogs/` holds authored catalog data for industries, data shapes,
+  workload patterns, core features, extensions, index patterns, topology
+  patterns, and anti-patterns.
+- `rules/` holds declarative matching rules and an authoring guide.
 - `prompts/` will hold planning prompt packs in PROMPT_44.
 - `fixtures/intakes/` contains small but realistic intake examples.
-- `fixtures/reports/` is reserved for golden reports in PROMPT_43.
+- `fixtures/reports/` contains Prompt 42 report snapshots; PROMPT_43 upgrades
+  them into masked golden tests for the scoring and report-generator work.
 
-Run the current stub with:
+Run the engine with:
 
 ```bash
 uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json
+```
+
+Lint the rule pack with:
+
+```bash
+uv run pgfound decision rules lint
 ```
