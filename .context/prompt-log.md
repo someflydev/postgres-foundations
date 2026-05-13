@@ -198,8 +198,15 @@ Completed:
   `decision-engine/prompts/`; added the shared architect persona and output
   contracts; added `pgfound decision prompt list|render`; documented planning
   prompts; and added prompt render tests plus fixture contexts.
+- PROMPT_45: Industry scenario batch 1; added SaaS, fintech, healthcare, and
+  ecommerce scenario packs under `scenarios/industries/`, each with
+  `scenario.json`, 800+ word narrative, decision-engine intake, and JSON/MD
+  expected reports; added scenario golden refresh via
+  `pgfound decision golden-refresh --confirm`; integrated industry scenario
+  intake/report drift checks into `pgfound content validate`; documented
+  scenario fixtures; and added per-industry scenario regression tests.
 
 Next expected prompt:
 
-- PROMPT_45: industry scenarios batch 1 (SaaS, fintech, healthcare,
-  ecommerce).
+- PROMPT_46: industry scenarios batch 2 (logistics/geo, observability,
+  knowledge/AI, modernization bridge).

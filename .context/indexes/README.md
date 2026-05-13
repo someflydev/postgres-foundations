@@ -171,6 +171,22 @@ Decision-engine prompt pack references introduced by PROMPT_44:
 - `tests/test_prompt_output_formats.py`
 - `tests/fixtures/evaluator-context.json`
 
+Industry scenario fixture references introduced by PROMPT_45:
+
+- `scenarios/industries/saas-multi-tenant/`
+- `scenarios/industries/fintech-payments/`
+- `scenarios/industries/healthcare-ops/`
+- `scenarios/industries/ecommerce-marketplace/`
+- `scenarios/README.md`
+- `src/pgfound/content/validate.py`
+- `src/pgfound/cli.py`
+- `docs/decision-engine-usage.md`
+- `tests/scenario_industry_helpers.py`
+- `tests/test_scenarios_saas.py`
+- `tests/test_scenarios_fintech.py`
+- `tests/test_scenarios_healthcare.py`
+- `tests/test_scenarios_ecommerce.py`
+
 Administration track references introduced by PROMPT_31:
 
 - `curriculum/admin/map.json`

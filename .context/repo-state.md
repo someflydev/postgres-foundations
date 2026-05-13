@@ -52,6 +52,13 @@ Current baseline:
   `pgfound decision prompt list|render`; extended the reusable prompt renderer
   to support multiple prompt roots; and documented the planning prompt workflow
   in `docs/llm-usage.md`.
+- Industry scenario fixtures: PROMPT_45 added twelve scenario packs under
+  `scenarios/industries/` for SaaS multi-tenant, fintech payments, healthcare
+  ops, and ecommerce marketplace. Each pack has `scenario.json`,
+  `narrative.md`, `intake.json`, `expected-report.json`, and
+  `expected-report.md`. `pgfound content validate` now checks industry scenario
+  intakes and report drift, and `pgfound decision golden-refresh --confirm`
+  regenerates scenario report goldens.
 - Content validation: PROMPT_05 added draft 2020-12 JSON Schemas under
   `content-schemas/`, one valid example per kind under
   `content-schemas/examples/`, and a real `pgfound content validate` command
