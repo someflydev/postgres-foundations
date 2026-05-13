@@ -1,0 +1,42 @@
+{
+  "id": "rule-audit-required-posture",
+  "title": "Preserve database-level audit posture when audit is required",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "security_constraint_present": "audit_required"
+      },
+      {
+        "data_shape_present": "relational_core"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "core_feature",
+      "target_slug": "constraints",
+      "verdict": "recommend_now",
+      "confidence": 0.88,
+      "why_now": [
+        "audit_required posture depends on database-enforced state transitions, not only application logging.",
+        "Relational integrity gives audit reviewers durable evidence that invalid business states were rejected."
+      ],
+      "why_not_yet": [
+        "If the audit scope is not yet named, start by identifying which tables and state changes require evidence."
+      ],
+      "triggers_for_next_stage": [
+        "Add append-only audit tables, actor identity propagation, and retention reviews once regulated workflows are mapped."
+      ],
+      "scoring": {
+        "domain_fit": 0.86,
+        "data_shape_fit": 0.9,
+        "workload_fit": 0.78,
+        "operational_feasibility": 0.9,
+        "growth_urgency": 0.42,
+        "portability_penalty": 0.02,
+        "complexity_penalty": 0.08
+      }
+    }
+  ]
+}

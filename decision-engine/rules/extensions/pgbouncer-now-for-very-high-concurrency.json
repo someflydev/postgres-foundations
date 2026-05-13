@@ -1,0 +1,74 @@
+{
+  "id": "rule-pgbouncer-now-for-very-high-concurrency",
+  "title": "Use PgBouncer now for very high connection pressure",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "scale_signal_gte": {
+          "key": "concurrent_connections_peak",
+          "value": 1000
+        }
+      }
+    ],
+    "if_any": [
+      {
+        "workload_pattern_present": "oltp_heavy"
+      },
+      {
+        "workload_pattern_present": "read_heavy"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "pgbouncer",
+      "verdict": "recommend_now",
+      "confidence": 0.9,
+      "why_now": [
+        "Very high connection peaks are an immediate PostgreSQL operating risk, even before adding larger topology changes.",
+        "PgBouncer is a narrow, portable operational tool with a clearer runbook than scaling backend process counts indefinitely."
+      ],
+      "why_not_yet": [
+        "Transaction pooling compatibility, prepared statement behavior, and session settings still need an explicit acceptance test."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt with pool sizing, idle timeout, failover routing, and drain procedures documented before the next traffic peak."
+      ],
+      "scoring": {
+        "domain_fit": 0.84,
+        "data_shape_fit": 0.7,
+        "workload_fit": 0.9,
+        "operational_feasibility": 0.88,
+        "growth_urgency": 0.82,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.18
+      }
+    },
+    {
+      "kind": "topology_pattern",
+      "target_slug": "pgbouncer_in_front",
+      "verdict": "recommend_now",
+      "confidence": 0.86,
+      "why_now": [
+        "At this connection level, pooling belongs in the production topology rather than as an application-side convention."
+      ],
+      "why_not_yet": [
+        "Pooler placement must be covered by failover and maintenance runbooks."
+      ],
+      "triggers_for_next_stage": [
+        "Review connection wait time, transaction duration, and pool saturation after one representative traffic window."
+      ],
+      "scoring": {
+        "domain_fit": 0.82,
+        "data_shape_fit": 0.68,
+        "workload_fit": 0.88,
+        "operational_feasibility": 0.84,
+        "growth_urgency": 0.8,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.2
+      }
+    }
+  ]
+}

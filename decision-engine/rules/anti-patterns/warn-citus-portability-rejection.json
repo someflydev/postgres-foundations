@@ -1,0 +1,45 @@
+{
+  "id": "rule-warn-citus-portability-rejection",
+  "title": "Warn when Citus conflicts with portability requirements",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "explicit_bias_for_contains": "citus"
+      },
+      {
+        "explicit_bias_against_contains": "citus"
+      },
+      {
+        "portability_constraint_present": "aws_rds"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "anti_pattern_warning",
+      "target_slug": "shard_without_distribution_key",
+      "verdict": "avoid_for_now",
+      "confidence": 0.84,
+      "why_now": [
+        "Citus is being considered, but the intake also names managed-service portability as a hard constraint.",
+        "Treat distributed PostgreSQL as blocked until portability, restore, and distribution-key evidence are resolved."
+      ],
+      "why_not_yet": [
+        "Single-primary tuning, partitioning, pooling, and read isolation should be exhausted first."
+      ],
+      "triggers_for_next_stage": [
+        "Revisit only after tenant-local query traces, cluster-aware restore drills, and a managed-service target are proven."
+      ],
+      "scoring": {
+        "domain_fit": 0.58,
+        "data_shape_fit": 0.7,
+        "workload_fit": 0.76,
+        "operational_feasibility": 0.42,
+        "growth_urgency": 0.74,
+        "portability_penalty": 0.36,
+        "complexity_penalty": 0.62
+      }
+    }
+  ]
+}

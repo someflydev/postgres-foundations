@@ -1,26 +1,24 @@
 # PostgreSQL Architecture Recommendation
-Intake: healthcare-ops-minimal  |  Generated: 2026-05-13T01:00:09.099723Z
+Intake: healthcare-ops-minimal  |  Generated: 2026-05-13T16:25:57.296235Z
 Industry: Healthcare Operations  |  Tenancy: multi_tenant_database_per_tenant  |  Ops tolerance: low
 
 ## Summary
-The intake points to 0 immediate recommendations, 13 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
+The intake points to 2 immediate recommendations, 11 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
 
 ## Recommend now
 
-- No recommendations cleared the recommend-now score boundary.
+- **Constraints** — score 0.69
+  - Why now: audit_required posture depends on database-enforced state transitions, not only application logging. Relational integrity gives audit reviewers durable evidence that invalid business states were rejected. Relational core data needs database-enforced truth before optional architecture choices. Constraints make bad states visible across every application writer.
+  - Why not something else: If the audit scope is not yet named, start by identifying which tables and state changes require evidence. If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints.
+  - Triggers for next stage: Add append-only audit tables, actor identity propagation, and retention reviews once regulated workflows are mapped. Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit.
+
+- **pg_stat_statements** — score 0.69 — [module e1-pg-stat-statements]
+  - Why now: Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions. pg_stat_statements is low-risk and broadly available.
+  - Why not something else: Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.
+  - Triggers for next stage: Use top total time and calls to justify the next index, schema, or topology recommendation.
 
 
 ## Candidate later
-
-- **pg_stat_statements** — score 0.66 — [module e1-pg-stat-statements]
-  - Why now: Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions. pg_stat_statements is low-risk and broadly available.
-  - Why not something else: Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Use top total time and calls to justify the next index, schema, or topology recommendation.
-
-- **Constraints** — score 0.65
-  - Why now: Relational core data needs database-enforced truth before optional architecture choices. Constraints make bad states visible across every application writer.
-  - Why not something else: If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit.
 
 - **Exclusion Constraints** — score 0.63
   - Why now: Scheduling, booking, and availability windows need overlap prevention at write time. Exclusion constraints keep race conditions out of application-only checks.
@@ -92,8 +90,8 @@ The intake points to 0 immediate recommendations, 13 later candidates, and 0 ite
 ## Score breakdown
 | Recommendation | Domain | Data | Workload | Ops | Growth | Portability | Complexity | Total |
 | -------------- | ------ | ---- | -------- | --- | ------ | ----------- | ---------- | ----- |
-| pg_stat_statements | 0.86 | 0.70 | 0.90 | 0.78 | 0.57 | 0.04 | 0.12 | 0.66 |
-| constraints | 0.80 | 0.90 | 0.75 | 0.80 | 0.46 | 0.04 | 0.08 | 0.65 |
+| constraints | 0.86 | 0.90 | 0.82 | 0.82 | 0.55 | 0.04 | 0.06 | 0.69 |
+| pg_stat_statements | 0.92 | 0.70 | 0.94 | 0.81 | 0.63 | 0.04 | 0.12 | 0.69 |
 | exclusion_constraints | 0.78 | 0.90 | 0.72 | 0.74 | 0.52 | 0.04 | 0.17 | 0.63 |
 | gist_range_exclusion | 0.78 | 0.88 | 0.72 | 0.72 | 0.52 | 0.04 | 0.18 | 0.62 |
 | btree_composite_equality_then_range | 0.72 | 0.70 | 0.84 | 0.74 | 0.55 | 0.04 | 0.12 | 0.61 |
@@ -108,8 +106,9 @@ The intake points to 0 immediate recommendations, 13 later candidates, and 0 ite
 
 
 ## Cited rules
-- rule-pg-stat-statements-for-real-workloads (contrib 0.90)
+- rule-audit-required-posture (contrib 0.88)
 - rule-prefer-constraints-for-relational-core (contrib 0.86)
+- rule-pg-stat-statements-for-real-workloads (contrib 0.90)
 - rule-exclusion-constraints-for-overlap-windows (contrib 0.82)
 - rule-gist-for-range-overlap (contrib 0.76)
 - rule-btree-composite-for-hot-filter-sort (contrib 0.72)

@@ -1,41 +1,39 @@
 # PostgreSQL Architecture Recommendation
-Intake: fintech-payments-minimal  |  Generated: 2026-05-13T01:00:08.135516Z
+Intake: fintech-payments-minimal  |  Generated: 2026-05-13T16:25:56.868542Z
 Industry: Fintech Payments  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: medium
 
 ## Summary
-The intake points to 0 immediate recommendations, 18 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
+The intake points to 5 immediate recommendations, 13 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
 
 ## Recommend now
 
-- No recommendations cleared the recommend-now score boundary.
+- **Constraints** — score 0.71
+  - Why now: audit_required posture depends on database-enforced state transitions, not only application logging. Relational integrity gives audit reviewers durable evidence that invalid business states were rejected. Relational core data needs database-enforced truth before optional architecture choices. Constraints make bad states visible across every application writer.
+  - Why not something else: If the audit scope is not yet named, start by identifying which tables and state changes require evidence. If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints.
+  - Triggers for next stage: Add append-only audit tables, actor identity propagation, and retention reviews once regulated workflows are mapped. Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit.
 
-
-## Candidate later
-
-- **pg_stat_statements** — score 0.68 — [module e1-pg-stat-statements]
+- **pg_stat_statements** — score 0.71 — [module e1-pg-stat-statements]
   - Why now: Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions. pg_stat_statements is low-risk and broadly available.
-  - Why not something else: Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
+  - Why not something else: Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.
   - Triggers for next stage: Use top total time and calls to justify the next index, schema, or topology recommendation.
-
-- **Constraints** — score 0.67
-  - Why now: Relational core data needs database-enforced truth before optional architecture choices. Constraints make bad states visible across every application writer.
-  - Why not something else: If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit.
 
 - **Row-level Security** — score 0.67
   - Why now: Shared-schema tenancy puts tenant isolation inside every query path. RLS gives the database a backstop when application filters are missed.
-  - Why not something else: RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
+  - Why not something else: RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline.
   - Triggers for next stage: Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters.
 
 - **Declarative Partitioning** — score 0.67
   - Why now: Large append-heavy tables need bounded maintenance, retention, and pruning strategy.
-  - Why not something else: Partitioning is premature when tables are modest, retention is vague, or queries do not prune by partition key. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
+  - Why not something else: Partitioning is premature when tables are modest, retention is vague, or queries do not prune by partition key.
   - Triggers for next stage: Escalate to pg_partman only after manual partition operations become a recurring operational risk.
 
 - **BRIN for Append-only Time** — score 0.67
   - Why now: BRIN is a low-maintenance fit for large chronological append-only tables. Append-heavy chronological data often gets useful pruning from small BRIN indexes.
-  - Why not something else: It is weak when data is not physically correlated with time or queries need point lookup. BRIN depends on physical correlation and does not replace point-lookup btrees. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
+  - Why not something else: It is weak when data is not physically correlated with time or queries need point lookup. BRIN depends on physical correlation and does not replace point-lookup btrees.
   - Triggers for next stage: Add btree companion indexes only for proven tenant, status, or id filters. Adopt when time-window scans dominate and table ordering remains correlated.
+
+
+## Candidate later
 
 - **Logical Replication** — score 0.63
   - Why now: A PostgreSQL source plus zero-downtime migration need is a direct fit for publication/subscription cutover.
@@ -117,8 +115,8 @@ The intake points to 0 immediate recommendations, 18 later candidates, and 0 ite
 ## Score breakdown
 | Recommendation | Domain | Data | Workload | Ops | Growth | Portability | Complexity | Total |
 | -------------- | ------ | ---- | -------- | --- | ------ | ----------- | ---------- | ----- |
-| pg_stat_statements | 0.86 | 0.70 | 0.90 | 0.82 | 0.75 | 0.04 | 0.12 | 0.68 |
-| constraints | 0.80 | 0.90 | 0.75 | 0.84 | 0.64 | 0.04 | 0.08 | 0.67 |
+| constraints | 0.86 | 0.90 | 0.82 | 0.86 | 0.72 | 0.04 | 0.06 | 0.71 |
+| pg_stat_statements | 0.92 | 0.70 | 0.94 | 0.85 | 0.81 | 0.04 | 0.12 | 0.71 |
 | row_level_security | 0.86 | 0.82 | 0.84 | 0.75 | 0.72 | 0.04 | 0.25 | 0.67 |
 | partitioning | 0.76 | 0.86 | 0.84 | 0.71 | 0.88 | 0.04 | 0.30 | 0.67 |
 | brin_append_only_chronological | 0.72 | 0.84 | 0.80 | 0.81 | 0.83 | 0.04 | 0.12 | 0.67 |
@@ -138,8 +136,9 @@ The intake points to 0 immediate recommendations, 18 later candidates, and 0 ite
 
 
 ## Cited rules
-- rule-pg-stat-statements-for-real-workloads (contrib 0.90)
+- rule-audit-required-posture (contrib 0.88)
 - rule-prefer-constraints-for-relational-core (contrib 0.86)
+- rule-pg-stat-statements-for-real-workloads (contrib 0.90)
 - rule-rls-when-multi-tenant-and-shared-schema (contrib 0.88)
 - rule-partitioning-when-retention-matters (contrib 0.80)
 - rule-brin-for-append-heavy-chronological (contrib 0.70)

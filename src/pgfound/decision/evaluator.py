@@ -72,7 +72,7 @@ def _downgrade_recommendation(recommendation: dict[str, Any]) -> None:
     if original != "recommend_now" or recommendation["kind"] == "anti_pattern_warning":
         recommendation["recommendation_class"] = recommendation["verdict"]
         return
-    if score >= 0.7:
+    if score >= 0.65:
         recommendation["recommendation_class"] = "recommend_now"
         recommendation["verdict"] = "recommend_now"
         return

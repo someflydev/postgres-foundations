@@ -1,11 +1,21 @@
 # PostgreSQL Architecture Recommendation
-Intake: saas-multi-tenant-minimal  |  Generated: 2026-05-13T01:00:11.272730Z
+Intake: saas-multi-tenant-minimal  |  Generated: 2026-05-13T16:25:58.226077Z
 Industry: SaaS Multi-tenant  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: low
 
 ## Summary
-The intake points to 1 immediate recommendation, 15 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. No anti-pattern warning matched this intake.
+The intake points to 3 immediate recommendations, 13 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. No anti-pattern warning matched this intake.
 
 ## Recommend now
+
+- **Constraints** — score 0.70
+  - Why now: audit_required posture depends on database-enforced state transitions, not only application logging. Relational integrity gives audit reviewers durable evidence that invalid business states were rejected. Relational core data needs database-enforced truth before optional architecture choices. Constraints make bad states visible across every application writer.
+  - Why not something else: If the audit scope is not yet named, start by identifying which tables and state changes require evidence. If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints.
+  - Triggers for next stage: Add append-only audit tables, actor identity propagation, and retention reviews once regulated workflows are mapped. Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit.
+
+- **pg_stat_statements** — score 0.70 — [module e1-pg-stat-statements]
+  - Why now: Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions. pg_stat_statements is low-risk and broadly available.
+  - Why not something else: Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.
+  - Triggers for next stage: Use top total time and calls to justify the next index, schema, or topology recommendation.
 
 - **Row-level Security** — score 0.70
   - Why now: Shared-schema tenancy puts tenant isolation inside every query path. RLS gives the database a backstop when application filters are missed.
@@ -14,16 +24,6 @@ The intake points to 1 immediate recommendation, 15 later candidates, and 0 item
 
 
 ## Candidate later
-
-- **pg_stat_statements** — score 0.67 — [module e1-pg-stat-statements]
-  - Why now: Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions. pg_stat_statements is low-risk and broadly available.
-  - Why not something else: Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Use top total time and calls to justify the next index, schema, or topology recommendation.
-
-- **Constraints** — score 0.67
-  - Why now: Relational core data needs database-enforced truth before optional architecture choices. Constraints make bad states visible across every application writer.
-  - Why not something else: If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit.
 
 - **Composite Equality Then Range** — score 0.63
   - Why now: Hot OLTP and read-heavy filters often need equality columns before range or sort columns.
@@ -105,9 +105,9 @@ The intake points to 1 immediate recommendation, 15 later candidates, and 0 item
 ## Score breakdown
 | Recommendation | Domain | Data | Workload | Ops | Growth | Portability | Complexity | Total |
 | -------------- | ------ | ---- | -------- | --- | ------ | ----------- | ---------- | ----- |
+| constraints | 0.86 | 0.90 | 0.82 | 0.82 | 0.72 | 0.04 | 0.06 | 0.70 |
+| pg_stat_statements | 0.92 | 0.70 | 0.94 | 0.81 | 0.81 | 0.04 | 0.12 | 0.70 |
 | row_level_security | 0.92 | 0.88 | 0.90 | 0.70 | 0.72 | 0.04 | 0.25 | 0.70 |
-| pg_stat_statements | 0.86 | 0.70 | 0.90 | 0.78 | 0.75 | 0.04 | 0.12 | 0.67 |
-| constraints | 0.80 | 0.90 | 0.75 | 0.80 | 0.64 | 0.04 | 0.08 | 0.67 |
 | btree_composite_equality_then_range | 0.72 | 0.70 | 0.84 | 0.74 | 0.72 | 0.04 | 0.12 | 0.63 |
 | partial_indexes | 0.70 | 0.72 | 0.82 | 0.70 | 0.77 | 0.04 | 0.16 | 0.62 |
 | partial_index_for_skew | 0.70 | 0.72 | 0.82 | 0.70 | 0.77 | 0.04 | 0.16 | 0.62 |
@@ -124,9 +124,10 @@ The intake points to 1 immediate recommendation, 15 later candidates, and 0 item
 
 
 ## Cited rules
-- rule-rls-when-multi-tenant-and-shared-schema (contrib 0.88)
-- rule-pg-stat-statements-for-real-workloads (contrib 0.90)
+- rule-audit-required-posture (contrib 0.88)
 - rule-prefer-constraints-for-relational-core (contrib 0.86)
+- rule-pg-stat-statements-for-real-workloads (contrib 0.90)
+- rule-rls-when-multi-tenant-and-shared-schema (contrib 0.88)
 - rule-btree-composite-for-hot-filter-sort (contrib 0.72)
 - rule-partial-indexes-for-skewed-hot-sets (contrib 0.68)
 - rule-generated-columns-for-jsonb-hot-keys (contrib 0.66)

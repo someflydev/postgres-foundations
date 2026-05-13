@@ -61,19 +61,101 @@
   },
   "overall": {
     "candidate_later": {
-      "count": 13,
-      "score": 0.629
+      "count": 8,
+      "score": 0.6
     },
     "not_enough_evidence": {
       "count": 1,
       "score": 0.368
     },
     "recommend_now": {
-      "count": 1,
-      "score": 0.703
+      "count": 6,
+      "score": 0.691
     }
   },
   "recommendations": [
+    {
+      "confidence": 0.88,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.711,
+      "score_breakdown": {
+        "complexity_penalty": 0.06,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.863,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.88,
+          "rule_id": "rule-audit-required-posture"
+        },
+        {
+          "contribution": 0.86,
+          "rule_id": "rule-prefer-constraints-for-relational-core"
+        }
+      ],
+      "target_slug": "constraints",
+      "title": "Constraints",
+      "triggers_for_next_stage": [
+        "Add append-only audit tables, actor identity propagation, and retention reviews once regulated workflows are mapped.",
+        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "If the audit scope is not yet named, start by identifying which tables and state changes require evidence.",
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+      ],
+      "why_now": [
+        "audit_required posture depends on database-enforced state transitions, not only application logging.",
+        "Relational integrity gives audit reviewers durable evidence that invalid business states were rejected.",
+        "Relational core data needs database-enforced truth before optional architecture choices.",
+        "Constraints make bad states visible across every application writer."
+      ]
+    },
+    {
+      "confidence": 0.9,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e1-pg-stat-statements",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.711,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.92,
+        "growth_urgency": 0.808,
+        "operational_feasibility": 0.855,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.94
+      },
+      "sources": [
+        {
+          "contribution": 0.9,
+          "rule_id": "rule-pg-stat-statements-for-real-workloads"
+        }
+      ],
+      "target_slug": "pg_stat_statements",
+      "title": "pg_stat_statements",
+      "triggers_for_next_stage": [
+        "Use top total time and calls to justify the next index, schema, or topology recommendation."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
+      ],
+      "why_now": [
+        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
+        "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
     {
       "confidence": 0.88,
       "followup_questions": [],
@@ -117,7 +199,7 @@
       "kind": "index_pattern",
       "module_slug": null,
       "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
+      "recommendation_class": "recommend_now",
       "recommendation_score": 0.691,
       "score_breakdown": {
         "complexity_penalty": 0.22,
@@ -139,89 +221,12 @@
       "triggers_for_next_stage": [
         "Benchmark representative bounding-box and nearest-neighbor queries."
       ],
-      "verdict": "candidate_later",
+      "verdict": "recommend_now",
       "why_not_yet": [
-        "Index choice should wait if the product only stores points for display.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+        "Index choice should wait if the product only stores points for display."
       ],
       "why_now": [
         "GiST spatial indexes are the expected access path for containment, intersection, and distance predicates."
-      ]
-    },
-    {
-      "confidence": 0.9,
-      "followup_questions": [],
-      "kind": "extension",
-      "module_slug": "e1-pg-stat-statements",
-      "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
-      "recommendation_score": 0.681,
-      "score_breakdown": {
-        "complexity_penalty": 0.12,
-        "data_shape_fit": 0.7,
-        "domain_fit": 0.86,
-        "growth_urgency": 0.753,
-        "operational_feasibility": 0.823,
-        "portability_penalty": 0.04,
-        "workload_fit": 0.9
-      },
-      "sources": [
-        {
-          "contribution": 0.9,
-          "rule_id": "rule-pg-stat-statements-for-real-workloads"
-        }
-      ],
-      "target_slug": "pg_stat_statements",
-      "title": "pg_stat_statements",
-      "triggers_for_next_stage": [
-        "Use top total time and calls to justify the next index, schema, or topology recommendation."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
-      ],
-      "why_now": [
-        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
-        "pg_stat_statements is low-risk and broadly available."
-      ]
-    },
-    {
-      "confidence": 0.86,
-      "followup_questions": [],
-      "kind": "core_feature",
-      "module_slug": null,
-      "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
-      "recommendation_score": 0.672,
-      "score_breakdown": {
-        "complexity_penalty": 0.08,
-        "data_shape_fit": 0.9,
-        "domain_fit": 0.8,
-        "growth_urgency": 0.643,
-        "operational_feasibility": 0.837,
-        "portability_penalty": 0.04,
-        "workload_fit": 0.75
-      },
-      "sources": [
-        {
-          "contribution": 0.86,
-          "rule_id": "rule-prefer-constraints-for-relational-core"
-        }
-      ],
-      "target_slug": "constraints",
-      "title": "Constraints",
-      "triggers_for_next_stage": [
-        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
-      ],
-      "why_now": [
-        "Relational core data needs database-enforced truth before optional architecture choices.",
-        "Constraints make bad states visible across every application writer."
       ]
     },
     {
@@ -230,7 +235,7 @@
       "kind": "core_feature",
       "module_slug": null,
       "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
+      "recommendation_class": "recommend_now",
       "recommendation_score": 0.672,
       "score_breakdown": {
         "complexity_penalty": 0.25,
@@ -252,10 +257,9 @@
       "triggers_for_next_stage": [
         "Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters."
       ],
-      "verdict": "candidate_later",
+      "verdict": "recommend_now",
       "why_not_yet": [
-        "RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+        "RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline."
       ],
       "why_now": [
         "Shared-schema tenancy puts tenant isolation inside every query path.",
@@ -268,7 +272,7 @@
       "kind": "core_feature",
       "module_slug": null,
       "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
+      "recommendation_class": "recommend_now",
       "recommendation_score": 0.655,
       "score_breakdown": {
         "complexity_penalty": 0.17,
@@ -290,10 +294,9 @@
       "triggers_for_next_stage": [
         "Escalate to GiST range indexes and concurrency scenarios when double-booking risk is on a hot path."
       ],
-      "verdict": "candidate_later",
+      "verdict": "recommend_now",
       "why_not_yet": [
-        "If overlapping rows are allowed by business policy, model the exception first instead of forcing a generic constraint.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+        "If overlapping rows are allowed by business policy, model the exception first instead of forcing a generic constraint."
       ],
       "why_now": [
         "Scheduling, booking, and availability windows need overlap prevention at write time.",
@@ -671,13 +674,13 @@
     }
   ],
   "score_breakdown": {
-    "complexity_penalty": 0.227,
+    "complexity_penalty": 0.225,
     "data_shape_fit": 0.741,
-    "domain_fit": 0.734,
-    "growth_urgency": 0.709,
-    "operational_feasibility": 0.741,
+    "domain_fit": 0.742,
+    "growth_urgency": 0.718,
+    "operational_feasibility": 0.745,
     "portability_penalty": 0.053,
-    "workload_fit": 0.778
+    "workload_fit": 0.785
   },
   "warnings": [
     {

@@ -64,15 +64,97 @@
   },
   "overall": {
     "candidate_later": {
-      "count": 15,
-      "score": 0.596
+      "count": 13,
+      "score": 0.584
     },
     "recommend_now": {
-      "count": 1,
-      "score": 0.702
+      "count": 3,
+      "score": 0.704
     }
   },
   "recommendations": [
+    {
+      "confidence": 0.88,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.705,
+      "score_breakdown": {
+        "complexity_penalty": 0.06,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.821,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.88,
+          "rule_id": "rule-audit-required-posture"
+        },
+        {
+          "contribution": 0.86,
+          "rule_id": "rule-prefer-constraints-for-relational-core"
+        }
+      ],
+      "target_slug": "constraints",
+      "title": "Constraints",
+      "triggers_for_next_stage": [
+        "Add append-only audit tables, actor identity propagation, and retention reviews once regulated workflows are mapped.",
+        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "If the audit scope is not yet named, start by identifying which tables and state changes require evidence.",
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+      ],
+      "why_now": [
+        "audit_required posture depends on database-enforced state transitions, not only application logging.",
+        "Relational integrity gives audit reviewers durable evidence that invalid business states were rejected.",
+        "Relational core data needs database-enforced truth before optional architecture choices.",
+        "Constraints make bad states visible across every application writer."
+      ]
+    },
+    {
+      "confidence": 0.9,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e1-pg-stat-statements",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.705,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.92,
+        "growth_urgency": 0.808,
+        "operational_feasibility": 0.813,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.94
+      },
+      "sources": [
+        {
+          "contribution": 0.9,
+          "rule_id": "rule-pg-stat-statements-for-real-workloads"
+        }
+      ],
+      "target_slug": "pg_stat_statements",
+      "title": "pg_stat_statements",
+      "triggers_for_next_stage": [
+        "Use top total time and calls to justify the next index, schema, or topology recommendation."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
+      ],
+      "why_now": [
+        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
+        "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
     {
       "confidence": 0.88,
       "followup_questions": [],
@@ -108,82 +190,6 @@
       "why_now": [
         "Shared-schema tenancy puts tenant isolation inside every query path.",
         "RLS gives the database a backstop when application filters are missed."
-      ]
-    },
-    {
-      "confidence": 0.9,
-      "followup_questions": [],
-      "kind": "extension",
-      "module_slug": "e1-pg-stat-statements",
-      "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
-      "recommendation_score": 0.674,
-      "score_breakdown": {
-        "complexity_penalty": 0.12,
-        "data_shape_fit": 0.7,
-        "domain_fit": 0.86,
-        "growth_urgency": 0.753,
-        "operational_feasibility": 0.781,
-        "portability_penalty": 0.04,
-        "workload_fit": 0.9
-      },
-      "sources": [
-        {
-          "contribution": 0.9,
-          "rule_id": "rule-pg-stat-statements-for-real-workloads"
-        }
-      ],
-      "target_slug": "pg_stat_statements",
-      "title": "pg_stat_statements",
-      "triggers_for_next_stage": [
-        "Use top total time and calls to justify the next index, schema, or topology recommendation."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
-      ],
-      "why_now": [
-        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
-        "pg_stat_statements is low-risk and broadly available."
-      ]
-    },
-    {
-      "confidence": 0.86,
-      "followup_questions": [],
-      "kind": "core_feature",
-      "module_slug": null,
-      "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
-      "recommendation_score": 0.666,
-      "score_breakdown": {
-        "complexity_penalty": 0.08,
-        "data_shape_fit": 0.9,
-        "domain_fit": 0.8,
-        "growth_urgency": 0.643,
-        "operational_feasibility": 0.795,
-        "portability_penalty": 0.04,
-        "workload_fit": 0.75
-      },
-      "sources": [
-        {
-          "contribution": 0.86,
-          "rule_id": "rule-prefer-constraints-for-relational-core"
-        }
-      ],
-      "target_slug": "constraints",
-      "title": "Constraints",
-      "triggers_for_next_stage": [
-        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
-      ],
-      "why_now": [
-        "Relational core data needs database-enforced truth before optional architecture choices.",
-        "Constraints make bad states visible across every application writer."
       ]
     },
     {
@@ -665,13 +671,13 @@
     }
   ],
   "score_breakdown": {
-    "complexity_penalty": 0.196,
+    "complexity_penalty": 0.195,
     "data_shape_fit": 0.726,
-    "domain_fit": 0.711,
-    "growth_urgency": 0.709,
-    "operational_feasibility": 0.701,
+    "domain_fit": 0.718,
+    "growth_urgency": 0.718,
+    "operational_feasibility": 0.705,
     "portability_penalty": 0.064,
-    "workload_fit": 0.776
+    "workload_fit": 0.782
   },
   "warnings": []
 }

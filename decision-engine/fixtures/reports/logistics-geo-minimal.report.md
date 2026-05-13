@@ -1,44 +1,44 @@
 # PostgreSQL Architecture Recommendation
-Intake: logistics-geo-minimal  |  Generated: 2026-05-13T01:00:10.079309Z
+Intake: logistics-geo-minimal  |  Generated: 2026-05-13T16:25:57.709570Z
 Industry: Logistics and Geospatial Operations  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: medium
 
 ## Summary
-The intake points to 1 immediate recommendation, 13 later candidates, and 1 item that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
+The intake points to 6 immediate recommendations, 8 later candidates, and 1 item that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
 
 ## Recommend now
+
+- **Constraints** — score 0.71
+  - Why now: audit_required posture depends on database-enforced state transitions, not only application logging. Relational integrity gives audit reviewers durable evidence that invalid business states were rejected. Relational core data needs database-enforced truth before optional architecture choices. Constraints make bad states visible across every application writer.
+  - Why not something else: If the audit scope is not yet named, start by identifying which tables and state changes require evidence. If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints.
+  - Triggers for next stage: Add append-only audit tables, actor identity propagation, and retention reviews once regulated workflows are mapped. Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit.
+
+- **pg_stat_statements** — score 0.71 — [module e1-pg-stat-statements]
+  - Why now: Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions. pg_stat_statements is low-risk and broadly available.
+  - Why not something else: Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.
+  - Triggers for next stage: Use top total time and calls to justify the next index, schema, or topology recommendation.
 
 - **PostGIS** — score 0.70 — [module e3-postgis]
   - Why now: Geo-query-heavy workloads need spatial types, predicates, and indexes rather than latitude/longitude conventions. PostGIS keeps spatial decisions close to transactional state.
   - Why not something else: PostGIS is not needed for display-only coordinates or rare exports with no spatial predicates.
   - Triggers for next stage: Add geometry validity, coordinate-system rules, and restore validation before production rollout.
 
-
-## Candidate later
-
 - **GiST Geospatial** — score 0.69
   - Why now: GiST spatial indexes are the expected access path for containment, intersection, and distance predicates.
-  - Why not something else: Index choice should wait if the product only stores points for display. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
+  - Why not something else: Index choice should wait if the product only stores points for display.
   - Triggers for next stage: Benchmark representative bounding-box and nearest-neighbor queries.
-
-- **pg_stat_statements** — score 0.68 — [module e1-pg-stat-statements]
-  - Why now: Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions. pg_stat_statements is low-risk and broadly available.
-  - Why not something else: Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Use top total time and calls to justify the next index, schema, or topology recommendation.
-
-- **Constraints** — score 0.67
-  - Why now: Relational core data needs database-enforced truth before optional architecture choices. Constraints make bad states visible across every application writer.
-  - Why not something else: If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit.
 
 - **Row-level Security** — score 0.67
   - Why now: Shared-schema tenancy puts tenant isolation inside every query path. RLS gives the database a backstop when application filters are missed.
-  - Why not something else: RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
+  - Why not something else: RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline.
   - Triggers for next stage: Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters.
 
 - **Exclusion Constraints** — score 0.66
   - Why now: Scheduling, booking, and availability windows need overlap prevention at write time. Exclusion constraints keep race conditions out of application-only checks.
-  - Why not something else: If overlapping rows are allowed by business policy, model the exception first instead of forcing a generic constraint. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
+  - Why not something else: If overlapping rows are allowed by business policy, model the exception first instead of forcing a generic constraint.
   - Triggers for next stage: Escalate to GiST range indexes and concurrency scenarios when double-booking risk is on a hot path.
+
+
+## Candidate later
 
 - **GiST Range Exclusion** — score 0.65
   - Why now: GiST range indexing supports overlap checks and range predicates for availability data. Range-window workloads need overlap operators and index support.
@@ -98,10 +98,10 @@ The intake points to 1 immediate recommendation, 13 later candidates, and 1 item
 ## Score breakdown
 | Recommendation | Domain | Data | Workload | Ops | Growth | Portability | Complexity | Total |
 | -------------- | ------ | ---- | -------- | --- | ------ | ----------- | ---------- | ----- |
+| constraints | 0.86 | 0.90 | 0.82 | 0.86 | 0.72 | 0.04 | 0.06 | 0.71 |
+| pg_stat_statements | 0.92 | 0.70 | 0.94 | 0.85 | 0.81 | 0.04 | 0.12 | 0.71 |
 | postgis | 0.90 | 0.94 | 0.90 | 0.70 | 0.75 | 0.08 | 0.35 | 0.70 |
 | gist_geospatial | 0.86 | 0.90 | 0.86 | 0.75 | 0.72 | 0.06 | 0.22 | 0.69 |
-| pg_stat_statements | 0.86 | 0.70 | 0.90 | 0.82 | 0.75 | 0.04 | 0.12 | 0.68 |
-| constraints | 0.80 | 0.90 | 0.75 | 0.84 | 0.64 | 0.04 | 0.08 | 0.67 |
 | row_level_security | 0.86 | 0.82 | 0.84 | 0.75 | 0.72 | 0.04 | 0.25 | 0.67 |
 | exclusion_constraints | 0.78 | 0.90 | 0.72 | 0.79 | 0.70 | 0.04 | 0.17 | 0.66 |
 | gist_range_exclusion | 0.78 | 0.88 | 0.72 | 0.76 | 0.70 | 0.04 | 0.18 | 0.65 |
@@ -116,9 +116,10 @@ The intake points to 1 immediate recommendation, 13 later candidates, and 1 item
 
 
 ## Cited rules
-- rule-postgis-for-geo-query-heavy (contrib 0.88)
-- rule-pg-stat-statements-for-real-workloads (contrib 0.90)
+- rule-audit-required-posture (contrib 0.88)
 - rule-prefer-constraints-for-relational-core (contrib 0.86)
+- rule-pg-stat-statements-for-real-workloads (contrib 0.90)
+- rule-postgis-for-geo-query-heavy (contrib 0.88)
 - rule-rls-when-multi-tenant-and-shared-schema (contrib 0.88)
 - rule-exclusion-constraints-for-overlap-windows (contrib 0.82)
 - rule-gist-for-range-overlap (contrib 0.76)

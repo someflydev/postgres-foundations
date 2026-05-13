@@ -1,0 +1,56 @@
+{
+  "id": "rule-timescaledb-now-for-mature-time-series",
+  "title": "Use TimescaleDB for mature central time-series operations",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "time_series_metrics"
+      },
+      {
+        "workload_pattern_present": "append_heavy"
+      },
+      {
+        "workload_pattern_present": "analytics_adjacent"
+      },
+      {
+        "scale_signal_gte": {
+          "key": "largest_table_rows",
+          "value": 250000000
+        }
+      }
+    ],
+    "if_not": [
+      {
+        "operational_tolerance_is": "low"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "timescaledb",
+      "verdict": "recommend_now",
+      "confidence": 0.84,
+      "why_now": [
+        "Large central time-series tables plus adjacent analytics create recurring chunk, retention, compression, and aggregate-maintenance work.",
+        "At this scale, TimescaleDB is justified only because the workload has crossed beyond one-off partition maintenance."
+      ],
+      "why_not_yet": [
+        "Do not adopt if the managed-service target cannot support extension upgrades, restore drills, and retention runbooks."
+      ],
+      "triggers_for_next_stage": [
+        "Adopt with documented compression policy, continuous aggregate ownership, restore testing, and rollback criteria."
+      ],
+      "scoring": {
+        "domain_fit": 0.82,
+        "data_shape_fit": 0.92,
+        "workload_fit": 0.88,
+        "operational_feasibility": 0.72,
+        "growth_urgency": 0.86,
+        "portability_penalty": 0.2,
+        "complexity_penalty": 0.38
+      }
+    }
+  ]
+}
