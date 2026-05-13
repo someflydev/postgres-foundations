@@ -1,12 +1,95 @@
 {
-  "engine_version": "0.2.0-prompt42",
+  "engine_version": "0.0.1",
+  "followup_question_groups": {},
   "followup_questions": [],
+  "full_intake": {
+    "as_of_date": "2026-05-12",
+    "data_shapes": [
+      "relational_core",
+      "append_only_events",
+      "time_series_metrics"
+    ],
+    "existing_postgres_topology": "primary_with_read_replicas",
+    "explicit_bias_against": [
+      {
+        "extension_slug": "citus",
+        "reason": "The team cannot operate distributed transactions until reconciliation tooling matures."
+      }
+    ],
+    "explicit_bias_for": [],
+    "free_form_notes": "Payments workload with strong auditability and managed service preference.",
+    "intake_id": "fintech-payments-minimal",
+    "migration_or_federation_needs": {
+      "has_legacy_non_postgres_source": false,
+      "has_legacy_postgres_source": true,
+      "requires_federation_via_fdw": false,
+      "requires_zero_downtime_migration": true
+    },
+    "organization": {
+      "industry": "fintech_payments",
+      "managed_service_requirement": "strongly_preferred",
+      "operational_tolerance": "medium",
+      "portability_constraints": [
+        "aws_rds",
+        "any_managed"
+      ],
+      "team_size_engineers": 18
+    },
+    "scale_signals": {
+      "concurrent_connections_peak": 420,
+      "growth_rate_month_over_month": 0.18,
+      "largest_object_bytes": 1048576,
+      "read_throughput_qps": 3500,
+      "row_counts_largest_tables": {
+        "ledger_entries": 85000000,
+        "payment_events": 140000000
+      },
+      "write_throughput_rows_per_sec": 900
+    },
+    "security_constraints": [
+      "audit_required",
+      "pii_in_scope",
+      "pci"
+    ],
+    "tenancy_model": "multi_tenant_shared_schema",
+    "workload_patterns": [
+      "oltp_heavy",
+      "append_heavy",
+      "analytics_adjacent"
+    ]
+  },
   "generated_at": "2026-05-12T00:00:00Z",
   "intake_id": "fintech-payments-minimal",
+  "intake_summary": {
+    "industry": "fintech_payments",
+    "industry_title": "Fintech Payments",
+    "operational_tolerance": "medium",
+    "tenancy_model": "multi_tenant_shared_schema"
+  },
+  "overall": {
+    "candidate_later": {
+      "count": 18,
+      "score": 0.613
+    }
+  },
   "recommendations": [
     {
       "confidence": 0.9,
+      "followup_questions": [],
       "kind": "extension",
+      "module_slug": "e1-pg-stat-statements",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.681,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.823,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.9
+      },
       "sources": [
         {
           "contribution": 0.9,
@@ -14,12 +97,14 @@
         }
       ],
       "target_slug": "pg_stat_statements",
+      "title": "pg_stat_statements",
       "triggers_for_next_stage": [
         "Use top total time and calls to justify the next index, schema, or topology recommendation."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
-        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
@@ -27,30 +112,22 @@
       ]
     },
     {
-      "confidence": 0.88,
-      "kind": "core_feature",
-      "sources": [
-        {
-          "contribution": 0.88,
-          "rule_id": "rule-rls-when-multi-tenant-and-shared-schema"
-        }
-      ],
-      "target_slug": "row_level_security",
-      "triggers_for_next_stage": [
-        "Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline."
-      ],
-      "why_now": [
-        "Shared-schema tenancy puts tenant isolation inside every query path.",
-        "RLS gives the database a backstop when application filters are missed."
-      ]
-    },
-    {
       "confidence": 0.86,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.672,
+      "score_breakdown": {
+        "complexity_penalty": 0.08,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.8,
+        "growth_urgency": 0.643,
+        "operational_feasibility": 0.837,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.75
+      },
       "sources": [
         {
           "contribution": 0.86,
@@ -58,12 +135,14 @@
         }
       ],
       "target_slug": "constraints",
+      "title": "Constraints",
       "triggers_for_next_stage": [
         "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
-        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "Relational core data needs database-enforced truth before optional architecture choices.",
@@ -71,29 +150,60 @@
       ]
     },
     {
-      "confidence": 0.82,
+      "confidence": 0.88,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.672,
+      "score_breakdown": {
+        "complexity_penalty": 0.25,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.746,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.84
+      },
       "sources": [
         {
-          "contribution": 0.82,
-          "rule_id": "rule-logical-replication-for-zero-downtime-migrations"
+          "contribution": 0.88,
+          "rule_id": "rule-rls-when-multi-tenant-and-shared-schema"
         }
       ],
-      "target_slug": "logical_replication",
+      "target_slug": "row_level_security",
+      "title": "Row-level Security",
       "triggers_for_next_stage": [
-        "Move to a blue-green topology once replication lag, cutover checks, and write-freeze windows are defined."
+        "Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
-        "Logical replication still needs primary keys, DDL choreography, sequence handling, and rollback planning."
+        "RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
-        "A PostgreSQL source plus zero-downtime migration need is a direct fit for publication/subscription cutover."
+        "Shared-schema tenancy puts tenant isolation inside every query path.",
+        "RLS gives the database a backstop when application filters are missed."
       ]
     },
     {
       "confidence": 0.8,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.667,
+      "score_breakdown": {
+        "complexity_penalty": 0.3,
+        "data_shape_fit": 0.86,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.879,
+        "operational_feasibility": 0.707,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.84
+      },
       "sources": [
         {
           "contribution": 0.8,
@@ -101,62 +211,36 @@
         }
       ],
       "target_slug": "partitioning",
+      "title": "Declarative Partitioning",
       "triggers_for_next_stage": [
         "Escalate to pg_partman only after manual partition operations become a recurring operational risk."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
-        "Partitioning is premature when tables are modest, retention is vague, or queries do not prune by partition key."
+        "Partitioning is premature when tables are modest, retention is vague, or queries do not prune by partition key.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "Large append-heavy tables need bounded maintenance, retention, and pruning strategy."
       ]
     },
     {
-      "confidence": 0.8,
-      "kind": "extension",
-      "sources": [
-        {
-          "contribution": 0.8,
-          "rule_id": "rule-pgbouncer-when-high-concurrency"
-        }
-      ],
-      "target_slug": "pgbouncer",
-      "triggers_for_next_stage": [
-        "Adopt once pool sizing, failover routing, and idle-session behavior are documented."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "Confirm application compatibility with transaction pooling, prepared statements, and session settings."
-      ],
-      "why_now": [
-        "High peak connections on OLTP/read-heavy traffic should not map one application worker to one backend."
-      ]
-    },
-    {
-      "confidence": 0.78,
-      "kind": "topology_pattern",
-      "sources": [
-        {
-          "contribution": 0.78,
-          "rule_id": "rule-logical-replication-pair-for-blue-green-upgrade"
-        }
-      ],
-      "target_slug": "logical_replication_pair",
-      "triggers_for_next_stage": [
-        "Move to blue-green once cutover gates and reverse-plan are written."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "DDL drift, sequences, replication lag, and fallback criteria must be owned."
-      ],
-      "why_now": [
-        "A logical replication pair supports validation and controlled cutover for PostgreSQL migrations."
-      ]
-    },
-    {
       "confidence": 0.76,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.667,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.84,
+        "domain_fit": 0.72,
+        "growth_urgency": 0.835,
+        "operational_feasibility": 0.811,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.8
+      },
       "sources": [
         {
           "contribution": 0.76,
@@ -168,14 +252,16 @@
         }
       ],
       "target_slug": "brin_append_only_chronological",
+      "title": "BRIN for Append-only Time",
       "triggers_for_next_stage": [
         "Add btree companion indexes only for proven tenant, status, or id filters.",
         "Adopt when time-window scans dominate and table ordering remains correlated."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
         "It is weak when data is not physically correlated with time or queries need point lookup.",
-        "BRIN depends on physical correlation and does not replace point-lookup btrees."
+        "BRIN depends on physical correlation and does not replace point-lookup btrees.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "BRIN is a low-maintenance fit for large chronological append-only tables.",
@@ -183,78 +269,59 @@
       ]
     },
     {
-      "confidence": 0.76,
-      "kind": "topology_pattern",
+      "confidence": 0.82,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.634,
+      "score_breakdown": {
+        "complexity_penalty": 0.28,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.78,
+        "growth_urgency": 0.835,
+        "operational_feasibility": 0.72,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.84
+      },
       "sources": [
         {
-          "contribution": 0.76,
-          "rule_id": "rule-pgbouncer-when-high-concurrency"
-        },
-        {
-          "contribution": 0.74,
-          "rule_id": "rule-pgbouncer-in-front-when-many-short-connections"
-        }
-      ],
-      "target_slug": "pgbouncer_in_front",
-      "triggers_for_next_stage": [
-        "Test failover target changes and pool draining in maintenance runbooks.",
-        "Adopt after transaction duration, idle sessions, and prepared-statement behavior are measured."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "It cannot compensate for long transactions or inefficient queries.",
-        "Pool mode can break session-state assumptions and should be tested with the application."
-      ],
-      "why_now": [
-        "Putting PgBouncer in front makes connection admission a topology concern.",
-        "Many concurrent sessions call for an explicit pooling layer in front of PostgreSQL."
-      ]
-    },
-    {
-      "confidence": 0.76,
-      "kind": "anti_pattern_warning",
-      "sources": [
-        {
-          "contribution": 0.76,
-          "rule_id": "rule-warn-no-pooling-high-connections"
-        }
-      ],
-      "target_slug": "no_pooling_high_connections",
-      "triggers_for_next_stage": [
-        "Add pool sizing, transaction duration, and session-state compatibility checks."
-      ],
-      "verdict": "avoid_for_now",
-      "why_not_yet": [
-        "Application pools may be enough if limits and transaction duration are already disciplined."
-      ],
-      "why_now": [
-        "High peak connections without pooling evidence risks backend exhaustion and idle-session waste."
-      ]
-    },
-    {
-      "confidence": 0.74,
-      "kind": "topology_pattern",
-      "sources": [
-        {
-          "contribution": 0.74,
+          "contribution": 0.82,
           "rule_id": "rule-logical-replication-for-zero-downtime-migrations"
         }
       ],
-      "target_slug": "blue_green_upgrade_via_logical_replication",
+      "target_slug": "logical_replication",
+      "title": "Logical Replication",
       "triggers_for_next_stage": [
-        "Adopt when dual-write avoidance, validation queries, and rollback owners are agreed."
+        "Move to a blue-green topology once replication lag, cutover checks, and write-freeze windows are defined."
       ],
       "verdict": "candidate_later",
       "why_not_yet": [
-        "Do not promise near-zero downtime until lag monitoring and reverse-cutover criteria are written."
+        "Logical replication still needs primary keys, DDL choreography, sequence handling, and rollback planning.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
-        "Blue-green cutover is plausible when logical replication is already part of migration planning."
+        "A PostgreSQL source plus zero-downtime migration need is a direct fit for publication/subscription cutover."
       ]
     },
     {
       "confidence": 0.72,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.632,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.72,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.785,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.84
+      },
       "sources": [
         {
           "contribution": 0.72,
@@ -262,6 +329,7 @@
         }
       ],
       "target_slug": "btree_composite_equality_then_range",
+      "title": "Composite Equality Then Range",
       "triggers_for_next_stage": [
         "Adopt after pg_stat_statements identifies repeated tenant/status/time or account/time access paths."
       ],
@@ -274,29 +342,22 @@
       ]
     },
     {
-      "confidence": 0.7,
-      "kind": "topology_pattern",
-      "sources": [
-        {
-          "contribution": 0.7,
-          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
-        }
-      ],
-      "target_slug": "primary_with_read_replicas",
-      "triggers_for_next_stage": [
-        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
-      ],
-      "why_now": [
-        "Reporting or read-heavy traffic may need isolation from primary write latency."
-      ]
-    },
-    {
       "confidence": 0.68,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.624,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.769,
+        "operational_feasibility": 0.74,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
       "sources": [
         {
           "contribution": 0.68,
@@ -304,6 +365,7 @@
         }
       ],
       "target_slug": "partial_indexes",
+      "title": "Partial Indexes",
       "triggers_for_next_stage": [
         "Adopt when pg_stat_statements or EXPLAIN shows repeated filters on status, tenant, active windows, or sparse flags."
       ],
@@ -317,7 +379,21 @@
     },
     {
       "confidence": 0.68,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.624,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.769,
+        "operational_feasibility": 0.74,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
       "sources": [
         {
           "contribution": 0.68,
@@ -325,6 +401,7 @@
         }
       ],
       "target_slug": "partial_index_for_skew",
+      "title": "Partial Index for Skew",
       "triggers_for_next_stage": [
         "Review index size and write amplification after one representative traffic window."
       ],
@@ -337,8 +414,59 @@
       ]
     },
     {
+      "confidence": 0.78,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.601,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.66,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.824,
+        "operational_feasibility": 0.652,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.78,
+          "rule_id": "rule-logical-replication-pair-for-blue-green-upgrade"
+        }
+      ],
+      "target_slug": "logical_replication_pair",
+      "title": "Logical Replication Pair",
+      "triggers_for_next_stage": [
+        "Move to blue-green once cutover gates and reverse-plan are written."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "DDL drift, sequences, replication lag, and fallback criteria must be owned.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "A logical replication pair supports validation and controlled cutover for PostgreSQL migrations."
+      ]
+    },
+    {
       "confidence": 0.67,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.587,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.66,
+        "domain_fit": 0.66,
+        "growth_urgency": 0.714,
+        "operational_feasibility": 0.772,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.74
+      },
       "sources": [
         {
           "contribution": 0.67,
@@ -346,6 +474,7 @@
         }
       ],
       "target_slug": "materialized_views",
+      "title": "Materialized Views",
       "triggers_for_next_stage": [
         "Adopt when repeated aggregate queries dominate total time and stale-enough answers are acceptable."
       ],
@@ -358,29 +487,103 @@
       ]
     },
     {
-      "confidence": 0.64,
+      "confidence": 0.8,
+      "followup_questions": [],
       "kind": "extension",
+      "module_slug": "pgbouncer",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.586,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.78,
+        "operational_feasibility": 0.678,
+        "portability_penalty": 0.16,
+        "workload_fit": 0.82
+      },
       "sources": [
         {
-          "contribution": 0.64,
-          "rule_id": "rule-timescaledb-when-centrally-time-series"
+          "contribution": 0.8,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
         }
       ],
-      "target_slug": "timescaledb",
+      "target_slug": "pgbouncer",
+      "title": "PgBouncer",
       "triggers_for_next_stage": [
-        "Revisit when compression, chunk maintenance, and retention automation are measured pain."
+        "Adopt once pool sizing, failover routing, and idle-session behavior are documented."
       ],
       "verdict": "candidate_later",
       "why_not_yet": [
-        "Core partitioning, BRIN, materialized views, and scheduled retention should be measured first."
+        "Confirm application compatibility with transaction pooling, prepared statements, and session settings.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
-        "Very large time-series metrics may benefit from hypertable lifecycle, compression, and retention ergonomics."
+        "High peak connections on OLTP/read-heavy traffic should not map one application worker to one backend."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.578,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.6,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.78,
+        "operational_feasibility": 0.652,
+        "portability_penalty": 0.12,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        },
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-pgbouncer-in-front-when-many-short-connections"
+        }
+      ],
+      "target_slug": "pgbouncer_in_front",
+      "title": "PgBouncer in Front",
+      "triggers_for_next_stage": [
+        "Test failover target changes and pool draining in maintenance runbooks.",
+        "Adopt after transaction duration, idle sessions, and prepared-statement behavior are measured."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "It cannot compensate for long transactions or inefficient queries.",
+        "Pool mode can break session-state assumptions and should be tested with the application.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Putting PgBouncer in front makes connection admission a topology concern.",
+        "Many concurrent sessions call for an explicit pooling layer in front of PostgreSQL."
       ]
     },
     {
       "confidence": 0.62,
+      "followup_questions": [],
       "kind": "extension",
+      "module_slug": "pg-partman",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.574,
+      "score_breakdown": {
+        "complexity_penalty": 0.38,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.64,
+        "growth_urgency": 0.846,
+        "operational_feasibility": 0.587,
+        "portability_penalty": 0.2,
+        "workload_fit": 0.74
+      },
       "sources": [
         {
           "contribution": 0.62,
@@ -388,6 +591,7 @@
         }
       ],
       "target_slug": "pg_partman",
+      "title": "pg_partman",
       "triggers_for_next_stage": [
         "Adopt when future partition creation or retention jobs become reviewed operational toil."
       ],
@@ -400,8 +604,130 @@
       ]
     },
     {
-      "confidence": 0.58,
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.574,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.652,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
+        }
+      ],
+      "target_slug": "primary_with_read_replicas",
+      "title": "Primary With Read Replicas",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
+      ],
+      "why_now": [
+        "Reporting or read-heavy traffic may need isolation from primary write latency."
+      ]
+    },
+    {
+      "confidence": 0.74,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.568,
+      "score_breakdown": {
+        "complexity_penalty": 0.72,
+        "data_shape_fit": 0.68,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.824,
+        "operational_feasibility": 0.528,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-logical-replication-for-zero-downtime-migrations"
+        }
+      ],
+      "target_slug": "blue_green_upgrade_via_logical_replication",
+      "title": "Blue-green Upgrade via Logical Replication",
+      "triggers_for_next_stage": [
+        "Adopt when dual-write avoidance, validation queries, and rollback owners are agreed."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not promise near-zero downtime until lag monitoring and reverse-cutover criteria are written."
+      ],
+      "why_now": [
+        "Blue-green cutover is plausible when logical replication is already part of migration planning."
+      ]
+    },
+    {
+      "confidence": 0.64,
+      "followup_questions": [],
       "kind": "extension",
+      "module_slug": "e5-timescaledb",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.553,
+      "score_breakdown": {
+        "complexity_penalty": 0.72,
+        "data_shape_fit": 0.86,
+        "domain_fit": 0.68,
+        "growth_urgency": 0.879,
+        "operational_feasibility": 0.424,
+        "portability_penalty": 0.22,
+        "workload_fit": 0.76
+      },
+      "sources": [
+        {
+          "contribution": 0.64,
+          "rule_id": "rule-timescaledb-when-centrally-time-series"
+        }
+      ],
+      "target_slug": "timescaledb",
+      "title": "TimescaleDB",
+      "triggers_for_next_stage": [
+        "Revisit when compression, chunk maintenance, and retention automation are measured pain."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Core partitioning, BRIN, materialized views, and scheduled retention should be measured first."
+      ],
+      "why_now": [
+        "Very large time-series metrics may benefit from hypertable lifecycle, compression, and retention ergonomics."
+      ]
+    },
+    {
+      "confidence": 0.58,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "when-uuid-is-the-right-key",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.538,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.64,
+        "domain_fit": 0.6,
+        "growth_urgency": 0.588,
+        "operational_feasibility": 0.81,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.6
+      },
       "sources": [
         {
           "contribution": 0.58,
@@ -409,6 +735,7 @@
         }
       ],
       "target_slug": "pgcrypto",
+      "title": "pgcrypto",
       "triggers_for_next_stage": [
         "Adopt when URL-safe identifiers or database-side UUID defaults are explicit requirements."
       ],
@@ -419,16 +746,52 @@
       "why_now": [
         "Database-generated UUID defaults are useful for public identifiers and distributed inserts."
       ]
+    },
+    {
+      "confidence": 0.76,
+      "followup_questions": [],
+      "kind": "anti_pattern_warning",
+      "module_slug": null,
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.76,
+      "score_breakdown": {
+        "complexity_penalty": 0.0,
+        "data_shape_fit": 0.0,
+        "domain_fit": 0.0,
+        "growth_urgency": 0.0,
+        "operational_feasibility": 0.0,
+        "portability_penalty": 0.0,
+        "workload_fit": 0.0
+      },
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-warn-no-pooling-high-connections"
+        }
+      ],
+      "target_slug": "no_pooling_high_connections",
+      "title": "No Pooling With High Connections",
+      "triggers_for_next_stage": [
+        "Add pool sizing, transaction duration, and session-state compatibility checks."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "Application pools may be enough if limits and transaction duration are already disciplined."
+      ],
+      "why_now": [
+        "High peak connections without pooling evidence risks backend exhaustion and idle-session waste."
+      ]
     }
   ],
   "score_breakdown": {
-    "complexity_penalty": 0.222,
-    "data_shape_fit": 0.721,
-    "domain_fit": 0.723,
-    "growth_urgency": 0.586,
-    "operational_feasibility": 0.746,
-    "portability_penalty": 0.071,
-    "workload_fit": 0.793
+    "complexity_penalty": 0.283,
+    "data_shape_fit": 0.729,
+    "domain_fit": 0.734,
+    "growth_urgency": 0.773,
+    "operational_feasibility": 0.704,
+    "portability_penalty": 0.082,
+    "workload_fit": 0.798
   },
   "warnings": [
     {

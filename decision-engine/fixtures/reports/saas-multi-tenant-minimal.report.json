@@ -1,34 +1,95 @@
 {
-  "engine_version": "0.2.0-prompt42",
+  "engine_version": "0.0.1",
+  "followup_question_groups": {},
   "followup_questions": [],
+  "full_intake": {
+    "as_of_date": "2026-05-12",
+    "data_shapes": [
+      "relational_core",
+      "semi_structured_jsonb",
+      "append_only_events"
+    ],
+    "existing_postgres_topology": "single_primary",
+    "explicit_bias_against": [],
+    "explicit_bias_for": [],
+    "free_form_notes": "Shared-schema SaaS with strict tenant isolation and limited operations staffing.",
+    "intake_id": "saas-multi-tenant-minimal",
+    "migration_or_federation_needs": {
+      "has_legacy_non_postgres_source": false,
+      "has_legacy_postgres_source": false,
+      "requires_federation_via_fdw": false,
+      "requires_zero_downtime_migration": false
+    },
+    "organization": {
+      "industry": "saas_multi_tenant",
+      "managed_service_requirement": "mandatory",
+      "operational_tolerance": "low",
+      "portability_constraints": [
+        "aws_rds",
+        "azure_pg"
+      ],
+      "team_size_engineers": 12
+    },
+    "scale_signals": {
+      "concurrent_connections_peak": 260,
+      "growth_rate_month_over_month": 0.11,
+      "largest_object_bytes": 262144,
+      "read_throughput_qps": 2400,
+      "row_counts_largest_tables": {
+        "accounts": 1200000,
+        "activities": 45000000
+      },
+      "write_throughput_rows_per_sec": 180
+    },
+    "security_constraints": [
+      "rls_required",
+      "audit_required",
+      "pii_in_scope",
+      "gdpr_dsr"
+    ],
+    "tenancy_model": "multi_tenant_shared_schema",
+    "workload_patterns": [
+      "oltp_heavy",
+      "read_heavy",
+      "strong_tenant_locality"
+    ]
+  },
   "generated_at": "2026-05-12T00:00:00Z",
   "intake_id": "saas-multi-tenant-minimal",
+  "intake_summary": {
+    "industry": "saas_multi_tenant",
+    "industry_title": "SaaS Multi-tenant",
+    "operational_tolerance": "low",
+    "tenancy_model": "multi_tenant_shared_schema"
+  },
+  "overall": {
+    "candidate_later": {
+      "count": 15,
+      "score": 0.596
+    },
+    "recommend_now": {
+      "count": 1,
+      "score": 0.702
+    }
+  },
   "recommendations": [
     {
-      "confidence": 0.9,
-      "kind": "extension",
-      "sources": [
-        {
-          "contribution": 0.9,
-          "rule_id": "rule-pg-stat-statements-for-real-workloads"
-        }
-      ],
-      "target_slug": "pg_stat_statements",
-      "triggers_for_next_stage": [
-        "Use top total time and calls to justify the next index, schema, or topology recommendation."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
-      ],
-      "why_now": [
-        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
-        "pg_stat_statements is low-risk and broadly available."
-      ]
-    },
-    {
       "confidence": 0.88,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.702,
+      "score_breakdown": {
+        "complexity_penalty": 0.25,
+        "data_shape_fit": 0.88,
+        "domain_fit": 0.92,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.704,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.9
+      },
       "sources": [
         {
           "contribution": 0.88,
@@ -36,6 +97,7 @@
         }
       ],
       "target_slug": "row_level_security",
+      "title": "Row-level Security",
       "triggers_for_next_stage": [
         "Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters."
       ],
@@ -49,8 +111,60 @@
       ]
     },
     {
+      "confidence": 0.9,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e1-pg-stat-statements",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.674,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.781,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.9
+      },
+      "sources": [
+        {
+          "contribution": 0.9,
+          "rule_id": "rule-pg-stat-statements-for-real-workloads"
+        }
+      ],
+      "target_slug": "pg_stat_statements",
+      "title": "pg_stat_statements",
+      "triggers_for_next_stage": [
+        "Use top total time and calls to justify the next index, schema, or topology recommendation."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
+        "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
+    {
       "confidence": 0.86,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.666,
+      "score_breakdown": {
+        "complexity_penalty": 0.08,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.8,
+        "growth_urgency": 0.643,
+        "operational_feasibility": 0.795,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.75
+      },
       "sources": [
         {
           "contribution": 0.86,
@@ -58,12 +172,14 @@
         }
       ],
       "target_slug": "constraints",
+      "title": "Constraints",
       "triggers_for_next_stage": [
         "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
-        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "Relational core data needs database-enforced truth before optional architecture choices.",
@@ -71,57 +187,22 @@
       ]
     },
     {
-      "confidence": 0.8,
-      "kind": "extension",
-      "sources": [
-        {
-          "contribution": 0.8,
-          "rule_id": "rule-pgbouncer-when-high-concurrency"
-        }
-      ],
-      "target_slug": "pgbouncer",
-      "triggers_for_next_stage": [
-        "Adopt once pool sizing, failover routing, and idle-session behavior are documented."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "Confirm application compatibility with transaction pooling, prepared statements, and session settings."
-      ],
-      "why_now": [
-        "High peak connections on OLTP/read-heavy traffic should not map one application worker to one backend."
-      ]
-    },
-    {
-      "confidence": 0.76,
-      "kind": "topology_pattern",
-      "sources": [
-        {
-          "contribution": 0.76,
-          "rule_id": "rule-pgbouncer-when-high-concurrency"
-        },
-        {
-          "contribution": 0.74,
-          "rule_id": "rule-pgbouncer-in-front-when-many-short-connections"
-        }
-      ],
-      "target_slug": "pgbouncer_in_front",
-      "triggers_for_next_stage": [
-        "Test failover target changes and pool draining in maintenance runbooks.",
-        "Adopt after transaction duration, idle sessions, and prepared-statement behavior are measured."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "It cannot compensate for long transactions or inefficient queries.",
-        "Pool mode can break session-state assumptions and should be tested with the application."
-      ],
-      "why_now": [
-        "Putting PgBouncer in front makes connection admission a topology concern.",
-        "Many concurrent sessions call for an explicit pooling layer in front of PostgreSQL."
-      ]
-    },
-    {
       "confidence": 0.72,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.626,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.72,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.743,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.84
+      },
       "sources": [
         {
           "contribution": 0.72,
@@ -129,6 +210,7 @@
         }
       ],
       "target_slug": "btree_composite_equality_then_range",
+      "title": "Composite Equality Then Range",
       "triggers_for_next_stage": [
         "Adopt after pg_stat_statements identifies repeated tenant/status/time or account/time access paths."
       ],
@@ -141,71 +223,22 @@
       ]
     },
     {
-      "confidence": 0.71,
-      "kind": "core_feature",
-      "sources": [
-        {
-          "contribution": 0.71,
-          "rule_id": "rule-jsonb-hybrid-columns-for-semi-structured"
-        }
-      ],
-      "target_slug": "jsonb",
-      "triggers_for_next_stage": [
-        "Promote hot JSON keys to generated or ordinary columns once query pressure and invariants are visible."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "Do not make the whole entity JSONB when keys are frequently filtered, joined, constrained, or audited."
-      ],
-      "why_now": [
-        "JSONB can carry variable attributes while stable identifiers and lifecycle columns stay relational."
-      ]
-    },
-    {
-      "confidence": 0.7,
-      "kind": "core_feature",
-      "sources": [
-        {
-          "contribution": 0.7,
-          "rule_id": "rule-physical-replication-for-read-isolation"
-        }
-      ],
-      "target_slug": "physical_replication",
-      "triggers_for_next_stage": [
-        "Adopt when read routing, lag tolerance, and failover behavior are documented."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "A replica does not fix bad queries, missing indexes, or write bottlenecks on the primary."
-      ],
-      "why_now": [
-        "Read-heavy systems can isolate reporting and expensive reads with replicas."
-      ]
-    },
-    {
-      "confidence": 0.7,
-      "kind": "topology_pattern",
-      "sources": [
-        {
-          "contribution": 0.7,
-          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
-        }
-      ],
-      "target_slug": "primary_with_read_replicas",
-      "triggers_for_next_stage": [
-        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
-      ],
-      "why_now": [
-        "Reporting or read-heavy traffic may need isolation from primary write latency."
-      ]
-    },
-    {
       "confidence": 0.68,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.618,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.769,
+        "operational_feasibility": 0.698,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
       "sources": [
         {
           "contribution": 0.68,
@@ -213,6 +246,7 @@
         }
       ],
       "target_slug": "partial_indexes",
+      "title": "Partial Indexes",
       "triggers_for_next_stage": [
         "Adopt when pg_stat_statements or EXPLAIN shows repeated filters on status, tenant, active windows, or sparse flags."
       ],
@@ -226,7 +260,21 @@
     },
     {
       "confidence": 0.68,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.618,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.769,
+        "operational_feasibility": 0.698,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
       "sources": [
         {
           "contribution": 0.68,
@@ -234,6 +282,7 @@
         }
       ],
       "target_slug": "partial_index_for_skew",
+      "title": "Partial Index for Skew",
       "triggers_for_next_stage": [
         "Review index size and write amplification after one representative traffic window."
       ],
@@ -247,7 +296,21 @@
     },
     {
       "confidence": 0.66,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.601,
+      "score_breakdown": {
+        "complexity_penalty": 0.15,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.64,
+        "growth_urgency": 0.67,
+        "operational_feasibility": 0.73,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.72
+      },
       "sources": [
         {
           "contribution": 0.66,
@@ -255,6 +318,7 @@
         }
       ],
       "target_slug": "generated_columns",
+      "title": "Generated Columns",
       "triggers_for_next_stage": [
         "Promote keys when query traces show stable filters, joins, uniqueness, or validation needs."
       ],
@@ -268,7 +332,21 @@
     },
     {
       "confidence": 0.66,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.587,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.64,
+        "growth_urgency": 0.659,
+        "operational_feasibility": 0.665,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.72
+      },
       "sources": [
         {
           "contribution": 0.66,
@@ -276,6 +354,7 @@
         }
       ],
       "target_slug": "gin_jsonb_containment",
+      "title": "GIN JSONB Containment",
       "triggers_for_next_stage": [
         "Adopt after EXPLAIN shows repeated @> predicates with selective keys."
       ],
@@ -288,8 +367,131 @@
       ]
     },
     {
+      "confidence": 0.71,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.583,
+      "score_breakdown": {
+        "complexity_penalty": 0.18,
+        "data_shape_fit": 0.85,
+        "domain_fit": 0.65,
+        "growth_urgency": 0.643,
+        "operational_feasibility": 0.717,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.62
+      },
+      "sources": [
+        {
+          "contribution": 0.71,
+          "rule_id": "rule-jsonb-hybrid-columns-for-semi-structured"
+        }
+      ],
+      "target_slug": "jsonb",
+      "title": "JSONB",
+      "triggers_for_next_stage": [
+        "Promote hot JSON keys to generated or ordinary columns once query pressure and invariants are visible."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not make the whole entity JSONB when keys are frequently filtered, joined, constrained, or audited."
+      ],
+      "why_now": [
+        "JSONB can carry variable attributes while stable identifiers and lifecycle columns stay relational."
+      ]
+    },
+    {
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.576,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.68,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.665,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-physical-replication-for-read-isolation"
+        }
+      ],
+      "target_slug": "physical_replication",
+      "title": "Physical Replication",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and failover behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "A replica does not fix bad queries, missing indexes, or write bottlenecks on the primary."
+      ],
+      "why_now": [
+        "Read-heavy systems can isolate reporting and expensive reads with replicas."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "pgbouncer",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.572,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.78,
+        "operational_feasibility": 0.636,
+        "portability_penalty": 0.24,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        }
+      ],
+      "target_slug": "pgbouncer",
+      "title": "PgBouncer",
+      "triggers_for_next_stage": [
+        "Adopt once pool sizing, failover routing, and idle-session behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Confirm application compatibility with transaction pooling, prepared statements, and session settings.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "High peak connections on OLTP/read-heavy traffic should not map one application worker to one backend."
+      ]
+    },
+    {
       "confidence": 0.64,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.572,
+      "score_breakdown": {
+        "complexity_penalty": 0.18,
+        "data_shape_fit": 0.66,
+        "domain_fit": 0.62,
+        "growth_urgency": 0.698,
+        "operational_feasibility": 0.691,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.78
+      },
       "sources": [
         {
           "contribution": 0.64,
@@ -297,6 +499,7 @@
         }
       ],
       "target_slug": "btree_covering_include",
+      "title": "Covering B-tree With INCLUDE",
       "triggers_for_next_stage": [
         "Adopt when visibility map health and EXPLAIN show index-only scan potential."
       ],
@@ -309,8 +512,66 @@
       ]
     },
     {
+      "confidence": 0.76,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.572,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.6,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.78,
+        "operational_feasibility": 0.61,
+        "portability_penalty": 0.12,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        },
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-pgbouncer-in-front-when-many-short-connections"
+        }
+      ],
+      "target_slug": "pgbouncer_in_front",
+      "title": "PgBouncer in Front",
+      "triggers_for_next_stage": [
+        "Test failover target changes and pool draining in maintenance runbooks.",
+        "Adopt after transaction duration, idle sessions, and prepared-statement behavior are measured."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "It cannot compensate for long transactions or inefficient queries.",
+        "Pool mode can break session-state assumptions and should be tested with the application.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Putting PgBouncer in front makes connection admission a topology concern.",
+        "Many concurrent sessions call for an explicit pooling layer in front of PostgreSQL."
+      ]
+    },
+    {
       "confidence": 0.61,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.571,
+      "score_breakdown": {
+        "complexity_penalty": 0.13,
+        "data_shape_fit": 0.74,
+        "domain_fit": 0.62,
+        "growth_urgency": 0.643,
+        "operational_feasibility": 0.704,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.7
+      },
       "sources": [
         {
           "contribution": 0.61,
@@ -318,6 +579,7 @@
         }
       ],
       "target_slug": "expression_indexes",
+      "title": "Expression Indexes",
       "triggers_for_next_stage": [
         "Adopt once normalized email, SKU, phone, or JSON extraction filters repeat."
       ],
@@ -330,8 +592,58 @@
       ]
     },
     {
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.567,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.61,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
+        }
+      ],
+      "target_slug": "primary_with_read_replicas",
+      "title": "Primary With Read Replicas",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
+      ],
+      "why_now": [
+        "Reporting or read-heavy traffic may need isolation from primary write latency."
+      ]
+    },
+    {
       "confidence": 0.58,
+      "followup_questions": [],
       "kind": "extension",
+      "module_slug": "when-uuid-is-the-right-key",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.532,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.64,
+        "domain_fit": 0.6,
+        "growth_urgency": 0.588,
+        "operational_feasibility": 0.768,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.6
+      },
       "sources": [
         {
           "contribution": 0.58,
@@ -339,6 +651,7 @@
         }
       ],
       "target_slug": "pgcrypto",
+      "title": "pgcrypto",
       "triggers_for_next_stage": [
         "Adopt when URL-safe identifiers or database-side UUID defaults are explicit requirements."
       ],
@@ -352,13 +665,13 @@
     }
   ],
   "score_breakdown": {
-    "complexity_penalty": 0.182,
-    "data_shape_fit": 0.714,
-    "domain_fit": 0.708,
-    "growth_urgency": 0.478,
-    "operational_feasibility": 0.766,
-    "portability_penalty": 0.048,
-    "workload_fit": 0.771
+    "complexity_penalty": 0.196,
+    "data_shape_fit": 0.726,
+    "domain_fit": 0.711,
+    "growth_urgency": 0.709,
+    "operational_feasibility": 0.701,
+    "portability_penalty": 0.064,
+    "workload_fit": 0.776
   },
   "warnings": []
 }

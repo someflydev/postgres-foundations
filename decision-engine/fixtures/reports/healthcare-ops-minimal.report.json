@@ -1,12 +1,95 @@
 {
-  "engine_version": "0.2.0-prompt42",
+  "engine_version": "0.0.1",
+  "followup_question_groups": {},
   "followup_questions": [],
+  "full_intake": {
+    "as_of_date": "2026-05-12",
+    "data_shapes": [
+      "relational_core",
+      "ranges_windows",
+      "append_only_events",
+      "foreign_postgres_access"
+    ],
+    "existing_postgres_topology": "primary_with_read_replicas",
+    "explicit_bias_against": [],
+    "explicit_bias_for": [
+      {
+        "extension_slug": "postgres_fdw",
+        "reason": "Short-lived read-only access is needed for legacy scheduling data during cutover."
+      }
+    ],
+    "free_form_notes": "Healthcare operations system with legacy bridge needs and low operational tolerance.",
+    "intake_id": "healthcare-ops-minimal",
+    "migration_or_federation_needs": {
+      "has_legacy_non_postgres_source": true,
+      "has_legacy_postgres_source": true,
+      "requires_federation_via_fdw": true,
+      "requires_zero_downtime_migration": false
+    },
+    "organization": {
+      "industry": "healthcare_ops",
+      "managed_service_requirement": "mandatory",
+      "operational_tolerance": "low",
+      "portability_constraints": [
+        "gcp_cloud_sql",
+        "any_managed"
+      ],
+      "team_size_engineers": 9
+    },
+    "scale_signals": {
+      "concurrent_connections_peak": 160,
+      "growth_rate_month_over_month": 0.07,
+      "read_throughput_qps": 1100,
+      "row_counts_largest_tables": {
+        "appointments": 9000000,
+        "audit_log": 60000000
+      },
+      "write_throughput_rows_per_sec": 95
+    },
+    "security_constraints": [
+      "audit_required",
+      "pii_in_scope",
+      "hipaa"
+    ],
+    "tenancy_model": "multi_tenant_database_per_tenant",
+    "workload_patterns": [
+      "oltp_heavy",
+      "read_heavy",
+      "migration_bridge"
+    ]
+  },
   "generated_at": "2026-05-12T00:00:00Z",
   "intake_id": "healthcare-ops-minimal",
+  "intake_summary": {
+    "industry": "healthcare_ops",
+    "industry_title": "Healthcare Operations",
+    "operational_tolerance": "low",
+    "tenancy_model": "multi_tenant_database_per_tenant"
+  },
+  "overall": {
+    "candidate_later": {
+      "count": 13,
+      "score": 0.593
+    }
+  },
   "recommendations": [
     {
       "confidence": 0.9,
+      "followup_questions": [],
       "kind": "extension",
+      "module_slug": "e1-pg-stat-statements",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.656,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.573,
+        "operational_feasibility": 0.781,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.9
+      },
       "sources": [
         {
           "contribution": 0.9,
@@ -14,12 +97,14 @@
         }
       ],
       "target_slug": "pg_stat_statements",
+      "title": "pg_stat_statements",
       "triggers_for_next_stage": [
         "Use top total time and calls to justify the next index, schema, or topology recommendation."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
-        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
@@ -28,7 +113,21 @@
     },
     {
       "confidence": 0.86,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.648,
+      "score_breakdown": {
+        "complexity_penalty": 0.08,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.8,
+        "growth_urgency": 0.463,
+        "operational_feasibility": 0.795,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.75
+      },
       "sources": [
         {
           "contribution": 0.86,
@@ -36,12 +135,14 @@
         }
       ],
       "target_slug": "constraints",
+      "title": "Constraints",
       "triggers_for_next_stage": [
         "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
-        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "Relational core data needs database-enforced truth before optional architecture choices.",
@@ -50,7 +151,21 @@
     },
     {
       "confidence": 0.82,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.631,
+      "score_breakdown": {
+        "complexity_penalty": 0.17,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.78,
+        "growth_urgency": 0.518,
+        "operational_feasibility": 0.743,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.72
+      },
       "sources": [
         {
           "contribution": 0.82,
@@ -58,12 +173,14 @@
         }
       ],
       "target_slug": "exclusion_constraints",
+      "title": "Exclusion Constraints",
       "triggers_for_next_stage": [
         "Escalate to GiST range indexes and concurrency scenarios when double-booking risk is on a hot path."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
-        "If overlapping rows are allowed by business policy, model the exception first instead of forcing a generic constraint."
+        "If overlapping rows are allowed by business policy, model the exception first instead of forcing a generic constraint.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "Scheduling, booking, and availability windows need overlap prevention at write time.",
@@ -71,30 +188,22 @@
       ]
     },
     {
-      "confidence": 0.8,
-      "kind": "extension",
-      "sources": [
-        {
-          "contribution": 0.8,
-          "rule_id": "rule-postgres-fdw-for-federation"
-        }
-      ],
-      "target_slug": "postgres_fdw",
-      "triggers_for_next_stage": [
-        "Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "FDW should not become a hidden permanent hot path without pushdown verification and retirement planning."
-      ],
-      "why_now": [
-        "The intake names remote PostgreSQL access and an FDW federation need.",
-        "postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded."
-      ]
-    },
-    {
       "confidence": 0.78,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.622,
+      "score_breakdown": {
+        "complexity_penalty": 0.18,
+        "data_shape_fit": 0.88,
+        "domain_fit": 0.78,
+        "growth_urgency": 0.518,
+        "operational_feasibility": 0.717,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.72
+      },
       "sources": [
         {
           "contribution": 0.78,
@@ -106,14 +215,16 @@
         }
       ],
       "target_slug": "gist_range_exclusion",
+      "title": "GiST Range Exclusion",
       "triggers_for_next_stage": [
         "Add representative concurrent insert tests before relying on the design.",
         "Pair with exclusion constraints for correctness-critical scheduling paths."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
         "Avoid broad GiST indexes when range predicates are rare or the range column is not selective.",
-        "Avoid if intervals are rare metadata and not queried or constrained."
+        "Avoid if intervals are rare metadata and not queried or constrained.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "GiST range indexing supports overlap checks and range predicates for availability data.",
@@ -121,36 +232,22 @@
       ]
     },
     {
-      "confidence": 0.76,
-      "kind": "topology_pattern",
-      "sources": [
-        {
-          "contribution": 0.76,
-          "rule_id": "rule-postgres-fdw-for-federation"
-        },
-        {
-          "contribution": 0.74,
-          "rule_id": "rule-fdw-federation-for-modernization-bridge"
-        }
-      ],
-      "target_slug": "postgres_fdw_federation",
-      "triggers_for_next_stage": [
-        "Document credentials, remote health monitoring, and fallback behavior.",
-        "Adopt once remote credentials, latency SLOs, and fallback behavior are documented."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "Avoid broad cross-database joins until latency and remote-owner behavior are understood.",
-        "Avoid broad permanent federation without pushdown checks and decommission criteria."
-      ],
-      "why_now": [
-        "A federation topology makes ownership and remote failure modes explicit.",
-        "Migration-bridge workloads need explicit remote-source boundaries and owner-visible failure modes."
-      ]
-    },
-    {
       "confidence": 0.72,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.608,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.72,
+        "growth_urgency": 0.545,
+        "operational_feasibility": 0.743,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.84
+      },
       "sources": [
         {
           "contribution": 0.72,
@@ -158,6 +255,7 @@
         }
       ],
       "target_slug": "btree_composite_equality_then_range",
+      "title": "Composite Equality Then Range",
       "triggers_for_next_stage": [
         "Adopt after pg_stat_statements identifies repeated tenant/status/time or account/time access paths."
       ],
@@ -170,71 +268,22 @@
       ]
     },
     {
-      "confidence": 0.7,
-      "kind": "core_feature",
-      "sources": [
-        {
-          "contribution": 0.7,
-          "rule_id": "rule-physical-replication-for-read-isolation"
-        }
-      ],
-      "target_slug": "physical_replication",
-      "triggers_for_next_stage": [
-        "Adopt when read routing, lag tolerance, and failover behavior are documented."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "A replica does not fix bad queries, missing indexes, or write bottlenecks on the primary."
-      ],
-      "why_now": [
-        "Read-heavy systems can isolate reporting and expensive reads with replicas."
-      ]
-    },
-    {
-      "confidence": 0.7,
-      "kind": "topology_pattern",
-      "sources": [
-        {
-          "contribution": 0.7,
-          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
-        }
-      ],
-      "target_slug": "primary_with_read_replicas",
-      "triggers_for_next_stage": [
-        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
-      ],
-      "why_now": [
-        "Reporting or read-heavy traffic may need isolation from primary write latency."
-      ]
-    },
-    {
       "confidence": 0.68,
-      "kind": "anti_pattern_warning",
-      "sources": [
-        {
-          "contribution": 0.68,
-          "rule_id": "rule-warn-no-restore-drills"
-        }
-      ],
-      "target_slug": "no_restore_drills",
-      "triggers_for_next_stage": [
-        "Require restore drills for extension objects, remote definitions, partition metadata, and large indexes."
-      ],
-      "verdict": "avoid_for_now",
-      "why_not_yet": [
-        "Simple core features can still proceed with modest runbooks."
-      ],
-      "why_now": [
-        "Low operational tolerance plus complex data or bridge needs requires restore proof before adopting more moving parts."
-      ]
-    },
-    {
-      "confidence": 0.68,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.6,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.589,
+        "operational_feasibility": 0.698,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
       "sources": [
         {
           "contribution": 0.68,
@@ -242,6 +291,7 @@
         }
       ],
       "target_slug": "partial_indexes",
+      "title": "Partial Indexes",
       "triggers_for_next_stage": [
         "Adopt when pg_stat_statements or EXPLAIN shows repeated filters on status, tenant, active windows, or sparse flags."
       ],
@@ -255,7 +305,21 @@
     },
     {
       "confidence": 0.68,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.6,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.589,
+        "operational_feasibility": 0.698,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
       "sources": [
         {
           "contribution": 0.68,
@@ -263,6 +327,7 @@
         }
       ],
       "target_slug": "partial_index_for_skew",
+      "title": "Partial Index for Skew",
       "triggers_for_next_stage": [
         "Review index size and write amplification after one representative traffic window."
       ],
@@ -275,8 +340,140 @@
       ]
     },
     {
+      "confidence": 0.8,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e6-postgres-fdw",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.593,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.8,
+        "domain_fit": 0.78,
+        "growth_urgency": 0.545,
+        "operational_feasibility": 0.61,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.78
+      },
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-postgres-fdw-for-federation"
+        }
+      ],
+      "target_slug": "postgres_fdw",
+      "title": "postgres_fdw",
+      "triggers_for_next_stage": [
+        "Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "FDW should not become a hidden permanent hot path without pushdown verification and retirement planning.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "The intake names remote PostgreSQL access and an FDW federation need.",
+        "postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.57,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.76,
+        "domain_fit": 0.78,
+        "growth_urgency": 0.534,
+        "operational_feasibility": 0.584,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.74
+      },
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-postgres-fdw-for-federation"
+        },
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-fdw-federation-for-modernization-bridge"
+        }
+      ],
+      "target_slug": "postgres_fdw_federation",
+      "title": "postgres_fdw Federation",
+      "triggers_for_next_stage": [
+        "Document credentials, remote health monitoring, and fallback behavior.",
+        "Adopt once remote credentials, latency SLOs, and fallback behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Avoid broad cross-database joins until latency and remote-owner behavior are understood.",
+        "Avoid broad permanent federation without pushdown checks and decommission criteria.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "A federation topology makes ownership and remote failure modes explicit.",
+        "Migration-bridge workloads need explicit remote-source boundaries and owner-visible failure modes."
+      ]
+    },
+    {
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.558,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.68,
+        "growth_urgency": 0.573,
+        "operational_feasibility": 0.665,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-physical-replication-for-read-isolation"
+        }
+      ],
+      "target_slug": "physical_replication",
+      "title": "Physical Replication",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and failover behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "A replica does not fix bad queries, missing indexes, or write bottlenecks on the primary."
+      ],
+      "why_now": [
+        "Read-heavy systems can isolate reporting and expensive reads with replicas."
+      ]
+    },
+    {
       "confidence": 0.64,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.554,
+      "score_breakdown": {
+        "complexity_penalty": 0.18,
+        "data_shape_fit": 0.66,
+        "domain_fit": 0.62,
+        "growth_urgency": 0.518,
+        "operational_feasibility": 0.691,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.78
+      },
       "sources": [
         {
           "contribution": 0.64,
@@ -284,6 +481,7 @@
         }
       ],
       "target_slug": "btree_covering_include",
+      "title": "Covering B-tree With INCLUDE",
       "triggers_for_next_stage": [
         "Adopt when visibility map health and EXPLAIN show index-only scan potential."
       ],
@@ -296,8 +494,58 @@
       ]
     },
     {
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.549,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.573,
+        "operational_feasibility": 0.61,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
+        }
+      ],
+      "target_slug": "primary_with_read_replicas",
+      "title": "Primary With Read Replicas",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
+      ],
+      "why_now": [
+        "Reporting or read-heavy traffic may need isolation from primary write latency."
+      ]
+    },
+    {
       "confidence": 0.58,
+      "followup_questions": [],
       "kind": "extension",
+      "module_slug": "when-uuid-is-the-right-key",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.514,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.64,
+        "domain_fit": 0.6,
+        "growth_urgency": 0.408,
+        "operational_feasibility": 0.768,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.6
+      },
       "sources": [
         {
           "contribution": 0.58,
@@ -305,6 +553,7 @@
         }
       ],
       "target_slug": "pgcrypto",
+      "title": "pgcrypto",
       "triggers_for_next_stage": [
         "Adopt when URL-safe identifiers or database-side UUID defaults are explicit requirements."
       ],
@@ -315,16 +564,52 @@
       "why_now": [
         "Database-generated UUID defaults are useful for public identifiers and distributed inserts."
       ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "anti_pattern_warning",
+      "module_slug": null,
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.68,
+      "score_breakdown": {
+        "complexity_penalty": 0.0,
+        "data_shape_fit": 0.0,
+        "domain_fit": 0.0,
+        "growth_urgency": 0.0,
+        "operational_feasibility": 0.0,
+        "portability_penalty": 0.0,
+        "workload_fit": 0.0
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-warn-no-restore-drills"
+        }
+      ],
+      "target_slug": "no_restore_drills",
+      "title": "No Restore Drills",
+      "triggers_for_next_stage": [
+        "Require restore drills for extension objects, remote definitions, partition metadata, and large indexes."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "Simple core features can still proceed with modest runbooks."
+      ],
+      "why_now": [
+        "Low operational tolerance plus complex data or bridge needs requires restore proof before adopting more moving parts."
+      ]
     }
   ],
   "score_breakdown": {
-    "complexity_penalty": 0.195,
-    "data_shape_fit": 0.741,
-    "domain_fit": 0.714,
-    "growth_urgency": 0.469,
-    "operational_feasibility": 0.751,
-    "portability_penalty": 0.053,
-    "workload_fit": 0.766
+    "complexity_penalty": 0.197,
+    "data_shape_fit": 0.74,
+    "domain_fit": 0.731,
+    "growth_urgency": 0.534,
+    "operational_feasibility": 0.7,
+    "portability_penalty": 0.055,
+    "workload_fit": 0.776
   },
   "warnings": [
     {

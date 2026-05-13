@@ -1,56 +1,96 @@
 {
-  "engine_version": "0.2.0-prompt42",
+  "engine_version": "0.0.1",
+  "followup_question_groups": {},
   "followup_questions": [],
+  "full_intake": {
+    "as_of_date": "2026-05-12",
+    "data_shapes": [
+      "relational_core",
+      "geospatial",
+      "ranges_windows"
+    ],
+    "existing_postgres_topology": "single_primary",
+    "explicit_bias_against": [],
+    "explicit_bias_for": [],
+    "free_form_notes": "Dispatch and service-zone queries need distance, containment, and nearest facility logic. Product is not asking for semantic search.",
+    "intake_id": "logistics-geo-minimal",
+    "migration_or_federation_needs": {
+      "has_legacy_non_postgres_source": false,
+      "has_legacy_postgres_source": false,
+      "requires_federation_via_fdw": false,
+      "requires_zero_downtime_migration": false
+    },
+    "organization": {
+      "industry": "logistics_geo",
+      "managed_service_requirement": "strongly_preferred",
+      "operational_tolerance": "medium",
+      "portability_constraints": [
+        "any_managed"
+      ],
+      "team_size_engineers": 12
+    },
+    "scale_signals": {
+      "concurrent_connections_peak": 180,
+      "growth_rate_month_over_month": 0.09,
+      "largest_object_bytes": 524288,
+      "read_throughput_qps": 1800,
+      "row_counts_largest_tables": {
+        "shipments": 18000000,
+        "tracking_events": 72000000
+      },
+      "write_throughput_rows_per_sec": 220
+    },
+    "security_constraints": [
+      "audit_required",
+      "pii_in_scope"
+    ],
+    "tenancy_model": "multi_tenant_shared_schema",
+    "workload_patterns": [
+      "oltp_heavy",
+      "geo_query_heavy",
+      "read_heavy"
+    ]
+  },
   "generated_at": "2026-05-12T00:00:00Z",
   "intake_id": "logistics-geo-minimal",
+  "intake_summary": {
+    "industry": "logistics_geo",
+    "industry_title": "Logistics and Geospatial Operations",
+    "operational_tolerance": "medium",
+    "tenancy_model": "multi_tenant_shared_schema"
+  },
+  "overall": {
+    "candidate_later": {
+      "count": 13,
+      "score": 0.629
+    },
+    "not_enough_evidence": {
+      "count": 1,
+      "score": 0.368
+    },
+    "recommend_now": {
+      "count": 1,
+      "score": 0.703
+    }
+  },
   "recommendations": [
     {
-      "confidence": 0.9,
-      "kind": "extension",
-      "sources": [
-        {
-          "contribution": 0.9,
-          "rule_id": "rule-pg-stat-statements-for-real-workloads"
-        }
-      ],
-      "target_slug": "pg_stat_statements",
-      "triggers_for_next_stage": [
-        "Use top total time and calls to justify the next index, schema, or topology recommendation."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
-      ],
-      "why_now": [
-        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
-        "pg_stat_statements is low-risk and broadly available."
-      ]
-    },
-    {
       "confidence": 0.88,
-      "kind": "core_feature",
-      "sources": [
-        {
-          "contribution": 0.88,
-          "rule_id": "rule-rls-when-multi-tenant-and-shared-schema"
-        }
-      ],
-      "target_slug": "row_level_security",
-      "triggers_for_next_stage": [
-        "Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline."
-      ],
-      "why_now": [
-        "Shared-schema tenancy puts tenant isolation inside every query path.",
-        "RLS gives the database a backstop when application filters are missed."
-      ]
-    },
-    {
-      "confidence": 0.88,
+      "followup_questions": [],
       "kind": "extension",
+      "module_slug": "e3-postgis",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.703,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.94,
+        "domain_fit": 0.9,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.704,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.9
+      },
       "sources": [
         {
           "contribution": 0.88,
@@ -58,6 +98,7 @@
         }
       ],
       "target_slug": "postgis",
+      "title": "PostGIS",
       "triggers_for_next_stage": [
         "Add geometry validity, coordinate-system rules, and restore validation before production rollout."
       ],
@@ -71,52 +112,22 @@
       ]
     },
     {
-      "confidence": 0.86,
-      "kind": "core_feature",
-      "sources": [
-        {
-          "contribution": 0.86,
-          "rule_id": "rule-prefer-constraints-for-relational-core"
-        }
-      ],
-      "target_slug": "constraints",
-      "triggers_for_next_stage": [
-        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
-      ],
-      "why_now": [
-        "Relational core data needs database-enforced truth before optional architecture choices.",
-        "Constraints make bad states visible across every application writer."
-      ]
-    },
-    {
-      "confidence": 0.82,
-      "kind": "core_feature",
-      "sources": [
-        {
-          "contribution": 0.82,
-          "rule_id": "rule-exclusion-constraints-for-overlap-windows"
-        }
-      ],
-      "target_slug": "exclusion_constraints",
-      "triggers_for_next_stage": [
-        "Escalate to GiST range indexes and concurrency scenarios when double-booking risk is on a hot path."
-      ],
-      "verdict": "recommend_now",
-      "why_not_yet": [
-        "If overlapping rows are allowed by business policy, model the exception first instead of forcing a generic constraint."
-      ],
-      "why_now": [
-        "Scheduling, booking, and availability windows need overlap prevention at write time.",
-        "Exclusion constraints keep race conditions out of application-only checks."
-      ]
-    },
-    {
       "confidence": 0.8,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.691,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.746,
+        "portability_penalty": 0.06,
+        "workload_fit": 0.86
+      },
       "sources": [
         {
           "contribution": 0.8,
@@ -124,20 +135,188 @@
         }
       ],
       "target_slug": "gist_geospatial",
+      "title": "GiST Geospatial",
       "triggers_for_next_stage": [
         "Benchmark representative bounding-box and nearest-neighbor queries."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
-        "Index choice should wait if the product only stores points for display."
+        "Index choice should wait if the product only stores points for display.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "GiST spatial indexes are the expected access path for containment, intersection, and distance predicates."
       ]
     },
     {
+      "confidence": 0.9,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e1-pg-stat-statements",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.681,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.823,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.9
+      },
+      "sources": [
+        {
+          "contribution": 0.9,
+          "rule_id": "rule-pg-stat-statements-for-real-workloads"
+        }
+      ],
+      "target_slug": "pg_stat_statements",
+      "title": "pg_stat_statements",
+      "triggers_for_next_stage": [
+        "Use top total time and calls to justify the next index, schema, or topology recommendation."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
+        "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
+    {
+      "confidence": 0.86,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.672,
+      "score_breakdown": {
+        "complexity_penalty": 0.08,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.8,
+        "growth_urgency": 0.643,
+        "operational_feasibility": 0.837,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.75
+      },
+      "sources": [
+        {
+          "contribution": 0.86,
+          "rule_id": "rule-prefer-constraints-for-relational-core"
+        }
+      ],
+      "target_slug": "constraints",
+      "title": "Constraints",
+      "triggers_for_next_stage": [
+        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Relational core data needs database-enforced truth before optional architecture choices.",
+        "Constraints make bad states visible across every application writer."
+      ]
+    },
+    {
+      "confidence": 0.88,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.672,
+      "score_breakdown": {
+        "complexity_penalty": 0.25,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.746,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.84
+      },
+      "sources": [
+        {
+          "contribution": 0.88,
+          "rule_id": "rule-rls-when-multi-tenant-and-shared-schema"
+        }
+      ],
+      "target_slug": "row_level_security",
+      "title": "Row-level Security",
+      "triggers_for_next_stage": [
+        "Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Shared-schema tenancy puts tenant isolation inside every query path.",
+        "RLS gives the database a backstop when application filters are missed."
+      ]
+    },
+    {
+      "confidence": 0.82,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.655,
+      "score_breakdown": {
+        "complexity_penalty": 0.17,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.78,
+        "growth_urgency": 0.698,
+        "operational_feasibility": 0.785,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.72
+      },
+      "sources": [
+        {
+          "contribution": 0.82,
+          "rule_id": "rule-exclusion-constraints-for-overlap-windows"
+        }
+      ],
+      "target_slug": "exclusion_constraints",
+      "title": "Exclusion Constraints",
+      "triggers_for_next_stage": [
+        "Escalate to GiST range indexes and concurrency scenarios when double-booking risk is on a hot path."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "If overlapping rows are allowed by business policy, model the exception first instead of forcing a generic constraint.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Scheduling, booking, and availability windows need overlap prevention at write time.",
+        "Exclusion constraints keep race conditions out of application-only checks."
+      ]
+    },
+    {
       "confidence": 0.78,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.647,
+      "score_breakdown": {
+        "complexity_penalty": 0.18,
+        "data_shape_fit": 0.88,
+        "domain_fit": 0.78,
+        "growth_urgency": 0.698,
+        "operational_feasibility": 0.759,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.72
+      },
       "sources": [
         {
           "contribution": 0.78,
@@ -149,14 +328,16 @@
         }
       ],
       "target_slug": "gist_range_exclusion",
+      "title": "GiST Range Exclusion",
       "triggers_for_next_stage": [
         "Add representative concurrent insert tests before relying on the design.",
         "Pair with exclusion constraints for correctness-critical scheduling paths."
       ],
-      "verdict": "recommend_now",
+      "verdict": "candidate_later",
       "why_not_yet": [
         "Avoid broad GiST indexes when range predicates are rare or the range column is not selective.",
-        "Avoid if intervals are rare metadata and not queried or constrained."
+        "Avoid if intervals are rare metadata and not queried or constrained.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
       ],
       "why_now": [
         "GiST range indexing supports overlap checks and range predicates for availability data.",
@@ -164,29 +345,22 @@
       ]
     },
     {
-      "confidence": 0.82,
-      "kind": "anti_pattern_warning",
-      "sources": [
-        {
-          "contribution": 0.82,
-          "rule_id": "rule-warn-geo-logic-without-postgis"
-        }
-      ],
-      "target_slug": "geo_logic_without_postgis",
-      "triggers_for_next_stage": [
-        "Adopt spatial types and validation rules before encoding geometry in ad hoc numeric columns."
-      ],
-      "verdict": "avoid_for_now",
-      "why_not_yet": [
-        "PostGIS can wait for display-only coordinates, but this intake has geo-query-heavy workload signals."
-      ],
-      "why_now": [
-        "Geo-heavy logic without PostGIS evidence risks incorrect distance, containment, and indexing behavior."
-      ]
-    },
-    {
       "confidence": 0.72,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.632,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.72,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.785,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.84
+      },
       "sources": [
         {
           "contribution": 0.72,
@@ -194,6 +368,7 @@
         }
       ],
       "target_slug": "btree_composite_equality_then_range",
+      "title": "Composite Equality Then Range",
       "triggers_for_next_stage": [
         "Adopt after pg_stat_statements identifies repeated tenant/status/time or account/time access paths."
       ],
@@ -206,50 +381,22 @@
       ]
     },
     {
-      "confidence": 0.7,
-      "kind": "core_feature",
-      "sources": [
-        {
-          "contribution": 0.7,
-          "rule_id": "rule-physical-replication-for-read-isolation"
-        }
-      ],
-      "target_slug": "physical_replication",
-      "triggers_for_next_stage": [
-        "Adopt when read routing, lag tolerance, and failover behavior are documented."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "A replica does not fix bad queries, missing indexes, or write bottlenecks on the primary."
-      ],
-      "why_now": [
-        "Read-heavy systems can isolate reporting and expensive reads with replicas."
-      ]
-    },
-    {
-      "confidence": 0.7,
-      "kind": "topology_pattern",
-      "sources": [
-        {
-          "contribution": 0.7,
-          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
-        }
-      ],
-      "target_slug": "primary_with_read_replicas",
-      "triggers_for_next_stage": [
-        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
-      ],
-      "why_now": [
-        "Reporting or read-heavy traffic may need isolation from primary write latency."
-      ]
-    },
-    {
       "confidence": 0.68,
+      "followup_questions": [],
       "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.624,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.769,
+        "operational_feasibility": 0.74,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
       "sources": [
         {
           "contribution": 0.68,
@@ -257,6 +404,7 @@
         }
       ],
       "target_slug": "partial_indexes",
+      "title": "Partial Indexes",
       "triggers_for_next_stage": [
         "Adopt when pg_stat_statements or EXPLAIN shows repeated filters on status, tenant, active windows, or sparse flags."
       ],
@@ -270,7 +418,21 @@
     },
     {
       "confidence": 0.68,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.624,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.769,
+        "operational_feasibility": 0.74,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
       "sources": [
         {
           "contribution": 0.68,
@@ -278,6 +440,7 @@
         }
       ],
       "target_slug": "partial_index_for_skew",
+      "title": "Partial Index for Skew",
       "triggers_for_next_stage": [
         "Review index size and write amplification after one representative traffic window."
       ],
@@ -290,8 +453,58 @@
       ]
     },
     {
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.582,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.68,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.707,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-physical-replication-for-read-isolation"
+        }
+      ],
+      "target_slug": "physical_replication",
+      "title": "Physical Replication",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and failover behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "A replica does not fix bad queries, missing indexes, or write bottlenecks on the primary."
+      ],
+      "why_now": [
+        "Read-heavy systems can isolate reporting and expensive reads with replicas."
+      ]
+    },
+    {
       "confidence": 0.64,
+      "followup_questions": [],
       "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.579,
+      "score_breakdown": {
+        "complexity_penalty": 0.18,
+        "data_shape_fit": 0.66,
+        "domain_fit": 0.62,
+        "growth_urgency": 0.698,
+        "operational_feasibility": 0.733,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.78
+      },
       "sources": [
         {
           "contribution": 0.64,
@@ -299,6 +512,7 @@
         }
       ],
       "target_slug": "btree_covering_include",
+      "title": "Covering B-tree With INCLUDE",
       "triggers_for_next_stage": [
         "Adopt when visibility map health and EXPLAIN show index-only scan potential."
       ],
@@ -311,8 +525,58 @@
       ]
     },
     {
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.574,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.652,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
+        }
+      ],
+      "target_slug": "primary_with_read_replicas",
+      "title": "Primary With Read Replicas",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
+      ],
+      "why_now": [
+        "Reporting or read-heavy traffic may need isolation from primary write latency."
+      ]
+    },
+    {
       "confidence": 0.58,
+      "followup_questions": [],
       "kind": "extension",
+      "module_slug": "when-uuid-is-the-right-key",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.538,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.64,
+        "domain_fit": 0.6,
+        "growth_urgency": 0.588,
+        "operational_feasibility": 0.81,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.6
+      },
       "sources": [
         {
           "contribution": 0.58,
@@ -320,6 +584,7 @@
         }
       ],
       "target_slug": "pgcrypto",
+      "title": "pgcrypto",
       "triggers_for_next_stage": [
         "Adopt when URL-safe identifiers or database-side UUID defaults are explicit requirements."
       ],
@@ -333,7 +598,21 @@
     },
     {
       "confidence": 0.56,
+      "followup_questions": [],
       "kind": "extension",
+      "module_slug": "e4-pgvector",
+      "original_verdict": "not_enough_evidence",
+      "recommendation_class": "not_enough_evidence",
+      "recommendation_score": 0.368,
+      "score_breakdown": {
+        "complexity_penalty": 0.72,
+        "data_shape_fit": 0.4,
+        "domain_fit": 0.45,
+        "growth_urgency": 0.588,
+        "operational_feasibility": 0.554,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.5
+      },
       "sources": [
         {
           "contribution": 0.56,
@@ -341,6 +620,7 @@
         }
       ],
       "target_slug": "pgvector",
+      "title": "pgvector",
       "triggers_for_next_stage": [
         "Revisit pgvector after an embedding corpus, offline evaluation set, and lexical or spatial baseline gaps are documented."
       ],
@@ -352,16 +632,52 @@
       "why_now": [
         "The intake mentions semantic or vector-style search, so pgvector should stay visible as a possible later option."
       ]
+    },
+    {
+      "confidence": 0.82,
+      "followup_questions": [],
+      "kind": "anti_pattern_warning",
+      "module_slug": null,
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.82,
+      "score_breakdown": {
+        "complexity_penalty": 0.0,
+        "data_shape_fit": 0.0,
+        "domain_fit": 0.0,
+        "growth_urgency": 0.0,
+        "operational_feasibility": 0.0,
+        "portability_penalty": 0.0,
+        "workload_fit": 0.0
+      },
+      "sources": [
+        {
+          "contribution": 0.82,
+          "rule_id": "rule-warn-geo-logic-without-postgis"
+        }
+      ],
+      "target_slug": "geo_logic_without_postgis",
+      "title": "Geo Logic Without PostGIS",
+      "triggers_for_next_stage": [
+        "Adopt spatial types and validation rules before encoding geometry in ad hoc numeric columns."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "PostGIS can wait for display-only coordinates, but this intake has geo-query-heavy workload signals."
+      ],
+      "why_now": [
+        "Geo-heavy logic without PostGIS evidence risks incorrect distance, containment, and indexing behavior."
+      ]
     }
   ],
   "score_breakdown": {
-    "complexity_penalty": 0.189,
-    "data_shape_fit": 0.758,
-    "domain_fit": 0.718,
-    "growth_urgency": 0.464,
-    "operational_feasibility": 0.776,
-    "portability_penalty": 0.045,
-    "workload_fit": 0.779
+    "complexity_penalty": 0.227,
+    "data_shape_fit": 0.741,
+    "domain_fit": 0.734,
+    "growth_urgency": 0.709,
+    "operational_feasibility": 0.741,
+    "portability_penalty": 0.053,
+    "workload_fit": 0.778
   },
   "warnings": [
     {
