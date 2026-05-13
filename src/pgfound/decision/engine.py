@@ -14,7 +14,7 @@ from pgfound import paths
 
 Report = dict[str, Any]
 
-ENGINE_VERSION = "0.1.0-prompt39"
+ENGINE_VERSION = "0.2.0-prompt42"
 SCHEMA_URI_BASE = "https://postgres-foundations/schema/"
 CATALOG_KINDS = {
     "industry": ("industries.json", "industry.schema.json"),
@@ -70,19 +70,6 @@ def _format_validation_errors(schema_name: str, errors: list[ValidationError]) -
         location = ".".join(str(part) for part in error.path) or "$"
         lines.append(f"- {location}: {error.message}")
     return "\n".join(lines)
-
-
-def _catalog_and_rule_warnings() -> list[str]:
-    warnings: list[str] = []
-    for label, directory in (("rules", paths.DECISION_ENGINE_DIR / "rules"),):
-        authored_files = [
-            path
-            for path in directory.glob("*.json")
-            if path.is_file() and not path.name.startswith(".")
-        ]
-        if not authored_files:
-            warnings.append(f"{label} not yet authored; decision output is intentionally empty")
-    return warnings
 
 
 def _catalog_path(kind: str) -> Path:
@@ -307,32 +294,48 @@ def validate_report(report: Report) -> None:
     _validate(report, "report.schema.json")
 
 
-def run_decision(intake_path: str | Path) -> Report:
-    """Validate an intake and return an empty-but-valid decision report."""
+def run_decision(intake_path: str | Path, rule_pattern: str | None = None) -> Report:
+    """Validate an intake and return a populated decision report."""
+    from pgfound.decision import evaluator
+
     intake_file = Path(intake_path)
     intake = _load_json(intake_file)
     _validate(intake, "intake.schema.json")
     validate_intake_references(intake)
+    evaluated = evaluator.evaluate(intake, rule_pattern=rule_pattern)
 
     report: Report = {
         "intake_id": intake["intake_id"],
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "engine_version": ENGINE_VERSION,
-        "recommendations": [],
-        "score_breakdown": {
-            "domain_fit": 0.0,
-            "data_shape_fit": 0.0,
-            "workload_fit": 0.0,
-            "operational_feasibility": 0.0,
-            "growth_urgency": 0.0,
-            "portability_penalty": 0.0,
-            "complexity_penalty": 0.0,
-        },
+        "recommendations": evaluated["recommendations"],
+        "score_breakdown": evaluated["score_breakdown"],
         "warnings": [
-            {"anti_pattern_slug": "catalogs_not_yet_authored", "message": warning}
-            for warning in _catalog_and_rule_warnings()
+            {
+                "anti_pattern_slug": recommendation["target_slug"],
+                "message": "; ".join(recommendation["why_now"])
+                or f"{recommendation['target_slug']} warning triggered",
+            }
+            for recommendation in evaluated["recommendations"]
+            if recommendation["kind"] == "anti_pattern_warning"
         ],
-        "followup_questions": [],
+        "followup_questions": evaluated["followup_questions"],
     }
     validate_report(report)
     return report
+
+
+def explain_decision(
+    intake_path: str | Path,
+    target_slug: str,
+    rule_pattern: str | None = None,
+) -> list[dict[str, str]]:
+    """Return rule explanations for one target slug."""
+    from pgfound.decision import evaluator
+
+    intake_file = Path(intake_path)
+    intake = _load_json(intake_file)
+    _validate(intake, "intake.schema.json")
+    validate_intake_references(intake)
+    evaluated = evaluator.evaluate(intake, rule_pattern=rule_pattern)
+    return evaluated["explain"].get(target_slug, [])

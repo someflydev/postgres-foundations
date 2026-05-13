@@ -32,9 +32,30 @@ def render_markdown(report: Report) -> str:
     ]
     if report["recommendations"]:
         for recommendation in report["recommendations"]:
-            lines.append(f"- `{recommendation['verdict']}` for `{recommendation['target_slug']}`")
+            lines.append(
+                f"### `{recommendation['target_slug']}` "
+                f"({recommendation['kind']}, {recommendation['verdict']}, "
+                f"{recommendation['confidence']:.2f})"
+            )
+            lines.append("")
+            lines.append("Why now:")
+            for item in recommendation["why_now"]:
+                lines.append(f"- {item}")
+            lines.append("")
+            lines.append("Why not yet:")
+            for item in recommendation["why_not_yet"]:
+                lines.append(f"- {item}")
+            lines.append("")
+            lines.append("Next-stage triggers:")
+            for item in recommendation["triggers_for_next_stage"]:
+                lines.append(f"- {item}")
+            lines.append("")
+            lines.append("Sources:")
+            for source in recommendation["sources"]:
+                lines.append(f"- `{source['rule_id']}` ({source['contribution']:.2f})")
+            lines.append("")
     else:
-        lines.append("No recommendations yet. Catalogs and rules are authored in later prompts.")
+        lines.append("No recommendations matched the current intake and rule filter.")
     lines.extend(["", "## Score Breakdown", ""])
     for name, score in report["score_breakdown"].items():
         lines.append(f"- `{name}`: {score:.2f}")

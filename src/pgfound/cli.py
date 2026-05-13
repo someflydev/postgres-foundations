@@ -25,6 +25,7 @@ from pgfound.content import seed_doctor as content_seed_doctor
 from pgfound.content import validate as content_validator
 from pgfound.decision import engine as decision_engine
 from pgfound.decision import report_writer as decision_report_writer
+from pgfound.decision import rules as decision_rules
 from pgfound.interview import rubric as interview_rubric
 from pgfound.interview import scenario as interview_scenario
 from pgfound.interview import session as interview_session
@@ -1242,6 +1243,31 @@ def decision_catalog_check() -> None:
         raise click.ClickException("decision catalog check found errors")
 
 
+@decision.group(help="Inspect and validate decision-engine rules.")
+def rules() -> None:
+    """Inspect and validate decision-engine rules."""
+
+
+@rules.command("lint", help="Run decision-engine rule lint checks.")
+@click.option("--rules", "rule_pattern", help="Restrict lint to a rule glob.")
+def decision_rules_lint(rule_pattern: str | None) -> None:
+    """Run rule schema and integrity checks."""
+    result = decision_rules.lint_rules(rule_pattern)
+    table = Table(title="decision rules lint")
+    table.add_column("Severity")
+    table.add_column("Message")
+    for message in result["errors"]:
+        table.add_row("error", message)
+    for message in result["warnings"]:
+        table.add_row("warning", message)
+    if not result["errors"] and not result["warnings"]:
+        table.add_row("ok", "no rule issues found")
+    console.print(table)
+
+    if result["errors"]:
+        raise click.ClickException("decision rules lint found errors")
+
+
 @decision.command("run", help="Validate an intake and write decision-engine reports.")
 @click.argument("intake_json", type=click.Path(path_type=Path))
 @click.option(
@@ -1249,10 +1275,17 @@ def decision_catalog_check() -> None:
     type=click.Path(path_type=Path),
     help="Report output directory. Defaults to tmp/decision-reports/<intake-id>/<timestamp>/.",
 )
-def decision_run(intake_json: Path, out_dir: Path | None) -> None:
+@click.option("--rules", "rule_pattern", help="Restrict the run to rule files matching a glob.")
+@click.option("--explain", "explain_target", help="Print contributing rules for one target slug.")
+def decision_run(
+    intake_json: Path,
+    out_dir: Path | None,
+    rule_pattern: str | None,
+    explain_target: str | None,
+) -> None:
     """Validate a decision intake and write JSON plus Markdown reports."""
     try:
-        report = decision_engine.run_decision(intake_json)
+        report = decision_engine.run_decision(intake_json, rule_pattern=rule_pattern)
     except decision_engine.DecisionValidationError as exc:
         raise click.ClickException(str(exc)) from exc
 
@@ -1263,3 +1296,23 @@ def decision_run(intake_json: Path, out_dir: Path | None) -> None:
     json_path, markdown_path = decision_report_writer.write_report(report, out_dir)
     _success(f"wrote decision report: {json_path}")
     _success(f"wrote decision report: {markdown_path}")
+
+    if explain_target:
+        explanations = decision_engine.explain_decision(
+            intake_json,
+            explain_target,
+            rule_pattern=rule_pattern,
+        )
+        table = Table(title=f"decision explain: {explain_target}")
+        table.add_column("Rule")
+        table.add_column("Verdict")
+        table.add_column("Why")
+        for explanation in explanations:
+            table.add_row(
+                explanation["rule_id"],
+                explanation["verdict"],
+                explanation["why"],
+            )
+        if not explanations:
+            table.add_row("-", "-", "no matching rules contributed")
+        console.print(table)
