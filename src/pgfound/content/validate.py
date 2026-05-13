@@ -14,6 +14,7 @@ from jsonschema import Draft202012Validator, RefResolver
 from jsonschema.exceptions import ValidationError
 
 from pgfound import paths
+from pgfound.decision import engine as decision_engine
 
 CONTENT_KINDS: Final[tuple[str, ...]] = (
     "curriculum",
@@ -171,6 +172,7 @@ def discover_content_files(
             if path.is_file()
             and path.suffix.lower() in CONTENT_SUFFIXES
             and "concurrency" not in path.relative_to(directory).parts
+            and not _is_industry_scenario_sidecar(path)
         )
 
     if include_examples:
@@ -218,6 +220,14 @@ def infer_kind(file_path: Path) -> str | None:
 
 def _is_interview_scenario_path(file_path: Path) -> bool:
     return "scenarios" in file_path.parts and "interviews" in file_path.parts
+
+
+def _is_industry_scenario_sidecar(file_path: Path) -> bool:
+    return (
+        "scenarios" in file_path.parts
+        and "industries" in file_path.parts
+        and file_path.name in {"intake.json", "expected-report.json"}
+    )
 
 
 def _exercise_exists(exercise_id: str) -> bool:
@@ -425,7 +435,105 @@ def _cross_file_checks(
                 )
         elif item.kind == "scenario" and _is_interview_scenario_path(item.path):
             errors.extend(_interview_scenario_errors(item, rubrics))
+        elif item.kind == "scenario" and _is_industry_scenario_path(item.path):
+            errors.extend(_industry_scenario_errors(item))
     return errors, warnings
+
+
+def _is_industry_scenario_path(file_path: Path) -> bool:
+    return (
+        "scenarios" in file_path.parts
+        and "industries" in file_path.parts
+        and file_path.name == "scenario.json"
+    )
+
+
+def _masked_decision_report(report: dict[str, Any]) -> dict[str, Any]:
+    masked = dict(report)
+    masked["generated_at"] = "<generated_at>"
+    masked["engine_version"] = decision_engine.ENGINE_VERSION
+    return masked
+
+
+def _industry_scenario_errors(item: LoadedContent) -> list[ValidationIssue]:
+    errors: list[ValidationIssue] = []
+    scenario_dir = item.path.parent
+    intake_path = scenario_dir / "intake.json"
+    expected_json_path = scenario_dir / "expected-report.json"
+    expected_markdown_path = scenario_dir / "expected-report.md"
+    narrative_path = scenario_dir / str(item.data.get("narrative_path", ""))
+
+    for required_path in (intake_path, expected_json_path, expected_markdown_path, narrative_path):
+        if not required_path.is_file():
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    f"required scenario artifact is missing: {required_path.name}",
+                )
+            )
+    if errors:
+        return errors
+
+    try:
+        report = decision_engine.run_decision(intake_path)
+    except decision_engine.DecisionValidationError as exc:
+        errors.append(ValidationIssue(item.kind, intake_path, str(exc)))
+        return errors
+
+    try:
+        expected_report = json.loads(expected_json_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                expected_json_path,
+                f"could not load expected-report.json: {exc}",
+            )
+        )
+        return errors
+
+    try:
+        decision_engine.validate_report(expected_report)
+    except decision_engine.DecisionValidationError as exc:
+        errors.append(ValidationIssue(item.kind, expected_json_path, str(exc)))
+        return errors
+
+    if _masked_decision_report(report) != _masked_decision_report(expected_report):
+        errors.append(
+            ValidationIssue(
+                item.kind,
+                expected_json_path,
+                "expected-report.json is stale; run pgfound decision golden-refresh --confirm",
+            )
+        )
+
+    actual_by_class: dict[str, set[str]] = {
+        "recommend_now": set(),
+        "candidate_later": set(),
+        "avoid_for_now": set(),
+    }
+    for recommendation in report["recommendations"]:
+        recommendation_class = recommendation.get("recommendation_class")
+        target_slug = recommendation.get("target_slug")
+        if recommendation_class in actual_by_class and isinstance(target_slug, str):
+            actual_by_class[recommendation_class].add(target_slug)
+
+    expected_outputs = item.data.get("expected_decision_outputs", {})
+    for recommendation_class, expected_slugs in expected_outputs.items():
+        if recommendation_class not in actual_by_class or not isinstance(expected_slugs, list):
+            continue
+        missing = sorted(set(expected_slugs) - actual_by_class[recommendation_class])
+        if missing:
+            errors.append(
+                ValidationIssue(
+                    item.kind,
+                    item.path,
+                    f"expected {recommendation_class} outputs missing from actual report: "
+                    + ", ".join(missing),
+                )
+            )
+    return errors
 
 
 def _interview_scenario_errors(

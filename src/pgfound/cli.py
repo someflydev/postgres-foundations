@@ -1418,3 +1418,36 @@ def decision_diff(report_a: Path, report_b: Path) -> None:
         lineterm="",
     ):
         click.echo(line)
+
+
+@decision.command("golden-refresh", help="Regenerate scenario decision report goldens.")
+@click.option(
+    "--confirm",
+    is_flag=True,
+    help="Overwrite expected-report.json and expected-report.md files.",
+)
+def decision_golden_refresh(confirm: bool) -> None:
+    """Refresh industry scenario decision-engine goldens."""
+    if not confirm:
+        raise click.ClickException("refusing to overwrite goldens without --confirm")
+
+    scenario_root = paths.SCENARIOS_DIR / "industries"
+    intake_paths = sorted(scenario_root.glob("*/*/intake.json"))
+    if not intake_paths:
+        raise click.ClickException("no industry scenario intakes found")
+
+    for intake_path in intake_paths:
+        try:
+            report = decision_engine.run_decision(intake_path)
+        except decision_engine.DecisionValidationError as exc:
+            raise click.ClickException(f"{intake_path}: {exc}") from exc
+        scenario_dir = intake_path.parent
+        (scenario_dir / "expected-report.json").write_text(
+            decision_report_writer.render_json(report),
+            encoding="utf-8",
+        )
+        (scenario_dir / "expected-report.md").write_text(
+            decision_report_writer.render_markdown(report, show_scores=True),
+            encoding="utf-8",
+        )
+        _success(f"refreshed decision golden: {scenario_dir}")

@@ -5,9 +5,10 @@ reviewable architecture recommendation.
 
 ## 1. Create or Choose an Intake
 
-Start from a fixture under `decision-engine/fixtures/intakes/` or author a new
-JSON document that matches `decision-engine/schemas/intake.schema.json`. The
-most important fields are the organization constraints, data shapes, workload
+Start from a fixture under `decision-engine/fixtures/intakes/`, an industry
+scenario under `scenarios/industries/*/*/intake.json`, or author a new JSON
+document that matches `decision-engine/schemas/intake.schema.json`. The most
+important fields are the organization constraints, data shapes, workload
 patterns, scale signals, tenancy model, security constraints, migration needs,
 existing topology, and free-form notes.
 
@@ -57,3 +58,14 @@ When report behavior changes intentionally, regenerate goldens with:
 ```bash
 scripts/update-decision-goldens.sh --confirm
 ```
+
+Industry scenario packs are also decision-engine regression fixtures. Refresh
+their `expected-report.json` and `expected-report.md` files with:
+
+```bash
+uv run pgfound decision golden-refresh --confirm
+```
+
+`uv run pgfound content validate` checks that scenario intakes validate, report
+goldens validate, and recorded scenario reports still match the current engine
+output.
