@@ -1,0 +1,364 @@
+{
+  "engine_version": "0.2.0-prompt42",
+  "followup_questions": [],
+  "generated_at": "2026-05-12T00:00:00Z",
+  "intake_id": "saas-multi-tenant-minimal",
+  "recommendations": [
+    {
+      "confidence": 0.9,
+      "kind": "extension",
+      "sources": [
+        {
+          "contribution": 0.9,
+          "rule_id": "rule-pg-stat-statements-for-real-workloads"
+        }
+      ],
+      "target_slug": "pg_stat_statements",
+      "triggers_for_next_stage": [
+        "Use top total time and calls to justify the next index, schema, or topology recommendation."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
+      ],
+      "why_now": [
+        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
+        "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
+    {
+      "confidence": 0.88,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.88,
+          "rule_id": "rule-rls-when-multi-tenant-and-shared-schema"
+        }
+      ],
+      "target_slug": "row_level_security",
+      "triggers_for_next_stage": [
+        "Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline."
+      ],
+      "why_now": [
+        "Shared-schema tenancy puts tenant isolation inside every query path.",
+        "RLS gives the database a backstop when application filters are missed."
+      ]
+    },
+    {
+      "confidence": 0.86,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.86,
+          "rule_id": "rule-prefer-constraints-for-relational-core"
+        }
+      ],
+      "target_slug": "constraints",
+      "triggers_for_next_stage": [
+        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+      ],
+      "why_now": [
+        "Relational core data needs database-enforced truth before optional architecture choices.",
+        "Constraints make bad states visible across every application writer."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "kind": "extension",
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        }
+      ],
+      "target_slug": "pgbouncer",
+      "triggers_for_next_stage": [
+        "Adopt once pool sizing, failover routing, and idle-session behavior are documented."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Confirm application compatibility with transaction pooling, prepared statements, and session settings."
+      ],
+      "why_now": [
+        "High peak connections on OLTP/read-heavy traffic should not map one application worker to one backend."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "kind": "topology_pattern",
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        },
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-pgbouncer-in-front-when-many-short-connections"
+        }
+      ],
+      "target_slug": "pgbouncer_in_front",
+      "triggers_for_next_stage": [
+        "Test failover target changes and pool draining in maintenance runbooks.",
+        "Adopt after transaction duration, idle sessions, and prepared-statement behavior are measured."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "It cannot compensate for long transactions or inefficient queries.",
+        "Pool mode can break session-state assumptions and should be tested with the application."
+      ],
+      "why_now": [
+        "Putting PgBouncer in front makes connection admission a topology concern.",
+        "Many concurrent sessions call for an explicit pooling layer in front of PostgreSQL."
+      ]
+    },
+    {
+      "confidence": 0.72,
+      "kind": "index_pattern",
+      "sources": [
+        {
+          "contribution": 0.72,
+          "rule_id": "rule-btree-composite-for-hot-filter-sort"
+        }
+      ],
+      "target_slug": "btree_composite_equality_then_range",
+      "triggers_for_next_stage": [
+        "Adopt after pg_stat_statements identifies repeated tenant/status/time or account/time access paths."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Column order must come from real predicates, not generic indexing instinct."
+      ],
+      "why_now": [
+        "Hot OLTP and read-heavy filters often need equality columns before range or sort columns."
+      ]
+    },
+    {
+      "confidence": 0.71,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.71,
+          "rule_id": "rule-jsonb-hybrid-columns-for-semi-structured"
+        }
+      ],
+      "target_slug": "jsonb",
+      "triggers_for_next_stage": [
+        "Promote hot JSON keys to generated or ordinary columns once query pressure and invariants are visible."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not make the whole entity JSONB when keys are frequently filtered, joined, constrained, or audited."
+      ],
+      "why_now": [
+        "JSONB can carry variable attributes while stable identifiers and lifecycle columns stay relational."
+      ]
+    },
+    {
+      "confidence": 0.7,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-physical-replication-for-read-isolation"
+        }
+      ],
+      "target_slug": "physical_replication",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and failover behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "A replica does not fix bad queries, missing indexes, or write bottlenecks on the primary."
+      ],
+      "why_now": [
+        "Read-heavy systems can isolate reporting and expensive reads with replicas."
+      ]
+    },
+    {
+      "confidence": 0.7,
+      "kind": "topology_pattern",
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
+        }
+      ],
+      "target_slug": "primary_with_read_replicas",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
+      ],
+      "why_now": [
+        "Reporting or read-heavy traffic may need isolation from primary write latency."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-partial-indexes-for-skewed-hot-sets"
+        }
+      ],
+      "target_slug": "partial_indexes",
+      "triggers_for_next_stage": [
+        "Adopt when pg_stat_statements or EXPLAIN shows repeated filters on status, tenant, active windows, or sparse flags."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Partial indexes need proven predicates; without query traces they become brittle guesses."
+      ],
+      "why_now": [
+        "Large OLTP tables often have small hot subsets that should not force full-table index maintenance."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "kind": "index_pattern",
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-partial-indexes-for-skewed-hot-sets"
+        }
+      ],
+      "target_slug": "partial_index_for_skew",
+      "triggers_for_next_stage": [
+        "Review index size and write amplification after one representative traffic window."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Wait until the predicate is stable in application SQL and selectivity has been measured."
+      ],
+      "why_now": [
+        "The index catalog has a matching pattern for selective predicates on skewed large tables."
+      ]
+    },
+    {
+      "confidence": 0.66,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.66,
+          "rule_id": "rule-generated-columns-for-jsonb-hot-keys"
+        }
+      ],
+      "target_slug": "generated_columns",
+      "triggers_for_next_stage": [
+        "Promote keys when query traces show stable filters, joins, uniqueness, or validation needs."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Wait until the hot keys are known; generated columns should not mirror every JSON attribute."
+      ],
+      "why_now": [
+        "Generated columns make repeatedly queried JSONB keys visible to constraints and indexes."
+      ]
+    },
+    {
+      "confidence": 0.66,
+      "kind": "index_pattern",
+      "sources": [
+        {
+          "contribution": 0.66,
+          "rule_id": "rule-gin-jsonb-for-containment"
+        }
+      ],
+      "target_slug": "gin_jsonb_containment",
+      "triggers_for_next_stage": [
+        "Adopt after EXPLAIN shows repeated @> predicates with selective keys."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "It is costly when the application does not use containment or filters too broadly."
+      ],
+      "why_now": [
+        "GIN JSONB can support containment queries on flexible attributes."
+      ]
+    },
+    {
+      "confidence": 0.64,
+      "kind": "index_pattern",
+      "sources": [
+        {
+          "contribution": 0.64,
+          "rule_id": "rule-btree-covering-for-read-heavy"
+        }
+      ],
+      "target_slug": "btree_covering_include",
+      "triggers_for_next_stage": [
+        "Adopt when visibility map health and EXPLAIN show index-only scan potential."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Covering indexes add write and storage cost, so projections must be stable and valuable."
+      ],
+      "why_now": [
+        "Read-heavy stable projections may benefit from INCLUDE columns and index-only scans."
+      ]
+    },
+    {
+      "confidence": 0.61,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.61,
+          "rule_id": "rule-generated-columns-for-jsonb-hot-keys"
+        }
+      ],
+      "target_slug": "expression_indexes",
+      "triggers_for_next_stage": [
+        "Adopt once normalized email, SKU, phone, or JSON extraction filters repeat."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "They depend on exact expression matching and should be tied to specific query shapes."
+      ],
+      "why_now": [
+        "Expression indexes can support normalized lookup while keeping the base model compact."
+      ]
+    },
+    {
+      "confidence": 0.58,
+      "kind": "extension",
+      "sources": [
+        {
+          "contribution": 0.58,
+          "rule_id": "rule-pgcrypto-for-public-identifiers"
+        }
+      ],
+      "target_slug": "pgcrypto",
+      "triggers_for_next_stage": [
+        "Adopt when URL-safe identifiers or database-side UUID defaults are explicit requirements."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not treat cryptographic functions as a security architecture without review."
+      ],
+      "why_now": [
+        "Database-generated UUID defaults are useful for public identifiers and distributed inserts."
+      ]
+    }
+  ],
+  "score_breakdown": {
+    "complexity_penalty": 0.182,
+    "data_shape_fit": 0.714,
+    "domain_fit": 0.708,
+    "growth_urgency": 0.478,
+    "operational_feasibility": 0.766,
+    "portability_penalty": 0.048,
+    "workload_fit": 0.771
+  },
+  "warnings": []
+}

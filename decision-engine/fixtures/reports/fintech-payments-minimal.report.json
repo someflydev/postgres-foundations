@@ -1,0 +1,439 @@
+{
+  "engine_version": "0.2.0-prompt42",
+  "followup_questions": [],
+  "generated_at": "2026-05-12T00:00:00Z",
+  "intake_id": "fintech-payments-minimal",
+  "recommendations": [
+    {
+      "confidence": 0.9,
+      "kind": "extension",
+      "sources": [
+        {
+          "contribution": 0.9,
+          "rule_id": "rule-pg-stat-statements-for-real-workloads"
+        }
+      ],
+      "target_slug": "pg_stat_statements",
+      "triggers_for_next_stage": [
+        "Use top total time and calls to justify the next index, schema, or topology recommendation."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
+      ],
+      "why_now": [
+        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
+        "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
+    {
+      "confidence": 0.88,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.88,
+          "rule_id": "rule-rls-when-multi-tenant-and-shared-schema"
+        }
+      ],
+      "target_slug": "row_level_security",
+      "triggers_for_next_stage": [
+        "Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline."
+      ],
+      "why_now": [
+        "Shared-schema tenancy puts tenant isolation inside every query path.",
+        "RLS gives the database a backstop when application filters are missed."
+      ]
+    },
+    {
+      "confidence": 0.86,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.86,
+          "rule_id": "rule-prefer-constraints-for-relational-core"
+        }
+      ],
+      "target_slug": "constraints",
+      "triggers_for_next_stage": [
+        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+      ],
+      "why_now": [
+        "Relational core data needs database-enforced truth before optional architecture choices.",
+        "Constraints make bad states visible across every application writer."
+      ]
+    },
+    {
+      "confidence": 0.82,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.82,
+          "rule_id": "rule-logical-replication-for-zero-downtime-migrations"
+        }
+      ],
+      "target_slug": "logical_replication",
+      "triggers_for_next_stage": [
+        "Move to a blue-green topology once replication lag, cutover checks, and write-freeze windows are defined."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Logical replication still needs primary keys, DDL choreography, sequence handling, and rollback planning."
+      ],
+      "why_now": [
+        "A PostgreSQL source plus zero-downtime migration need is a direct fit for publication/subscription cutover."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-partitioning-when-retention-matters"
+        }
+      ],
+      "target_slug": "partitioning",
+      "triggers_for_next_stage": [
+        "Escalate to pg_partman only after manual partition operations become a recurring operational risk."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Partitioning is premature when tables are modest, retention is vague, or queries do not prune by partition key."
+      ],
+      "why_now": [
+        "Large append-heavy tables need bounded maintenance, retention, and pruning strategy."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "kind": "extension",
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        }
+      ],
+      "target_slug": "pgbouncer",
+      "triggers_for_next_stage": [
+        "Adopt once pool sizing, failover routing, and idle-session behavior are documented."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Confirm application compatibility with transaction pooling, prepared statements, and session settings."
+      ],
+      "why_now": [
+        "High peak connections on OLTP/read-heavy traffic should not map one application worker to one backend."
+      ]
+    },
+    {
+      "confidence": 0.78,
+      "kind": "topology_pattern",
+      "sources": [
+        {
+          "contribution": 0.78,
+          "rule_id": "rule-logical-replication-pair-for-blue-green-upgrade"
+        }
+      ],
+      "target_slug": "logical_replication_pair",
+      "triggers_for_next_stage": [
+        "Move to blue-green once cutover gates and reverse-plan are written."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "DDL drift, sequences, replication lag, and fallback criteria must be owned."
+      ],
+      "why_now": [
+        "A logical replication pair supports validation and controlled cutover for PostgreSQL migrations."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "kind": "index_pattern",
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-partitioning-when-retention-matters"
+        },
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-brin-for-append-heavy-chronological"
+        }
+      ],
+      "target_slug": "brin_append_only_chronological",
+      "triggers_for_next_stage": [
+        "Add btree companion indexes only for proven tenant, status, or id filters.",
+        "Adopt when time-window scans dominate and table ordering remains correlated."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "It is weak when data is not physically correlated with time or queries need point lookup.",
+        "BRIN depends on physical correlation and does not replace point-lookup btrees."
+      ],
+      "why_now": [
+        "BRIN is a low-maintenance fit for large chronological append-only tables.",
+        "Append-heavy chronological data often gets useful pruning from small BRIN indexes."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "kind": "topology_pattern",
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        },
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-pgbouncer-in-front-when-many-short-connections"
+        }
+      ],
+      "target_slug": "pgbouncer_in_front",
+      "triggers_for_next_stage": [
+        "Test failover target changes and pool draining in maintenance runbooks.",
+        "Adopt after transaction duration, idle sessions, and prepared-statement behavior are measured."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "It cannot compensate for long transactions or inefficient queries.",
+        "Pool mode can break session-state assumptions and should be tested with the application."
+      ],
+      "why_now": [
+        "Putting PgBouncer in front makes connection admission a topology concern.",
+        "Many concurrent sessions call for an explicit pooling layer in front of PostgreSQL."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "kind": "anti_pattern_warning",
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-warn-no-pooling-high-connections"
+        }
+      ],
+      "target_slug": "no_pooling_high_connections",
+      "triggers_for_next_stage": [
+        "Add pool sizing, transaction duration, and session-state compatibility checks."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "Application pools may be enough if limits and transaction duration are already disciplined."
+      ],
+      "why_now": [
+        "High peak connections without pooling evidence risks backend exhaustion and idle-session waste."
+      ]
+    },
+    {
+      "confidence": 0.74,
+      "kind": "topology_pattern",
+      "sources": [
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-logical-replication-for-zero-downtime-migrations"
+        }
+      ],
+      "target_slug": "blue_green_upgrade_via_logical_replication",
+      "triggers_for_next_stage": [
+        "Adopt when dual-write avoidance, validation queries, and rollback owners are agreed."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not promise near-zero downtime until lag monitoring and reverse-cutover criteria are written."
+      ],
+      "why_now": [
+        "Blue-green cutover is plausible when logical replication is already part of migration planning."
+      ]
+    },
+    {
+      "confidence": 0.72,
+      "kind": "index_pattern",
+      "sources": [
+        {
+          "contribution": 0.72,
+          "rule_id": "rule-btree-composite-for-hot-filter-sort"
+        }
+      ],
+      "target_slug": "btree_composite_equality_then_range",
+      "triggers_for_next_stage": [
+        "Adopt after pg_stat_statements identifies repeated tenant/status/time or account/time access paths."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Column order must come from real predicates, not generic indexing instinct."
+      ],
+      "why_now": [
+        "Hot OLTP and read-heavy filters often need equality columns before range or sort columns."
+      ]
+    },
+    {
+      "confidence": 0.7,
+      "kind": "topology_pattern",
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
+        }
+      ],
+      "target_slug": "primary_with_read_replicas",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
+      ],
+      "why_now": [
+        "Reporting or read-heavy traffic may need isolation from primary write latency."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-partial-indexes-for-skewed-hot-sets"
+        }
+      ],
+      "target_slug": "partial_indexes",
+      "triggers_for_next_stage": [
+        "Adopt when pg_stat_statements or EXPLAIN shows repeated filters on status, tenant, active windows, or sparse flags."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Partial indexes need proven predicates; without query traces they become brittle guesses."
+      ],
+      "why_now": [
+        "Large OLTP tables often have small hot subsets that should not force full-table index maintenance."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "kind": "index_pattern",
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-partial-indexes-for-skewed-hot-sets"
+        }
+      ],
+      "target_slug": "partial_index_for_skew",
+      "triggers_for_next_stage": [
+        "Review index size and write amplification after one representative traffic window."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Wait until the predicate is stable in application SQL and selectivity has been measured."
+      ],
+      "why_now": [
+        "The index catalog has a matching pattern for selective predicates on skewed large tables."
+      ]
+    },
+    {
+      "confidence": 0.67,
+      "kind": "core_feature",
+      "sources": [
+        {
+          "contribution": 0.67,
+          "rule_id": "rule-materialized-views-for-adjacent-analytics"
+        }
+      ],
+      "target_slug": "materialized_views",
+      "triggers_for_next_stage": [
+        "Adopt when repeated aggregate queries dominate total time and stale-enough answers are acceptable."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Refresh cadence, staleness tolerance, and locking behavior must be known first."
+      ],
+      "why_now": [
+        "Adjacent analytics often needs precomputed read models before replicas or distributed systems."
+      ]
+    },
+    {
+      "confidence": 0.64,
+      "kind": "extension",
+      "sources": [
+        {
+          "contribution": 0.64,
+          "rule_id": "rule-timescaledb-when-centrally-time-series"
+        }
+      ],
+      "target_slug": "timescaledb",
+      "triggers_for_next_stage": [
+        "Revisit when compression, chunk maintenance, and retention automation are measured pain."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Core partitioning, BRIN, materialized views, and scheduled retention should be measured first."
+      ],
+      "why_now": [
+        "Very large time-series metrics may benefit from hypertable lifecycle, compression, and retention ergonomics."
+      ]
+    },
+    {
+      "confidence": 0.62,
+      "kind": "extension",
+      "sources": [
+        {
+          "contribution": 0.62,
+          "rule_id": "rule-pg-partman-when-partitioning-managed-manually"
+        }
+      ],
+      "target_slug": "pg_partman",
+      "triggers_for_next_stage": [
+        "Adopt when future partition creation or retention jobs become reviewed operational toil."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "The table must already deserve partitioning; pg_partman is not the reason to partition."
+      ],
+      "why_now": [
+        "Recurring time-based partition creation and retention can justify pg_partman automation."
+      ]
+    },
+    {
+      "confidence": 0.58,
+      "kind": "extension",
+      "sources": [
+        {
+          "contribution": 0.58,
+          "rule_id": "rule-pgcrypto-for-public-identifiers"
+        }
+      ],
+      "target_slug": "pgcrypto",
+      "triggers_for_next_stage": [
+        "Adopt when URL-safe identifiers or database-side UUID defaults are explicit requirements."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not treat cryptographic functions as a security architecture without review."
+      ],
+      "why_now": [
+        "Database-generated UUID defaults are useful for public identifiers and distributed inserts."
+      ]
+    }
+  ],
+  "score_breakdown": {
+    "complexity_penalty": 0.222,
+    "data_shape_fit": 0.721,
+    "domain_fit": 0.723,
+    "growth_urgency": 0.586,
+    "operational_feasibility": 0.746,
+    "portability_penalty": 0.071,
+    "workload_fit": 0.793
+  },
+  "warnings": [
+    {
+      "anti_pattern_slug": "no_pooling_high_connections",
+      "message": "High peak connections without pooling evidence risks backend exhaustion and idle-session waste."
+    }
+  ]
+}
