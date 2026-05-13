@@ -11,5 +11,60 @@
     }
   ],
   "allowed_concepts": ["select", "where", "order_by"],
-  "not_yet_allowed_concepts": ["join", "cte", "window_function"]
+  "not_yet_allowed_concepts": ["join", "cte", "window_function"],
+  "report": {
+    "intake_id": "saas-multi-tenant-minimal",
+    "full_intake": {
+      "organization": {
+        "operational_tolerance": "low",
+        "managed_service_requirement": "mandatory",
+        "portability_constraints": ["aws_rds", "azure_pg"]
+      }
+    },
+    "recommendations": [
+      {
+        "target_slug": "row_level_security",
+        "title": "Row-level Security",
+        "recommendation_class": "recommend_now",
+        "sources": [
+          {
+            "rule_id": "rule-rls-when-multi-tenant-and-shared-schema",
+            "contribution": 0.88
+          }
+        ],
+        "why_now": ["Shared-schema tenancy requires a database backstop."],
+        "why_not_yet": ["Policies need test coverage and bypass-role review."]
+      }
+    ]
+  },
+  "anti_patterns": [
+    {
+      "id": "no_pooling_high_connections",
+      "title": "No pooling with high connections",
+      "summary": "Many short-lived connections without pooling."
+    }
+  ],
+  "catalogs": {
+    "postgres_core_features": [
+      {
+        "id": "row_level_security",
+        "title": "Row-level Security",
+        "summary": "Database-enforced tenant isolation policies."
+      }
+    ],
+    "extensions": [
+      {
+        "id": "pg_stat_statements",
+        "title": "pg_stat_statements",
+        "summary": "Track query execution statistics."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "rule-rls-when-multi-tenant-and-shared-schema",
+      "target_slug": "row_level_security",
+      "verdict": "recommend_now"
+    }
+  ]
 }

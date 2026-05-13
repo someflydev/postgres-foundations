@@ -1,0 +1,56 @@
+{
+  "intake": {
+    "intake_id": "saas-multi-tenant-minimal",
+    "organization": {
+      "industry": "saas_multi_tenant",
+      "operational_tolerance": "low",
+      "managed_service_requirement": "mandatory",
+      "portability_constraints": ["aws_rds", "azure_pg"]
+    },
+    "data_shapes": ["relational_core", "semi_structured_jsonb"],
+    "workload_patterns": ["oltp_heavy", "strong_tenant_locality"],
+    "tenancy_model": "multi_tenant_shared_schema",
+    "security_constraints": ["rls_required", "pii_in_scope"]
+  },
+  "catalogs": {
+    "extensions": [
+      {
+        "id": "pg_stat_statements",
+        "title": "pg_stat_statements",
+        "summary": "Track query execution statistics."
+      }
+    ],
+    "postgres_core_features": [
+      {
+        "id": "row_level_security",
+        "title": "Row-level Security",
+        "summary": "Database-enforced tenant isolation policies."
+      }
+    ],
+    "anti_patterns": [
+      {
+        "id": "no_pooling_high_connections",
+        "title": "No pooling with high connections",
+        "summary": "Many short-lived connections without pooling."
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "rule-rls-when-multi-tenant-and-shared-schema",
+      "target_slug": "row_level_security",
+      "verdict": "recommend_now",
+      "why_now": ["Shared-schema tenancy requires a database backstop."],
+      "why_not_yet": ["Policies need test coverage and bypass-role review."],
+      "triggers_for_next_stage": ["Review policy coverage for tenant-scoped tables."]
+    }
+  ],
+  "report_schema": {
+    "type": "object",
+    "required": ["intake_id", "recommendations"],
+    "properties": {
+      "intake_id": { "type": "string" },
+      "recommendations": { "type": "array" }
+    }
+  }
+}
