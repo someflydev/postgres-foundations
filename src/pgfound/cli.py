@@ -25,6 +25,7 @@ from pgfound.content import seed as content_seed
 from pgfound.content import seed_doctor as content_seed_doctor
 from pgfound.content import validate as content_validator
 from pgfound.decision import engine as decision_engine
+from pgfound.decision import prompts as decision_prompts
 from pgfound.decision import report_writer as decision_report_writer
 from pgfound.decision import rules as decision_rules
 from pgfound.interview import rubric as interview_rubric
@@ -1267,6 +1268,63 @@ def decision_rules_lint(rule_pattern: str | None) -> None:
 
     if result["errors"]:
         raise click.ClickException("decision rules lint found errors")
+
+
+@decision.group(help="Render decision-engine prompt templates.")
+def prompt() -> None:
+    """Render and inspect decision-engine prompt templates."""
+
+
+@prompt.command("list", help="List decision-engine prompt templates.")
+def decision_prompt_list() -> None:
+    """List decision prompt templates and their declared consumers."""
+    table = Table(title="pgfound decision prompts")
+    table.add_column("ID")
+    table.add_column("Consumed by")
+    table.add_column("Required inputs")
+    for template in decision_prompts.list_templates():
+        required = [
+            name for name, spec in template.inputs.items() if bool(spec.get("required", False))
+        ]
+        table.add_row(template.id, ", ".join(template.consumed_by), ", ".join(required))
+    console.print(table)
+
+
+@prompt.command("render", help="Render one decision-engine prompt template.")
+@click.argument("template_id")
+@click.option(
+    "--context",
+    "context_path",
+    type=click.Path(path_type=Path),
+    required=True,
+    help="JSON context object.",
+)
+@click.option(
+    "--var",
+    "var_overrides",
+    multiple=True,
+    help="Override one render variable as key=value. JSON values are accepted.",
+)
+@click.option("--out", "out_path", type=click.Path(path_type=Path), help="Write prompt here.")
+def decision_prompt_render(
+    template_id: str,
+    context_path: Path,
+    var_overrides: tuple[str, ...],
+    out_path: Path | None,
+) -> None:
+    """Render one decision template without calling an LLM."""
+    try:
+        context = llm_templates.load_context(context_path)
+        variables = llm_templates.parse_var_overrides(var_overrides)
+        rendered = decision_prompts.render_template(template_id, context, variables=variables)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    if out_path:
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(rendered, encoding="utf-8")
+        _success(f"rendered: {out_path}")
+        return
+    click.echo(rendered, nl=False)
 
 
 @decision.command("run", help="Validate an intake and write decision-engine reports.")

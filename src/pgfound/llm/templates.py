@@ -74,14 +74,18 @@ class PromptTemplate:
         return tuple(str(item) for item in raw)
 
 
-def load_template(template_id: str) -> PromptTemplate:
-    """Load one template by front-matter id."""
+def load_template_from_dir(template_id: str, template_dir: Path, label: str) -> PromptTemplate:
+    """Load one template by front-matter id from a prompt-template root."""
     normalized = template_id.removesuffix(".md")
-    path = paths.LLM_PROMPTS_DIR / f"{normalized}.md"
+    path = template_dir / f"{normalized}.md"
     if not path.is_file():
-        matches = [template for template in list_templates() if template.id == normalized]
+        matches = [
+            template
+            for template in list_templates_from_dir(template_dir)
+            if template.id == normalized
+        ]
         if not matches:
-            msg = f"LLM prompt template not found: {template_id}"
+            msg = f"{label} prompt template not found: {template_id}"
             raise ValueError(msg)
         return matches[0]
     template = parse_template(path)
@@ -91,16 +95,26 @@ def load_template(template_id: str) -> PromptTemplate:
     return template
 
 
-def list_templates() -> list[PromptTemplate]:
-    """Return all front-matter prompt templates under llm-prompts."""
+def load_template(template_id: str) -> PromptTemplate:
+    """Load one training-side template by front-matter id."""
+    return load_template_from_dir(template_id, paths.LLM_PROMPTS_DIR, "LLM")
+
+
+def list_templates_from_dir(template_dir: Path) -> list[PromptTemplate]:
+    """Return all front-matter prompt templates under a template root."""
     templates: list[PromptTemplate] = []
-    for path in sorted(paths.LLM_PROMPTS_DIR.rglob("*.md")):
+    for path in sorted(template_dir.rglob("*.md")):
         text = path.read_text(encoding="utf-8")
         if not FRONT_MATTER_RE.match(text):
             continue
         template = parse_template(path)
         templates.append(template)
     return templates
+
+
+def list_templates() -> list[PromptTemplate]:
+    """Return all front-matter prompt templates under llm-prompts."""
+    return list_templates_from_dir(paths.LLM_PROMPTS_DIR)
 
 
 def parse_template(path: Path) -> PromptTemplate:
@@ -130,6 +144,24 @@ def render_template(
     return Template(template.body, undefined=StrictUndefined).render(**merged)
 
 
+def render_loaded_template(
+    template: PromptTemplate,
+    context: dict[str, Any],
+    *,
+    variables: dict[str, Any] | None = None,
+    output_format_base: str = "llm-prompts/shared/output-formats",
+) -> str:
+    """Validate and render an already loaded template."""
+    merged = merge_context(
+        template,
+        context,
+        variables=variables,
+        output_format_base=output_format_base,
+    )
+    validate_inputs(template, merged)
+    return Template(template.body, undefined=StrictUndefined).render(**merged)
+
+
 def render_template_to_path(
     template_id: str,
     context: dict[str, Any],
@@ -149,6 +181,7 @@ def merge_context(
     context: dict[str, Any],
     *,
     variables: dict[str, Any] | None = None,
+    output_format_base: str = "llm-prompts/shared/output-formats",
 ) -> dict[str, Any]:
     """Merge template variables, context JSON, and CLI overrides."""
     merged: dict[str, Any] = {}
@@ -160,9 +193,7 @@ def merge_context(
         merged.update(variables)
     output_format = template.metadata.get("outputs", {}).get("format")
     if output_format:
-        merged.setdefault(
-            "output_format_ref", f"llm-prompts/shared/output-formats/{output_format}.md"
-        )
+        merged.setdefault("output_format_ref", f"{output_format_base}/{output_format}.md")
     return merged
 
 
