@@ -10,11 +10,11 @@ from typing import Any
 from jsonschema import Draft202012Validator, ValidationError
 from referencing import Registry, Resource
 
-from pgfound import paths
+from pgfound import __version__, paths
 
 Report = dict[str, Any]
 
-ENGINE_VERSION = "0.2.0-prompt42"
+ENGINE_VERSION = __version__
 SCHEMA_URI_BASE = "https://postgres-foundations/schema/"
 CATALOG_KINDS = {
     "industry": ("industries.json", "industry.schema.json"),
@@ -308,8 +308,17 @@ def run_decision(intake_path: str | Path, rule_pattern: str | None = None) -> Re
         "intake_id": intake["intake_id"],
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "engine_version": ENGINE_VERSION,
+        "intake_summary": {
+            "industry": intake["organization"]["industry"],
+            "industry_title": load_catalog_index("industry")
+            .get(intake["organization"]["industry"], {})
+            .get("title", intake["organization"]["industry"]),
+            "tenancy_model": intake["tenancy_model"],
+            "operational_tolerance": intake["organization"]["operational_tolerance"],
+        },
         "recommendations": evaluated["recommendations"],
         "score_breakdown": evaluated["score_breakdown"],
+        "overall": evaluated["overall"],
         "warnings": [
             {
                 "anti_pattern_slug": recommendation["target_slug"],
@@ -320,6 +329,8 @@ def run_decision(intake_path: str | Path, rule_pattern: str | None = None) -> Re
             if recommendation["kind"] == "anti_pattern_warning"
         ],
         "followup_questions": evaluated["followup_questions"],
+        "followup_question_groups": evaluated["followup_question_groups"],
+        "full_intake": intake,
     }
     validate_report(report)
     return report

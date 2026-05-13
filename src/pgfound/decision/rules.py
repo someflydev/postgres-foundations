@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import fnmatch
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -39,6 +40,7 @@ TARGET_KIND_TO_CATALOG = {
     "topology_pattern": "topology_pattern",
     "anti_pattern_warning": "anti_pattern",
 }
+TOKEN_RE = re.compile(r"[a-z0-9_]+")
 
 
 @dataclass(frozen=True)
@@ -86,6 +88,18 @@ def _scale_value(intake: dict[str, Any], key: str) -> float:
     return float(value or 0)
 
 
+def _tokenized_contains(haystack: str, needle: str) -> bool:
+    haystack_lower = haystack.lower()
+    needle_lower = needle.lower()
+    if needle_lower in haystack_lower:
+        return True
+    haystack_tokens = TOKEN_RE.findall(haystack_lower)
+    needle_tokens = TOKEN_RE.findall(needle_lower)
+    if not needle_tokens:
+        return False
+    return " ".join(needle_tokens) in " ".join(haystack_tokens)
+
+
 def predicate_matches(predicate: dict[str, Any], intake: dict[str, Any]) -> bool:
     """Evaluate one predicate against one intake."""
     key, expected = next(iter(predicate.items()))
@@ -122,7 +136,7 @@ def predicate_matches(predicate: dict[str, Any], intake: dict[str, Any]) -> bool
     if key == "migration_need":
         return bool(intake["migration_or_federation_needs"].get(expected))
     if key == "free_form_notes_contains":
-        return str(expected).lower() in intake["free_form_notes"].lower()
+        return _tokenized_contains(intake["free_form_notes"], str(expected))
     if key == "explicit_bias_for_contains":
         return any(item["extension_slug"] == expected for item in intake["explicit_bias_for"])
     if key == "explicit_bias_against_contains":
@@ -148,9 +162,7 @@ def rule_matches(rule: dict[str, Any], intake: dict[str, Any]) -> bool:
 def matching_rules(rules: list[dict[str, Any]], intake: dict[str, Any]) -> list[RuleMatch]:
     """Return active rule matches and their actions."""
     return [
-        RuleMatch(rule=rule, actions=rule["then"])
-        for rule in rules
-        if rule_matches(rule, intake)
+        RuleMatch(rule=rule, actions=rule["then"]) for rule in rules if rule_matches(rule, intake)
     ]
 
 

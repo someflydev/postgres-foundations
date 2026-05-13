@@ -1,0 +1,9 @@
+{
+  "domain_fit": 0.2,
+  "data_shape_fit": 0.2,
+  "workload_fit": 0.2,
+  "operational_feasibility": 0.15,
+  "growth_urgency": 0.1,
+  "portability_penalty": -0.1,
+  "complexity_penalty": -0.05
+}
