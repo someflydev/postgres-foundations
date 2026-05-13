@@ -1,0 +1,53 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "ranges_windows",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "existing_postgres_topology": "primary_with_read_replicas",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [],
+  "free_form_notes": "They need tenant isolation, exclusion-style booking protection, and a posture on whether time-series tooling is justified for video-quality metrics. Provider groups behave like tenants, but patients move between groups after insurance changes, so isolation cannot erase cross-group care workflows. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "intake_id": "healthcare-telehealth-appointment-platform",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "healthcare_ops",
+    "managed_service_requirement": "strongly_preferred",
+    "operational_tolerance": "medium",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 64
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 2100,
+    "growth_rate_month_over_month": 0.17,
+    "read_throughput_qps": 7800,
+    "row_counts_largest_tables": {
+      "appointments": 88000000,
+      "availability_windows": 260000000,
+      "video_session_events": 340000000
+    },
+    "write_throughput_rows_per_sec": 1700
+  },
+  "security_constraints": [
+    "hipaa",
+    "pii_in_scope",
+    "audit_required",
+    "rls_required"
+  ],
+  "tenancy_model": "multi_tenant_shared_schema",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "read_heavy",
+    "strong_tenant_locality"
+  ]
+}

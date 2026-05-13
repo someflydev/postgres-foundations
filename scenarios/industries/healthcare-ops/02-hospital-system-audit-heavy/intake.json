@@ -1,0 +1,52 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "full_text_docs"
+  ],
+  "existing_postgres_topology": "primary_with_read_replicas",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [],
+  "free_form_notes": "They are weighing native full-text search, pg_trgm for misspelled patient names, and replica isolation for compliance reporting. Audit investigators search by vague clinician notes, but patient-matching false positives can create real compliance work. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "intake_id": "healthcare-hospital-system-audit-heavy",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "healthcare_ops",
+    "managed_service_requirement": "mandatory",
+    "operational_tolerance": "medium",
+    "portability_constraints": [
+      "aws_rds",
+      "any_managed"
+    ],
+    "team_size_engineers": 41
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 760,
+    "growth_rate_month_over_month": 0.1,
+    "read_throughput_qps": 4200,
+    "row_counts_largest_tables": {
+      "audit_events": 220000000,
+      "documents": 9500000,
+      "encounters": 18000000
+    },
+    "write_throughput_rows_per_sec": 850
+  },
+  "security_constraints": [
+    "hipaa",
+    "pii_in_scope",
+    "audit_required"
+  ],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "search_heavy",
+    "analytics_adjacent"
+  ]
+}

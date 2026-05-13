@@ -1,0 +1,71 @@
+{
+  "context": {
+    "operational_tolerance": "low",
+    "portability_requirements": "Managed PostgreSQL required or strongly preferred: aws_rds",
+    "scale_signals": [
+      "11200 read qps",
+      "2400 write rows/sec",
+      "1450 peak connections",
+      "18% monthly growth"
+    ],
+    "team_size": "72 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections",
+      "no_restore_drills"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "partial_indexes",
+      "partial_index_for_skew",
+      "materialized_views",
+      "physical_replication",
+      "btree_covering_include",
+      "primary_with_read_replicas",
+      "pg_partman"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements",
+      "partitioning",
+      "brin_append_only_chronological",
+      "pgbouncer",
+      "pgbouncer_in_front"
+    ]
+  },
+  "id": "fintech-high-volume-trading-adjacent",
+  "industry": "fintech_payments",
+  "narrative_path": "narrative.md",
+  "suggested_capstone_id": "03-event-heavy-operations",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "row-level-security-policy-design",
+    "partitioning-large-table-operations",
+    "pg-stat-statements-basics",
+    "full-text-search-core",
+    "postgres-fdw-boundaries"
+  ],
+  "tags": [
+    "fintech-payments",
+    "high-scale-mature",
+    "single-tenant"
+  ],
+  "title": "High-volume trading-adjacent payments reconciliation",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "analytics_adjacent",
+    "read_heavy"
+  ]
+}

@@ -1,0 +1,492 @@
+{
+  "engine_version": "0.0.1",
+  "followup_question_groups": {},
+  "followup_questions": [],
+  "full_intake": {
+    "as_of_date": "2026-05-12",
+    "data_shapes": [
+      "relational_core",
+      "semi_structured_jsonb"
+    ],
+    "existing_postgres_topology": "single_primary",
+    "explicit_bias_against": [],
+    "explicit_bias_for": [
+      {
+        "extension_slug": "pgvector",
+        "reason": "Product stakeholders asked whether semantic retrieval belongs in PostgreSQL."
+      }
+    ],
+    "free_form_notes": "They are considering pgvector for account notes because sales managers ask for semantic recall, but the team has not built a lexical search baseline yet. Two design partners use unusually broad custom fields, so JSONB appears in hot screens even though most tenants remain simple. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+    "intake_id": "saas-early-stage-crm",
+    "migration_or_federation_needs": {
+      "has_legacy_non_postgres_source": false,
+      "has_legacy_postgres_source": false,
+      "requires_federation_via_fdw": false,
+      "requires_zero_downtime_migration": false
+    },
+    "organization": {
+      "industry": "saas_multi_tenant",
+      "managed_service_requirement": "mandatory",
+      "operational_tolerance": "low",
+      "portability_constraints": [
+        "aws_rds"
+      ],
+      "team_size_engineers": 8
+    },
+    "scale_signals": {
+      "concurrent_connections_peak": 140,
+      "growth_rate_month_over_month": 0.11,
+      "read_throughput_qps": 520,
+      "row_counts_largest_tables": {
+        "accounts": 320000,
+        "audit_events": 2200000,
+        "tenant_memberships": 180000
+      },
+      "write_throughput_rows_per_sec": 75
+    },
+    "security_constraints": [
+      "rls_required",
+      "pii_in_scope"
+    ],
+    "tenancy_model": "multi_tenant_shared_schema",
+    "workload_patterns": [
+      "oltp_heavy",
+      "read_heavy",
+      "strong_tenant_locality"
+    ]
+  },
+  "generated_at": "2026-05-13T16:23:19.374429Z",
+  "intake_id": "saas-early-stage-crm",
+  "intake_summary": {
+    "industry": "saas_multi_tenant",
+    "industry_title": "SaaS Multi-tenant",
+    "operational_tolerance": "low",
+    "tenancy_model": "multi_tenant_shared_schema"
+  },
+  "overall": {
+    "candidate_later": {
+      "count": 7,
+      "score": 0.542
+    },
+    "not_enough_evidence": {
+      "count": 1,
+      "score": 0.317
+    },
+    "recommend_now": {
+      "count": 3,
+      "score": 0.659
+    }
+  },
+  "recommendations": [
+    {
+      "confidence": 0.86,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.66,
+      "score_breakdown": {
+        "complexity_penalty": 0.06,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.365,
+        "operational_feasibility": 0.761,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.86,
+          "rule_id": "rule-prefer-constraints-for-relational-core"
+        }
+      ],
+      "target_slug": "constraints",
+      "title": "Constraints",
+      "triggers_for_next_stage": [
+        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+      ],
+      "why_now": [
+        "Relational core data needs database-enforced truth before optional architecture choices.",
+        "Constraints make bad states visible across every application writer."
+      ]
+    },
+    {
+      "confidence": 0.9,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e1-pg-stat-statements",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.66,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.92,
+        "growth_urgency": 0.448,
+        "operational_feasibility": 0.754,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.94
+      },
+      "sources": [
+        {
+          "contribution": 0.9,
+          "rule_id": "rule-pg-stat-statements-for-real-workloads"
+        }
+      ],
+      "target_slug": "pg_stat_statements",
+      "title": "pg_stat_statements",
+      "triggers_for_next_stage": [
+        "Use top total time and calls to justify the next index, schema, or topology recommendation."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
+      ],
+      "why_now": [
+        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
+        "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
+    {
+      "confidence": 0.88,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.657,
+      "score_breakdown": {
+        "complexity_penalty": 0.25,
+        "data_shape_fit": 0.88,
+        "domain_fit": 0.92,
+        "growth_urgency": 0.365,
+        "operational_feasibility": 0.645,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.9
+      },
+      "sources": [
+        {
+          "contribution": 0.88,
+          "rule_id": "rule-rls-when-multi-tenant-and-shared-schema"
+        }
+      ],
+      "target_slug": "row_level_security",
+      "title": "Row-level Security",
+      "triggers_for_next_stage": [
+        "Review policy coverage for every tenant-scoped table and add plan checks for hot tenant filters."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "RLS policies need session identity plumbing, bypass-role review, tests, and operational debugging discipline."
+      ],
+      "why_now": [
+        "Shared-schema tenancy puts tenant isolation inside every query path.",
+        "RLS gives the database a backstop when application filters are missed."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.573,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.409,
+        "operational_feasibility": 0.638,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-partial-indexes-for-skewed-hot-sets"
+        }
+      ],
+      "target_slug": "partial_indexes",
+      "title": "Partial Indexes",
+      "triggers_for_next_stage": [
+        "Adopt when pg_stat_statements or EXPLAIN shows repeated filters on status, tenant, active windows, or sparse flags."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Partial indexes need proven predicates; without query traces they become brittle guesses."
+      ],
+      "why_now": [
+        "Large OLTP tables often have small hot subsets that should not force full-table index maintenance."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.573,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.409,
+        "operational_feasibility": 0.638,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-partial-indexes-for-skewed-hot-sets"
+        }
+      ],
+      "target_slug": "partial_index_for_skew",
+      "title": "Partial Index for Skew",
+      "triggers_for_next_stage": [
+        "Review index size and write amplification after one representative traffic window."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Wait until the predicate is stable in application SQL and selectivity has been measured."
+      ],
+      "why_now": [
+        "The index catalog has a matching pattern for selective predicates on skewed large tables."
+      ]
+    },
+    {
+      "confidence": 0.66,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.556,
+      "score_breakdown": {
+        "complexity_penalty": 0.15,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.64,
+        "growth_urgency": 0.31,
+        "operational_feasibility": 0.67,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.72
+      },
+      "sources": [
+        {
+          "contribution": 0.66,
+          "rule_id": "rule-generated-columns-for-jsonb-hot-keys"
+        }
+      ],
+      "target_slug": "generated_columns",
+      "title": "Generated Columns",
+      "triggers_for_next_stage": [
+        "Promote keys when query traces show stable filters, joins, uniqueness, or validation needs."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Wait until the hot keys are known; generated columns should not mirror every JSON attribute."
+      ],
+      "why_now": [
+        "Generated columns make repeatedly queried JSONB keys visible to constraints and indexes."
+      ]
+    },
+    {
+      "confidence": 0.66,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.542,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.64,
+        "growth_urgency": 0.299,
+        "operational_feasibility": 0.605,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.72
+      },
+      "sources": [
+        {
+          "contribution": 0.66,
+          "rule_id": "rule-gin-jsonb-for-containment"
+        }
+      ],
+      "target_slug": "gin_jsonb_containment",
+      "title": "GIN JSONB Containment",
+      "triggers_for_next_stage": [
+        "Adopt after EXPLAIN shows repeated @> predicates with selective keys."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "It is costly when the application does not use containment or filters too broadly."
+      ],
+      "why_now": [
+        "GIN JSONB can support containment queries on flexible attributes."
+      ]
+    },
+    {
+      "confidence": 0.71,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.538,
+      "score_breakdown": {
+        "complexity_penalty": 0.18,
+        "data_shape_fit": 0.85,
+        "domain_fit": 0.65,
+        "growth_urgency": 0.283,
+        "operational_feasibility": 0.657,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.62
+      },
+      "sources": [
+        {
+          "contribution": 0.71,
+          "rule_id": "rule-jsonb-hybrid-columns-for-semi-structured"
+        }
+      ],
+      "target_slug": "jsonb",
+      "title": "JSONB",
+      "triggers_for_next_stage": [
+        "Promote hot JSON keys to generated or ordinary columns once query pressure and invariants are visible."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not make the whole entity JSONB when keys are frequently filtered, joined, constrained, or audited."
+      ],
+      "why_now": [
+        "JSONB can carry variable attributes while stable identifiers and lifecycle columns stay relational."
+      ]
+    },
+    {
+      "confidence": 0.61,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.526,
+      "score_breakdown": {
+        "complexity_penalty": 0.13,
+        "data_shape_fit": 0.74,
+        "domain_fit": 0.62,
+        "growth_urgency": 0.283,
+        "operational_feasibility": 0.645,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.7
+      },
+      "sources": [
+        {
+          "contribution": 0.61,
+          "rule_id": "rule-generated-columns-for-jsonb-hot-keys"
+        }
+      ],
+      "target_slug": "expression_indexes",
+      "title": "Expression Indexes",
+      "triggers_for_next_stage": [
+        "Adopt once normalized email, SKU, phone, or JSON extraction filters repeat."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "They depend on exact expression matching and should be tied to specific query shapes."
+      ],
+      "why_now": [
+        "Expression indexes can support normalized lookup while keeping the base model compact."
+      ]
+    },
+    {
+      "confidence": 0.58,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "when-uuid-is-the-right-key",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.487,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.64,
+        "domain_fit": 0.6,
+        "growth_urgency": 0.228,
+        "operational_feasibility": 0.708,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.6
+      },
+      "sources": [
+        {
+          "contribution": 0.58,
+          "rule_id": "rule-pgcrypto-for-public-identifiers"
+        }
+      ],
+      "target_slug": "pgcrypto",
+      "title": "pgcrypto",
+      "triggers_for_next_stage": [
+        "Adopt when URL-safe identifiers or database-side UUID defaults are explicit requirements."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not treat cryptographic functions as a security architecture without review."
+      ],
+      "why_now": [
+        "Database-generated UUID defaults are useful for public identifiers and distributed inserts."
+      ]
+    },
+    {
+      "confidence": 0.56,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e4-pgvector",
+      "original_verdict": "not_enough_evidence",
+      "recommendation_class": "not_enough_evidence",
+      "recommendation_score": 0.317,
+      "score_breakdown": {
+        "complexity_penalty": 0.72,
+        "data_shape_fit": 0.4,
+        "domain_fit": 0.45,
+        "growth_urgency": 0.228,
+        "operational_feasibility": 0.452,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.5
+      },
+      "sources": [
+        {
+          "contribution": 0.56,
+          "rule_id": "rule-pgvector-not-yet-without-embeddings"
+        }
+      ],
+      "target_slug": "pgvector",
+      "title": "pgvector",
+      "triggers_for_next_stage": [
+        "Revisit pgvector after an embedding corpus, offline evaluation set, and lexical or spatial baseline gaps are documented."
+      ],
+      "verdict": "not_enough_evidence",
+      "why_not_yet": [
+        "There is no embeddings_vectors data shape, embedding refresh plan, recall target, or permission-aware retrieval design yet.",
+        "For geo-heavy logistics, PostGIS answers spatial distance and containment questions more directly than vector search."
+      ],
+      "why_now": [
+        "The intake mentions semantic or vector-style search, so pgvector should stay visible as a possible later option."
+      ]
+    }
+  ],
+  "score_breakdown": {
+    "complexity_penalty": 0.206,
+    "data_shape_fit": 0.745,
+    "domain_fit": 0.7,
+    "growth_urgency": 0.33,
+    "operational_feasibility": 0.652,
+    "portability_penalty": 0.044,
+    "workload_fit": 0.742
+  },
+  "warnings": []
+}

@@ -1,0 +1,62 @@
+{
+  "context": {
+    "operational_tolerance": "low",
+    "portability_requirements": "Managed PostgreSQL required or strongly preferred: aws_rds",
+    "scale_signals": [
+      "480 read qps",
+      "70 write rows/sec",
+      "90 peak connections",
+      "9% monthly growth"
+    ],
+    "team_size": "9 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "ranges_windows",
+    "semi_structured_jsonb"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [],
+    "candidate_later": [
+      "exclusion_constraints",
+      "gist_range_exclusion",
+      "partial_indexes",
+      "partial_index_for_skew",
+      "generated_columns",
+      "gin_jsonb_containment",
+      "jsonb",
+      "expression_indexes"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements"
+    ]
+  },
+  "id": "healthcare-clinic-ops-ehr-adjacent",
+  "industry": "healthcare_ops",
+  "narrative_path": "narrative.md",
+  "suggested_capstone_id": "02-scheduling-availability",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "row-level-security-policy-design",
+    "partitioning-large-table-operations",
+    "pg-stat-statements-basics",
+    "full-text-search-core",
+    "postgres-fdw-boundaries"
+  ],
+  "tags": [
+    "healthcare-ops",
+    "small-early-conservative",
+    "single-tenant"
+  ],
+  "title": "Clinic operations platform adjacent to EHR",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy"
+  ]
+}

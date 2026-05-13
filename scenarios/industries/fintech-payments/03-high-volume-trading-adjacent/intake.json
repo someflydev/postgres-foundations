@@ -1,0 +1,51 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "existing_postgres_topology": "primary_with_read_replicas",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [],
+  "free_form_notes": "They claim a strong RPO target but have not documented restore drills for partition metadata, large BRIN indexes, or audit exports. The workload is trading-adjacent rather than order matching, so correctness and reconciliation explainability outrank microsecond latency. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "intake_id": "fintech-high-volume-trading-adjacent",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "fintech_payments",
+    "managed_service_requirement": "mandatory",
+    "operational_tolerance": "low",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 72
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 1450,
+    "growth_rate_month_over_month": 0.18,
+    "read_throughput_qps": 11200,
+    "row_counts_largest_tables": {
+      "fills": 210000000,
+      "ledger_entries": 410000000,
+      "risk_snapshots": 98000000
+    },
+    "write_throughput_rows_per_sec": 2400
+  },
+  "security_constraints": [
+    "pci",
+    "pii_in_scope",
+    "audit_required"
+  ],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "analytics_adjacent",
+    "read_heavy"
+  ]
+}

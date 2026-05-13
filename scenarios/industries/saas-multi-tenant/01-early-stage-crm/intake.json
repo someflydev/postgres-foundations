@@ -1,0 +1,53 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "semi_structured_jsonb"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "pgvector",
+      "reason": "Product stakeholders asked whether semantic retrieval belongs in PostgreSQL."
+    }
+  ],
+  "free_form_notes": "They are considering pgvector for account notes because sales managers ask for semantic recall, but the team has not built a lexical search baseline yet. Two design partners use unusually broad custom fields, so JSONB appears in hot screens even though most tenants remain simple. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "intake_id": "saas-early-stage-crm",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "saas_multi_tenant",
+    "managed_service_requirement": "mandatory",
+    "operational_tolerance": "low",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 8
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 140,
+    "growth_rate_month_over_month": 0.11,
+    "read_throughput_qps": 520,
+    "row_counts_largest_tables": {
+      "accounts": 320000,
+      "audit_events": 2200000,
+      "tenant_memberships": 180000
+    },
+    "write_throughput_rows_per_sec": 75
+  },
+  "security_constraints": [
+    "rls_required",
+    "pii_in_scope"
+  ],
+  "tenancy_model": "multi_tenant_shared_schema",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy",
+    "strong_tenant_locality"
+  ]
+}

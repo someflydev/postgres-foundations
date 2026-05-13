@@ -1,0 +1,68 @@
+{
+  "context": {
+    "operational_tolerance": "medium",
+    "portability_requirements": "Managed PostgreSQL required or strongly preferred: aws_rds, any_managed",
+    "scale_signals": [
+      "1900 read qps",
+      "520 write rows/sec",
+      "430 peak connections",
+      "8% monthly growth"
+    ],
+    "team_size": "34 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "foreign_postgres_access"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "logical_replication",
+      "btree_composite_equality_then_range",
+      "partial_indexes",
+      "partial_index_for_skew",
+      "postgres_fdw",
+      "logical_replication_pair",
+      "postgres_fdw_federation",
+      "materialized_views"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements",
+      "partitioning",
+      "brin_append_only_chronological"
+    ]
+  },
+  "id": "fintech-regional-bank-reconciliation",
+  "industry": "fintech_payments",
+  "narrative_path": "narrative.md",
+  "suggested_capstone_id": "04-modernization-bridge",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "row-level-security-policy-design",
+    "partitioning-large-table-operations",
+    "pg-stat-statements-basics",
+    "full-text-search-core",
+    "postgres-fdw-boundaries"
+  ],
+  "tags": [
+    "fintech-payments",
+    "mid-stage-pressure-judgment",
+    "single-tenant"
+  ],
+  "title": "Regional bank reconciliation platform",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "analytics_adjacent",
+    "migration_bridge"
+  ]
+}

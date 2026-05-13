@@ -1,0 +1,69 @@
+{
+  "context": {
+    "operational_tolerance": "medium",
+    "portability_requirements": "Managed PostgreSQL required or strongly preferred: aws_rds, any_managed",
+    "scale_signals": [
+      "4200 read qps",
+      "850 write rows/sec",
+      "760 peak connections",
+      "10% monthly growth"
+    ],
+    "team_size": "41 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "full_text_docs"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "partial_indexes",
+      "partial_index_for_skew",
+      "materialized_views",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "primary_with_read_replicas",
+      "pg_partman"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements",
+      "full_text_search",
+      "partitioning",
+      "brin_append_only_chronological"
+    ]
+  },
+  "id": "healthcare-hospital-system-audit-heavy",
+  "industry": "healthcare_ops",
+  "narrative_path": "narrative.md",
+  "suggested_capstone_id": "03-event-heavy-operations",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "row-level-security-policy-design",
+    "partitioning-large-table-operations",
+    "pg-stat-statements-basics",
+    "full-text-search-core",
+    "postgres-fdw-boundaries"
+  ],
+  "tags": [
+    "healthcare-ops",
+    "mid-stage-pressure-judgment",
+    "single-tenant"
+  ],
+  "title": "Hospital system audit-heavy operations",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "search_heavy",
+    "analytics_adjacent"
+  ]
+}

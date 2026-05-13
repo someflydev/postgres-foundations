@@ -1,0 +1,72 @@
+{
+  "context": {
+    "operational_tolerance": "medium",
+    "portability_requirements": "Managed PostgreSQL required or strongly preferred: aws_rds",
+    "scale_signals": [
+      "8600 read qps",
+      "1800 write rows/sec",
+      "1800 peak connections",
+      "20% monthly growth"
+    ],
+    "team_size": "58 engineers",
+    "tenancy_model": "multi tenant schema per tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "semi_structured_jsonb"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "shard_without_distribution_key",
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "partial_indexes",
+      "partial_index_for_skew",
+      "generated_columns",
+      "gin_jsonb_containment",
+      "jsonb",
+      "materialized_views",
+      "physical_replication"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements",
+      "partitioning",
+      "brin_append_only_chronological",
+      "pgbouncer",
+      "pgbouncer_in_front"
+    ]
+  },
+  "id": "saas-multi-region-compliance",
+  "industry": "saas_multi_tenant",
+  "narrative_path": "narrative.md",
+  "suggested_capstone_id": "01-multi-tenant-saas-crm",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "row-level-security-policy-design",
+    "partitioning-large-table-operations",
+    "pg-stat-statements-basics",
+    "full-text-search-core",
+    "postgres-fdw-boundaries"
+  ],
+  "tags": [
+    "saas-multi-tenant",
+    "high-scale-mature",
+    "multi-tenant-schema-per-tenant"
+  ],
+  "title": "Multi-region SaaS compliance with one very large tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "read_heavy",
+    "strong_tenant_locality",
+    "analytics_adjacent"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "append_only_events"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "pgcrypto",
+      "reason": "Public references should not expose sequence values."
+    }
+  ],
+  "free_form_notes": "They want immutable ledger checks and better idempotency before any extension discussion; pgcrypto is being considered for public payment references. Reconciliation is still partly spreadsheet-driven, so operational risk comes from human correction loops as much as query speed. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "intake_id": "fintech-startup-payments-gateway",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "fintech_payments",
+    "managed_service_requirement": "mandatory",
+    "operational_tolerance": "low",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 10
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 120,
+    "growth_rate_month_over_month": 0.13,
+    "read_throughput_qps": 360,
+    "row_counts_largest_tables": {
+      "ledger_entries": 2800000,
+      "payments": 850000,
+      "webhook_events": 4100000
+    },
+    "write_throughput_rows_per_sec": 95
+  },
+  "security_constraints": [
+    "pci",
+    "pii_in_scope",
+    "audit_required"
+  ],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy"
+  ]
+}

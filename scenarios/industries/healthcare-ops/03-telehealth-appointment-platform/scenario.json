@@ -1,0 +1,73 @@
+{
+  "context": {
+    "operational_tolerance": "medium",
+    "portability_requirements": "Managed PostgreSQL required or strongly preferred: aws_rds",
+    "scale_signals": [
+      "7800 read qps",
+      "1700 write rows/sec",
+      "2100 peak connections",
+      "17% monthly growth"
+    ],
+    "team_size": "64 engineers",
+    "tenancy_model": "multi tenant shared schema"
+  },
+  "data_shapes": [
+    "relational_core",
+    "ranges_windows",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "partial_indexes",
+      "partial_index_for_skew",
+      "physical_replication",
+      "btree_covering_include",
+      "pg_partman",
+      "primary_with_read_replicas",
+      "timescaledb"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements",
+      "row_level_security",
+      "partitioning",
+      "brin_append_only_chronological",
+      "pgbouncer",
+      "exclusion_constraints",
+      "pgbouncer_in_front"
+    ]
+  },
+  "id": "healthcare-telehealth-appointment-platform",
+  "industry": "healthcare_ops",
+  "narrative_path": "narrative.md",
+  "suggested_capstone_id": "02-scheduling-availability",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "row-level-security-policy-design",
+    "partitioning-large-table-operations",
+    "pg-stat-statements-basics",
+    "full-text-search-core",
+    "postgres-fdw-boundaries"
+  ],
+  "tags": [
+    "healthcare-ops",
+    "high-scale-mature",
+    "multi-tenant-shared-schema"
+  ],
+  "title": "Telehealth appointment platform at national scale",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "read_heavy",
+    "strong_tenant_locality"
+  ]
+}

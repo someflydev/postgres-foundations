@@ -1,0 +1,48 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "semi_structured_jsonb",
+    "full_text_docs"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [],
+  "free_form_notes": "They are considering pg_trgm and unaccent for product search, while resisting a separate search service until PostgreSQL evidence says core search is exhausted. Merchandising teams edit product attributes daily, so JSONB flexibility is useful but cannot become an excuse for unindexed filter chaos. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "intake_id": "ecommerce-dtc-mid-stage",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "ecommerce_marketplace",
+    "managed_service_requirement": "mandatory",
+    "operational_tolerance": "low",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 14
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 240,
+    "growth_rate_month_over_month": 0.12,
+    "read_throughput_qps": 1600,
+    "row_counts_largest_tables": {
+      "orders": 2200000,
+      "products": 180000,
+      "search_documents": 620000
+    },
+    "write_throughput_rows_per_sec": 130
+  },
+  "security_constraints": [
+    "pii_in_scope"
+  ],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy",
+    "search_heavy"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "semi_structured_jsonb",
+    "append_only_events"
+  ],
+  "existing_postgres_topology": "primary_with_read_replicas",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [],
+  "free_form_notes": "Sellers act like tenants, and the team needs a decision on partitioning orders and inventory movement history before holiday volume. Some sellers share fulfillment networks, so tenant locality is strong for dashboards but weaker for shipment allocation. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "intake_id": "ecommerce-marketplace-many-sellers",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "ecommerce_marketplace",
+    "managed_service_requirement": "strongly_preferred",
+    "operational_tolerance": "medium",
+    "portability_constraints": [
+      "aws_rds",
+      "any_managed"
+    ],
+    "team_size_engineers": 38
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 980,
+    "growth_rate_month_over_month": 0.15,
+    "read_throughput_qps": 5400,
+    "row_counts_largest_tables": {
+      "inventory_movements": 190000000,
+      "orders": 76000000,
+      "seller_events": 130000000
+    },
+    "write_throughput_rows_per_sec": 980
+  },
+  "security_constraints": [
+    "pii_in_scope",
+    "rls_required",
+    "audit_required"
+  ],
+  "tenancy_model": "multi_tenant_shared_schema",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy",
+    "append_heavy",
+    "strong_tenant_locality",
+    "analytics_adjacent"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "semi_structured_jsonb"
+  ],
+  "existing_postgres_topology": "primary_with_read_replicas",
+  "explicit_bias_against": [
+    {
+      "extension_slug": "citus",
+      "reason": "Managed portability and restore ownership are hard constraints."
+    }
+  ],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "citus",
+      "reason": "Architecture review asked whether tenant-local scale merits distributed PostgreSQL."
+    }
+  ],
+  "free_form_notes": "Citus is on the architecture board because the biggest tenant dominates storage, but procurement requires portable managed PostgreSQL and no self-managed cluster. The largest tenant is huge but has cross-tenant administrative workflows that do not always include a stable tenant distribution key. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "intake_id": "saas-multi-region-compliance",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "saas_multi_tenant",
+    "managed_service_requirement": "mandatory",
+    "operational_tolerance": "medium",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 58
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 1800,
+    "growth_rate_month_over_month": 0.2,
+    "read_throughput_qps": 8600,
+    "row_counts_largest_tables": {
+      "accounts": 31000000,
+      "permission_audit": 90000000,
+      "tenant_events": 260000000
+    },
+    "write_throughput_rows_per_sec": 1800
+  },
+  "security_constraints": [
+    "rls_required",
+    "pii_in_scope",
+    "audit_required",
+    "gdpr_dsr"
+  ],
+  "tenancy_model": "multi_tenant_schema_per_tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "read_heavy",
+    "strong_tenant_locality",
+    "analytics_adjacent"
+  ]
+}

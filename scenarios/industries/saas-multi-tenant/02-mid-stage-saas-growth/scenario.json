@@ -1,0 +1,66 @@
+{
+  "context": {
+    "operational_tolerance": "medium",
+    "portability_requirements": "Managed PostgreSQL required or strongly preferred: aws_rds, any_managed",
+    "scale_signals": [
+      "2500 read qps",
+      "420 write rows/sec",
+      "620 peak connections",
+      "16% monthly growth"
+    ],
+    "team_size": "26 engineers",
+    "tenancy_model": "multi tenant schema per tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "semi_structured_jsonb",
+    "append_only_events"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "partial_indexes",
+      "partial_index_for_skew",
+      "generated_columns",
+      "gin_jsonb_containment",
+      "jsonb",
+      "materialized_views",
+      "pgbouncer"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements"
+    ]
+  },
+  "id": "saas-mid-stage-growth",
+  "industry": "saas_multi_tenant",
+  "narrative_path": "narrative.md",
+  "suggested_capstone_id": "01-multi-tenant-saas-crm",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "row-level-security-policy-design",
+    "partitioning-large-table-operations",
+    "pg-stat-statements-basics",
+    "full-text-search-core",
+    "postgres-fdw-boundaries"
+  ],
+  "tags": [
+    "saas-multi-tenant",
+    "mid-stage-pressure-judgment",
+    "multi-tenant-schema-per-tenant"
+  ],
+  "title": "Mid-stage SaaS growth with one large tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy",
+    "analytics_adjacent",
+    "strong_tenant_locality"
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "context": {
+    "operational_tolerance": "medium",
+    "portability_requirements": "Managed PostgreSQL required or strongly preferred: aws_rds",
+    "scale_signals": [
+      "9100 read qps",
+      "1900 write rows/sec",
+      "1700 peak connections",
+      "14% monthly growth"
+    ],
+    "team_size": "69 engineers",
+    "tenancy_model": "multi tenant shared schema"
+  },
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "full_text_docs",
+    "foreign_postgres_access"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "logical_replication",
+      "btree_composite_equality_then_range",
+      "partial_indexes",
+      "partial_index_for_skew",
+      "postgres_fdw",
+      "logical_replication_pair",
+      "postgres_fdw_federation",
+      "materialized_views"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements",
+      "row_level_security",
+      "full_text_search",
+      "partitioning",
+      "brin_append_only_chronological",
+      "pgbouncer",
+      "pgbouncer_in_front"
+    ]
+  },
+  "id": "ecommerce-cross-border-compliance",
+  "industry": "ecommerce_marketplace",
+  "narrative_path": "narrative.md",
+  "suggested_capstone_id": "04-modernization-bridge",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "row-level-security-policy-design",
+    "partitioning-large-table-operations",
+    "pg-stat-statements-basics",
+    "full-text-search-core",
+    "postgres-fdw-boundaries"
+  ],
+  "tags": [
+    "ecommerce-marketplace",
+    "high-scale-mature",
+    "multi-tenant-shared-schema"
+  ],
+  "title": "Cross-border ecommerce compliance platform",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "read_heavy",
+    "search_heavy",
+    "migration_bridge",
+    "analytics_adjacent"
+  ]
+}

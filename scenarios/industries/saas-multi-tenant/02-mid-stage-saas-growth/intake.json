@@ -1,0 +1,51 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "semi_structured_jsonb",
+    "append_only_events"
+  ],
+  "existing_postgres_topology": "primary_with_read_replicas",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [],
+  "free_form_notes": "They are deciding whether the largest enterprise tenant should move to its own schema and whether reporting should hit a replica or materialized rollups. The largest tenant negotiates quarterly custom data-retention terms, while smaller tenants expect shared release velocity. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "intake_id": "saas-mid-stage-growth",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "saas_multi_tenant",
+    "managed_service_requirement": "strongly_preferred",
+    "operational_tolerance": "medium",
+    "portability_constraints": [
+      "aws_rds",
+      "any_managed"
+    ],
+    "team_size_engineers": 26
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 620,
+    "growth_rate_month_over_month": 0.16,
+    "read_throughput_qps": 2500,
+    "row_counts_largest_tables": {
+      "accounts": 6400000,
+      "activity_events": 42000000,
+      "invoices": 9000000
+    },
+    "write_throughput_rows_per_sec": 420
+  },
+  "security_constraints": [
+    "pii_in_scope",
+    "audit_required"
+  ],
+  "tenancy_model": "multi_tenant_schema_per_tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy",
+    "analytics_adjacent",
+    "strong_tenant_locality"
+  ]
+}

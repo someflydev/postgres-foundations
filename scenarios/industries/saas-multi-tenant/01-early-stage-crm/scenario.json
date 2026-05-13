@@ -1,0 +1,62 @@
+{
+  "context": {
+    "operational_tolerance": "low",
+    "portability_requirements": "Managed PostgreSQL required or strongly preferred: aws_rds",
+    "scale_signals": [
+      "520 read qps",
+      "75 write rows/sec",
+      "140 peak connections",
+      "11% monthly growth"
+    ],
+    "team_size": "8 engineers",
+    "tenancy_model": "multi tenant shared schema"
+  },
+  "data_shapes": [
+    "relational_core",
+    "semi_structured_jsonb"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [],
+    "candidate_later": [
+      "partial_indexes",
+      "partial_index_for_skew",
+      "generated_columns",
+      "gin_jsonb_containment",
+      "jsonb",
+      "expression_indexes",
+      "pgcrypto"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements",
+      "row_level_security"
+    ]
+  },
+  "id": "saas-early-stage-crm",
+  "industry": "saas_multi_tenant",
+  "narrative_path": "narrative.md",
+  "suggested_capstone_id": "01-multi-tenant-saas-crm",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "row-level-security-policy-design",
+    "partitioning-large-table-operations",
+    "pg-stat-statements-basics",
+    "full-text-search-core",
+    "postgres-fdw-boundaries"
+  ],
+  "tags": [
+    "saas-multi-tenant",
+    "small-early-conservative",
+    "multi-tenant-shared-schema"
+  ],
+  "title": "Early-stage CRM with shared-schema tenants",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy",
+    "strong_tenant_locality"
+  ]
+}

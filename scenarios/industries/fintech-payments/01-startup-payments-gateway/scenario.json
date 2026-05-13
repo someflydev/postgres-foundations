@@ -1,0 +1,59 @@
+{
+  "context": {
+    "operational_tolerance": "low",
+    "portability_requirements": "Managed PostgreSQL required or strongly preferred: aws_rds",
+    "scale_signals": [
+      "360 read qps",
+      "95 write rows/sec",
+      "120 peak connections",
+      "13% monthly growth"
+    ],
+    "team_size": "10 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "append_only_events"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "partition_too_early"
+    ],
+    "candidate_later": [
+      "brin_append_only_chronological",
+      "partial_indexes",
+      "partial_index_for_skew",
+      "pgcrypto"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements"
+    ]
+  },
+  "id": "fintech-startup-payments-gateway",
+  "industry": "fintech_payments",
+  "narrative_path": "narrative.md",
+  "suggested_capstone_id": "03-event-heavy-operations",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "row-level-security-policy-design",
+    "partitioning-large-table-operations",
+    "pg-stat-statements-basics",
+    "full-text-search-core",
+    "postgres-fdw-boundaries"
+  ],
+  "tags": [
+    "fintech-payments",
+    "small-early-conservative",
+    "single-tenant"
+  ],
+  "title": "Startup payments gateway before formal ledger scale",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy"
+  ]
+}
