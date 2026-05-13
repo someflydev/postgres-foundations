@@ -1,0 +1,61 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "geospatial",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "postgis",
+      "reason": "Spatial joins and distance buckets are central to analytics."
+    },
+    {
+      "extension_slug": "timescaledb",
+      "reason": "Retention, compression, and continuous rollups are measured operational pain."
+    }
+  ],
+  "free_form_notes": "The fleet analytics group runs regional heat maps, corridor dwell-time analysis, and spatial compliance reporting. Data is centrally time-keyed and old partitions are expensive to manage. They need not shard yet because queries are regional/time bounded, not tenant-local.",
+  "intake_id": "logistics-global-fleet-analytics",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "logistics_geo",
+    "managed_service_requirement": "strongly_preferred",
+    "operational_tolerance": "high",
+    "portability_constraints": [
+      "aws_rds",
+      "azure_pg"
+    ],
+    "team_size_engineers": 28
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 850,
+    "growth_rate_month_over_month": 0.16,
+    "read_throughput_qps": 4200,
+    "row_counts_largest_tables": {
+      "facilities": 65000,
+      "fleet_positions": 880000000,
+      "route_events": 540000000
+    },
+    "write_throughput_rows_per_sec": 2100
+  },
+  "security_constraints": [
+    "pii_in_scope",
+    "gdpr_dsr"
+  ],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "read_heavy",
+    "append_heavy",
+    "analytics_adjacent",
+    "geo_query_heavy"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "context": {
+    "operational_tolerance": "low",
+    "portability_requirements": "Managed PostgreSQL posture: aws_rds",
+    "scale_signals": [
+      "900 read qps",
+      "65 write rows/sec",
+      "140 peak connections",
+      "7% monthly growth"
+    ],
+    "team_size": "9 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "full_text_docs",
+    "semi_structured_jsonb",
+    "hierarchy_paths"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [],
+    "candidate_later": [
+      "full_text_search",
+      "gin_jsonb_containment",
+      "gin_trgm_similarity",
+      "jsonb",
+      "ltree",
+      "pg_trgm"
+    ],
+    "recommend_now": [
+      "constraints"
+    ]
+  },
+  "id": "knowledge-internal-eng-search",
+  "industry": "knowledge_ai",
+  "narrative_path": "narrative.md",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "pg-stat-statements-basics",
+    "partitioning-large-table-operations",
+    "full-text-search-core",
+    "postgres-fdw-boundaries",
+    "row-level-security-policy-design"
+  ],
+  "tags": [
+    "knowledge-ai",
+    "internal-eng-knowledge-search",
+    "low-tolerance"
+  ],
+  "title": "Internal engineering knowledge search",
+  "workload_patterns": [
+    "search_heavy"
+  ]
+}

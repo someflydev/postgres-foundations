@@ -1,0 +1,62 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "full_text_docs",
+    "embeddings_vectors",
+    "semi_structured_jsonb"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "pgvector",
+      "reason": "Hybrid retrieval has measured semantic recall gaps."
+    },
+    {
+      "extension_slug": "pg_trgm",
+      "reason": "Names, gene symbols, and titles need fuzzy lexical recall."
+    }
+  ],
+  "free_form_notes": "Researchers combine project-scoped RLS, lexical ranking, fuzzy title matching, and vector retrieval. The corpus is large enough that ANN index evaluation is required, but HNSW still needs recall and memory gates before it becomes automatic.",
+  "intake_id": "knowledge-research-corpus-hybrid-retrieval",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "knowledge_ai",
+    "managed_service_requirement": "strongly_preferred",
+    "operational_tolerance": "medium",
+    "portability_constraints": [
+      "aws_rds",
+      "azure_pg"
+    ],
+    "team_size_engineers": 24
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 620,
+    "growth_rate_month_over_month": 0.11,
+    "read_throughput_qps": 3600,
+    "row_counts_largest_tables": {
+      "embedding_rows": 78000000,
+      "paper_chunks": 78000000,
+      "projects": 180000
+    },
+    "write_throughput_rows_per_sec": 260
+  },
+  "security_constraints": [
+    "rls_required",
+    "pii_in_scope",
+    "gdpr_dsr"
+  ],
+  "tenancy_model": "multi_tenant_shared_schema",
+  "workload_patterns": [
+    "search_heavy",
+    "read_heavy",
+    "semantic_retrieval",
+    "strong_tenant_locality"
+  ]
+}

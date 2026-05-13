@@ -1,0 +1,73 @@
+{
+  "context": {
+    "operational_tolerance": "medium",
+    "portability_requirements": "Managed PostgreSQL posture: aws_rds, gcp_cloud_sql",
+    "scale_signals": [
+      "1800 read qps",
+      "620 write rows/sec",
+      "360 peak connections",
+      "12% monthly growth"
+    ],
+    "team_size": "15 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "geospatial",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "btree_covering_include",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pg_partman",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "pgcrypto",
+      "physical_replication",
+      "primary_with_read_replicas",
+      "timescaledb"
+    ],
+    "recommend_now": [
+      "brin_append_only_chronological",
+      "constraints",
+      "gist_geospatial",
+      "partitioning",
+      "pg_stat_statements",
+      "postgis"
+    ]
+  },
+  "id": "logistics-multi-region-zones",
+  "industry": "logistics_geo",
+  "narrative_path": "narrative.md",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "pg-stat-statements-basics",
+    "partitioning-large-table-operations",
+    "full-text-search-core",
+    "postgres-fdw-boundaries",
+    "row-level-security-policy-design"
+  ],
+  "tags": [
+    "logistics-geo",
+    "multi-region-logistics-with-zones",
+    "medium-tolerance"
+  ],
+  "title": "Multi-region logistics with service zones",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy",
+    "append_heavy",
+    "geo_query_heavy"
+  ]
+}

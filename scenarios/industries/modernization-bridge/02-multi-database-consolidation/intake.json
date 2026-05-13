@@ -1,0 +1,55 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "foreign_postgres_access",
+    "append_only_events"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "postgres_fdw",
+      "reason": "Some validation reads must span old PostgreSQL systems during migration."
+    }
+  ],
+  "free_form_notes": "Several PostgreSQL databases and one vendor source are being consolidated. The PostgreSQL systems need publication/subscription migration with validation queries, while FDW is a transition tool for bounded reads. The migration playbook must cover primary keys, sequences, DDL, lag, and rollback.",
+  "intake_id": "modernization-multi-database-consolidation",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": true,
+    "has_legacy_postgres_source": true,
+    "requires_federation_via_fdw": true,
+    "requires_zero_downtime_migration": true
+  },
+  "organization": {
+    "industry": "modernization_bridge",
+    "managed_service_requirement": "strongly_preferred",
+    "operational_tolerance": "medium",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 19
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 440,
+    "growth_rate_month_over_month": 0.06,
+    "read_throughput_qps": 1700,
+    "row_counts_largest_tables": {
+      "accounts": 56000000,
+      "audit_events": 260000000,
+      "ledger_events": 180000000
+    },
+    "write_throughput_rows_per_sec": 520
+  },
+  "security_constraints": [
+    "pii_in_scope",
+    "audit_required"
+  ],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "migration_bridge",
+    "oltp_heavy",
+    "read_heavy",
+    "replication_fanout"
+  ]
+}

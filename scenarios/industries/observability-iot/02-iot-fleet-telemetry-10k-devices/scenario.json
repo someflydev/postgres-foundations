@@ -1,0 +1,69 @@
+{
+  "context": {
+    "operational_tolerance": "high",
+    "portability_requirements": "Managed PostgreSQL posture: aws_rds",
+    "scale_signals": [
+      "2600 read qps",
+      "1800 write rows/sec",
+      "420 peak connections",
+      "14% monthly growth"
+    ],
+    "team_size": "18 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "time_series_metrics",
+    "append_only_events"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "btree_covering_include",
+      "materialized_views",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pg_partman",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "physical_replication",
+      "primary_with_read_replicas"
+    ],
+    "recommend_now": [
+      "brin_append_only_chronological",
+      "constraints",
+      "partitioning",
+      "pg_stat_statements",
+      "timescaledb"
+    ]
+  },
+  "id": "observability-iot-fleet-10k-devices",
+  "industry": "observability_iot",
+  "narrative_path": "narrative.md",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "pg-stat-statements-basics",
+    "partitioning-large-table-operations",
+    "full-text-search-core",
+    "postgres-fdw-boundaries",
+    "row-level-security-policy-design"
+  ],
+  "tags": [
+    "observability-iot",
+    "iot-fleet-telemetry-10k-devices",
+    "high-tolerance"
+  ],
+  "title": "IoT fleet telemetry for 10k devices",
+  "workload_patterns": [
+    "append_heavy",
+    "analytics_adjacent",
+    "read_heavy"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "foreign_postgres_access"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [
+    {
+      "extension_slug": "citus",
+      "reason": "AWS RDS portability and no distribution key make Citus inappropriate now."
+    }
+  ],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "postgres_fdw",
+      "reason": "Carveout needs bounded validation reads from the old PostgreSQL monolith."
+    },
+    {
+      "extension_slug": "citus",
+      "reason": "An executive asked whether the new platform should start distributed."
+    }
+  ],
+  "free_form_notes": "The new service must read a narrow customer and order slice from the old PostgreSQL monolith during carveout. Logical replication may become useful for cutover later, but initial need is FDW with pushdown checks and a retirement plan. Citus is blocked by portability and absent distribution-key evidence.",
+  "intake_id": "modernization-legacy-monolith-carveout",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": true,
+    "requires_federation_via_fdw": true,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "modernization_bridge",
+    "managed_service_requirement": "mandatory",
+    "operational_tolerance": "low",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 11
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 260,
+    "growth_rate_month_over_month": 0.04,
+    "read_throughput_qps": 1100,
+    "row_counts_largest_tables": {
+      "audit_events": 94000000,
+      "customer_profiles": 8500000,
+      "orders": 42000000
+    },
+    "write_throughput_rows_per_sec": 220
+  },
+  "security_constraints": [
+    "pii_in_scope"
+  ],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "migration_bridge",
+    "read_heavy"
+  ]
+}

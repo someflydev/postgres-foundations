@@ -1,0 +1,73 @@
+{
+  "context": {
+    "operational_tolerance": "high",
+    "portability_requirements": "Managed PostgreSQL posture: aws_rds, azure_pg",
+    "scale_signals": [
+      "4200 read qps",
+      "2100 write rows/sec",
+      "850 peak connections",
+      "16% monthly growth"
+    ],
+    "team_size": "28 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "geospatial",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "btree_covering_include",
+      "materialized_views",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pg_partman",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "physical_replication",
+      "primary_with_read_replicas"
+    ],
+    "recommend_now": [
+      "brin_append_only_chronological",
+      "constraints",
+      "gist_geospatial",
+      "partitioning",
+      "pg_stat_statements",
+      "postgis",
+      "timescaledb"
+    ]
+  },
+  "id": "logistics-global-fleet-analytics",
+  "industry": "logistics_geo",
+  "narrative_path": "narrative.md",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "pg-stat-statements-basics",
+    "partitioning-large-table-operations",
+    "full-text-search-core",
+    "postgres-fdw-boundaries",
+    "row-level-security-policy-design"
+  ],
+  "tags": [
+    "logistics-geo",
+    "global-fleet-analytics",
+    "high-tolerance"
+  ],
+  "title": "Global fleet analytics and spatial operations",
+  "workload_patterns": [
+    "read_heavy",
+    "append_heavy",
+    "analytics_adjacent",
+    "geo_query_heavy"
+  ]
+}

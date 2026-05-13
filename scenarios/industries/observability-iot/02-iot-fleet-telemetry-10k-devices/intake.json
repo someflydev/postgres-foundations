@@ -1,0 +1,51 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "time_series_metrics",
+    "append_only_events"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "timescaledb",
+      "reason": "Compression and continuous aggregates are needed for telemetry dashboards."
+    }
+  ],
+  "free_form_notes": "Device telemetry is centrally time-keyed with stable retention, compression targets, and hourly continuous aggregate dashboards. Core partitioning has been tested; chunk lifecycle and compression are now operational pain rather than theory.",
+  "intake_id": "observability-iot-fleet-10k-devices",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "observability_iot",
+    "managed_service_requirement": "strongly_preferred",
+    "operational_tolerance": "high",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 18
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 420,
+    "growth_rate_month_over_month": 0.14,
+    "read_throughput_qps": 2600,
+    "row_counts_largest_tables": {
+      "device_events": 220000000,
+      "devices": 10000,
+      "telemetry_points": 620000000
+    },
+    "write_throughput_rows_per_sec": 1800
+  },
+  "security_constraints": [],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "append_heavy",
+    "analytics_adjacent",
+    "read_heavy"
+  ]
+}

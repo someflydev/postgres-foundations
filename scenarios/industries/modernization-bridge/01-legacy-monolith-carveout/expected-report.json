@@ -1,0 +1,713 @@
+{
+  "engine_version": "0.0.1",
+  "followup_question_groups": {},
+  "followup_questions": [],
+  "full_intake": {
+    "as_of_date": "2026-05-12",
+    "data_shapes": [
+      "relational_core",
+      "foreign_postgres_access"
+    ],
+    "existing_postgres_topology": "single_primary",
+    "explicit_bias_against": [
+      {
+        "extension_slug": "citus",
+        "reason": "AWS RDS portability and no distribution key make Citus inappropriate now."
+      }
+    ],
+    "explicit_bias_for": [
+      {
+        "extension_slug": "postgres_fdw",
+        "reason": "Carveout needs bounded validation reads from the old PostgreSQL monolith."
+      },
+      {
+        "extension_slug": "citus",
+        "reason": "An executive asked whether the new platform should start distributed."
+      }
+    ],
+    "free_form_notes": "The new service must read a narrow customer and order slice from the old PostgreSQL monolith during carveout. Logical replication may become useful for cutover later, but initial need is FDW with pushdown checks and a retirement plan. Citus is blocked by portability and absent distribution-key evidence.",
+    "intake_id": "modernization-legacy-monolith-carveout",
+    "migration_or_federation_needs": {
+      "has_legacy_non_postgres_source": false,
+      "has_legacy_postgres_source": true,
+      "requires_federation_via_fdw": true,
+      "requires_zero_downtime_migration": false
+    },
+    "organization": {
+      "industry": "modernization_bridge",
+      "managed_service_requirement": "mandatory",
+      "operational_tolerance": "low",
+      "portability_constraints": [
+        "aws_rds"
+      ],
+      "team_size_engineers": 11
+    },
+    "scale_signals": {
+      "concurrent_connections_peak": 260,
+      "growth_rate_month_over_month": 0.04,
+      "read_throughput_qps": 1100,
+      "row_counts_largest_tables": {
+        "audit_events": 94000000,
+        "customer_profiles": 8500000,
+        "orders": 42000000
+      },
+      "write_throughput_rows_per_sec": 220
+    },
+    "security_constraints": [
+      "pii_in_scope"
+    ],
+    "tenancy_model": "single_tenant",
+    "workload_patterns": [
+      "oltp_heavy",
+      "migration_bridge",
+      "read_heavy"
+    ]
+  },
+  "generated_at": "2026-05-13T16:52:15.738720Z",
+  "intake_id": "modernization-legacy-monolith-carveout",
+  "intake_summary": {
+    "industry": "modernization_bridge",
+    "industry_title": "Modernization Bridge",
+    "operational_tolerance": "low",
+    "tenancy_model": "single_tenant"
+  },
+  "overall": {
+    "avoid_for_now": {
+      "count": 1,
+      "score": 0.33
+    },
+    "candidate_later": {
+      "count": 10,
+      "score": 0.575
+    },
+    "recommend_now": {
+      "count": 3,
+      "score": 0.692
+    }
+  },
+  "recommendations": [
+    {
+      "confidence": 0.86,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.696,
+      "score_breakdown": {
+        "complexity_penalty": 0.06,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.635,
+        "operational_feasibility": 0.821,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.86,
+          "rule_id": "rule-prefer-constraints-for-relational-core"
+        }
+      ],
+      "target_slug": "constraints",
+      "title": "Constraints",
+      "triggers_for_next_stage": [
+        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+      ],
+      "why_now": [
+        "Relational core data needs database-enforced truth before optional architecture choices.",
+        "Constraints make bad states visible across every application writer."
+      ]
+    },
+    {
+      "confidence": 0.9,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e1-pg-stat-statements",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.696,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.92,
+        "growth_urgency": 0.718,
+        "operational_feasibility": 0.813,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.94
+      },
+      "sources": [
+        {
+          "contribution": 0.9,
+          "rule_id": "rule-pg-stat-statements-for-real-workloads"
+        }
+      ],
+      "target_slug": "pg_stat_statements",
+      "title": "pg_stat_statements",
+      "triggers_for_next_stage": [
+        "Use top total time and calls to justify the next index, schema, or topology recommendation."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
+      ],
+      "why_now": [
+        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
+        "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e6-postgres-fdw",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.684,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.88,
+        "growth_urgency": 0.701,
+        "operational_feasibility": 0.714,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.88
+      },
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-postgres-fdw-for-federation"
+        }
+      ],
+      "target_slug": "postgres_fdw",
+      "title": "postgres_fdw",
+      "triggers_for_next_stage": [
+        "Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "FDW should not become a hidden permanent hot path without pushdown verification and retirement planning."
+      ],
+      "why_now": [
+        "The intake names remote PostgreSQL access and an FDW federation need.",
+        "postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded."
+      ]
+    },
+    {
+      "confidence": 0.72,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.617,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.72,
+        "growth_urgency": 0.635,
+        "operational_feasibility": 0.743,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.84
+      },
+      "sources": [
+        {
+          "contribution": 0.72,
+          "rule_id": "rule-btree-composite-for-hot-filter-sort"
+        }
+      ],
+      "target_slug": "btree_composite_equality_then_range",
+      "title": "Composite Equality Then Range",
+      "triggers_for_next_stage": [
+        "Adopt after pg_stat_statements identifies repeated tenant/status/time or account/time access paths."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Column order must come from real predicates, not generic indexing instinct."
+      ],
+      "why_now": [
+        "Hot OLTP and read-heavy filters often need equality columns before range or sort columns."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.609,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.679,
+        "operational_feasibility": 0.698,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-partial-indexes-for-skewed-hot-sets"
+        }
+      ],
+      "target_slug": "partial_indexes",
+      "title": "Partial Indexes",
+      "triggers_for_next_stage": [
+        "Adopt when pg_stat_statements or EXPLAIN shows repeated filters on status, tenant, active windows, or sparse flags."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Partial indexes need proven predicates; without query traces they become brittle guesses."
+      ],
+      "why_now": [
+        "Large OLTP tables often have small hot subsets that should not force full-table index maintenance."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.609,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.679,
+        "operational_feasibility": 0.698,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-partial-indexes-for-skewed-hot-sets"
+        }
+      ],
+      "target_slug": "partial_index_for_skew",
+      "title": "Partial Index for Skew",
+      "triggers_for_next_stage": [
+        "Review index size and write amplification after one representative traffic window."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Wait until the predicate is stable in application SQL and selectivity has been measured."
+      ],
+      "why_now": [
+        "The index catalog has a matching pattern for selective predicates on skewed large tables."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.579,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.76,
+        "domain_fit": 0.78,
+        "growth_urgency": 0.624,
+        "operational_feasibility": 0.584,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.74
+      },
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-postgres-fdw-for-federation"
+        },
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-fdw-federation-for-modernization-bridge"
+        }
+      ],
+      "target_slug": "postgres_fdw_federation",
+      "title": "postgres_fdw Federation",
+      "triggers_for_next_stage": [
+        "Document credentials, remote health monitoring, and fallback behavior.",
+        "Adopt once remote credentials, latency SLOs, and fallback behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Avoid broad cross-database joins until latency and remote-owner behavior are understood.",
+        "Avoid broad permanent federation without pushdown checks and decommission criteria.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "A federation topology makes ownership and remote failure modes explicit.",
+        "Migration-bridge workloads need explicit remote-source boundaries and owner-visible failure modes."
+      ]
+    },
+    {
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.567,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.68,
+        "growth_urgency": 0.663,
+        "operational_feasibility": 0.665,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-physical-replication-for-read-isolation"
+        }
+      ],
+      "target_slug": "physical_replication",
+      "title": "Physical Replication",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and failover behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "A replica does not fix bad queries, missing indexes, or write bottlenecks on the primary."
+      ],
+      "why_now": [
+        "Read-heavy systems can isolate reporting and expensive reads with replicas."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "pgbouncer",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.563,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.69,
+        "operational_feasibility": 0.636,
+        "portability_penalty": 0.24,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        }
+      ],
+      "target_slug": "pgbouncer",
+      "title": "PgBouncer",
+      "triggers_for_next_stage": [
+        "Adopt once pool sizing, failover routing, and idle-session behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Confirm application compatibility with transaction pooling, prepared statements, and session settings.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "High peak connections on OLTP/read-heavy traffic should not map one application worker to one backend."
+      ]
+    },
+    {
+      "confidence": 0.64,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.563,
+      "score_breakdown": {
+        "complexity_penalty": 0.18,
+        "data_shape_fit": 0.66,
+        "domain_fit": 0.62,
+        "growth_urgency": 0.608,
+        "operational_feasibility": 0.691,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.78
+      },
+      "sources": [
+        {
+          "contribution": 0.64,
+          "rule_id": "rule-btree-covering-for-read-heavy"
+        }
+      ],
+      "target_slug": "btree_covering_include",
+      "title": "Covering B-tree With INCLUDE",
+      "triggers_for_next_stage": [
+        "Adopt when visibility map health and EXPLAIN show index-only scan potential."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Covering indexes add write and storage cost, so projections must be stable and valuable."
+      ],
+      "why_now": [
+        "Read-heavy stable projections may benefit from INCLUDE columns and index-only scans."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.563,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.6,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.69,
+        "operational_feasibility": 0.61,
+        "portability_penalty": 0.12,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        },
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-pgbouncer-in-front-when-many-short-connections"
+        }
+      ],
+      "target_slug": "pgbouncer_in_front",
+      "title": "PgBouncer in Front",
+      "triggers_for_next_stage": [
+        "Test failover target changes and pool draining in maintenance runbooks.",
+        "Adopt after transaction duration, idle sessions, and prepared-statement behavior are measured."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "It cannot compensate for long transactions or inefficient queries.",
+        "Pool mode can break session-state assumptions and should be tested with the application.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Putting PgBouncer in front makes connection admission a topology concern.",
+        "Many concurrent sessions call for an explicit pooling layer in front of PostgreSQL."
+      ]
+    },
+    {
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.558,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.663,
+        "operational_feasibility": 0.61,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
+        }
+      ],
+      "target_slug": "primary_with_read_replicas",
+      "title": "Primary With Read Replicas",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
+      ],
+      "why_now": [
+        "Reporting or read-heavy traffic may need isolation from primary write latency."
+      ]
+    },
+    {
+      "confidence": 0.58,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "when-uuid-is-the-right-key",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.523,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.64,
+        "domain_fit": 0.6,
+        "growth_urgency": 0.498,
+        "operational_feasibility": 0.768,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.6
+      },
+      "sources": [
+        {
+          "contribution": 0.58,
+          "rule_id": "rule-pgcrypto-for-public-identifiers"
+        }
+      ],
+      "target_slug": "pgcrypto",
+      "title": "pgcrypto",
+      "triggers_for_next_stage": [
+        "Adopt when URL-safe identifiers or database-side UUID defaults are explicit requirements."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not treat cryptographic functions as a security architecture without review."
+      ],
+      "why_now": [
+        "Database-generated UUID defaults are useful for public identifiers and distributed inserts."
+      ]
+    },
+    {
+      "confidence": 0.84,
+      "followup_questions": [],
+      "kind": "anti_pattern_warning",
+      "module_slug": null,
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.84,
+      "score_breakdown": {
+        "complexity_penalty": 0.0,
+        "data_shape_fit": 0.0,
+        "domain_fit": 0.0,
+        "growth_urgency": 0.0,
+        "operational_feasibility": 0.0,
+        "portability_penalty": 0.0,
+        "workload_fit": 0.0
+      },
+      "sources": [
+        {
+          "contribution": 0.84,
+          "rule_id": "rule-warn-citus-portability-rejection"
+        },
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-warn-shard-without-distribution-key"
+        }
+      ],
+      "target_slug": "shard_without_distribution_key",
+      "title": "Shard Without Distribution Key",
+      "triggers_for_next_stage": [
+        "Revisit only after tenant-local query traces, cluster-aware restore drills, and a managed-service target are proven.",
+        "Revisit after query traces prove tenant-local reads, writes, and joins."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "Single-primary tuning, partitioning, pooling, and read isolation should be exhausted first.",
+        "Distributed PostgreSQL needs hot paths to include a stable key often enough to preserve locality."
+      ],
+      "why_now": [
+        "Citus is being considered, but the intake also names managed-service portability as a hard constraint.",
+        "Treat distributed PostgreSQL as blocked until portability, restore, and distribution-key evidence are resolved.",
+        "Citus bias without strong tenant locality suggests distribution before a distribution key is proven."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "anti_pattern_warning",
+      "module_slug": null,
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.68,
+      "score_breakdown": {
+        "complexity_penalty": 0.0,
+        "data_shape_fit": 0.0,
+        "domain_fit": 0.0,
+        "growth_urgency": 0.0,
+        "operational_feasibility": 0.0,
+        "portability_penalty": 0.0,
+        "workload_fit": 0.0
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-warn-no-restore-drills"
+        }
+      ],
+      "target_slug": "no_restore_drills",
+      "title": "No Restore Drills",
+      "triggers_for_next_stage": [
+        "Require restore drills for extension objects, remote definitions, partition metadata, and large indexes."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "Simple core features can still proceed with modest runbooks."
+      ],
+      "why_now": [
+        "Low operational tolerance plus complex data or bridge needs requires restore proof before adopting more moving parts."
+      ]
+    },
+    {
+      "confidence": 0.82,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e7-citus",
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.33,
+      "score_breakdown": {
+        "complexity_penalty": 0.72,
+        "data_shape_fit": 0.58,
+        "domain_fit": 0.48,
+        "growth_urgency": 0.646,
+        "operational_feasibility": 0.278,
+        "portability_penalty": 0.36,
+        "workload_fit": 0.42
+      },
+      "sources": [
+        {
+          "contribution": 0.82,
+          "rule_id": "rule-citus-avoid-without-portable-distribution-key"
+        }
+      ],
+      "target_slug": "citus",
+      "title": "Citus",
+      "triggers_for_next_stage": [
+        "Revisit only after single-primary tuning, partitioning, and tenant-local query traces have been exhausted."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "Distributed PostgreSQL should wait until hot paths prove a stable distribution key and the team can operate cluster-aware backup, restore, and rebalancing."
+      ],
+      "why_now": [
+        "The intake explicitly raises Citus but also identifies portability and distribution-key concerns."
+      ]
+    }
+  ],
+  "score_breakdown": {
+    "complexity_penalty": 0.258,
+    "data_shape_fit": 0.696,
+    "domain_fit": 0.726,
+    "growth_urgency": 0.652,
+    "operational_feasibility": 0.666,
+    "portability_penalty": 0.097,
+    "workload_fit": 0.779
+  },
+  "warnings": [
+    {
+      "anti_pattern_slug": "shard_without_distribution_key",
+      "message": "Citus is being considered, but the intake also names managed-service portability as a hard constraint.; Treat distributed PostgreSQL as blocked until portability, restore, and distribution-key evidence are resolved.; Citus bias without strong tenant locality suggests distribution before a distribution key is proven."
+    },
+    {
+      "anti_pattern_slug": "no_restore_drills",
+      "message": "Low operational tolerance plus complex data or bridge needs requires restore proof before adopting more moving parts."
+    }
+  ]
+}

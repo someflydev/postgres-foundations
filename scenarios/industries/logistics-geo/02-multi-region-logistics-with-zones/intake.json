@@ -1,0 +1,56 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "geospatial",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "postgis",
+      "reason": "Zone containment and nearest facility predicates are product-critical."
+    }
+  ],
+  "free_form_notes": "Dispatch uses polygon containment, distance, and region boundary intersections on every quote. Breadcrumb retention is 180 days and time-window scans dominate investigations. TimescaleDB is being discussed for compression, but partitioning and BRIN have not been fully measured.",
+  "intake_id": "logistics-multi-region-zones",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "logistics_geo",
+    "managed_service_requirement": "strongly_preferred",
+    "operational_tolerance": "medium",
+    "portability_constraints": [
+      "aws_rds",
+      "gcp_cloud_sql"
+    ],
+    "team_size_engineers": 15
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 360,
+    "growth_rate_month_over_month": 0.12,
+    "read_throughput_qps": 1800,
+    "row_counts_largest_tables": {
+      "delivery_breadcrumbs": 145000000,
+      "service_zones": 9200,
+      "shipments": 18000000
+    },
+    "write_throughput_rows_per_sec": 620
+  },
+  "security_constraints": [
+    "pii_in_scope"
+  ],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy",
+    "append_heavy",
+    "geo_query_heavy"
+  ]
+}

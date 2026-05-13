@@ -1,0 +1,386 @@
+{
+  "engine_version": "0.0.1",
+  "followup_question_groups": {},
+  "followup_questions": [],
+  "full_intake": {
+    "as_of_date": "2026-05-12",
+    "data_shapes": [
+      "relational_core",
+      "full_text_docs",
+      "semi_structured_jsonb",
+      "hierarchy_paths"
+    ],
+    "existing_postgres_topology": "single_primary",
+    "explicit_bias_against": [],
+    "explicit_bias_for": [
+      {
+        "extension_slug": "pg_trgm",
+        "reason": "Developers need typo-tolerant fuzzy title and symbol search."
+      },
+      {
+        "extension_slug": "pgvector",
+        "reason": "Stakeholders asked for semantic search after lexical launch."
+      }
+    ],
+    "free_form_notes": "The first launch needs core FTS, snippets, filters, typo-tolerant fuzzy matching on titles and symbols, and clear freshness rules. Semantic retrieval is promising later, but there are no embeddings, model owners, or evaluation sets today. Documents also live in stable handbook and service ownership folder paths where subtree search is a normal product behavior. This remains an early search launch rather than a broad read-scaling problem.",
+    "intake_id": "knowledge-internal-eng-search",
+    "migration_or_federation_needs": {
+      "has_legacy_non_postgres_source": false,
+      "has_legacy_postgres_source": false,
+      "requires_federation_via_fdw": false,
+      "requires_zero_downtime_migration": false
+    },
+    "organization": {
+      "industry": "knowledge_ai",
+      "managed_service_requirement": "mandatory",
+      "operational_tolerance": "low",
+      "portability_constraints": [
+        "aws_rds"
+      ],
+      "team_size_engineers": 9
+    },
+    "scale_signals": {
+      "concurrent_connections_peak": 140,
+      "growth_rate_month_over_month": 0.07,
+      "read_throughput_qps": 900,
+      "row_counts_largest_tables": {
+        "document_versions": 2400000,
+        "documents": 850000,
+        "search_events": 9000000
+      },
+      "write_throughput_rows_per_sec": 65
+    },
+    "security_constraints": [],
+    "tenancy_model": "single_tenant",
+    "workload_patterns": [
+      "search_heavy"
+    ]
+  },
+  "generated_at": "2026-05-13T16:52:14.900987Z",
+  "intake_id": "knowledge-internal-eng-search",
+  "intake_summary": {
+    "industry": "knowledge_ai",
+    "industry_title": "Knowledge and AI Retrieval",
+    "operational_tolerance": "low",
+    "tenancy_model": "single_tenant"
+  },
+  "overall": {
+    "candidate_later": {
+      "count": 6,
+      "score": 0.574
+    },
+    "not_enough_evidence": {
+      "count": 1,
+      "score": 0.316
+    },
+    "recommend_now": {
+      "count": 1,
+      "score": 0.66
+    }
+  },
+  "recommendations": [
+    {
+      "confidence": 0.86,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.66,
+      "score_breakdown": {
+        "complexity_penalty": 0.06,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.275,
+        "operational_feasibility": 0.821,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.86,
+          "rule_id": "rule-prefer-constraints-for-relational-core"
+        }
+      ],
+      "target_slug": "constraints",
+      "title": "Constraints",
+      "triggers_for_next_stage": [
+        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+      ],
+      "why_now": [
+        "Relational core data needs database-enforced truth before optional architecture choices.",
+        "Constraints make bad states visible across every application writer."
+      ]
+    },
+    {
+      "confidence": 0.82,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.631,
+      "score_breakdown": {
+        "complexity_penalty": 0.14,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.75,
+        "growth_urgency": 0.248,
+        "operational_feasibility": 0.782,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.85
+      },
+      "sources": [
+        {
+          "contribution": 0.82,
+          "rule_id": "rule-full-text-search-before-vector"
+        }
+      ],
+      "target_slug": "full_text_search",
+      "title": "Full-text Search",
+      "triggers_for_next_stage": [
+        "Evaluate pg_trgm for fuzzy lexical misses and pgvector only after lexical baselines plateau."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Core FTS may not solve semantic recall, typo tolerance, or multilingual normalization alone.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Document search should first establish lexical parsing, ranking, filters, and explainable relevance."
+      ]
+    },
+    {
+      "confidence": 0.75,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e2-pg-trgm",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.594,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.248,
+        "operational_feasibility": 0.74,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.75,
+          "rule_id": "rule-pg-trgm-for-fuzzy-support-ui"
+        }
+      ],
+      "target_slug": "pg_trgm",
+      "title": "pg_trgm",
+      "triggers_for_next_stage": [
+        "If lexical similarity plateaus below product goals, evaluate pgvector for semantic retrieval."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not index every text column; scope it to product fields with measured fuzzy-search value.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Fuzzy lexical matching is the cheapest next step beyond core FTS for typo-tolerant search.",
+        "pg_trgm is broadly available on managed PostgreSQL."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.584,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.86,
+        "domain_fit": 0.68,
+        "growth_urgency": 0.248,
+        "operational_feasibility": 0.717,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.78
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-pg-trgm-for-fuzzy-support-ui"
+        }
+      ],
+      "target_slug": "gin_trgm_similarity",
+      "title": "GIN Trigram Similarity",
+      "triggers_for_next_stage": [
+        "Adopt after EXPLAIN confirms sequential scans or slow ILIKE paths on target columns."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Wait until the searched columns and acceptable false-positive rate are known."
+      ],
+      "why_now": [
+        "GIN trigram indexes support targeted similarity and substring search paths."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "ltree",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.554,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.86,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.209,
+        "operational_feasibility": 0.662,
+        "portability_penalty": 0.05,
+        "workload_fit": 0.72
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-ltree-for-deep-hierarchy"
+        }
+      ],
+      "target_slug": "ltree",
+      "title": "ltree",
+      "triggers_for_next_stage": [
+        "Adopt when subtree reads or permission-scope path checks are frequent and path labels are stable."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Recursive CTEs, adjacency lists, or closure tables may be enough for shallow or metadata-rich trees."
+      ],
+      "why_now": [
+        "Hierarchy path search can benefit from native ancestor, descendant, and subtree operators."
+      ]
+    },
+    {
+      "confidence": 0.66,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.542,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.64,
+        "growth_urgency": 0.209,
+        "operational_feasibility": 0.665,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.72
+      },
+      "sources": [
+        {
+          "contribution": 0.66,
+          "rule_id": "rule-gin-jsonb-for-containment"
+        }
+      ],
+      "target_slug": "gin_jsonb_containment",
+      "title": "GIN JSONB Containment",
+      "triggers_for_next_stage": [
+        "Adopt after EXPLAIN shows repeated @> predicates with selective keys."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "It is costly when the application does not use containment or filters too broadly."
+      ],
+      "why_now": [
+        "GIN JSONB can support containment queries on flexible attributes."
+      ]
+    },
+    {
+      "confidence": 0.71,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.538,
+      "score_breakdown": {
+        "complexity_penalty": 0.18,
+        "data_shape_fit": 0.85,
+        "domain_fit": 0.65,
+        "growth_urgency": 0.193,
+        "operational_feasibility": 0.717,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.62
+      },
+      "sources": [
+        {
+          "contribution": 0.71,
+          "rule_id": "rule-jsonb-hybrid-columns-for-semi-structured"
+        }
+      ],
+      "target_slug": "jsonb",
+      "title": "JSONB",
+      "triggers_for_next_stage": [
+        "Promote hot JSON keys to generated or ordinary columns once query pressure and invariants are visible."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not make the whole entity JSONB when keys are frequently filtered, joined, constrained, or audited."
+      ],
+      "why_now": [
+        "JSONB can carry variable attributes while stable identifiers and lifecycle columns stay relational."
+      ]
+    },
+    {
+      "confidence": 0.56,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e4-pgvector",
+      "original_verdict": "not_enough_evidence",
+      "recommendation_class": "not_enough_evidence",
+      "recommendation_score": 0.316,
+      "score_breakdown": {
+        "complexity_penalty": 0.72,
+        "data_shape_fit": 0.4,
+        "domain_fit": 0.45,
+        "growth_urgency": 0.138,
+        "operational_feasibility": 0.512,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.5
+      },
+      "sources": [
+        {
+          "contribution": 0.56,
+          "rule_id": "rule-pgvector-not-yet-without-embeddings"
+        }
+      ],
+      "target_slug": "pgvector",
+      "title": "pgvector",
+      "triggers_for_next_stage": [
+        "Revisit pgvector after an embedding corpus, offline evaluation set, and lexical or spatial baseline gaps are documented."
+      ],
+      "verdict": "not_enough_evidence",
+      "why_not_yet": [
+        "There is no embeddings_vectors data shape, embedding refresh plan, recall target, or permission-aware retrieval design yet.",
+        "For geo-heavy logistics, PostGIS answers spatial distance and containment questions more directly than vector search."
+      ],
+      "why_now": [
+        "The intake mentions semantic or vector-style search, so pgvector should stay visible as a possible later option."
+      ]
+    }
+  ],
+  "score_breakdown": {
+    "complexity_penalty": 0.272,
+    "data_shape_fit": 0.811,
+    "domain_fit": 0.679,
+    "growth_urgency": 0.221,
+    "operational_feasibility": 0.702,
+    "portability_penalty": 0.046,
+    "workload_fit": 0.726
+  },
+  "warnings": []
+}

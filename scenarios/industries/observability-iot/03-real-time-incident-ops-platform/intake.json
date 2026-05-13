@@ -1,0 +1,61 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "time_series_metrics",
+    "append_only_events",
+    "semi_structured_jsonb"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "timescaledb",
+      "reason": "Incident metrics need compression and rolling aggregates."
+    },
+    {
+      "extension_slug": "pgvector",
+      "reason": "Leadership asked about anomaly embedding search."
+    }
+  ],
+  "free_form_notes": "Incident responders need recent-window metrics, tenant isolation, and fast status timelines. There is talk of AI vector anomaly search, but no embedding corpus, offline labels, or recall target exists. The not yet posture should be explicit rather than hype.",
+  "intake_id": "observability-real-time-incident-ops",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "observability_iot",
+    "managed_service_requirement": "strongly_preferred",
+    "operational_tolerance": "medium",
+    "portability_constraints": [
+      "aws_rds",
+      "gcp_cloud_sql"
+    ],
+    "team_size_engineers": 22
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 980,
+    "growth_rate_month_over_month": 0.13,
+    "read_throughput_qps": 3100,
+    "row_counts_largest_tables": {
+      "incident_updates": 36000000,
+      "signal_events": 410000000,
+      "tenant_memberships": 900000
+    },
+    "write_throughput_rows_per_sec": 1250
+  },
+  "security_constraints": [
+    "rls_required"
+  ],
+  "tenancy_model": "multi_tenant_shared_schema",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "analytics_adjacent",
+    "read_heavy",
+    "strong_tenant_locality"
+  ]
+}

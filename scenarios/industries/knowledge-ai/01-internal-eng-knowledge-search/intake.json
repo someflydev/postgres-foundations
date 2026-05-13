@@ -1,0 +1,54 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "full_text_docs",
+    "semi_structured_jsonb",
+    "hierarchy_paths"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "pg_trgm",
+      "reason": "Developers need typo-tolerant fuzzy title and symbol search."
+    },
+    {
+      "extension_slug": "pgvector",
+      "reason": "Stakeholders asked for semantic search after lexical launch."
+    }
+  ],
+  "free_form_notes": "The first launch needs core FTS, snippets, filters, typo-tolerant fuzzy matching on titles and symbols, and clear freshness rules. Semantic retrieval is promising later, but there are no embeddings, model owners, or evaluation sets today. Documents also live in stable handbook and service ownership folder paths where subtree search is a normal product behavior. This remains an early search launch rather than a broad read-scaling problem.",
+  "intake_id": "knowledge-internal-eng-search",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "knowledge_ai",
+    "managed_service_requirement": "mandatory",
+    "operational_tolerance": "low",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 9
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 140,
+    "growth_rate_month_over_month": 0.07,
+    "read_throughput_qps": 900,
+    "row_counts_largest_tables": {
+      "document_versions": 2400000,
+      "documents": 850000,
+      "search_events": 9000000
+    },
+    "write_throughput_rows_per_sec": 65
+  },
+  "security_constraints": [],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "search_heavy"
+  ]
+}

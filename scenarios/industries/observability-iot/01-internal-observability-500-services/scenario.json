@@ -1,0 +1,67 @@
+{
+  "context": {
+    "operational_tolerance": "medium",
+    "portability_requirements": "Managed PostgreSQL posture: aws_rds",
+    "scale_signals": [
+      "1300 read qps",
+      "950 write rows/sec",
+      "260 peak connections",
+      "9% monthly growth"
+    ],
+    "team_size": "12 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "btree_covering_include",
+      "materialized_views",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pg_partman",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "physical_replication",
+      "primary_with_read_replicas",
+      "timescaledb"
+    ],
+    "recommend_now": [
+      "brin_append_only_chronological",
+      "constraints",
+      "partitioning",
+      "pg_stat_statements"
+    ]
+  },
+  "id": "observability-internal-500-services",
+  "industry": "observability_iot",
+  "narrative_path": "narrative.md",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "pg-stat-statements-basics",
+    "partitioning-large-table-operations",
+    "full-text-search-core",
+    "postgres-fdw-boundaries",
+    "row-level-security-policy-design"
+  ],
+  "tags": [
+    "observability-iot",
+    "internal-observability-500-services",
+    "medium-tolerance"
+  ],
+  "title": "Internal observability for 500 services",
+  "workload_patterns": [
+    "append_heavy",
+    "analytics_adjacent",
+    "read_heavy"
+  ]
+}

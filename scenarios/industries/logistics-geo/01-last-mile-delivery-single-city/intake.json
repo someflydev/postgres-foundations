@@ -1,0 +1,47 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "geospatial",
+    "ranges_windows"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [],
+  "free_form_notes": "Coordinates support dispatch screens and small service-zone checks, but routing remains in the application. The team is tempted by PostGIS but has not made spatial predicates a hot path; GiST range checks for shift windows matter more today. Restore drills are immature.",
+  "intake_id": "logistics-last-mile-single-city",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": false,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": false
+  },
+  "organization": {
+    "industry": "logistics_geo",
+    "managed_service_requirement": "mandatory",
+    "operational_tolerance": "low",
+    "portability_constraints": [
+      "aws_rds"
+    ],
+    "team_size_engineers": 7
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 150,
+    "growth_rate_month_over_month": 0.08,
+    "read_throughput_qps": 760,
+    "row_counts_largest_tables": {
+      "deliveries": 2600000,
+      "driver_locations": 18000000,
+      "service_zones": 48
+    },
+    "write_throughput_rows_per_sec": 85
+  },
+  "security_constraints": [
+    "pii_in_scope"
+  ],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy"
+  ]
+}

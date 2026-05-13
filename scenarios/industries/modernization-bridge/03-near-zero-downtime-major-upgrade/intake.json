@@ -1,0 +1,61 @@
+{
+  "as_of_date": "2026-05-12",
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "existing_postgres_topology": "single_primary",
+  "explicit_bias_against": [],
+  "explicit_bias_for": [
+    {
+      "extension_slug": "pg_stat_statements",
+      "reason": "The upgrade readiness review must start with workload evidence."
+    },
+    {
+      "extension_slug": "pg_partman",
+      "reason": "Partition maintenance must survive the blue-green upgrade."
+    }
+  ],
+  "free_form_notes": "The platform is planning a near-zero-downtime major upgrade using a logical replication pair and blue-green validation. Append-heavy audit and metrics tables need partitioning discipline, pg_partman review, and pg_stat_statements before and after cutover to catch regressions.",
+  "intake_id": "modernization-zero-downtime-major-upgrade",
+  "migration_or_federation_needs": {
+    "has_legacy_non_postgres_source": false,
+    "has_legacy_postgres_source": true,
+    "requires_federation_via_fdw": false,
+    "requires_zero_downtime_migration": true
+  },
+  "organization": {
+    "industry": "modernization_bridge",
+    "managed_service_requirement": "strongly_preferred",
+    "operational_tolerance": "high",
+    "portability_constraints": [
+      "aws_rds",
+      "gcp_cloud_sql"
+    ],
+    "team_size_engineers": 26
+  },
+  "scale_signals": {
+    "concurrent_connections_peak": 760,
+    "growth_rate_month_over_month": 0.05,
+    "read_throughput_qps": 2600,
+    "row_counts_largest_tables": {
+      "audit_events": 390000000,
+      "metric_samples": 280000000,
+      "orders": 88000000
+    },
+    "write_throughput_rows_per_sec": 820
+  },
+  "security_constraints": [
+    "audit_required",
+    "pii_in_scope"
+  ],
+  "tenancy_model": "single_tenant",
+  "workload_patterns": [
+    "migration_bridge",
+    "oltp_heavy",
+    "append_heavy",
+    "read_heavy",
+    "analytics_adjacent"
+  ]
+}

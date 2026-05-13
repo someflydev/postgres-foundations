@@ -1,0 +1,59 @@
+{
+  "context": {
+    "operational_tolerance": "low",
+    "portability_requirements": "Managed PostgreSQL posture: aws_rds",
+    "scale_signals": [
+      "760 read qps",
+      "85 write rows/sec",
+      "150 peak connections",
+      "8% monthly growth"
+    ],
+    "team_size": "7 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "geospatial",
+    "ranges_windows"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [],
+    "candidate_later": [
+      "exclusion_constraints",
+      "gist_range_exclusion",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pgcrypto",
+      "postgis"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements"
+    ]
+  },
+  "id": "logistics-last-mile-single-city",
+  "industry": "logistics_geo",
+  "narrative_path": "narrative.md",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "pg-stat-statements-basics",
+    "partitioning-large-table-operations",
+    "full-text-search-core",
+    "postgres-fdw-boundaries",
+    "row-level-security-policy-design"
+  ],
+  "tags": [
+    "logistics-geo",
+    "last-mile-delivery-single-city",
+    "low-tolerance"
+  ],
+  "title": "Single-city last-mile delivery with modest zones",
+  "workload_patterns": [
+    "oltp_heavy",
+    "read_heavy"
+  ]
+}

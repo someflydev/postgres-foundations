@@ -1,0 +1,68 @@
+{
+  "context": {
+    "operational_tolerance": "low",
+    "portability_requirements": "Managed PostgreSQL posture: aws_rds",
+    "scale_signals": [
+      "1100 read qps",
+      "220 write rows/sec",
+      "260 peak connections",
+      "4% monthly growth"
+    ],
+    "team_size": "11 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "foreign_postgres_access"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "citus",
+      "no_restore_drills",
+      "shard_without_distribution_key"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "btree_covering_include",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "pgcrypto",
+      "physical_replication",
+      "postgres_fdw_federation",
+      "primary_with_read_replicas"
+    ],
+    "recommend_now": [
+      "constraints",
+      "pg_stat_statements",
+      "postgres_fdw"
+    ]
+  },
+  "id": "modernization-legacy-monolith-carveout",
+  "industry": "modernization_bridge",
+  "narrative_path": "narrative.md",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "pg-stat-statements-basics",
+    "partitioning-large-table-operations",
+    "full-text-search-core",
+    "postgres-fdw-boundaries",
+    "row-level-security-policy-design"
+  ],
+  "tags": [
+    "modernization-bridge",
+    "legacy-monolith-carveout",
+    "low-tolerance"
+  ],
+  "title": "Legacy monolith carveout with bounded FDW bridge",
+  "workload_patterns": [
+    "oltp_heavy",
+    "migration_bridge",
+    "read_heavy"
+  ]
+}

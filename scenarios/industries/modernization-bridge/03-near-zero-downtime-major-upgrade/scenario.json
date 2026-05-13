@@ -1,0 +1,75 @@
+{
+  "context": {
+    "operational_tolerance": "high",
+    "portability_requirements": "Managed PostgreSQL posture: aws_rds, gcp_cloud_sql",
+    "scale_signals": [
+      "2600 read qps",
+      "820 write rows/sec",
+      "760 peak connections",
+      "5% monthly growth"
+    ],
+    "team_size": "26 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "append_only_events",
+    "time_series_metrics"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "btree_covering_include",
+      "materialized_views",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pg_partman",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "pgcrypto",
+      "physical_replication",
+      "primary_with_read_replicas"
+    ],
+    "recommend_now": [
+      "blue_green_upgrade_via_logical_replication",
+      "brin_append_only_chronological",
+      "constraints",
+      "logical_replication",
+      "logical_replication_pair",
+      "partitioning",
+      "pg_stat_statements",
+      "timescaledb"
+    ]
+  },
+  "id": "modernization-zero-downtime-major-upgrade",
+  "industry": "modernization_bridge",
+  "narrative_path": "narrative.md",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "pg-stat-statements-basics",
+    "partitioning-large-table-operations",
+    "full-text-search-core",
+    "postgres-fdw-boundaries",
+    "row-level-security-policy-design"
+  ],
+  "tags": [
+    "modernization-bridge",
+    "near-zero-downtime-major-upgrade",
+    "high-tolerance"
+  ],
+  "title": "Near-zero-downtime major PostgreSQL upgrade",
+  "workload_patterns": [
+    "migration_bridge",
+    "oltp_heavy",
+    "append_heavy",
+    "read_heavy",
+    "analytics_adjacent"
+  ]
+}

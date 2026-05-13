@@ -1,0 +1,776 @@
+{
+  "engine_version": "0.0.1",
+  "followup_question_groups": {},
+  "followup_questions": [],
+  "full_intake": {
+    "as_of_date": "2026-05-12",
+    "data_shapes": [
+      "relational_core",
+      "geospatial",
+      "append_only_events",
+      "time_series_metrics"
+    ],
+    "existing_postgres_topology": "single_primary",
+    "explicit_bias_against": [],
+    "explicit_bias_for": [
+      {
+        "extension_slug": "postgis",
+        "reason": "Spatial joins and distance buckets are central to analytics."
+      },
+      {
+        "extension_slug": "timescaledb",
+        "reason": "Retention, compression, and continuous rollups are measured operational pain."
+      }
+    ],
+    "free_form_notes": "The fleet analytics group runs regional heat maps, corridor dwell-time analysis, and spatial compliance reporting. Data is centrally time-keyed and old partitions are expensive to manage. They need not shard yet because queries are regional/time bounded, not tenant-local.",
+    "intake_id": "logistics-global-fleet-analytics",
+    "migration_or_federation_needs": {
+      "has_legacy_non_postgres_source": false,
+      "has_legacy_postgres_source": false,
+      "requires_federation_via_fdw": false,
+      "requires_zero_downtime_migration": false
+    },
+    "organization": {
+      "industry": "logistics_geo",
+      "managed_service_requirement": "strongly_preferred",
+      "operational_tolerance": "high",
+      "portability_constraints": [
+        "aws_rds",
+        "azure_pg"
+      ],
+      "team_size_engineers": 28
+    },
+    "scale_signals": {
+      "concurrent_connections_peak": 850,
+      "growth_rate_month_over_month": 0.16,
+      "read_throughput_qps": 4200,
+      "row_counts_largest_tables": {
+        "facilities": 65000,
+        "fleet_positions": 880000000,
+        "route_events": 540000000
+      },
+      "write_throughput_rows_per_sec": 2100
+    },
+    "security_constraints": [
+      "pii_in_scope",
+      "gdpr_dsr"
+    ],
+    "tenancy_model": "single_tenant",
+    "workload_patterns": [
+      "read_heavy",
+      "append_heavy",
+      "analytics_adjacent",
+      "geo_query_heavy"
+    ]
+  },
+  "generated_at": "2026-05-13T16:52:15.605360Z",
+  "intake_id": "logistics-global-fleet-analytics",
+  "intake_summary": {
+    "industry": "logistics_geo",
+    "industry_title": "Logistics and Geospatial Operations",
+    "operational_tolerance": "high",
+    "tenancy_model": "single_tenant"
+  },
+  "overall": {
+    "candidate_later": {
+      "count": 10,
+      "score": 0.606
+    },
+    "recommend_now": {
+      "count": 7,
+      "score": 0.699
+    }
+  },
+  "recommendations": [
+    {
+      "confidence": 0.86,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.724,
+      "score_breakdown": {
+        "complexity_penalty": 0.06,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.947,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.86,
+          "rule_id": "rule-prefer-constraints-for-relational-core"
+        }
+      ],
+      "target_slug": "constraints",
+      "title": "Constraints",
+      "triggers_for_next_stage": [
+        "Escalate to exclusion constraints or RLS when overlap or tenant-isolation rules become explicit."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "If invariants are not yet known, start by naming the entity lifecycle and failure states before adding broad constraints."
+      ],
+      "why_now": [
+        "Relational core data needs database-enforced truth before optional architecture choices.",
+        "Constraints make bad states visible across every application writer."
+      ]
+    },
+    {
+      "confidence": 0.9,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e1-pg-stat-statements",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.724,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.92,
+        "growth_urgency": 0.808,
+        "operational_feasibility": 0.939,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.94
+      },
+      "sources": [
+        {
+          "contribution": 0.9,
+          "rule_id": "rule-pg-stat-statements-for-real-workloads"
+        }
+      ],
+      "target_slug": "pg_stat_statements",
+      "title": "pg_stat_statements",
+      "triggers_for_next_stage": [
+        "Use top total time and calls to justify the next index, schema, or topology recommendation."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit."
+      ],
+      "why_now": [
+        "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
+        "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
+    {
+      "confidence": 0.88,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e3-postgis",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.716,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.94,
+        "domain_fit": 0.9,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.788,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.9
+      },
+      "sources": [
+        {
+          "contribution": 0.88,
+          "rule_id": "rule-postgis-for-geo-query-heavy"
+        }
+      ],
+      "target_slug": "postgis",
+      "title": "PostGIS",
+      "triggers_for_next_stage": [
+        "Add geometry validity, coordinate-system rules, and restore validation before production rollout."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "PostGIS is not needed for display-only coordinates or rare exports with no spatial predicates."
+      ],
+      "why_now": [
+        "Geo-query-heavy workloads need spatial types, predicates, and indexes rather than latitude/longitude conventions.",
+        "PostGIS keeps spatial decisions close to transactional state."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.704,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.83,
+        "portability_penalty": 0.06,
+        "workload_fit": 0.86
+      },
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-postgis-for-geo-query-heavy"
+        }
+      ],
+      "target_slug": "gist_geospatial",
+      "title": "GiST Geospatial",
+      "triggers_for_next_stage": [
+        "Benchmark representative bounding-box and nearest-neighbor queries."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Index choice should wait if the product only stores points for display."
+      ],
+      "why_now": [
+        "GiST spatial indexes are the expected access path for containment, intersection, and distance predicates."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.68,
+      "score_breakdown": {
+        "complexity_penalty": 0.3,
+        "data_shape_fit": 0.86,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.879,
+        "operational_feasibility": 0.791,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.84
+      },
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-partitioning-when-retention-matters"
+        }
+      ],
+      "target_slug": "partitioning",
+      "title": "Declarative Partitioning",
+      "triggers_for_next_stage": [
+        "Escalate to pg_partman only after manual partition operations become a recurring operational risk."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Partitioning is premature when tables are modest, retention is vague, or queries do not prune by partition key."
+      ],
+      "why_now": [
+        "Large append-heavy tables need bounded maintenance, retention, and pruning strategy."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.68,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.84,
+        "domain_fit": 0.72,
+        "growth_urgency": 0.835,
+        "operational_feasibility": 0.895,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-partitioning-when-retention-matters"
+        },
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-brin-for-append-heavy-chronological"
+        }
+      ],
+      "target_slug": "brin_append_only_chronological",
+      "title": "BRIN for Append-only Time",
+      "triggers_for_next_stage": [
+        "Add btree companion indexes only for proven tenant, status, or id filters.",
+        "Adopt when time-window scans dominate and table ordering remains correlated."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "It is weak when data is not physically correlated with time or queries need point lookup.",
+        "BRIN depends on physical correlation and does not replace point-lookup btrees."
+      ],
+      "why_now": [
+        "BRIN is a low-maintenance fit for large chronological append-only tables.",
+        "Append-heavy chronological data often gets useful pruning from small BRIN indexes."
+      ]
+    },
+    {
+      "confidence": 0.84,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e5-timescaledb",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.666,
+      "score_breakdown": {
+        "complexity_penalty": 0.72,
+        "data_shape_fit": 0.92,
+        "domain_fit": 0.82,
+        "growth_urgency": 0.945,
+        "operational_feasibility": 0.69,
+        "portability_penalty": 0.2,
+        "workload_fit": 0.88
+      },
+      "sources": [
+        {
+          "contribution": 0.84,
+          "rule_id": "rule-timescaledb-now-for-mature-time-series"
+        },
+        {
+          "contribution": 0.64,
+          "rule_id": "rule-timescaledb-when-centrally-time-series"
+        }
+      ],
+      "target_slug": "timescaledb",
+      "title": "TimescaleDB",
+      "triggers_for_next_stage": [
+        "Adopt with documented compression policy, continuous aggregate ownership, restore testing, and rollback criteria.",
+        "Revisit when compression, chunk maintenance, and retention automation are measured pain."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Do not adopt if the managed-service target cannot support extension upgrades, restore drills, and retention runbooks.",
+        "Core partitioning, BRIN, materialized views, and scheduled retention should be measured first."
+      ],
+      "why_now": [
+        "Large central time-series tables plus adjacent analytics create recurring chunk, retention, compression, and aggregate-maintenance work.",
+        "At this scale, TimescaleDB is justified only because the workload has crossed beyond one-off partition maintenance.",
+        "Very large time-series metrics may benefit from hypertable lifecycle, compression, and retention ergonomics."
+      ]
+    },
+    {
+      "confidence": 0.72,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.645,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.7,
+        "domain_fit": 0.72,
+        "growth_urgency": 0.725,
+        "operational_feasibility": 0.869,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.84
+      },
+      "sources": [
+        {
+          "contribution": 0.72,
+          "rule_id": "rule-btree-composite-for-hot-filter-sort"
+        }
+      ],
+      "target_slug": "btree_composite_equality_then_range",
+      "title": "Composite Equality Then Range",
+      "triggers_for_next_stage": [
+        "Adopt after pg_stat_statements identifies repeated tenant/status/time or account/time access paths."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Column order must come from real predicates, not generic indexing instinct."
+      ],
+      "why_now": [
+        "Hot OLTP and read-heavy filters often need equality columns before range or sort columns."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.636,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.769,
+        "operational_feasibility": 0.824,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-partial-indexes-for-skewed-hot-sets"
+        }
+      ],
+      "target_slug": "partial_indexes",
+      "title": "Partial Indexes",
+      "triggers_for_next_stage": [
+        "Adopt when pg_stat_statements or EXPLAIN shows repeated filters on status, tenant, active windows, or sparse flags."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Partial indexes need proven predicates; without query traces they become brittle guesses."
+      ],
+      "why_now": [
+        "Large OLTP tables often have small hot subsets that should not force full-table index maintenance."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.636,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.72,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.769,
+        "operational_feasibility": 0.824,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-partial-indexes-for-skewed-hot-sets"
+        }
+      ],
+      "target_slug": "partial_index_for_skew",
+      "title": "Partial Index for Skew",
+      "triggers_for_next_stage": [
+        "Review index size and write amplification after one representative traffic window."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Wait until the predicate is stable in application SQL and selectivity has been measured."
+      ],
+      "why_now": [
+        "The index catalog has a matching pattern for selective predicates on skewed large tables."
+      ]
+    },
+    {
+      "confidence": 0.67,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.6,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.66,
+        "domain_fit": 0.66,
+        "growth_urgency": 0.714,
+        "operational_feasibility": 0.856,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.74
+      },
+      "sources": [
+        {
+          "contribution": 0.67,
+          "rule_id": "rule-materialized-views-for-adjacent-analytics"
+        }
+      ],
+      "target_slug": "materialized_views",
+      "title": "Materialized Views",
+      "triggers_for_next_stage": [
+        "Adopt when repeated aggregate queries dominate total time and stale-enough answers are acceptable."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Refresh cadence, staleness tolerance, and locking behavior must be known first."
+      ],
+      "why_now": [
+        "Adjacent analytics often needs precomputed read models before replicas or distributed systems."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "pgbouncer",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.599,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.78,
+        "operational_feasibility": 0.762,
+        "portability_penalty": 0.16,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        }
+      ],
+      "target_slug": "pgbouncer",
+      "title": "PgBouncer",
+      "triggers_for_next_stage": [
+        "Adopt once pool sizing, failover routing, and idle-session behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Confirm application compatibility with transaction pooling, prepared statements, and session settings.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "High peak connections on OLTP/read-heavy traffic should not map one application worker to one backend."
+      ]
+    },
+    {
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.595,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.68,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.791,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-physical-replication-for-read-isolation"
+        }
+      ],
+      "target_slug": "physical_replication",
+      "title": "Physical Replication",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and failover behavior are documented."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "A replica does not fix bad queries, missing indexes, or write bottlenecks on the primary."
+      ],
+      "why_now": [
+        "Read-heavy systems can isolate reporting and expensive reads with replicas."
+      ]
+    },
+    {
+      "confidence": 0.64,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.591,
+      "score_breakdown": {
+        "complexity_penalty": 0.18,
+        "data_shape_fit": 0.66,
+        "domain_fit": 0.62,
+        "growth_urgency": 0.698,
+        "operational_feasibility": 0.817,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.78
+      },
+      "sources": [
+        {
+          "contribution": 0.64,
+          "rule_id": "rule-btree-covering-for-read-heavy"
+        }
+      ],
+      "target_slug": "btree_covering_include",
+      "title": "Covering B-tree With INCLUDE",
+      "triggers_for_next_stage": [
+        "Adopt when visibility map health and EXPLAIN show index-only scan potential."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Covering indexes add write and storage cost, so projections must be stable and valuable."
+      ],
+      "why_now": [
+        "Read-heavy stable projections may benefit from INCLUDE columns and index-only scans."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.591,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.6,
+        "domain_fit": 0.76,
+        "growth_urgency": 0.78,
+        "operational_feasibility": 0.736,
+        "portability_penalty": 0.12,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-pgbouncer-when-high-concurrency"
+        },
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-pgbouncer-in-front-when-many-short-connections"
+        }
+      ],
+      "target_slug": "pgbouncer_in_front",
+      "title": "PgBouncer in Front",
+      "triggers_for_next_stage": [
+        "Test failover target changes and pool draining in maintenance runbooks.",
+        "Adopt after transaction duration, idle sessions, and prepared-statement behavior are measured."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "It cannot compensate for long transactions or inefficient queries.",
+        "Pool mode can break session-state assumptions and should be tested with the application.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Putting PgBouncer in front makes connection admission a topology concern.",
+        "Many concurrent sessions call for an explicit pooling layer in front of PostgreSQL."
+      ]
+    },
+    {
+      "confidence": 0.62,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "pg-partman",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.586,
+      "score_breakdown": {
+        "complexity_penalty": 0.38,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.64,
+        "growth_urgency": 0.846,
+        "operational_feasibility": 0.671,
+        "portability_penalty": 0.2,
+        "workload_fit": 0.74
+      },
+      "sources": [
+        {
+          "contribution": 0.62,
+          "rule_id": "rule-pg-partman-when-partitioning-managed-manually"
+        }
+      ],
+      "target_slug": "pg_partman",
+      "title": "pg_partman",
+      "triggers_for_next_stage": [
+        "Adopt when future partition creation or retention jobs become reviewed operational toil."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "The table must already deserve partitioning; pg_partman is not the reason to partition."
+      ],
+      "why_now": [
+        "Recurring time-based partition creation and retention can justify pg_partman automation."
+      ]
+    },
+    {
+      "confidence": 0.7,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.586,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.62,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.753,
+        "operational_feasibility": 0.736,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.82
+      },
+      "sources": [
+        {
+          "contribution": 0.7,
+          "rule_id": "rule-read-replica-when-reporting-needs-isolation"
+        }
+      ],
+      "target_slug": "primary_with_read_replicas",
+      "title": "Primary With Read Replicas",
+      "triggers_for_next_stage": [
+        "Adopt when read routing, lag tolerance, and consistency expectations are explicit."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes."
+      ],
+      "why_now": [
+        "Reporting or read-heavy traffic may need isolation from primary write latency."
+      ]
+    },
+    {
+      "confidence": 0.76,
+      "followup_questions": [],
+      "kind": "anti_pattern_warning",
+      "module_slug": null,
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.76,
+      "score_breakdown": {
+        "complexity_penalty": 0.0,
+        "data_shape_fit": 0.0,
+        "domain_fit": 0.0,
+        "growth_urgency": 0.0,
+        "operational_feasibility": 0.0,
+        "portability_penalty": 0.0,
+        "workload_fit": 0.0
+      },
+      "sources": [
+        {
+          "contribution": 0.76,
+          "rule_id": "rule-warn-no-pooling-high-connections"
+        }
+      ],
+      "target_slug": "no_pooling_high_connections",
+      "title": "No Pooling With High Connections",
+      "triggers_for_next_stage": [
+        "Add pool sizing, transaction duration, and session-state compatibility checks."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "Application pools may be enough if limits and transaction duration are already disciplined."
+      ],
+      "why_now": [
+        "High peak connections without pooling evidence risks backend exhaustion and idle-session waste."
+      ]
+    }
+  ],
+  "score_breakdown": {
+    "complexity_penalty": 0.254,
+    "data_shape_fit": 0.753,
+    "domain_fit": 0.752,
+    "growth_urgency": 0.78,
+    "operational_feasibility": 0.81,
+    "portability_penalty": 0.08,
+    "workload_fit": 0.825
+  },
+  "warnings": [
+    {
+      "anti_pattern_slug": "no_pooling_high_connections",
+      "message": "High peak connections without pooling evidence risks backend exhaustion and idle-session waste."
+    }
+  ]
+}

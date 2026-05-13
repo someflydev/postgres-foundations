@@ -1,0 +1,71 @@
+{
+  "context": {
+    "operational_tolerance": "medium",
+    "portability_requirements": "Managed PostgreSQL posture: aws_rds",
+    "scale_signals": [
+      "1700 read qps",
+      "520 write rows/sec",
+      "440 peak connections",
+      "6% monthly growth"
+    ],
+    "team_size": "19 engineers",
+    "tenancy_model": "single tenant"
+  },
+  "data_shapes": [
+    "relational_core",
+    "foreign_postgres_access",
+    "append_only_events"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "blue_green_upgrade_via_logical_replication",
+      "btree_composite_equality_then_range",
+      "btree_covering_include",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "pgcrypto",
+      "physical_replication",
+      "postgres_fdw_federation",
+      "primary_with_read_replicas"
+    ],
+    "recommend_now": [
+      "constraints",
+      "logical_replication",
+      "logical_replication_pair",
+      "pg_stat_statements",
+      "postgres_fdw"
+    ]
+  },
+  "id": "modernization-multi-database-consolidation",
+  "industry": "modernization_bridge",
+  "narrative_path": "narrative.md",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "pg-stat-statements-basics",
+    "partitioning-large-table-operations",
+    "full-text-search-core",
+    "postgres-fdw-boundaries",
+    "row-level-security-policy-design"
+  ],
+  "tags": [
+    "modernization-bridge",
+    "multi-database-consolidation",
+    "medium-tolerance"
+  ],
+  "title": "Multi-database consolidation with logical replication",
+  "workload_patterns": [
+    "migration_bridge",
+    "oltp_heavy",
+    "read_heavy",
+    "replication_fanout"
+  ]
+}

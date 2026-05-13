@@ -1,0 +1,80 @@
+{
+  "context": {
+    "operational_tolerance": "medium",
+    "portability_requirements": "Managed PostgreSQL posture: aws_rds, gcp_cloud_sql",
+    "scale_signals": [
+      "3100 read qps",
+      "1250 write rows/sec",
+      "980 peak connections",
+      "13% monthly growth"
+    ],
+    "team_size": "22 engineers",
+    "tenancy_model": "multi tenant shared schema"
+  },
+  "data_shapes": [
+    "relational_core",
+    "time_series_metrics",
+    "append_only_events",
+    "semi_structured_jsonb"
+  ],
+  "expected_decision_outputs": {
+    "avoid_for_now": [
+      "no_pooling_high_connections"
+    ],
+    "candidate_later": [
+      "btree_composite_equality_then_range",
+      "btree_covering_include",
+      "citus",
+      "citus_distributed_cluster",
+      "expression_indexes",
+      "generated_columns",
+      "gin_jsonb_containment",
+      "jsonb",
+      "materialized_views",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pg_partman",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "pgcrypto",
+      "physical_replication",
+      "primary_with_read_replicas"
+    ],
+    "recommend_now": [
+      "brin_append_only_chronological",
+      "constraints",
+      "partitioning",
+      "pg_stat_statements",
+      "row_level_security",
+      "timescaledb"
+    ]
+  },
+  "id": "observability-real-time-incident-ops",
+  "industry": "observability_iot",
+  "narrative_path": "narrative.md",
+  "suggested_exercises": [
+    "first-select-write-query",
+    "what-lateral-unlocks-level-c-1",
+    "partition-by-retention-window-level-c-1"
+  ],
+  "suggested_lessons": [
+    "pg-stat-statements-basics",
+    "partitioning-large-table-operations",
+    "full-text-search-core",
+    "postgres-fdw-boundaries",
+    "row-level-security-policy-design"
+  ],
+  "tags": [
+    "observability-iot",
+    "real-time-incident-ops-platform",
+    "medium-tolerance"
+  ],
+  "title": "Real-time incident operations platform",
+  "workload_patterns": [
+    "oltp_heavy",
+    "append_heavy",
+    "analytics_adjacent",
+    "read_heavy",
+    "strong_tenant_locality"
+  ]
+}
