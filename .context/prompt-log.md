@@ -205,8 +205,14 @@ Completed:
   `pgfound decision golden-refresh --confirm`; integrated industry scenario
   intake/report drift checks into `pgfound content validate`; documented
   scenario fixtures; and added per-industry scenario regression tests.
+- PROMPT_46: Industry scenario batch 2; added logistics/geo, observability/IoT,
+  knowledge/AI, and modernization bridge scenario packs under
+  `scenarios/industries/`, each with narrative, decision intake, scenario
+  metadata, and JSON/MD expected reports; tightened PostGIS, pgvector,
+  TimescaleDB, postgres_fdw, Citus, and logical-replication posture rules for
+  the new fixtures; added `pgfound decision scenarios audit`; documented the
+  scenario set; and added per-industry plus coverage-audit tests.
 
 Next expected prompt:
 
-- PROMPT_46: industry scenarios batch 2 (logistics/geo, observability,
-  knowledge/AI, modernization bridge).
+- PROMPT_47: progress tracking and remediation flows on the training side.

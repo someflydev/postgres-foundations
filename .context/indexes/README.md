@@ -187,6 +187,21 @@ Industry scenario fixture references introduced by PROMPT_45:
 - `tests/test_scenarios_healthcare.py`
 - `tests/test_scenarios_ecommerce.py`
 
+Industry scenario fixture references introduced by PROMPT_46:
+
+- `scenarios/industries/logistics-geo/`
+- `scenarios/industries/observability-iot/`
+- `scenarios/industries/knowledge-ai/`
+- `scenarios/industries/modernization-bridge/`
+- `docs/decision-engine-scenarios.md`
+- `src/pgfound/decision/scenarios.py`
+- `tests/test_scenarios_coverage_audit.py`
+- `src/pgfound/cli.py`
+- `tests/test_scenarios_logistics.py`
+- `tests/test_scenarios_observability.py`
+- `tests/test_scenarios_knowledge_ai.py`
+- `tests/test_scenarios_modernization.py`
+
 Administration track references introduced by PROMPT_31:
 
 - `curriculum/admin/map.json`

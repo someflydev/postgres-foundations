@@ -40,6 +40,7 @@ concrete, operational, and PostgreSQL core-first.
 - Decision report diff: `uv run pgfound decision diff decision-engine/fixtures/reports/saas-multi-tenant-minimal.report.md decision-engine/fixtures/reports/logistics-geo-minimal.report.md`
 - Decision golden update: `scripts/update-decision-goldens.sh --confirm`
 - Decision scenario golden refresh: `uv run pgfound decision golden-refresh --confirm`
+- Decision scenario coverage audit: `uv run pgfound decision scenarios audit`
 - Decision catalog list: `uv run pgfound decision catalog list --kind industry`
 - Decision catalog check: `uv run pgfound decision catalog check`
 - Decision rules lint: `uv run pgfound decision rules lint`

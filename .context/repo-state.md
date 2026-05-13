@@ -59,6 +59,12 @@ Current baseline:
   `expected-report.md`. `pgfound content validate` now checks industry scenario
   intakes and report drift, and `pgfound decision golden-refresh --confirm`
   regenerates scenario report goldens.
+- Industry scenario batch 2: PROMPT_46 added twelve more scenario packs for
+  logistics/geo, observability/IoT, knowledge/AI, and modernization bridge.
+  These exercise PostGIS, TimescaleDB, pgvector, postgres_fdw, Citus blocking,
+  pg_partman, and logical-replication recommendation paths. It also added
+  `pgfound decision scenarios audit` for extension coverage counts and
+  `docs/decision-engine-scenarios.md`.
 - Content validation: PROMPT_05 added draft 2020-12 JSON Schemas under
   `content-schemas/`, one valid example per kind under
   `content-schemas/examples/`, and a real `pgfound content validate` command
