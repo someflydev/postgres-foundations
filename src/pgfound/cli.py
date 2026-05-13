@@ -1,5 +1,6 @@
 """Click command surface for pgfound."""
 
+import difflib
 import json
 import shutil
 import subprocess
@@ -1277,11 +1278,26 @@ def decision_rules_lint(rule_pattern: str | None) -> None:
 )
 @click.option("--rules", "rule_pattern", help="Restrict the run to rule files matching a glob.")
 @click.option("--explain", "explain_target", help="Print contributing rules for one target slug.")
+@click.option(
+    "--format",
+    "output_format",
+    type=click.Choice(["json", "markdown", "both"]),
+    default="both",
+    show_default=True,
+    help="Output format. json and markdown write only to stdout; both writes files.",
+)
+@click.option(
+    "--show-scores/--hide-scores",
+    default=False,
+    help="Include per-dimension score table in Markdown output.",
+)
 def decision_run(
     intake_json: Path,
     out_dir: Path | None,
     rule_pattern: str | None,
     explain_target: str | None,
+    output_format: str,
+    show_scores: bool,
 ) -> None:
     """Validate a decision intake and write JSON plus Markdown reports."""
     try:
@@ -1289,11 +1305,22 @@ def decision_run(
     except decision_engine.DecisionValidationError as exc:
         raise click.ClickException(str(exc)) from exc
 
+    if output_format == "json":
+        click.echo(decision_report_writer.render_json(report), nl=False)
+        return
+    if output_format == "markdown":
+        click.echo(
+            decision_report_writer.render_markdown(report, show_scores=show_scores), nl=False
+        )
+        return
+
     if out_dir is None:
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         out_dir = paths.TMP_DIR / "decision-reports" / report["intake_id"] / timestamp
 
-    json_path, markdown_path = decision_report_writer.write_report(report, out_dir)
+    json_path, markdown_path = decision_report_writer.write_report(
+        report, out_dir, show_scores=show_scores
+    )
     _success(f"wrote decision report: {json_path}")
     _success(f"wrote decision report: {markdown_path}")
 
@@ -1316,3 +1343,20 @@ def decision_run(
         if not explanations:
             table.add_row("-", "-", "no matching rules contributed")
         console.print(table)
+
+
+@decision.command("diff", help="Diff two decision reports.")
+@click.argument("report_a", type=click.Path(path_type=Path))
+@click.argument("report_b", type=click.Path(path_type=Path))
+def decision_diff(report_a: Path, report_b: Path) -> None:
+    """Produce a human-readable diff between two report files."""
+    left = report_a.read_text(encoding="utf-8").splitlines()
+    right = report_b.read_text(encoding="utf-8").splitlines()
+    for line in difflib.unified_diff(
+        left,
+        right,
+        fromfile=str(report_a),
+        tofile=str(report_b),
+        lineterm="",
+    ):
+        click.echo(line)

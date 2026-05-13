@@ -1,0 +1,101 @@
+# PostgreSQL Architecture Recommendation
+Intake: {{ report.intake_id }}  |  Generated: {{ report.generated_at }}
+Industry: {{ report.intake_summary.industry_title }}  |  Tenancy: {{ report.intake_summary.tenancy_model }}  |  Ops tolerance: {{ report.intake_summary.operational_tolerance }}
+
+## Summary
+{% set recommend_now = report.recommendations | selectattr("recommendation_class", "equalto", "recommend_now") | list -%}
+{% set candidate_later = report.recommendations | selectattr("recommendation_class", "equalto", "candidate_later") | list -%}
+{% set evidence = report.recommendations | selectattr("recommendation_class", "equalto", "not_enough_evidence") | list -%}
+{% set warnings = report.warnings -%}
+The intake points to {{ recommend_now | length }} immediate recommendation{% if recommend_now | length != 1 %}s{% endif %}, {{ candidate_later | length }} later candidate{% if candidate_later | length != 1 %}s{% endif %}, and {{ evidence | length }} item{% if evidence | length != 1 %}s{% endif %} that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. {% if warnings %}The warning section calls out {{ warnings | length }} anti-pattern{% if warnings | length != 1 %}s{% endif %} that should be handled regardless of scoring.{% else %}No anti-pattern warning matched this intake.{% endif %}
+
+## Recommend now
+{% for item in recommend_now %}
+- **{{ item.title }}** — score {{ item.recommendation_score | score }}{% if item.module_slug %} — [module {{ item.module_slug }}]{% endif %}
+  - Why now: {{ item.why_now | join(" ") if item.why_now else "The matched rule and score support immediate adoption." }}
+  - Why not something else: {{ item.why_not_yet | join(" ") if item.why_not_yet else "No stronger deferral signal was present." }}
+  - Triggers for next stage: {{ item.triggers_for_next_stage | join(" ") if item.triggers_for_next_stage else "Define rollout evidence and owner." }}
+{% else %}
+- No recommendations cleared the recommend-now score boundary.
+{% endfor %}
+
+## Candidate later
+{% for item in candidate_later %}
+- **{{ item.title }}** — score {{ item.recommendation_score | score }}{% if item.module_slug %} — [module {{ item.module_slug }}]{% endif %}
+  - Why now: {{ item.why_now | join(" ") if item.why_now else "The rule matched some intake evidence." }}
+  - Why not something else: {{ item.why_not_yet | join(" ") if item.why_not_yet else "The score indicates adoption should wait for stronger evidence." }}
+  - Triggers for next stage: {{ item.triggers_for_next_stage | join(" ") if item.triggers_for_next_stage else "Collect workload evidence and revisit." }}
+{% else %}
+- No later candidates matched.
+{% endfor %}
+
+## Not enough evidence
+{% for item in evidence %}
+- **{{ item.title }}** — score {{ item.recommendation_score | score }}{% if item.module_slug %} — [module {{ item.module_slug }}]{% endif %}
+  - Why now: {{ item.why_now | join(" ") if item.why_now else "The intake hints at this area." }}
+  - Why not something else: {{ item.why_not_yet | join(" ") if item.why_not_yet else "Evidence is currently too weak." }}
+{% if item.followup_questions %}
+  - Follow-up questions: {{ item.followup_questions | join(" ") }}
+{% endif %}
+{% else %}
+- No low-confidence recommendation matched.
+{% endfor %}
+
+## Avoid for now
+{% for warning in report.warnings %}
+- **{{ warning.anti_pattern_slug }}**: {{ warning.message }}
+{% else %}
+- No anti-pattern warnings matched.
+{% endfor %}
+
+{% if show_scores %}
+## Score breakdown
+| Recommendation | Domain | Data | Workload | Ops | Growth | Portability | Complexity | Total |
+| -------------- | ------ | ---- | -------- | --- | ------ | ----------- | ---------- | ----- |
+{% for item in report.recommendations if item.kind != "anti_pattern_warning" -%}
+| {{ item.target_slug }} | {{ item.score_breakdown.domain_fit | score }} | {{ item.score_breakdown.data_shape_fit | score }} | {{ item.score_breakdown.workload_fit | score }} | {{ item.score_breakdown.operational_feasibility | score }} | {{ item.score_breakdown.growth_urgency | score }} | {{ item.score_breakdown.portability_penalty | score }} | {{ item.score_breakdown.complexity_penalty | score }} | {{ item.recommendation_score | score }} |
+{% endfor %}
+
+{% endif -%}
+## Cited rules
+{% set cited = [] -%}
+{% for item in report.recommendations -%}
+{% for source in item.sources -%}
+{% if source.rule_id not in cited -%}
+{% set _ = cited.append(source.rule_id) -%}
+- {{ source.rule_id }} (contrib {{ source.contribution | score }})
+{% endif -%}
+{% endfor -%}
+{% endfor %}
+
+## Next steps (90-day horizon)
+1. Convert each recommend-now item into a small implementation or validation plan with owner, rollback criteria, and acceptance checks.
+2. Capture the workload evidence needed to promote or reject candidate-later items.
+3. Resolve avoid-for-now warnings before adding topology, extension, or indexing complexity.
+
+## Notes and caveats
+- Scores are decision support, not an automatic architecture approval.
+- Penalty dimensions are shown as positive values in the table and subtracted by the weighted model.
+{% if report.followup_question_groups %}
+- Follow-up questions are grouped below so discovery can happen by topic.
+{% endif %}
+
+{% if report.followup_question_groups %}
+## Follow-up Questions
+{% for group, questions in report.followup_question_groups.items() %}
+### {{ group | title }}
+{% for question in questions %}
+- {{ question }}
+{% endfor %}
+{% endfor %}
+
+{% endif -%}
+## Appendix: full intake
+<details>
+<summary>Full intake JSON</summary>
+
+```json
+{{ report.full_intake | tojson(indent=2) }}
+```
+
+</details>
