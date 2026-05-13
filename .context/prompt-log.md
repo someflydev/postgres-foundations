@@ -193,7 +193,13 @@ Completed:
   Markdown reports, score-aware CLI formats, report diffing, grouped follow-up
   questions, tokenized free-form note matching, golden report regeneration, and
   scoring/report/golden tests.
+- PROMPT_44: Decision-engine 4-layer prompt pack; added schema/catalog,
+  evaluator, scenario-generation, and critique prompt templates under
+  `decision-engine/prompts/`; added the shared architect persona and output
+  contracts; added `pgfound decision prompt list|render`; documented planning
+  prompts; and added prompt render tests plus fixture contexts.
 
 Next expected prompt:
 
-- PROMPT_44: 4-layer decision-engine prompt pack.
+- PROMPT_45: industry scenarios batch 1 (SaaS, fintech, healthcare,
+  ecommerce).

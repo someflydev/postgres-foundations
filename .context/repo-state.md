@@ -45,6 +45,13 @@ Current baseline:
   --format json|markdown|both`, `--show-scores`, `decision diff`, tokenized
   free-form note matching, a guarded golden regeneration script, and
   `docs/decision-engine-usage.md`.
+- Decision engine prompt pack: PROMPT_44 added front-matter Markdown templates
+  under `decision-engine/prompts/` for schema/catalog authoring, evaluator
+  cross-checks, industry scenario generation, and critique/validation; added
+  shared architect and output-format prompts; added
+  `pgfound decision prompt list|render`; extended the reusable prompt renderer
+  to support multiple prompt roots; and documented the planning prompt workflow
+  in `docs/llm-usage.md`.
 - Content validation: PROMPT_05 added draft 2020-12 JSON Schemas under
   `content-schemas/`, one valid example per kind under
   `content-schemas/examples/`, and a real `pgfound content validate` command

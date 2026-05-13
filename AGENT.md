@@ -42,6 +42,8 @@ concrete, operational, and PostgreSQL core-first.
 - Decision catalog list: `uv run pgfound decision catalog list --kind industry`
 - Decision catalog check: `uv run pgfound decision catalog check`
 - Decision rules lint: `uv run pgfound decision rules lint`
+- Decision prompt list: `uv run pgfound decision prompt list`
+- Decision prompt render: `uv run pgfound decision prompt render layer-2-evaluator/evaluate-intake --context tests/fixtures/evaluator-context.json`
 - Content validate: `uv run pgfound content validate`
 - Content examples validate: `uv run pgfound content validate --include-examples`
 - Content lint: `uv run pgfound content lint`

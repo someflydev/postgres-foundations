@@ -158,6 +158,19 @@ Decision-engine scoring and report references introduced by PROMPT_43:
 - `tests/test_report_writer.py`
 - `tests/test_decision_golden.py`
 
+Decision-engine prompt pack references introduced by PROMPT_44:
+
+- `decision-engine/prompts/README.md`
+- `decision-engine/prompts/layer-1-schema-catalog/*.md`
+- `decision-engine/prompts/layer-2-evaluator/*.md`
+- `decision-engine/prompts/layer-3-scenarios/*.md`
+- `decision-engine/prompts/layer-4-critique/*.md`
+- `decision-engine/prompts/shared/`
+- `src/pgfound/decision/prompts.py`
+- `tests/test_decision_prompts.py`
+- `tests/test_prompt_output_formats.py`
+- `tests/fixtures/evaluator-context.json`
+
 Administration track references introduced by PROMPT_31:
 
 - `curriculum/admin/map.json`

@@ -86,6 +86,14 @@ decision explanations. These prompts must stay aligned with decision-engine
 catalogs and rules so planning guidance remains explainable, operationally
 aware, and core-first.
 
+Use `pgfound decision prompt list` to inspect planning templates and
+`pgfound decision prompt render <template-id> --context <json-file>` to render
+one. The decision prompt pack has four layers: schema and catalog generation,
+evaluator cross-checks, industry scenario generation, and critique/validation.
+The shared architect persona requires every recommendation to cite rules or
+catalog entries and permits "not yet" when evidence or operational tolerance is
+insufficient.
+
 In both locations, prompt templates should make the LLM's role explicit. The
 model is there to review, question, challenge, and remediate. It is not there to
 replace the lab, the database, or the planner's responsibility to defend a
