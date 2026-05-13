@@ -28,13 +28,13 @@
         "Move to a blue-green topology once replication lag, cutover checks, and write-freeze windows are defined."
       ],
       "scoring": {
-        "domain_fit": 0.78,
-        "data_shape_fit": 0.7,
-        "workload_fit": 0.84,
-        "operational_feasibility": 0.72,
-        "growth_urgency": 0.7,
+        "domain_fit": 0.9,
+        "data_shape_fit": 0.82,
+        "workload_fit": 0.94,
+        "operational_feasibility": 0.88,
+        "growth_urgency": 0.84,
         "portability_penalty": 0.08,
-        "complexity_penalty": 0.28
+        "complexity_penalty": 0.2
       }
     },
     {

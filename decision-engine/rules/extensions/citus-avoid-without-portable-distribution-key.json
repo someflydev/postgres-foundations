@@ -1,0 +1,46 @@
+{
+  "id": "rule-citus-avoid-without-portable-distribution-key",
+  "title": "Avoid Citus when distribution key and portability are unresolved",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "explicit_bias_for_contains": "citus"
+      },
+      {
+        "explicit_bias_against_contains": "citus"
+      }
+    ],
+    "if_not": [
+      {
+        "workload_pattern_present": "strong_tenant_locality"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "citus",
+      "verdict": "avoid_for_now",
+      "confidence": 0.82,
+      "why_now": [
+        "The intake explicitly raises Citus but also identifies portability and distribution-key concerns."
+      ],
+      "why_not_yet": [
+        "Distributed PostgreSQL should wait until hot paths prove a stable distribution key and the team can operate cluster-aware backup, restore, and rebalancing."
+      ],
+      "triggers_for_next_stage": [
+        "Revisit only after single-primary tuning, partitioning, and tenant-local query traces have been exhausted."
+      ],
+      "scoring": {
+        "domain_fit": 0.48,
+        "data_shape_fit": 0.58,
+        "workload_fit": 0.42,
+        "operational_feasibility": 0.36,
+        "growth_urgency": 0.52,
+        "portability_penalty": 0.36,
+        "complexity_penalty": 0.72
+      }
+    }
+  ]
+}

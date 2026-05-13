@@ -33,13 +33,13 @@
         "Choose HNSW or IVFFlat after recall, latency, memory, and refresh tests are measured."
       ],
       "scoring": {
-        "domain_fit": 0.78,
-        "data_shape_fit": 0.92,
-        "workload_fit": 0.86,
-        "operational_feasibility": 0.66,
-        "growth_urgency": 0.6,
+        "domain_fit": 0.94,
+        "data_shape_fit": 0.98,
+        "workload_fit": 0.96,
+        "operational_feasibility": 0.86,
+        "growth_urgency": 0.72,
         "portability_penalty": 0.1,
-        "complexity_penalty": 0.36
+        "complexity_penalty": 0.28
       }
     },
     {

@@ -68,12 +68,12 @@
   },
   "overall": {
     "candidate_later": {
-      "count": 11,
-      "score": 0.582
+      "count": 10,
+      "score": 0.581
     },
     "recommend_now": {
-      "count": 2,
-      "score": 0.687
+      "count": 3,
+      "score": 0.683
     }
   },
   "recommendations": [
@@ -157,6 +157,43 @@
       "why_now": [
         "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
         "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e6-postgres-fdw",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.675,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.88,
+        "growth_urgency": 0.611,
+        "operational_feasibility": 0.714,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.88
+      },
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-postgres-fdw-for-federation"
+        }
+      ],
+      "target_slug": "postgres_fdw",
+      "title": "postgres_fdw",
+      "triggers_for_next_stage": [
+        "Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "FDW should not become a hidden permanent hot path without pushdown verification and retirement planning."
+      ],
+      "why_now": [
+        "The intake names remote PostgreSQL access and an FDW federation need.",
+        "postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded."
       ]
     },
     {
@@ -347,44 +384,6 @@
       ],
       "why_now": [
         "The index catalog has a matching pattern for selective predicates on skewed large tables."
-      ]
-    },
-    {
-      "confidence": 0.8,
-      "followup_questions": [],
-      "kind": "extension",
-      "module_slug": "e6-postgres-fdw",
-      "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
-      "recommendation_score": 0.593,
-      "score_breakdown": {
-        "complexity_penalty": 0.35,
-        "data_shape_fit": 0.8,
-        "domain_fit": 0.78,
-        "growth_urgency": 0.545,
-        "operational_feasibility": 0.61,
-        "portability_penalty": 0.08,
-        "workload_fit": 0.78
-      },
-      "sources": [
-        {
-          "contribution": 0.8,
-          "rule_id": "rule-postgres-fdw-for-federation"
-        }
-      ],
-      "target_slug": "postgres_fdw",
-      "title": "postgres_fdw",
-      "triggers_for_next_stage": [
-        "Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "FDW should not become a hidden permanent hot path without pushdown verification and retirement planning.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
-      ],
-      "why_now": [
-        "The intake names remote PostgreSQL access and an FDW federation need.",
-        "postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded."
       ]
     },
     {
@@ -614,12 +613,12 @@
   ],
   "score_breakdown": {
     "complexity_penalty": 0.195,
-    "data_shape_fit": 0.74,
-    "domain_fit": 0.74,
-    "growth_urgency": 0.545,
-    "operational_feasibility": 0.705,
+    "data_shape_fit": 0.748,
+    "domain_fit": 0.748,
+    "growth_urgency": 0.55,
+    "operational_feasibility": 0.713,
     "portability_penalty": 0.055,
-    "workload_fit": 0.785
+    "workload_fit": 0.792
   },
   "warnings": [
     {

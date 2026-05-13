@@ -20,18 +20,24 @@
     "avoid_for_now": [],
     "candidate_later": [
       "btree_composite_equality_then_range",
-      "partial_indexes",
-      "partial_index_for_skew",
+      "btree_covering_include",
+      "expression_indexes",
       "generated_columns",
       "gin_jsonb_containment",
       "jsonb",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "pgcrypto",
       "physical_replication",
+      "primary_with_read_replicas",
       "unaccent"
     ],
     "recommend_now": [
       "constraints",
-      "pg_stat_statements",
-      "full_text_search"
+      "full_text_search",
+      "pg_stat_statements"
     ]
   },
   "id": "ecommerce-dtc-mid-stage",

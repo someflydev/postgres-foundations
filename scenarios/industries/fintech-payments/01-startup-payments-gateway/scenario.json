@@ -21,8 +21,8 @@
     ],
     "candidate_later": [
       "brin_append_only_chronological",
-      "partial_indexes",
       "partial_index_for_skew",
+      "partial_indexes",
       "pgcrypto"
     ],
     "recommend_now": [

@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: saas-early-stage-crm  |  Generated: 2026-05-13T16:23:19.374429Z
+Intake: saas-early-stage-crm  |  Generated: 2026-05-13T16:52:16.569180Z
 Industry: SaaS Multi-tenant  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: low
 
 ## Summary

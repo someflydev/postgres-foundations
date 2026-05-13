@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: saas-multi-region-compliance  |  Generated: 2026-05-13T16:23:19.903477Z
+Intake: saas-multi-region-compliance  |  Generated: 2026-05-13T16:52:16.844764Z
 Industry: SaaS Multi-tenant  |  Tenancy: multi_tenant_schema_per_tenant  |  Ops tolerance: medium
 
 ## Summary

@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: logistics-geo-minimal  |  Generated: 2026-05-13T16:25:57.709570Z
+Intake: logistics-geo-minimal  |  Generated: 2026-05-12T00:00:00Z
 Industry: Logistics and Geospatial Operations  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: medium
 
 ## Summary

@@ -22,24 +22,30 @@
       "no_pooling_high_connections"
     ],
     "candidate_later": [
-      "logical_replication",
+      "blue_green_upgrade_via_logical_replication",
       "btree_composite_equality_then_range",
-      "partial_indexes",
+      "btree_covering_include",
+      "materialized_views",
       "partial_index_for_skew",
-      "postgres_fdw",
-      "logical_replication_pair",
+      "partial_indexes",
+      "pg_partman",
+      "pgcrypto",
+      "physical_replication",
       "postgres_fdw_federation",
-      "materialized_views"
+      "primary_with_read_replicas"
     ],
     "recommend_now": [
-      "constraints",
-      "pg_stat_statements",
-      "row_level_security",
-      "full_text_search",
-      "partitioning",
       "brin_append_only_chronological",
+      "constraints",
+      "full_text_search",
+      "logical_replication",
+      "logical_replication_pair",
+      "partitioning",
+      "pg_stat_statements",
       "pgbouncer",
-      "pgbouncer_in_front"
+      "pgbouncer_in_front",
+      "postgres_fdw",
+      "row_level_security"
     ]
   },
   "id": "ecommerce-cross-border-compliance",

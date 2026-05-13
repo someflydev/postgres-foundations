@@ -21,20 +21,26 @@
       "no_pooling_high_connections"
     ],
     "candidate_later": [
-      "logical_replication",
+      "blue_green_upgrade_via_logical_replication",
       "btree_composite_equality_then_range",
-      "partial_indexes",
+      "materialized_views",
       "partial_index_for_skew",
-      "postgres_fdw",
-      "logical_replication_pair",
+      "partial_indexes",
+      "pg_partman",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "pgcrypto",
       "postgres_fdw_federation",
-      "materialized_views"
+      "primary_with_read_replicas"
     ],
     "recommend_now": [
+      "brin_append_only_chronological",
       "constraints",
-      "pg_stat_statements",
+      "logical_replication",
+      "logical_replication_pair",
       "partitioning",
-      "brin_append_only_chronological"
+      "pg_stat_statements",
+      "postgres_fdw"
     ]
   },
   "id": "fintech-regional-bank-reconciliation",

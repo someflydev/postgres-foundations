@@ -18,24 +18,31 @@
   ],
   "expected_decision_outputs": {
     "avoid_for_now": [
-      "shard_without_distribution_key",
-      "no_pooling_high_connections"
+      "no_pooling_high_connections",
+      "shard_without_distribution_key"
     ],
     "candidate_later": [
       "btree_composite_equality_then_range",
-      "partial_indexes",
-      "partial_index_for_skew",
+      "btree_covering_include",
+      "citus",
+      "citus_distributed_cluster",
+      "expression_indexes",
       "generated_columns",
       "gin_jsonb_containment",
       "jsonb",
       "materialized_views",
-      "physical_replication"
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pg_partman",
+      "pgcrypto",
+      "physical_replication",
+      "primary_with_read_replicas"
     ],
     "recommend_now": [
-      "constraints",
-      "pg_stat_statements",
-      "partitioning",
       "brin_append_only_chronological",
+      "constraints",
+      "partitioning",
+      "pg_stat_statements",
       "pgbouncer",
       "pgbouncer_in_front"
     ]

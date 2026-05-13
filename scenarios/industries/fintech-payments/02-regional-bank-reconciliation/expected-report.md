@@ -1,11 +1,16 @@
 # PostgreSQL Architecture Recommendation
-Intake: fintech-regional-bank-reconciliation  |  Generated: 2026-05-13T16:23:17.801118Z
+Intake: fintech-regional-bank-reconciliation  |  Generated: 2026-05-13T16:52:14.207336Z
 Industry: Fintech Payments  |  Tenancy: single_tenant  |  Ops tolerance: medium
 
 ## Summary
-The intake points to 4 immediate recommendations, 14 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
+The intake points to 7 immediate recommendations, 11 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
 
 ## Recommend now
+
+- **Logical Replication** — score 0.74
+  - Why now: A PostgreSQL source plus zero-downtime migration need is a direct fit for publication/subscription cutover.
+  - Why not something else: Logical replication still needs primary keys, DDL choreography, sequence handling, and rollback planning.
+  - Triggers for next stage: Move to a blue-green topology once replication lag, cutover checks, and write-freeze windows are defined.
 
 - **Constraints** — score 0.72
   - Why now: audit_required posture depends on database-enforced state transitions, not only application logging. Relational integrity gives audit reviewers durable evidence that invalid business states were rejected. Relational core data needs database-enforced truth before optional architecture choices. Constraints make bad states visible across every application writer.
@@ -16,6 +21,16 @@ The intake points to 4 immediate recommendations, 14 later candidates, and 0 ite
   - Why now: Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions. pg_stat_statements is low-risk and broadly available.
   - Why not something else: Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.
   - Triggers for next stage: Use top total time and calls to justify the next index, schema, or topology recommendation.
+
+- **Logical Replication Pair** — score 0.72
+  - Why now: A logical replication pair supports validation and controlled cutover for PostgreSQL migrations.
+  - Why not something else: DDL drift, sequences, replication lag, and fallback criteria must be owned.
+  - Triggers for next stage: Move to blue-green once cutover gates and reverse-plan are written.
+
+- **postgres_fdw** — score 0.71 — [module e6-postgres-fdw]
+  - Why now: The intake names remote PostgreSQL access and an FDW federation need. postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded.
+  - Why not something else: FDW should not become a hidden permanent hot path without pushdown verification and retirement planning.
+  - Triggers for next stage: Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads.
 
 - **Declarative Partitioning** — score 0.67
   - Why now: Large append-heavy tables need bounded maintenance, retention, and pruning strategy.
@@ -29,11 +44,6 @@ The intake points to 4 immediate recommendations, 14 later candidates, and 0 ite
 
 
 ## Candidate later
-
-- **Logical Replication** — score 0.64
-  - Why now: A PostgreSQL source plus zero-downtime migration need is a direct fit for publication/subscription cutover.
-  - Why not something else: Logical replication still needs primary keys, DDL choreography, sequence handling, and rollback planning. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Move to a blue-green topology once replication lag, cutover checks, and write-freeze windows are defined.
 
 - **Composite Equality Then Range** — score 0.64
   - Why now: Hot OLTP and read-heavy filters often need equality columns before range or sort columns.
@@ -49,16 +59,6 @@ The intake points to 4 immediate recommendations, 14 later candidates, and 0 ite
   - Why now: The index catalog has a matching pattern for selective predicates on skewed large tables.
   - Why not something else: Wait until the predicate is stable in application SQL and selectivity has been measured.
   - Triggers for next stage: Review index size and write amplification after one representative traffic window.
-
-- **postgres_fdw** — score 0.62 — [module e6-postgres-fdw]
-  - Why now: The intake names remote PostgreSQL access and an FDW federation need. postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded.
-  - Why not something else: FDW should not become a hidden permanent hot path without pushdown verification and retirement planning. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads.
-
-- **Logical Replication Pair** — score 0.61
-  - Why now: A logical replication pair supports validation and controlled cutover for PostgreSQL migrations.
-  - Why not something else: DDL drift, sequences, replication lag, and fallback criteria must be owned. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Move to blue-green once cutover gates and reverse-plan are written.
 
 - **postgres_fdw Federation** — score 0.60
   - Why now: A federation topology makes ownership and remote failure modes explicit. Migration-bridge workloads need explicit remote-source boundaries and owner-visible failure modes.
@@ -115,16 +115,16 @@ The intake points to 4 immediate recommendations, 14 later candidates, and 0 ite
 ## Score breakdown
 | Recommendation | Domain | Data | Workload | Ops | Growth | Portability | Complexity | Total |
 | -------------- | ------ | ---- | -------- | --- | ------ | ----------- | ---------- | ----- |
+| logical_replication | 0.90 | 0.82 | 0.94 | 0.87 | 0.91 | 0.08 | 0.20 | 0.74 |
 | constraints | 0.86 | 0.90 | 0.82 | 0.91 | 0.72 | 0.04 | 0.06 | 0.72 |
 | pg_stat_statements | 0.92 | 0.70 | 0.94 | 0.90 | 0.81 | 0.04 | 0.12 | 0.72 |
+| logical_replication_pair | 0.90 | 0.82 | 0.94 | 0.82 | 0.90 | 0.10 | 0.35 | 0.72 |
+| postgres_fdw | 0.88 | 0.90 | 0.88 | 0.81 | 0.79 | 0.08 | 0.35 | 0.71 |
 | partitioning | 0.76 | 0.86 | 0.84 | 0.76 | 0.88 | 0.04 | 0.30 | 0.67 |
 | brin_append_only_chronological | 0.72 | 0.84 | 0.80 | 0.86 | 0.83 | 0.04 | 0.12 | 0.67 |
-| logical_replication | 0.78 | 0.70 | 0.84 | 0.77 | 0.83 | 0.08 | 0.28 | 0.64 |
 | btree_composite_equality_then_range | 0.72 | 0.70 | 0.84 | 0.83 | 0.72 | 0.04 | 0.12 | 0.64 |
 | partial_indexes | 0.70 | 0.72 | 0.82 | 0.79 | 0.77 | 0.04 | 0.16 | 0.63 |
 | partial_index_for_skew | 0.70 | 0.72 | 0.82 | 0.79 | 0.77 | 0.04 | 0.16 | 0.63 |
-| postgres_fdw | 0.78 | 0.80 | 0.78 | 0.70 | 0.72 | 0.08 | 0.35 | 0.62 |
-| logical_replication_pair | 0.76 | 0.66 | 0.82 | 0.70 | 0.82 | 0.10 | 0.35 | 0.61 |
 | postgres_fdw_federation | 0.78 | 0.76 | 0.74 | 0.68 | 0.71 | 0.10 | 0.35 | 0.60 |
 | materialized_views | 0.66 | 0.66 | 0.74 | 0.82 | 0.71 | 0.04 | 0.16 | 0.59 |
 | pgbouncer | 0.76 | 0.62 | 0.82 | 0.73 | 0.78 | 0.16 | 0.35 | 0.59 |
@@ -136,16 +136,16 @@ The intake points to 4 immediate recommendations, 14 later candidates, and 0 ite
 
 
 ## Cited rules
+- rule-logical-replication-for-zero-downtime-migrations (contrib 0.82)
 - rule-audit-required-posture (contrib 0.88)
 - rule-prefer-constraints-for-relational-core (contrib 0.86)
 - rule-pg-stat-statements-for-real-workloads (contrib 0.90)
+- rule-logical-replication-pair-for-blue-green-upgrade (contrib 0.78)
+- rule-postgres-fdw-for-federation (contrib 0.80)
 - rule-partitioning-when-retention-matters (contrib 0.80)
 - rule-brin-for-append-heavy-chronological (contrib 0.70)
-- rule-logical-replication-for-zero-downtime-migrations (contrib 0.82)
 - rule-btree-composite-for-hot-filter-sort (contrib 0.72)
 - rule-partial-indexes-for-skewed-hot-sets (contrib 0.68)
-- rule-postgres-fdw-for-federation (contrib 0.80)
-- rule-logical-replication-pair-for-blue-green-upgrade (contrib 0.78)
 - rule-fdw-federation-for-modernization-bridge (contrib 0.74)
 - rule-materialized-views-for-adjacent-analytics (contrib 0.67)
 - rule-pgbouncer-when-high-concurrency (contrib 0.80)

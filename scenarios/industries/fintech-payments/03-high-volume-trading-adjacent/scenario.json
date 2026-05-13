@@ -23,19 +23,21 @@
     ],
     "candidate_later": [
       "btree_composite_equality_then_range",
-      "partial_indexes",
-      "partial_index_for_skew",
-      "materialized_views",
-      "physical_replication",
       "btree_covering_include",
+      "materialized_views",
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pg_partman",
+      "pgcrypto",
+      "physical_replication",
       "primary_with_read_replicas",
-      "pg_partman"
+      "timescaledb"
     ],
     "recommend_now": [
-      "constraints",
-      "pg_stat_statements",
-      "partitioning",
       "brin_append_only_chronological",
+      "constraints",
+      "partitioning",
+      "pg_stat_statements",
       "pgbouncer",
       "pgbouncer_in_front"
     ]

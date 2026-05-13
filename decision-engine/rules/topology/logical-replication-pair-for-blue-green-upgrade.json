@@ -28,13 +28,13 @@
         "Move to blue-green once cutover gates and reverse-plan are written."
       ],
       "scoring": {
-        "domain_fit": 0.76,
-        "data_shape_fit": 0.66,
-        "workload_fit": 0.82,
-        "operational_feasibility": 0.68,
-        "growth_urgency": 0.68,
+        "domain_fit": 0.9,
+        "data_shape_fit": 0.82,
+        "workload_fit": 0.94,
+        "operational_feasibility": 0.86,
+        "growth_urgency": 0.82,
         "portability_penalty": 0.1,
-        "complexity_penalty": 0.3
+        "complexity_penalty": 0.22
       }
     }
   ]

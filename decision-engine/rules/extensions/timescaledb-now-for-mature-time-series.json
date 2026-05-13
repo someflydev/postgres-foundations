@@ -46,10 +46,10 @@
         "domain_fit": 0.82,
         "data_shape_fit": 0.92,
         "workload_fit": 0.88,
-        "operational_feasibility": 0.72,
-        "growth_urgency": 0.86,
+        "operational_feasibility": 0.8,
+        "growth_urgency": 0.9,
         "portability_penalty": 0.2,
-        "complexity_penalty": 0.38
+        "complexity_penalty": 0.3
       }
     }
   ]

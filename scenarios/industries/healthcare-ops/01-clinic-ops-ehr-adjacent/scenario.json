@@ -20,13 +20,14 @@
     "avoid_for_now": [],
     "candidate_later": [
       "exclusion_constraints",
-      "gist_range_exclusion",
-      "partial_indexes",
-      "partial_index_for_skew",
+      "expression_indexes",
       "generated_columns",
       "gin_jsonb_containment",
+      "gist_range_exclusion",
       "jsonb",
-      "expression_indexes"
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pgcrypto"
     ],
     "recommend_now": [
       "constraints",

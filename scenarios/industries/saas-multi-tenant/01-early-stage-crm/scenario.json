@@ -18,12 +18,12 @@
   "expected_decision_outputs": {
     "avoid_for_now": [],
     "candidate_later": [
-      "partial_indexes",
-      "partial_index_for_skew",
+      "expression_indexes",
       "generated_columns",
       "gin_jsonb_containment",
       "jsonb",
-      "expression_indexes",
+      "partial_index_for_skew",
+      "partial_indexes",
       "pgcrypto"
     ],
     "recommend_now": [

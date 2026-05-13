@@ -23,23 +23,27 @@
     ],
     "candidate_later": [
       "btree_composite_equality_then_range",
-      "partial_indexes",
-      "partial_index_for_skew",
-      "physical_replication",
       "btree_covering_include",
+      "citus",
+      "citus_distributed_cluster",
+      "partial_index_for_skew",
+      "partial_indexes",
       "pg_partman",
+      "pgcrypto",
+      "physical_replication",
       "primary_with_read_replicas",
       "timescaledb"
     ],
     "recommend_now": [
-      "constraints",
-      "pg_stat_statements",
-      "row_level_security",
-      "partitioning",
       "brin_append_only_chronological",
-      "pgbouncer",
+      "constraints",
       "exclusion_constraints",
-      "pgbouncer_in_front"
+      "gist_range_exclusion",
+      "partitioning",
+      "pg_stat_statements",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "row_level_security"
     ]
   },
   "id": "healthcare-telehealth-appointment-platform",

@@ -1,0 +1,46 @@
+{
+  "id": "rule-postgis-candidate-for-geospatial",
+  "title": "Keep PostGIS visible for geospatial data before hot spatial predicates",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "data_shape_present": "geospatial"
+      }
+    ],
+    "if_not": [
+      {
+        "workload_pattern_present": "geo_query_heavy"
+      },
+      {
+        "explicit_bias_against_contains": "postgis"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "extension",
+      "target_slug": "postgis",
+      "verdict": "candidate_later",
+      "confidence": 0.62,
+      "why_now": [
+        "The data model already stores geospatial values, so PostGIS should stay on the review path."
+      ],
+      "why_not_yet": [
+        "Coordinates and small zone sets do not justify spatial types and operators until containment, distance, or intersection queries become hot paths."
+      ],
+      "triggers_for_next_stage": [
+        "Promote when dispatch, pricing, compliance, or availability depends on indexed spatial predicates rather than display-only coordinates."
+      ],
+      "scoring": {
+        "domain_fit": 0.66,
+        "data_shape_fit": 0.82,
+        "workload_fit": 0.48,
+        "operational_feasibility": 0.7,
+        "growth_urgency": 0.34,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.28
+      }
+    }
+  ]
+}

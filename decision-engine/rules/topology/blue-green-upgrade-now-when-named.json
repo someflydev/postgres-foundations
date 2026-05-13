@@ -1,0 +1,44 @@
+{
+  "id": "rule-blue-green-upgrade-now-when-named",
+  "title": "Recommend blue-green logical replication topology when upgrade plan is explicit",
+  "status": "active",
+  "when": {
+    "if_all": [
+      {
+        "migration_need": "requires_zero_downtime_migration"
+      },
+      {
+        "migration_need": "has_legacy_postgres_source"
+      },
+      {
+        "free_form_notes_contains": "blue-green"
+      }
+    ]
+  },
+  "then": [
+    {
+      "kind": "topology_pattern",
+      "target_slug": "blue_green_upgrade_via_logical_replication",
+      "verdict": "recommend_now",
+      "confidence": 0.86,
+      "why_now": [
+        "The intake names a blue-green upgrade and zero-downtime PostgreSQL migration, so the topology should be designed explicitly now."
+      ],
+      "why_not_yet": [
+        "The plan still needs lag gates, sequence handling, validation queries, write-freeze rules, and rollback ownership."
+      ],
+      "triggers_for_next_stage": [
+        "Run rehearsal cutovers and compare pg_stat_statements before and after the upgrade window."
+      ],
+      "scoring": {
+        "domain_fit": 0.96,
+        "data_shape_fit": 0.88,
+        "workload_fit": 0.96,
+        "operational_feasibility": 0.9,
+        "growth_urgency": 0.88,
+        "portability_penalty": 0.08,
+        "complexity_penalty": 0.22
+      }
+    }
+  ]
+}

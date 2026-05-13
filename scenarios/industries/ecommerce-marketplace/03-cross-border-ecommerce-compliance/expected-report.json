@@ -57,7 +57,7 @@
       "analytics_adjacent"
     ]
   },
-  "generated_at": "2026-05-13T16:23:17.287784Z",
+  "generated_at": "2026-05-13T16:52:13.933773Z",
   "intake_id": "ecommerce-cross-border-compliance",
   "intake_summary": {
     "industry": "ecommerce_marketplace",
@@ -67,15 +67,51 @@
   },
   "overall": {
     "candidate_later": {
-      "count": 14,
-      "score": 0.602
+      "count": 11,
+      "score": 0.596
     },
     "recommend_now": {
-      "count": 8,
-      "score": 0.689
+      "count": 11,
+      "score": 0.697
     }
   },
   "recommendations": [
+    {
+      "confidence": 0.82,
+      "followup_questions": [],
+      "kind": "core_feature",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.736,
+      "score_breakdown": {
+        "complexity_penalty": 0.2,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.9,
+        "growth_urgency": 0.912,
+        "operational_feasibility": 0.873,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.94
+      },
+      "sources": [
+        {
+          "contribution": 0.82,
+          "rule_id": "rule-logical-replication-for-zero-downtime-migrations"
+        }
+      ],
+      "target_slug": "logical_replication",
+      "title": "Logical Replication",
+      "triggers_for_next_stage": [
+        "Move to a blue-green topology once replication lag, cutover checks, and write-freeze windows are defined."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Logical replication still needs primary keys, DDL choreography, sequence handling, and rollback planning."
+      ],
+      "why_now": [
+        "A PostgreSQL source plus zero-downtime migration need is a direct fit for publication/subscription cutover."
+      ]
+    },
     {
       "confidence": 0.88,
       "followup_questions": [],
@@ -159,6 +195,42 @@
       ]
     },
     {
+      "confidence": 0.78,
+      "followup_questions": [],
+      "kind": "topology_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.717,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.9,
+        "growth_urgency": 0.901,
+        "operational_feasibility": 0.818,
+        "portability_penalty": 0.1,
+        "workload_fit": 0.94
+      },
+      "sources": [
+        {
+          "contribution": 0.78,
+          "rule_id": "rule-logical-replication-pair-for-blue-green-upgrade"
+        }
+      ],
+      "target_slug": "logical_replication_pair",
+      "title": "Logical Replication Pair",
+      "triggers_for_next_stage": [
+        "Move to blue-green once cutover gates and reverse-plan are written."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "DDL drift, sequences, replication lag, and fallback criteria must be owned."
+      ],
+      "why_now": [
+        "A logical replication pair supports validation and controlled cutover for PostgreSQL migrations."
+      ]
+    },
+    {
       "confidence": 0.88,
       "followup_questions": [],
       "kind": "core_feature",
@@ -193,6 +265,43 @@
       "why_now": [
         "Shared-schema tenancy puts tenant isolation inside every query path.",
         "RLS gives the database a backstop when application filters are missed."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e6-postgres-fdw",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.706,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.88,
+        "growth_urgency": 0.791,
+        "operational_feasibility": 0.805,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.88
+      },
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-postgres-fdw-for-federation"
+        }
+      ],
+      "target_slug": "postgres_fdw",
+      "title": "postgres_fdw",
+      "triggers_for_next_stage": [
+        "Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "FDW should not become a hidden permanent hot path without pushdown verification and retirement planning."
+      ],
+      "why_now": [
+        "The intake names remote PostgreSQL access and an FDW federation need.",
+        "postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded."
       ]
     },
     {
@@ -405,43 +514,6 @@
       ]
     },
     {
-      "confidence": 0.82,
-      "followup_questions": [],
-      "kind": "core_feature",
-      "module_slug": null,
-      "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
-      "recommendation_score": 0.641,
-      "score_breakdown": {
-        "complexity_penalty": 0.28,
-        "data_shape_fit": 0.7,
-        "domain_fit": 0.78,
-        "growth_urgency": 0.835,
-        "operational_feasibility": 0.769,
-        "portability_penalty": 0.08,
-        "workload_fit": 0.84
-      },
-      "sources": [
-        {
-          "contribution": 0.82,
-          "rule_id": "rule-logical-replication-for-zero-downtime-migrations"
-        }
-      ],
-      "target_slug": "logical_replication",
-      "title": "Logical Replication",
-      "triggers_for_next_stage": [
-        "Move to a blue-green topology once replication lag, cutover checks, and write-freeze windows are defined."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "Logical replication still needs primary keys, DDL choreography, sequence handling, and rollback planning.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
-      ],
-      "why_now": [
-        "A PostgreSQL source plus zero-downtime migration need is a direct fit for publication/subscription cutover."
-      ]
-    },
-    {
       "confidence": 0.72,
       "followup_questions": [],
       "kind": "index_pattern",
@@ -547,81 +619,6 @@
       ],
       "why_now": [
         "The index catalog has a matching pattern for selective predicates on skewed large tables."
-      ]
-    },
-    {
-      "confidence": 0.8,
-      "followup_questions": [],
-      "kind": "extension",
-      "module_slug": "e6-postgres-fdw",
-      "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
-      "recommendation_score": 0.624,
-      "score_breakdown": {
-        "complexity_penalty": 0.35,
-        "data_shape_fit": 0.8,
-        "domain_fit": 0.78,
-        "growth_urgency": 0.725,
-        "operational_feasibility": 0.701,
-        "portability_penalty": 0.08,
-        "workload_fit": 0.78
-      },
-      "sources": [
-        {
-          "contribution": 0.8,
-          "rule_id": "rule-postgres-fdw-for-federation"
-        }
-      ],
-      "target_slug": "postgres_fdw",
-      "title": "postgres_fdw",
-      "triggers_for_next_stage": [
-        "Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "FDW should not become a hidden permanent hot path without pushdown verification and retirement planning.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
-      ],
-      "why_now": [
-        "The intake names remote PostgreSQL access and an FDW federation need.",
-        "postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded."
-      ]
-    },
-    {
-      "confidence": 0.78,
-      "followup_questions": [],
-      "kind": "topology_pattern",
-      "module_slug": null,
-      "original_verdict": "recommend_now",
-      "recommendation_class": "candidate_later",
-      "recommendation_score": 0.608,
-      "score_breakdown": {
-        "complexity_penalty": 0.35,
-        "data_shape_fit": 0.66,
-        "domain_fit": 0.76,
-        "growth_urgency": 0.824,
-        "operational_feasibility": 0.701,
-        "portability_penalty": 0.1,
-        "workload_fit": 0.82
-      },
-      "sources": [
-        {
-          "contribution": 0.78,
-          "rule_id": "rule-logical-replication-pair-for-blue-green-upgrade"
-        }
-      ],
-      "target_slug": "logical_replication_pair",
-      "title": "Logical Replication Pair",
-      "triggers_for_next_stage": [
-        "Move to blue-green once cutover gates and reverse-plan are written."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "DDL drift, sequences, replication lag, and fallback criteria must be owned.",
-        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
-      ],
-      "why_now": [
-        "A logical replication pair supports validation and controlled cutover for PostgreSQL migrations."
       ]
     },
     {
@@ -958,13 +955,13 @@
     }
   ],
   "score_breakdown": {
-    "complexity_penalty": 0.254,
-    "data_shape_fit": 0.737,
-    "domain_fit": 0.749,
-    "growth_urgency": 0.773,
-    "operational_feasibility": 0.778,
+    "complexity_penalty": 0.25,
+    "data_shape_fit": 0.755,
+    "domain_fit": 0.765,
+    "growth_urgency": 0.783,
+    "operational_feasibility": 0.793,
     "portability_penalty": 0.076,
-    "workload_fit": 0.813
+    "workload_fit": 0.828
   },
   "warnings": [
     {

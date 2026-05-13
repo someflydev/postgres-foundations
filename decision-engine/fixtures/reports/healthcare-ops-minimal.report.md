@@ -1,9 +1,9 @@
 # PostgreSQL Architecture Recommendation
-Intake: healthcare-ops-minimal  |  Generated: 2026-05-13T16:25:57.296235Z
+Intake: healthcare-ops-minimal  |  Generated: 2026-05-12T00:00:00Z
 Industry: Healthcare Operations  |  Tenancy: multi_tenant_database_per_tenant  |  Ops tolerance: low
 
 ## Summary
-The intake points to 2 immediate recommendations, 11 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
+The intake points to 3 immediate recommendations, 10 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
 
 ## Recommend now
 
@@ -16,6 +16,11 @@ The intake points to 2 immediate recommendations, 11 later candidates, and 0 ite
   - Why now: Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions. pg_stat_statements is low-risk and broadly available.
   - Why not something else: Ownership is still required: reset cadence, query text policy, and review rhythm should be explicit.
   - Triggers for next stage: Use top total time and calls to justify the next index, schema, or topology recommendation.
+
+- **postgres_fdw** — score 0.68 — [module e6-postgres-fdw]
+  - Why now: The intake names remote PostgreSQL access and an FDW federation need. postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded.
+  - Why not something else: FDW should not become a hidden permanent hot path without pushdown verification and retirement planning.
+  - Triggers for next stage: Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads.
 
 
 ## Candidate later
@@ -44,11 +49,6 @@ The intake points to 2 immediate recommendations, 11 later candidates, and 0 ite
   - Why now: The index catalog has a matching pattern for selective predicates on skewed large tables.
   - Why not something else: Wait until the predicate is stable in application SQL and selectivity has been measured.
   - Triggers for next stage: Review index size and write amplification after one representative traffic window.
-
-- **postgres_fdw** — score 0.59 — [module e6-postgres-fdw]
-  - Why now: The intake names remote PostgreSQL access and an FDW federation need. postgres_fdw is the narrowest PostgreSQL-native bridge when remote paths are bounded.
-  - Why not something else: FDW should not become a hidden permanent hot path without pushdown verification and retirement planning. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
-  - Triggers for next stage: Require EXPLAIN VERBOSE pushdown checks and a materialization plan for hot remote reads.
 
 - **postgres_fdw Federation** — score 0.57
   - Why now: A federation topology makes ownership and remote failure modes explicit. Migration-bridge workloads need explicit remote-source boundaries and owner-visible failure modes.
@@ -92,12 +92,12 @@ The intake points to 2 immediate recommendations, 11 later candidates, and 0 ite
 | -------------- | ------ | ---- | -------- | --- | ------ | ----------- | ---------- | ----- |
 | constraints | 0.86 | 0.90 | 0.82 | 0.82 | 0.55 | 0.04 | 0.06 | 0.69 |
 | pg_stat_statements | 0.92 | 0.70 | 0.94 | 0.81 | 0.63 | 0.04 | 0.12 | 0.69 |
+| postgres_fdw | 0.88 | 0.90 | 0.88 | 0.71 | 0.61 | 0.08 | 0.35 | 0.68 |
 | exclusion_constraints | 0.78 | 0.90 | 0.72 | 0.74 | 0.52 | 0.04 | 0.17 | 0.63 |
 | gist_range_exclusion | 0.78 | 0.88 | 0.72 | 0.72 | 0.52 | 0.04 | 0.18 | 0.62 |
 | btree_composite_equality_then_range | 0.72 | 0.70 | 0.84 | 0.74 | 0.55 | 0.04 | 0.12 | 0.61 |
 | partial_indexes | 0.70 | 0.72 | 0.82 | 0.70 | 0.59 | 0.04 | 0.16 | 0.60 |
 | partial_index_for_skew | 0.70 | 0.72 | 0.82 | 0.70 | 0.59 | 0.04 | 0.16 | 0.60 |
-| postgres_fdw | 0.78 | 0.80 | 0.78 | 0.61 | 0.55 | 0.08 | 0.35 | 0.59 |
 | postgres_fdw_federation | 0.78 | 0.76 | 0.74 | 0.58 | 0.53 | 0.10 | 0.35 | 0.57 |
 | physical_replication | 0.68 | 0.62 | 0.80 | 0.67 | 0.57 | 0.08 | 0.22 | 0.56 |
 | btree_covering_include | 0.62 | 0.66 | 0.78 | 0.69 | 0.52 | 0.04 | 0.18 | 0.55 |
@@ -109,11 +109,11 @@ The intake points to 2 immediate recommendations, 11 later candidates, and 0 ite
 - rule-audit-required-posture (contrib 0.88)
 - rule-prefer-constraints-for-relational-core (contrib 0.86)
 - rule-pg-stat-statements-for-real-workloads (contrib 0.90)
+- rule-postgres-fdw-for-federation (contrib 0.80)
 - rule-exclusion-constraints-for-overlap-windows (contrib 0.82)
 - rule-gist-for-range-overlap (contrib 0.76)
 - rule-btree-composite-for-hot-filter-sort (contrib 0.72)
 - rule-partial-indexes-for-skewed-hot-sets (contrib 0.68)
-- rule-postgres-fdw-for-federation (contrib 0.80)
 - rule-fdw-federation-for-modernization-bridge (contrib 0.74)
 - rule-physical-replication-for-read-isolation (contrib 0.70)
 - rule-btree-covering-for-read-heavy (contrib 0.64)

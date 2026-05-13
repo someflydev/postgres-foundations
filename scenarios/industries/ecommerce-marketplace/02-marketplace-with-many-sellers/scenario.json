@@ -22,20 +22,29 @@
     ],
     "candidate_later": [
       "btree_composite_equality_then_range",
-      "partial_indexes",
-      "partial_index_for_skew",
+      "btree_covering_include",
+      "citus",
+      "citus_distributed_cluster",
+      "expression_indexes",
       "generated_columns",
       "gin_jsonb_containment",
       "jsonb",
       "materialized_views",
-      "pgbouncer"
+      "partial_index_for_skew",
+      "partial_indexes",
+      "pg_partman",
+      "pgbouncer",
+      "pgbouncer_in_front",
+      "pgcrypto",
+      "physical_replication",
+      "primary_with_read_replicas"
     ],
     "recommend_now": [
+      "brin_append_only_chronological",
       "constraints",
-      "pg_stat_statements",
-      "row_level_security",
       "partitioning",
-      "brin_append_only_chronological"
+      "pg_stat_statements",
+      "row_level_security"
     ]
   },
   "id": "ecommerce-marketplace-many-sellers",
