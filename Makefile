@@ -1,4 +1,4 @@
-.PHONY: install fmt lint test cli lab-up lab-down lab-nuke lab-psql lab-logs lab-sandbox-up
+.PHONY: install fmt lint test test-integration test-all cli lab-up lab-down lab-nuke lab-psql lab-logs lab-sandbox-up
 
 COMPOSE := docker compose -f docker/docker-compose.yml
 
@@ -12,6 +12,12 @@ lint:
 	uv run ruff check .
 
 test:
+	uv run pytest
+
+test-integration:
+	uv run pytest tests/integration
+
+test-all:
 	uv run pytest
 
 cli:
