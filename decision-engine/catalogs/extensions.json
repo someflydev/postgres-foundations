@@ -10,12 +10,30 @@
     "operational_cost": "The operational cost is low but real. The team must manage shared_preload_libraries where required, reset cadence, pg_stat_statements.max, query text visibility, and whether track_io_timing or planning counters are available. Sensitive query text may need policy review.",
     "replication_backup_implications": "Statistics are local observation data, not application state. They do not need to be preserved in logical backups, but failover and restore runbooks should recognize that a new primary starts with a different statistics history.",
     "managed_service_availability": "broadly_available",
-    "adoption_triggers": ["oltp_heavy", "read_heavy", "analytics_adjacent", "strong_tenant_locality"],
-    "avoidance_triggers": ["no_restore_drills"],
-    "not_yet_triggers": ["No one owns regular workload review.", "The system is still a toy or local-only lab with no repeated query mix.", "Query text collection would violate a policy that has not been reviewed."],
+    "adoption_triggers": [
+      "oltp_heavy",
+      "read_heavy",
+      "analytics_adjacent",
+      "strong_tenant_locality"
+    ],
+    "avoidance_triggers": [
+      "no_restore_drills"
+    ],
+    "not_yet_triggers": [
+      "No one owns regular workload review.",
+      "The system is still a toy or local-only lab with no repeated query mix.",
+      "Query text collection would violate a policy that has not been reviewed."
+    ],
     "prereq_extensions": [],
     "module_slug": "e1-pg-stat-statements",
-    "anti_patterns": ["replica_as_performance_bandage", "unused_indexes", "redundant_indexes"]
+    "anti_patterns": [
+      "replica_as_performance_bandage",
+      "unused_indexes",
+      "redundant_indexes"
+    ],
+    "training_modules": [
+      "a5-monitoring-and-performance-ops"
+    ]
   },
   {
     "id": "pg_trgm",
@@ -28,12 +46,24 @@
     "operational_cost": "GIN or GiST trigram indexes can be large and write-heavy. Teams should scope indexes to valuable columns, test similarity thresholds, monitor write amplification, and avoid indexing every text field just because fuzzy search exists. The review should include representative misspellings, false positives, and explain plans so the index supports a product behavior rather than a vague search improvement.",
     "replication_backup_implications": "Trigram indexes replicate and restore as normal relation state, but their size and rebuild cost matter in restore drills. Extension availability must be confirmed before restoring schema objects that depend on trigram operators or operator classes.",
     "managed_service_availability": "broadly_available",
-    "adoption_triggers": ["search_heavy"],
-    "avoidance_triggers": ["vector_before_lexical", "unused_indexes"],
-    "not_yet_triggers": ["Core FTS has not been modeled or measured.", "The search fields are not known, so index scope would be speculative.", "The product needs semantic retrieval rather than fuzzy lexical matching."],
+    "adoption_triggers": [
+      "search_heavy"
+    ],
+    "avoidance_triggers": [
+      "vector_before_lexical",
+      "unused_indexes"
+    ],
+    "not_yet_triggers": [
+      "Core FTS has not been modeled or measured.",
+      "The search fields are not known, so index scope would be speculative.",
+      "The product needs semantic retrieval rather than fuzzy lexical matching."
+    ],
     "prereq_extensions": [],
     "module_slug": "e2-pg-trgm",
-    "anti_patterns": ["vector_before_lexical", "unused_indexes"]
+    "anti_patterns": [
+      "vector_before_lexical",
+      "unused_indexes"
+    ]
   },
   {
     "id": "postgis",
@@ -46,12 +76,22 @@
     "operational_cost": "The cost is medium. Teams must understand spatial index behavior, coordinate systems, geometry validity, extension upgrade compatibility, larger backups, and managed-service support. Query review needs spatial EXPLAIN literacy, and data-loading pipelines should validate geometry rather than allowing malformed shapes to become production incidents.",
     "replication_backup_implications": "Spatial data follows normal PostgreSQL backup and replication paths, but extension version compatibility matters during restore, major upgrades, and migrations between providers. Restore drills should include PostGIS objects and spatial validation queries.",
     "managed_service_availability": "broadly_available",
-    "adoption_triggers": ["geo_query_heavy"],
-    "avoidance_triggers": ["geo_logic_without_postgis"],
-    "not_yet_triggers": ["Coordinates are only display metadata.", "No hot path uses within, intersects, nearest, or distance predicates.", "The team has not chosen coordinate-system and geometry-validity rules."],
+    "adoption_triggers": [
+      "geo_query_heavy"
+    ],
+    "avoidance_triggers": [
+      "geo_logic_without_postgis"
+    ],
+    "not_yet_triggers": [
+      "Coordinates are only display metadata.",
+      "No hot path uses within, intersects, nearest, or distance predicates.",
+      "The team has not chosen coordinate-system and geometry-validity rules."
+    ],
     "prereq_extensions": [],
     "module_slug": "e3-postgis",
-    "anti_patterns": ["geo_logic_without_postgis"]
+    "anti_patterns": [
+      "geo_logic_without_postgis"
+    ]
   },
   {
     "id": "pgvector",
@@ -64,12 +104,22 @@
     "operational_cost": "The cost is medium to high. HNSW and IVFFlat indexes consume memory and storage, require recall testing, and can complicate bulk refresh. Teams also need embedding lifecycle, model-version, deletion, and reindexing procedures. A useful rollout includes offline evaluation sets and rollback criteria when recall or latency does not justify the index cost.",
     "replication_backup_implications": "Vector tables and indexes are normal PostgreSQL data, but restore time, index rebuild memory, and extension availability must be included in drills. Embedding model versions and regeneration procedures should be documented outside the database.",
     "managed_service_availability": "broadly_available",
-    "adoption_triggers": ["semantic_retrieval"],
-    "avoidance_triggers": ["vector_before_lexical"],
-    "not_yet_triggers": ["Core lexical search has not been implemented.", "Tenant and permission filters are not part of the retrieval plan.", "Embedding refresh, deletion, and model-version ownership are undefined."],
+    "adoption_triggers": [
+      "semantic_retrieval"
+    ],
+    "avoidance_triggers": [
+      "vector_before_lexical"
+    ],
+    "not_yet_triggers": [
+      "Core lexical search has not been implemented.",
+      "Tenant and permission filters are not part of the retrieval plan.",
+      "Embedding refresh, deletion, and model-version ownership are undefined."
+    ],
     "prereq_extensions": [],
     "module_slug": "e4-pgvector",
-    "anti_patterns": ["vector_before_lexical"]
+    "anti_patterns": [
+      "vector_before_lexical"
+    ]
   },
   {
     "id": "timescaledb",
@@ -82,12 +132,24 @@
     "operational_cost": "The operational cost is significant. Teams must check managed-service availability, extension versions, backup and restore behavior, major upgrades, compression tradeoffs, and whether operations staff understand hypertables rather than plain partitions. Compression policy, chunk sizing, and background jobs become part of production review rather than hidden extension defaults.",
     "replication_backup_implications": "Hypertable metadata, jobs, compressed chunks, and extension versions must be restored consistently. Logical replication support and provider-specific backup behavior need explicit review before the extension enters a production plan.",
     "managed_service_availability": "limited",
-    "adoption_triggers": ["append_heavy", "analytics_adjacent"],
-    "avoidance_triggers": ["partition_too_early"],
-    "not_yet_triggers": ["Core partitioning and BRIN have not been measured.", "Retention and compression requirements are vague.", "Managed-service support or restore behavior is unknown."],
+    "adoption_triggers": [
+      "append_heavy",
+      "analytics_adjacent"
+    ],
+    "avoidance_triggers": [
+      "partition_too_early"
+    ],
+    "not_yet_triggers": [
+      "Core partitioning and BRIN have not been measured.",
+      "Retention and compression requirements are vague.",
+      "Managed-service support or restore behavior is unknown."
+    ],
     "prereq_extensions": [],
     "module_slug": "e5-timescaledb",
-    "anti_patterns": ["partition_too_early", "no_restore_drills"]
+    "anti_patterns": [
+      "partition_too_early",
+      "no_restore_drills"
+    ]
   },
   {
     "id": "postgres_fdw",
@@ -100,12 +162,22 @@
     "operational_cost": "The cost is medium. Remote credentials, network latency, transaction semantics, server definitions, planner estimates, and failure behavior cross a boundary that ordinary local SQL does not expose. Monitoring must separate local database health from remote-source failures so support teams know which owner can act.",
     "replication_backup_implications": "Foreign table definitions and server mappings back up locally, but remote data does not. Restore plans must identify both sides of the bridge, recreate extension objects, and prove the restored environment can reach or intentionally replace the remote source.",
     "managed_service_availability": "broadly_available",
-    "adoption_triggers": ["migration_bridge"],
-    "avoidance_triggers": ["fdw_without_pushdown_verification"],
-    "not_yet_triggers": ["EXPLAIN VERBOSE has not confirmed remote pushdown.", "Remote ownership and credentials are unclear.", "The bridge has no retirement or materialization plan."],
+    "adoption_triggers": [
+      "migration_bridge"
+    ],
+    "avoidance_triggers": [
+      "fdw_without_pushdown_verification"
+    ],
+    "not_yet_triggers": [
+      "EXPLAIN VERBOSE has not confirmed remote pushdown.",
+      "Remote ownership and credentials are unclear.",
+      "The bridge has no retirement or materialization plan."
+    ],
     "prereq_extensions": [],
     "module_slug": "e6-postgres-fdw",
-    "anti_patterns": ["fdw_without_pushdown_verification"]
+    "anti_patterns": [
+      "fdw_without_pushdown_verification"
+    ]
   },
   {
     "id": "pgbouncer",
@@ -118,12 +190,26 @@
     "operational_cost": "The cost is medium. Pool mode affects prepared statements, session settings, temporary tables, advisory locks, LISTEN/NOTIFY, authentication, failover routing, and observability. The application must be compatible with the selected mode, and runbooks should explain how to drain, reload, and redirect pools during maintenance or failover.",
     "replication_backup_implications": "PgBouncer has no database backup state, but failover and restore runbooks must update pool targets, credentials, health checks, and DNS or service discovery paths.",
     "managed_service_availability": "limited",
-    "adoption_triggers": ["oltp_heavy", "read_heavy"],
-    "avoidance_triggers": ["no_pooling_high_connections"],
-    "not_yet_triggers": ["Application pool limits are unknown.", "The workload depends on session state incompatible with transaction pooling.", "Connection count is not the measured bottleneck."],
+    "adoption_triggers": [
+      "oltp_heavy",
+      "read_heavy"
+    ],
+    "avoidance_triggers": [
+      "no_pooling_high_connections"
+    ],
+    "not_yet_triggers": [
+      "Application pool limits are unknown.",
+      "The workload depends on session state incompatible with transaction pooling.",
+      "Connection count is not the measured bottleneck."
+    ],
     "prereq_extensions": [],
     "module_slug": "pgbouncer",
-    "anti_patterns": ["no_pooling_high_connections"]
+    "anti_patterns": [
+      "no_pooling_high_connections"
+    ],
+    "training_modules": [
+      "a3-auth-and-pooling"
+    ]
   },
   {
     "id": "citus",
@@ -136,12 +222,24 @@
     "operational_cost": "The cost is high. Backups, rebalancing, shard placement, coordinator and worker health, distributed query plans, major upgrades, and managed-service portability all become materially more complex.",
     "replication_backup_implications": "Backup and restore must cover coordinator and workers consistently. Replication architecture is provider-specific, and disaster recovery runbooks need cluster-aware validation rather than single-node assumptions. A restore drill should prove reference tables, distributed tables, shard metadata, and application routing together.",
     "managed_service_availability": "limited",
-    "adoption_triggers": ["strong_tenant_locality", "analytics_adjacent"],
-    "avoidance_triggers": ["shard_without_distribution_key"],
-    "not_yet_triggers": ["No proven distribution key appears on hot paths.", "The workload has not exhausted single-primary and partitioning options.", "The team cannot operate cluster backup, restore, and rebalancing."],
+    "adoption_triggers": [
+      "strong_tenant_locality",
+      "analytics_adjacent"
+    ],
+    "avoidance_triggers": [
+      "shard_without_distribution_key"
+    ],
+    "not_yet_triggers": [
+      "No proven distribution key appears on hot paths.",
+      "The workload has not exhausted single-primary and partitioning options.",
+      "The team cannot operate cluster backup, restore, and rebalancing."
+    ],
     "prereq_extensions": [],
     "module_slug": "e7-citus",
-    "anti_patterns": ["shard_without_distribution_key", "no_restore_drills"]
+    "anti_patterns": [
+      "shard_without_distribution_key",
+      "no_restore_drills"
+    ]
   },
   {
     "id": "ltree",
@@ -154,12 +252,23 @@
     "operational_cost": "The cost is low to medium. Teams must design label rules, handle subtree moves, choose GiST or GIN indexes, and confirm managed-service availability. The data model should still explain ownership and lifecycle of nodes.",
     "replication_backup_implications": "ltree data and indexes replicate normally, but extension availability must be checked in target environments before restore or migration. Path values are ordinary data once the extension exists. Restore validation should include representative ancestor and descendant queries, not just table counts.",
     "managed_service_availability": "broadly_available",
-    "adoption_triggers": ["search_heavy", "read_heavy"],
-    "avoidance_triggers": ["jsonb_everything"],
-    "not_yet_triggers": ["Recursive CTEs or adjacency lists have not been tested.", "Hierarchy edges need rich metadata better represented as rows.", "Path labels or subtree-move semantics are unstable."],
+    "adoption_triggers": [
+      "search_heavy",
+      "read_heavy"
+    ],
+    "avoidance_triggers": [
+      "jsonb_everything"
+    ],
+    "not_yet_triggers": [
+      "Recursive CTEs or adjacency lists have not been tested.",
+      "Hierarchy edges need rich metadata better represented as rows.",
+      "Path labels or subtree-move semantics are unstable."
+    ],
     "prereq_extensions": [],
     "module_slug": "ltree",
-    "anti_patterns": ["jsonb_everything"]
+    "anti_patterns": [
+      "jsonb_everything"
+    ]
   },
   {
     "id": "pg_partman",
@@ -172,12 +281,24 @@
     "operational_cost": "The cost is medium. Background maintenance, configuration tables, extension upgrades, job scheduling, and partition naming conventions become part of operations. Teams must understand both PostgreSQL partitioning and pg_partman behavior. Monitoring should alert before missing future partitions breaks ingest or retention jobs remove the wrong data.",
     "replication_backup_implications": "Partition metadata and pg_partman configuration must be restored consistently before maintenance resumes. Restore drills should prove that jobs, future partitions, and retention behavior still work, including the first insert after recovery and the next scheduled maintenance cycle.",
     "managed_service_availability": "limited",
-    "adoption_triggers": ["append_heavy", "analytics_adjacent"],
-    "avoidance_triggers": ["partition_too_early"],
-    "not_yet_triggers": ["Partitioning itself is premature.", "Manual partition maintenance is not yet a real operational burden.", "Restore drills do not cover partition-management metadata."],
+    "adoption_triggers": [
+      "append_heavy",
+      "analytics_adjacent"
+    ],
+    "avoidance_triggers": [
+      "partition_too_early"
+    ],
+    "not_yet_triggers": [
+      "Partitioning itself is premature.",
+      "Manual partition maintenance is not yet a real operational burden.",
+      "Restore drills do not cover partition-management metadata."
+    ],
     "prereq_extensions": [],
     "module_slug": "pg-partman",
-    "anti_patterns": ["partition_too_early", "no_restore_drills"]
+    "anti_patterns": [
+      "partition_too_early",
+      "no_restore_drills"
+    ]
   },
   {
     "id": "unaccent",
@@ -190,12 +311,22 @@
     "operational_cost": "The cost is low. The main burden is documenting language expectations, generated-column dependencies, and whether accent folding applies to all search or only selected fields. Teams should test examples where accent folding would be wrong, such as proper nouns or regulated identifiers.",
     "replication_backup_implications": "Dictionary configuration, generated search values, and dependent indexes must exist in restored environments. Extension availability is usually straightforward, but restore validation should include representative accent-insensitive search queries and any generated tsvector columns that depend on unaccent normalization.",
     "managed_service_availability": "broadly_available",
-    "adoption_triggers": ["search_heavy"],
-    "avoidance_triggers": ["vector_before_lexical"],
-    "not_yet_triggers": ["The product requires accent-sensitive matching.", "No multilingual or accent-insensitive search requirement exists.", "Search normalization rules have not been documented."],
+    "adoption_triggers": [
+      "search_heavy"
+    ],
+    "avoidance_triggers": [
+      "vector_before_lexical"
+    ],
+    "not_yet_triggers": [
+      "The product requires accent-sensitive matching.",
+      "No multilingual or accent-insensitive search requirement exists.",
+      "Search normalization rules have not been documented."
+    ],
     "prereq_extensions": [],
     "module_slug": "multi-language-and-unaccent",
-    "anti_patterns": ["vector_before_lexical"]
+    "anti_patterns": [
+      "vector_before_lexical"
+    ]
   },
   {
     "id": "pgcrypto",
@@ -208,11 +339,22 @@
     "operational_cost": "The cost is low for UUID generation. The cost becomes policy-heavy if teams use cryptographic functions for passwords, encryption, or token handling, because key management and compliance requirements are outside simple schema design. Documentation should separate safe defaults from security architecture decisions.",
     "replication_backup_implications": "Generated UUID values are ordinary data, and defaults restore cleanly when the extension is installed first. Restore scripts must create the extension before objects that depend on its functions.",
     "managed_service_availability": "broadly_available",
-    "adoption_triggers": ["oltp_heavy", "migration_bridge"],
-    "avoidance_triggers": ["jsonb_everything"],
-    "not_yet_triggers": ["Opaque identifiers are not needed.", "Dense sequence keys are better for the internal workload.", "The intended cryptographic use has not received security review."],
+    "adoption_triggers": [
+      "oltp_heavy",
+      "migration_bridge"
+    ],
+    "avoidance_triggers": [
+      "jsonb_everything"
+    ],
+    "not_yet_triggers": [
+      "Opaque identifiers are not needed.",
+      "Dense sequence keys are better for the internal workload.",
+      "The intended cryptographic use has not received security review."
+    ],
     "prereq_extensions": [],
     "module_slug": "when-uuid-is-the-right-key",
-    "anti_patterns": ["jsonb_everything"]
+    "anti_patterns": [
+      "jsonb_everything"
+    ]
   }
 ]

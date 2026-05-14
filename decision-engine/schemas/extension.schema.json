@@ -45,6 +45,7 @@
     },
     "prereq_extensions": { "$ref": "#/$defs/slug_array" },
     "module_slug": { "$ref": "#/$defs/module_slug" },
+    "training_modules": { "$ref": "#/$defs/module_slug_array" },
     "anti_patterns": { "$ref": "#/$defs/slug_array" }
   },
   "$defs": {
@@ -59,6 +60,11 @@
     "slug_array": {
       "type": "array",
       "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "module_slug_array": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/module_slug" },
       "uniqueItems": true
     }
   }

@@ -21,6 +21,7 @@
     "introduced_in_phase": { "type": "integer", "minimum": 0 },
     "applies_to_data_shapes": { "$ref": "#/$defs/slug_array" },
     "applies_to_workload_patterns": { "$ref": "#/$defs/slug_array" },
+    "training_modules": { "$ref": "#/$defs/module_slug_array" },
     "failure_modes": {
       "type": "array",
       "items": { "type": "string", "minLength": 1 },
@@ -40,6 +41,15 @@
     "slug_array": {
       "type": "array",
       "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "module_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "module_slug_array": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/module_slug" },
       "uniqueItems": true
     }
   }

@@ -39,3 +39,16 @@ def test_extension_modules_have_lessons_exercises_and_catalog_alignment() -> Non
     )
     for extension in catalog:
         assert extension["module_slug"] in module_ids | lesson_ids, extension["id"]
+
+
+def test_admin_modules_have_decision_engine_training_references() -> None:
+    admin = json.loads((paths.CURRICULUM_DIR / "admin" / "map.json").read_text(encoding="utf-8"))
+    admin_module_ids = {module["id"] for module in admin["modules"]}
+    referenced: set[str] = set()
+
+    for catalog_path in (paths.DECISION_ENGINE_DIR / "catalogs").glob("*.json"):
+        entries = json.loads(catalog_path.read_text(encoding="utf-8"))
+        for entry in entries:
+            referenced.update(entry.get("training_modules", []))
+
+    assert admin_module_ids <= referenced

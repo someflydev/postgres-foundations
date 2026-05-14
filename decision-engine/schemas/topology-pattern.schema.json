@@ -18,6 +18,7 @@
     "title": { "type": "string", "minLength": 1 },
     "summary": { "type": "string", "minLength": 1 },
     "applies_to_workload_patterns": { "$ref": "#/$defs/slug_array" },
+    "training_modules": { "$ref": "#/$defs/module_slug_array" },
     "operational_cost": { "type": "string", "minLength": 1 },
     "failure_modes": {
       "type": "array",
@@ -38,6 +39,15 @@
     "slug_array": {
       "type": "array",
       "items": { "$ref": "#/$defs/slug" },
+      "uniqueItems": true
+    },
+    "module_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "module_slug_array": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/module_slug" },
       "uniqueItems": true
     }
   }

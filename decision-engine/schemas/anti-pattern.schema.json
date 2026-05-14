@@ -22,6 +22,7 @@
       "minItems": 1
     },
     "recommended_alternative": { "type": "string", "minLength": 1 },
+    "training_modules": { "$ref": "#/$defs/module_slug_array" },
     "references": {
       "type": "array",
       "items": { "type": "string", "pattern": "^docs/anti-patterns/[a-z0-9_]+\\.md$" },
@@ -32,6 +33,15 @@
     "slug": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*$"
+    },
+    "module_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "module_slug_array": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/module_slug" },
+      "uniqueItems": true
     }
   }
 }

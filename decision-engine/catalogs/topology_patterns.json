@@ -3,72 +3,153 @@
     "id": "single_primary",
     "title": "Single Primary",
     "summary": "A single PostgreSQL primary is the default topology for transactional systems. It fits until measured write, availability, or read-isolation requirements justify extra moving parts.",
-    "applies_to_workload_patterns": ["oltp_heavy", "append_heavy", "geo_query_heavy", "semantic_retrieval", "strong_tenant_locality"],
+    "applies_to_workload_patterns": [
+      "oltp_heavy",
+      "append_heavy",
+      "geo_query_heavy",
+      "semantic_retrieval",
+      "strong_tenant_locality"
+    ],
     "operational_cost": "Low relative cost, with normal backup, restore, monitoring, and maintenance responsibilities.",
-    "failure_modes": ["Treating one primary as simple while skipping restore drills or connection limits."],
-    "references": ["docs/lab.md", "docs/admin-track/a4-backup-and-upgrades-playbook.md"]
+    "failure_modes": [
+      "Treating one primary as simple while skipping restore drills or connection limits."
+    ],
+    "references": [
+      "docs/lab.md",
+      "docs/admin-track/a4-backup-and-upgrades-playbook.md"
+    ],
+    "training_modules": [
+      "a4-maintenance-and-lifecycle"
+    ]
   },
   {
     "id": "primary_with_read_replicas",
     "title": "Primary With Read Replicas",
     "summary": "Read replicas isolate read traffic and improve availability posture for read-heavy or reporting paths. They fit when stale reads are acceptable and lag is observable.",
-    "applies_to_workload_patterns": ["read_heavy", "search_heavy", "analytics_adjacent", "replication_fanout", "geo_query_heavy", "semantic_retrieval"],
+    "applies_to_workload_patterns": [
+      "read_heavy",
+      "search_heavy",
+      "analytics_adjacent",
+      "replication_fanout",
+      "geo_query_heavy",
+      "semantic_retrieval"
+    ],
     "operational_cost": "Medium cost because lag, failover behavior, query routing, and replica sizing become product concerns.",
-    "failure_modes": ["Using replicas to hide bad indexes, slow joins, or workloads that require fresh reads."],
-    "references": ["docs/admin-track/a6-replication-ha-playbook.md", "docs/anti-patterns/replica_as_performance_bandage.md"]
+    "failure_modes": [
+      "Using replicas to hide bad indexes, slow joins, or workloads that require fresh reads."
+    ],
+    "references": [
+      "docs/admin-track/a6-replication-ha-playbook.md",
+      "docs/anti-patterns/replica_as_performance_bandage.md"
+    ],
+    "training_modules": [
+      "a6-replication-and-ha"
+    ]
   },
   {
     "id": "logical_replication_pair",
     "title": "Logical Replication Pair",
     "summary": "A logical replication pair moves selected table changes between PostgreSQL databases. It fits migration, fanout, and controlled coexistence when schema scope is explicit.",
-    "applies_to_workload_patterns": ["append_heavy", "replication_fanout"],
+    "applies_to_workload_patterns": [
+      "append_heavy",
+      "replication_fanout"
+    ],
     "operational_cost": "Medium cost because publications, slots, lag, DDL changes, and conflict expectations need ownership.",
-    "failure_modes": ["Unmonitored slots retain WAL or replicated schemas drift without tests."],
-    "references": ["docs/logical-replication-playbook.md", "lessons/phase-10-security-and-replication"]
+    "failure_modes": [
+      "Unmonitored slots retain WAL or replicated schemas drift without tests."
+    ],
+    "references": [
+      "docs/logical-replication-playbook.md",
+      "lessons/phase-10-security-and-replication"
+    ]
   },
   {
     "id": "logical_replication_to_analytics_replica",
     "title": "Logical Replication to Analytics Replica",
     "summary": "This topology feeds operational data into an analytics-focused PostgreSQL target. It fits reporting workloads that can tolerate lag and should not scan the primary.",
-    "applies_to_workload_patterns": ["analytics_adjacent"],
+    "applies_to_workload_patterns": [
+      "analytics_adjacent"
+    ],
     "operational_cost": "Medium to high cost because freshness contracts, schema transforms, and replay monitoring are now required.",
-    "failure_modes": ["Analytics queries assume primary freshness or silently fall behind during slot lag."],
-    "references": ["docs/logical-replication-playbook.md", "docs/observability-intro.md"]
+    "failure_modes": [
+      "Analytics queries assume primary freshness or silently fall behind during slot lag."
+    ],
+    "references": [
+      "docs/logical-replication-playbook.md",
+      "docs/observability-intro.md"
+    ]
   },
   {
     "id": "postgres_fdw_federation",
     "title": "postgres_fdw Federation",
     "summary": "FDW federation exposes remote PostgreSQL data for bridge reads or limited federation. It fits temporary coexistence, not vague permanent ownership.",
-    "applies_to_workload_patterns": ["migration_bridge"],
+    "applies_to_workload_patterns": [
+      "migration_bridge"
+    ],
     "operational_cost": "Medium cost because network latency, credentials, remote plans, and failure domains enter query execution.",
-    "failure_modes": ["Remote filters fail to push down and hot queries pull large tables over the network."],
-    "references": ["docs/extension-track/e6-postgres-fdw.md", "docs/anti-patterns/fdw_without_pushdown_verification.md"]
+    "failure_modes": [
+      "Remote filters fail to push down and hot queries pull large tables over the network."
+    ],
+    "references": [
+      "docs/extension-track/e6-postgres-fdw.md",
+      "docs/anti-patterns/fdw_without_pushdown_verification.md"
+    ]
   },
   {
     "id": "citus_distributed_cluster",
     "title": "Citus Distributed Cluster",
     "summary": "A Citus cluster distributes tables across workers using a distribution key. It fits tenant-local or shard-local workloads after single-node limits are proven.",
-    "applies_to_workload_patterns": ["strong_tenant_locality", "analytics_adjacent"],
+    "applies_to_workload_patterns": [
+      "strong_tenant_locality",
+      "analytics_adjacent"
+    ],
     "operational_cost": "High cost because backups, rebalancing, shard placement, upgrades, and query locality must be operated deliberately.",
-    "failure_modes": ["Choosing a distribution key that hot queries do not include creates cross-shard work and surprise latency."],
-    "references": ["docs/extension-track/e7-citus.md", "docs/anti-patterns/shard_without_distribution_key.md"]
+    "failure_modes": [
+      "Choosing a distribution key that hot queries do not include creates cross-shard work and surprise latency."
+    ],
+    "references": [
+      "docs/extension-track/e7-citus.md",
+      "docs/anti-patterns/shard_without_distribution_key.md"
+    ]
   },
   {
     "id": "pgbouncer_in_front",
     "title": "PgBouncer in Front",
     "summary": "PgBouncer in front of PostgreSQL controls client connection pressure and session churn. It fits connection-heavy applications before max_connections becomes the scaling plan.",
-    "applies_to_workload_patterns": ["oltp_heavy", "read_heavy"],
+    "applies_to_workload_patterns": [
+      "oltp_heavy",
+      "read_heavy"
+    ],
     "operational_cost": "Medium cost because pool mode, prepared statements, session settings, failover, and observability need review.",
-    "failure_modes": ["Transaction pooling breaks code that assumes session state or LISTEN/NOTIFY behavior."],
-    "references": ["docs/extension-track/pgbouncer.md", "docs/admin-track/a3-auth-and-pooling-playbook.md"]
+    "failure_modes": [
+      "Transaction pooling breaks code that assumes session state or LISTEN/NOTIFY behavior."
+    ],
+    "references": [
+      "docs/extension-track/pgbouncer.md",
+      "docs/admin-track/a3-auth-and-pooling-playbook.md"
+    ],
+    "training_modules": [
+      "a3-auth-and-pooling"
+    ]
   },
   {
     "id": "blue_green_upgrade_via_logical_replication",
     "title": "Blue-green Upgrade via Logical Replication",
     "summary": "Blue-green upgrade via logical replication builds a new target while the old system continues writing. It fits high-care migrations that need rehearsal and rollback windows.",
-    "applies_to_workload_patterns": ["migration_bridge"],
+    "applies_to_workload_patterns": [
+      "migration_bridge"
+    ],
     "operational_cost": "High cost because dual writes, sequence handling, cutover validation, and rollback criteria must be explicit.",
-    "failure_modes": ["Cutover proceeds without reconciliation queries or a tested reverse path."],
-    "references": ["docs/logical-replication-playbook.md", "docs/admin-track/a4-backup-and-upgrades-playbook.md"]
+    "failure_modes": [
+      "Cutover proceeds without reconciliation queries or a tested reverse path."
+    ],
+    "references": [
+      "docs/logical-replication-playbook.md",
+      "docs/admin-track/a4-backup-and-upgrades-playbook.md"
+    ],
+    "training_modules": [
+      "a4-maintenance-and-lifecycle",
+      "a6-replication-and-ha"
+    ]
   }
 ]

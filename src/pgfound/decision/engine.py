@@ -222,6 +222,10 @@ def check_catalogs() -> CatalogCheckResult:
                 errors.append(f"extension:{extension['id']} references missing anti_pattern:{slug}")
 
     module_ids: set[str] = set()
+    admin_map_path = paths.CURRICULUM_DIR / "admin" / "map.json"
+    if admin_map_path.is_file():
+        admin_map = _load_json(admin_map_path)
+        module_ids.update(str(module["id"]) for module in admin_map.get("modules", []))
     extension_map_path = paths.CURRICULUM_DIR / "extensions" / "map.json"
     if extension_map_path.is_file():
         extension_map = _load_json(extension_map_path)
@@ -229,6 +233,11 @@ def check_catalogs() -> CatalogCheckResult:
     module_ids.update(
         path.parent.name for path in (paths.LESSONS_DIR).glob("phase-*/*/*/lesson.json")
     )
+    for kind, entries in catalogs.items():
+        for entry in entries.values():
+            for slug in entry.get("training_modules", []):
+                if slug not in module_ids:
+                    errors.append(f"{kind}:{entry['id']} references missing training_module:{slug}")
     for extension in catalogs["extension"].values():
         module_slug = extension["module_slug"]
         if module_slug not in module_ids:
