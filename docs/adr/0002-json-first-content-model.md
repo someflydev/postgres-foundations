@@ -10,10 +10,10 @@ Accepted
 
 ## Context
 
-The platform will contain curriculum metadata, rubric structures,
+The platform contains curriculum metadata, rubric structures,
 decision-engine catalogs, rules, scoring inputs, anti-pattern definitions, and
 reporting data. These artifacts must be reviewable by humans and validated by
-programs. They will also drive automated review, prompt assembly, and planning
+programs. They also drive automated review, prompt assembly, and planning
 reports, so the format must support stable diffs and predictable parsing.
 
 ## Decision

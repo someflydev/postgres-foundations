@@ -1,6 +1,7 @@
 # Known Gaps
 
-This file records honest release gaps discovered during the PROMPT_50 audit.
+This file records honest release gaps discovered during release-readiness
+audits.
 
 ## Quickstart Human Freshness
 

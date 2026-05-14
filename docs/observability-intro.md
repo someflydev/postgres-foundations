@@ -50,6 +50,6 @@ an operator workflow.
 
 ## Later Depth
 
-Phase admin work in `PROMPT_33` goes deeper on operational dashboards,
-retention windows, baselines, and how query statistics fit with logs and
-database health checks.
+The admin monitoring track goes deeper on operational dashboards, retention
+windows, baselines, and how query statistics fit with logs and database health
+checks.

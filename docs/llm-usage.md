@@ -102,22 +102,21 @@ recommendation.
 ## Interview Stub Behavior
 
 `pgfound interview start --scenario <id>` uses templates from
-`llm-prompts/interview/stages/`, but Prompt 28 does not make real LLM calls. For
-each stage, the simulator prints the resolved prompt, records the learner's
+`llm-prompts/interview/stages/`, but the local CLI does not make real LLM calls.
+For each stage, the simulator prints the resolved prompt, records the learner's
 response, logs the exact payload it would send to the LLM, and emits the stub:
 
 ```text
-[LLM response intentionally stubbed until PROMPT_30 interview integration]
+[LLM response intentionally stubbed; rendered provider-neutral prompt captured]
 ```
 
 Design and explainability stages also close with standard follow-up questions
 from the prompt template. Debugging drill stages reference existing exercises
 and attempt the normal exercise check against the learner's saved answer.
 
-PROMPT_30 should plug into this by upgrading interview-specific prompts while
-continuing to keep the actual model call stubbed. The transcript format and the
-"what would be sent" audit trail should remain stable so review and replay
-tooling can compare stubbed and real interviewer behavior later.
+The transcript format and the "what would be sent" audit trail should remain
+stable so review and replay tooling can compare stubbed and real interviewer
+behavior later.
 
 ## Rendered Review Artifacts
 

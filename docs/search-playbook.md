@@ -14,7 +14,7 @@ Use lexical FTS when exact words, stems, titles, bodies, tags, authors, and cate
 
 ## Semantic Search Pointer
 
-`pgvector` is useful when users need meaning similarity rather than lexical overlap: related concepts, paraphrases, recommendations, or embedding-backed retrieval. It is deliberately later, in Phase E4, PROMPT_35. Do not use vector search to skip basic lexical evidence.
+`pgvector` is useful when users need meaning similarity rather than lexical overlap: related concepts, paraphrases, recommendations, or embedding-backed retrieval. It is deliberately later, in extension module E4. Do not use vector search to skip basic lexical evidence.
 
 The extension deep-dive is `docs/extension-track/e4-pgvector.md`, with authored lessons under `lessons/extensions/e4-pgvector/`. Treat vector search as one retrieval signal, not as a replacement for filters, ranking, or lexical diagnostics. Hybrid designs should keep core FTS and trigram evidence visible, then add vector distance only where semantic recall changes the product outcome.
 

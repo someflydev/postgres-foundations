@@ -12,7 +12,8 @@ and explicit triggers for later adoption.
   workload patterns, core features, extensions, index patterns, topology
   patterns, and anti-patterns.
 - `rules/` holds declarative matching rules and an authoring guide.
-- `prompts/` will hold planning prompt packs in PROMPT_44.
+- `prompts/` contains the four-layer planning prompt pack for catalog,
+  evaluator, scenario, and critique work.
 - `fixtures/intakes/` contains small but realistic intake examples.
 - `fixtures/reports/` contains golden JSON and Markdown reports for every
   fixture intake.

@@ -24,6 +24,11 @@ PostgreSQL architecture reinforce the same operating model.
           |                      |                      |
           +----------------------+----------------------+
                                  |
+                 +---------------v----------------+
+                 | pgfound CLI, Docker lab,       |
+                 | validators, tests, reports     |
+                 +---------------+----------------+
+                                 |
                     Review, defense, and planning
 ```
 
@@ -44,11 +49,10 @@ produce evidence of competence rather than a simple count of completed pages.
 
 The main artifacts live under `curriculum/`, `lessons/`, `exercises/`,
 `seed-data/`, `scenarios/`, `rubrics/`, `capstones/`, `llm-prompts/`, `docker/`,
-and `tests/`. Early prompts may leave many of these directories skeletal, but
-their roles are fixed by this architecture. The local package under `src/`
-provides command-line and programmatic support as the platform grows.
-Authoring rules, required fields, examples, and validator behavior are captured
-in [Content Authoring](authoring.md).
+and `tests/`. The local package under `src/` provides command-line and
+programmatic support for the learner loop, validation, review, progress, lab
+operations, and decision-engine workflows. Authoring rules, required fields,
+examples, and validator behavior are captured in [Content Authoring](authoring.md).
 
 Reusable scenario domains live under `seed-data/packs/`. These packs define the
 small canonical schemas, seed rows, manifests, and deterministic generators for
@@ -149,11 +153,12 @@ for future stages, warnings about operational burden, and references back to
 core PostgreSQL features or extension choices.
 
 The main artifacts live under `decision-engine/catalogs/`,
-`decision-engine/rules/`, `decision-engine/prompts/`, and future evaluator and
-reporting modules in `src/`. The authored industry, data-shape, and workload
-pattern catalogs are shared vocabulary between the planning engine and the
-extension track: they connect workload signals to PostgreSQL core features,
-extension candidates, index patterns, topology patterns, and anti-patterns.
+`decision-engine/rules/`, `decision-engine/prompts/`, and the evaluator,
+scoring, and report modules under `src/pgfound/decision/`. The authored
+industry, data-shape, and workload-pattern catalogs are shared vocabulary
+between the planning engine and the extension track: they connect workload
+signals to PostgreSQL core features, extension candidates, index patterns,
+topology patterns, and anti-patterns.
 Catalogs are JSON-first so they can be validated, diffed, tested, and reused
 by both the planning engine and the learning materials. YAML may be tolerated
 only where human ergonomics clearly justify it, but JSON is the default for
@@ -186,9 +191,8 @@ Shared artifacts should be referenced rather than copied. Doctrine lives in
 `docs/doctrine.md`. Architecture lives in this document. ADRs live in
 `docs/adr/`. Rubrics live under `rubrics/`. Training prompts live under
 `llm-prompts/`; planning prompts live under `decision-engine/prompts/`.
-Decision metadata such as extension characteristics should become
-authoritative in `decision-engine/catalogs/` and be referenced from training
-materials.
+Decision metadata such as extension characteristics is authoritative in
+`decision-engine/catalogs/` and should be referenced from training materials.
 
 The boundary between subsystems is practical, not ideological. Curriculum
 teaches people. The administration and extension track teaches operational and

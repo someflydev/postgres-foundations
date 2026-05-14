@@ -1,8 +1,8 @@
 # pgfound CLI
 
 The `pgfound` CLI is the stable orchestration surface for PostgreSQL Foundations.
-Some commands are intentionally stubs and name the future prompt that completes
-them.
+It ties together the Docker lab, content validation, exercise loop, review
+workflows, progress records, interview practice, and decision engine.
 
 ## `pgfound --help`
 
@@ -122,8 +122,9 @@ Options:
 
 ## `pgfound content show KIND ID`
 
-Prints raw file content for one content item. Structured loading lands in
-`PROMPT_05`.
+Prints raw file content for one content item. Use it when you know a lesson,
+exercise, scenario, capstone, or rubric ID and want to inspect the source
+artifact without browsing the directory tree.
 
 ## `pgfound content validate`
 
@@ -348,12 +349,13 @@ uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-m
 uv run pgfound decision from-progress
 ```
 
-The prompt-39 implementation is intentionally conservative: catalogs and rules
-are not authored yet, so valid intakes produce an empty valid report with
-warnings that the catalog and rule data is not yet available. Validation errors
-exit non-zero and print the failing schema paths.
+Reports include recommend-now items, candidate-later items, anti-pattern
+warnings, score breakdowns, cited rules, follow-up questions, and the full intake
+appendix. Validation errors exit non-zero and print the failing schema paths.
 
 ## `pgfound interview start`
 
-Stub command that exits 0 and reports that the interview simulator lands in
-`PROMPT_28`.
+Starts an interview simulator session from a scenario. The local interviewer
+voice is intentionally stubbed, but the command captures prompts, learner
+responses, rubric metadata, and a transcript that can be reviewed or dispatched
+as a provider-neutral prompt bundle.
