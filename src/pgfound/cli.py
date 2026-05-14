@@ -967,18 +967,94 @@ def progress() -> None:
     """Show learner progress."""
 
 
-@progress.command("show", help="Print a minimal tmp/progress summary.")
-def progress_show() -> None:
-    """Print a minimal learner progress summary."""
-    summary = progress_store.summarize()
-    table = Table(title="pgfound progress")
-    table.add_column("Area")
-    table.add_column("Files", justify="right")
-    table.add_column("Attempts", justify="right")
-    table.add_row("profile", "1" if summary.profile_exists else "0", "-")
-    table.add_row("exercises", str(summary.exercise_files), str(summary.exercise_attempts))
-    table.add_row("capstones", str(summary.capstone_files), str(summary.capstone_attempts))
+@progress.command("init", help="Create tmp/progress/profile.json.")
+@click.option("--name", default="learner", show_default=True, help="Learner display name.")
+def progress_init(name: str) -> None:
+    """Initialize a local learner profile."""
+    profile = progress_store.LearnerProfile(
+        name=name,
+        started_at=datetime.now(timezone.utc).isoformat(),
+        goals=(),
+    )
+    path = progress_store.store.write_profile(profile)
+    _success(f"created {path.relative_to(paths.REPO_ROOT)}")
+
+
+@progress.command("show", help="Print a learner progress dashboard.")
+@click.option("--module", "module_id", help="Show one module in detail.")
+def progress_show(module_id: str | None) -> None:
+    """Print a learner progress dashboard."""
+    try:
+        snapshot = progress_store.store.load_snapshot()
+        progress_store.reports.render_dashboard(console, snapshot, module_id=module_id)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+
+
+@progress.command("export", help="Export a shareable progress summary.")
+@click.option(
+    "--format",
+    "output_format",
+    type=click.Choice(["json", "markdown"]),
+    default="markdown",
+    show_default=True,
+)
+def progress_export(output_format: str) -> None:
+    """Export progress summary to stdout."""
+    snapshot = progress_store.store.load_snapshot()
+    click.echo(
+        progress_store.reports.render_export(snapshot, output_format=output_format), nl=False
+    )
+
+
+@main.command("remediate", help="Generate a remediation pack from learner progress.")
+@click.option("--module", "module_id", help="Restrict remediation to one module.")
+@click.option(
+    "--scope",
+    type=click.Choice(["recent", "all"]),
+    default="recent",
+    show_default=True,
+)
+def remediate(module_id: str | None, scope: str) -> None:
+    """Generate a remediation pack."""
+    try:
+        snapshot = progress_store.store.load_snapshot()
+        pack = progress_store.remediation.build_remediation_pack(
+            snapshot, module_id=module_id, scope=scope
+        )
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+    table = Table(title="pgfound remediation")
+    table.add_column("Field")
+    table.add_column("Value")
+    table.add_row("module", pack.module_id or "-")
+    table.add_row("weaknesses", ", ".join(pack.weaknesses))
+    table.add_row("lessons", str(len(pack.lessons)))
+    table.add_row("exercises", str(len(pack.exercises)))
+    table.add_row("path", str(pack.path.relative_to(paths.REPO_ROOT)))
     console.print(table)
+
+
+@main.command("next", help="Recommend the single best next learner action.")
+def next_command() -> None:
+    """Recommend the next learner action."""
+    snapshot = progress_store.store.load_snapshot()
+    action = progress_store.remediation.recommend_next(snapshot)
+    console.print(f"{action.action}\n{action.rationale}")
+
+
+@main.group(help="Generate coach-facing reports.")
+def coach() -> None:
+    """Generate coach-facing reports."""
+
+
+@coach.command("report", help="Render a coach-friendly Markdown report.")
+@click.argument("profile_path", type=click.Path(path_type=Path))
+def coach_report(profile_path: Path) -> None:
+    """Render a coach-friendly progress report."""
+    root = profile_path.parent
+    snapshot = progress_store.store.load_snapshot(root)
+    click.echo(progress_store.reports.render_coach_report(snapshot, profile_path), nl=False)
 
 
 @main.group(help="Run capstone workspace commands.")
@@ -1017,7 +1093,7 @@ def capstone_start(capstone_id: str) -> None:
             "status": "started",
         }
     )
-    progress_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    progress_store.store.write_capstone_progress(capstone_id, attempts)
 
     for name in ("brief.md", "constraints.md", "acceptance-criteria.md"):
         path = capstone_dir / name
@@ -1432,6 +1508,60 @@ def decision_run(
         if not explanations:
             table.add_row("-", "-", "no matching rules contributed")
         console.print(table)
+
+
+@decision.command("from-progress", help="Generate a learner-as-architect decision intake.")
+@click.option(
+    "--out",
+    "out_path",
+    type=click.Path(path_type=Path),
+    help="Output path. Defaults to tmp/decision-intakes/from-progress.json.",
+)
+def decision_from_progress(out_path: Path | None) -> None:
+    """Generate a showcase decision intake from the learner profile."""
+    snapshot = progress_store.store.load_snapshot()
+    profile_name = snapshot.profile.name if snapshot.profile else "learner"
+    today = datetime.now(timezone.utc).date().isoformat()
+    payload = {
+        "intake_id": "learner-as-architect-from-progress",
+        "as_of_date": today,
+        "organization": {
+            "industry": "saas_multi_tenant",
+            "team_size_engineers": 1,
+            "operational_tolerance": "medium",
+            "managed_service_requirement": "strongly_preferred",
+            "portability_constraints": ["any_managed"],
+        },
+        "data_shapes": ["relational_core", "semi_structured_jsonb"],
+        "workload_patterns": ["oltp_heavy", "read_heavy"],
+        "scale_signals": {
+            "row_counts_largest_tables": {"learner_artifacts": len(snapshot.exercise_attempts)},
+            "write_throughput_rows_per_sec": 1,
+            "read_throughput_qps": 10,
+            "concurrent_connections_peak": 5,
+            "largest_object_bytes": 262144,
+            "growth_rate_month_over_month": 0.05,
+        },
+        "tenancy_model": "single_tenant",
+        "security_constraints": ["audit_required"],
+        "migration_or_federation_needs": {
+            "has_legacy_postgres_source": False,
+            "has_legacy_non_postgres_source": False,
+            "requires_zero_downtime_migration": False,
+            "requires_federation_via_fdw": False,
+        },
+        "explicit_bias_against": [],
+        "explicit_bias_for": [],
+        "existing_postgres_topology": "single_primary",
+        "free_form_notes": (
+            "For the learner-as-architect workflow. "
+            f"{profile_name} is practicing decision-engine review against a small team context."
+        ),
+    }
+    out_path = out_path or paths.TMP_DIR / "decision-intakes" / "from-progress.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    _success(f"wrote {out_path.relative_to(paths.REPO_ROOT)}")
 
 
 @decision.command("diff", help="Diff two decision reports.")

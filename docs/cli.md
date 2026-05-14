@@ -273,8 +273,41 @@ against the live lab database.
 
 ## `pgfound progress show`
 
-Reads `tmp/progress/` and prints a minimal summary of profile, exercise, and
-capstone attempt records. The evaluator-grade progress engine lands later.
+Reads `tmp/progress/` and prints a Rich progress dashboard with phase, admin,
+extension, capstone, interview, and recent-attempt signals.
+
+```bash
+uv run pgfound progress init --name "test"
+uv run pgfound progress show
+uv run pgfound progress show --module phase-01
+uv run pgfound progress export --format markdown
+```
+
+## `pgfound remediate`
+
+Builds a remediation pack under `tmp/remediation/` from weak rubric dimensions,
+skipped Level D work, and unmet module exit evidence.
+
+```bash
+uv run pgfound remediate
+uv run pgfound remediate --module phase-06 --scope all
+```
+
+## `pgfound next`
+
+Recommends one next learner action with a one-sentence rationale.
+
+```bash
+uv run pgfound next
+```
+
+## `pgfound coach report PROFILE_PATH`
+
+Prints a coach-friendly Markdown progress report for a local profile.
+
+```bash
+uv run pgfound coach report tmp/progress/profile.json
+```
 
 ## `pgfound capstone start ID`
 
@@ -310,6 +343,7 @@ rule directories, and writes `report.json` plus `report.md`.
 ```bash
 uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json
 uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json --out-dir tmp/my-report
+uv run pgfound decision from-progress
 ```
 
 The prompt-39 implementation is intentionally conservative: catalogs and rules
