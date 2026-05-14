@@ -85,16 +85,16 @@ def validate_markdown_links(root: Path) -> CheckResult:
     return CheckResult(errors=tuple(errors), warnings=tuple(warnings))
 
 
-def _readme_local_links(readme_path: Path) -> list[str]:
-    text = readme_path.read_text(encoding="utf-8")
+def _markdown_local_links(markdown_path: Path, display_name: str) -> list[str]:
+    text = markdown_path.read_text(encoding="utf-8")
     errors: list[str] = []
     for link in MD_LINK_RE.findall(text):
-        resolved = _resolve_link(readme_path, link)
+        resolved = _resolve_link(markdown_path, link)
         if resolved is None:
             continue
         candidate = _normalize_existing_target(resolved)
         if not resolved.exists() and not candidate.exists():
-            errors.append(f"README.md: broken link target {link}")
+            errors.append(f"{display_name}: broken link target {link}")
     return errors
 
 
@@ -140,11 +140,33 @@ def validate_readme(readme_path: Path | None = None) -> CheckResult:
     if not readme_path.is_file():
         return CheckResult(errors=("README.md is missing",))
     errors = [
-        *_readme_local_links(readme_path),
+        *_markdown_local_links(readme_path, "README.md"),
         *_readme_inline_paths(readme_path),
         *_readme_shell_blocks(readme_path),
     ]
     return CheckResult(errors=tuple(errors))
+
+
+def validate_markdown_file_links(
+    markdown_path: Path, display_name: str | None = None
+) -> CheckResult:
+    """Validate local links in one public Markdown file."""
+    if not markdown_path.is_file():
+        name = display_name or _display_path(markdown_path)
+        return CheckResult(errors=(f"{name} is missing",))
+    name = display_name or _display_path(markdown_path)
+    return CheckResult(errors=tuple(_markdown_local_links(markdown_path, name)))
+
+
+def validate_public_docs(root: Path | None = None) -> CheckResult:
+    """Validate top-level public documentation files."""
+    root = root or paths.REPO_ROOT
+    readme = validate_readme(root / "README.md")
+    contributing = validate_markdown_file_links(root / "CONTRIBUTING.md", "CONTRIBUTING.md")
+    return CheckResult(
+        errors=readme.errors + contributing.errors,
+        warnings=readme.warnings + contributing.warnings,
+    )
 
 
 def _print_result(result: CheckResult) -> None:

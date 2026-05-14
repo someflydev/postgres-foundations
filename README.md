@@ -68,7 +68,7 @@ Read the full doctrine in [docs/doctrine.md](docs/doctrine.md).
 
 ## Status and Roadmap
 
-The repo currently contains the full platform surface: curriculum and exercises, lab tooling, admin and extension tracks, capstones, review workflows, interview simulation, progress and remediation flows, decision-engine catalogs/rules/scoring, scenario fixtures, and public documentation. The next prompt adds CI, pre-commit configuration, and release-readiness checks.
+The repo currently contains the full platform surface: curriculum and exercises, lab tooling, admin and extension tracks, capstones, review workflows, interview simulation, progress and remediation flows, decision-engine catalogs/rules/scoring, scenario fixtures, public documentation, CI, pre-commit configuration, and release-readiness checks. Remaining release caveats are tracked in [docs/known-gaps.md](docs/known-gaps.md).
 
 Architecture decisions are recorded under [docs/adr/](docs/adr/). The ADRs explain why the repo uses Python with `uv`, JSON-first content, Docker for the lab, a core-first extension doctrine, and an explainable decision engine.
 

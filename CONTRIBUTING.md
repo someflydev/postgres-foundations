@@ -57,7 +57,7 @@ make verify
 
 PRs should include the user need, changed artifacts, verification commands, and
 any intentionally changed golden files or scenario reports. CI must pass before
-merge once CI exists.
+merge.
 
 ## Adding A New Extension Module
 

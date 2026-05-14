@@ -86,7 +86,12 @@ def docs() -> None:
 @docs.command("check", help="Validate docs links and report orphan docs pages.")
 def docs_check() -> None:
     """Validate docs links and report orphan docs pages."""
-    result = docs_checker.validate_markdown_links(paths.REPO_ROOT / "docs")
+    docs_result = docs_checker.validate_markdown_links(paths.REPO_ROOT / "docs")
+    public_result = docs_checker.validate_public_docs(paths.REPO_ROOT)
+    result = docs_checker.CheckResult(
+        errors=docs_result.errors + public_result.errors,
+        warnings=docs_result.warnings + public_result.warnings,
+    )
     for warning in result.warnings:
         click.echo(f"warning: {warning}")
     for error in result.errors:
