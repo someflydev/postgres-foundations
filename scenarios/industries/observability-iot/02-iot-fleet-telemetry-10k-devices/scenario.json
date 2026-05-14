@@ -46,14 +46,14 @@
   "suggested_exercises": [
     "first-select-write-query",
     "what-lateral-unlocks-level-c-1",
-    "partition-by-retention-window-level-c-1"
+    "e5-timescaledb-retention-policies-level-c-1"
   ],
   "suggested_lessons": [
-    "pg-stat-statements-basics",
-    "partitioning-large-table-operations",
-    "full-text-search-core",
-    "postgres-fdw-boundaries",
-    "row-level-security-policy-design"
+    "what-pg-stat-statements-actually-captures",
+    "what-problem-partitioning-solves",
+    "why-lexical-search-first",
+    "postgres-fdw-introduction",
+    "introduction-to-row-level-security"
   ],
   "tags": [
     "observability-iot",

@@ -39,14 +39,14 @@
   "suggested_exercises": [
     "first-select-write-query",
     "what-lateral-unlocks-level-c-1",
-    "partition-by-retention-window-level-c-1"
+    "e5-timescaledb-retention-policies-level-c-1"
   ],
   "suggested_lessons": [
-    "row-level-security-policy-design",
-    "partitioning-large-table-operations",
-    "pg-stat-statements-basics",
-    "full-text-search-core",
-    "postgres-fdw-boundaries"
+    "introduction-to-row-level-security",
+    "what-problem-partitioning-solves",
+    "what-pg-stat-statements-actually-captures",
+    "why-lexical-search-first",
+    "postgres-fdw-introduction"
   ],
   "tags": [
     "saas-multi-tenant",
