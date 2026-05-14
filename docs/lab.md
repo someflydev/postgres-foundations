@@ -178,6 +178,10 @@ psql "postgresql://pgfound:pgfound@localhost:5438/pgfound" \
   -c "CREATE TABLE metrics(ts timestamptz NOT NULL, value numeric); SELECT create_hypertable('metrics', by_range('ts')); INSERT INTO metrics VALUES (now(), 1); SELECT count(*) FROM metrics;"
 ```
 
+Use this profile only for extension-track E5 labs. Phase 9 partitioning labs
+continue to run against the normal PostgreSQL service so learners can compare
+core partitioning with TimescaleDB rather than mixing the two environments.
+
 Citus runs behind the `citus` profile with one coordinator and two worker
 containers, all pinned to `citusdata/citus:12.1`. The coordinator listens on
 host port 5439 and the init script registers both workers:
@@ -207,21 +211,20 @@ Use this profile for partition maintenance labs that need `partman.create_parent
 `partman.run_maintenance_proc`, premake windows, and retention checks. The
 normal `pg` service remains the baseline for manual Phase 9 partitioning.
 
-Use this profile only for extension-track E5 labs. Phase 9 partitioning labs
-continue to run against the normal PostgreSQL service so learners can compare
-core partitioning with TimescaleDB rather than mixing the two environments.
-
 The lab currently uses a single PostgreSQL superuser role, `pgfound`, for
 simplicity. Phase 10 introduces role design and least-privilege practice;
 deeper operational separation remains part of the later admin track.
 
 If port 55433 is already in use, set `POSTGRES_PORT` in `.env` and restart the
 service. If the sandbox port 55434 is occupied, set `POSTGRES_SANDBOX_PORT`. If
-the HBA overlay port 55435 is occupied, set `POSTGRES_HBA_OVERLAY_PORT`. If
-the PgBouncer port 6432 is occupied, set `PGBOUNCER_PORT`. If the PostGIS port
-5436 is occupied, set `POSTGIS_PORT`. If the pgvector port 5437 is occupied,
-set `PGVECTOR_PORT`. If the TimescaleDB port 5438 is occupied, set
-`TIMESCALE_PORT`. If init scripts do not run, confirm you reset with
+the logical-replication subscriber port 5435 is occupied, set
+`POSTGRES_REPLICA_PORT`. If the HBA overlay port 55435 is occupied, set
+`POSTGRES_HBA_OVERLAY_PORT`. If the PgBouncer port 6432 is occupied, set
+`PGBOUNCER_PORT`. If the PostGIS port 5436 is occupied, set `POSTGIS_PORT`. If
+the pgvector port 5437 is occupied, set `PGVECTOR_PORT`. If the TimescaleDB port
+5438 is occupied, set `TIMESCALE_PORT`. If the Citus coordinator port 5439 is
+occupied, set `CITUS_PORT`. If the pg_partman port 5440 is occupied, set
+`PGPARTMAN_PORT`. If init scripts do not run, confirm you reset with
 `make lab-nuke`; PostgreSQL entrypoint scripts run only when the data directory
 is empty. If the container reports permission issues reading init scripts,
 check that files under `docker/initdb/` are readable by Docker. Tail logs with:
