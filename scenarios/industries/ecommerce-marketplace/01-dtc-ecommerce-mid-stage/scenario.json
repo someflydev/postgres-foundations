@@ -17,10 +17,13 @@
     "full_text_docs"
   ],
   "expected_decision_outputs": {
-    "avoid_for_now": [],
+    "avoid_for_now": [
+      "jsonb_everything"
+    ],
     "candidate_later": [
       "btree_composite_equality_then_range",
       "btree_covering_include",
+      "expression_index_for_normalization",
       "expression_indexes",
       "generated_columns",
       "gin_jsonb_containment",

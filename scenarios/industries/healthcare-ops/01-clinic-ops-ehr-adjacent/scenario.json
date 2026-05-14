@@ -13,6 +13,7 @@
   },
   "data_shapes": [
     "relational_core",
+    "geospatial",
     "ranges_windows",
     "semi_structured_jsonb"
   ],
@@ -27,7 +28,8 @@
       "jsonb",
       "partial_index_for_skew",
       "partial_indexes",
-      "pgcrypto"
+      "pgcrypto",
+      "postgis"
     ],
     "recommend_now": [
       "constraints",

@@ -12,7 +12,7 @@
     "existing_postgres_topology": "single_primary",
     "explicit_bias_against": [],
     "explicit_bias_for": [],
-    "free_form_notes": "Coordinates support dispatch screens and small service-zone checks, but routing remains in the application. The team is tempted by PostGIS but has not made spatial predicates a hot path; GiST range checks for shift windows matter more today. Restore drills are immature.",
+    "free_form_notes": "Coordinates support dispatch screens, service-zone containment, and nearby-driver checks on every quote, but routing remains in the application. The team is tempted to keep latitude and longitude math in application code instead of adopting PostGIS, while GiST range checks for shift windows also matter today. Restore drills are immature.",
     "intake_id": "logistics-last-mile-single-city",
     "migration_or_federation_needs": {
       "has_legacy_non_postgres_source": false,
@@ -46,10 +46,11 @@
     "tenancy_model": "single_tenant",
     "workload_patterns": [
       "oltp_heavy",
-      "read_heavy"
+      "read_heavy",
+      "geo_query_heavy"
     ]
   },
-  "generated_at": "2026-05-14T07:31:49.272364Z",
+  "generated_at": "2026-05-14T10:55:18.413154Z",
   "intake_id": "logistics-last-mile-single-city",
   "intake_summary": {
     "industry": "logistics_geo",
@@ -59,16 +60,16 @@
   },
   "overall": {
     "candidate_later": {
-      "count": 6,
-      "score": 0.57
+      "count": 5,
+      "score": 0.584
     },
     "not_enough_evidence": {
       "count": 1,
       "score": 0.335
     },
     "recommend_now": {
-      "count": 2,
-      "score": 0.678
+      "count": 4,
+      "score": 0.671
     }
   },
   "recommendations": [
@@ -144,6 +145,79 @@
       "why_now": [
         "Workload decisions need normalized statement evidence before adding indexes, replicas, or extensions.",
         "pg_stat_statements is low-risk and broadly available."
+      ]
+    },
+    {
+      "confidence": 0.88,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e3-postgis",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.67,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.94,
+        "domain_fit": 0.9,
+        "growth_urgency": 0.573,
+        "operational_feasibility": 0.603,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.9
+      },
+      "sources": [
+        {
+          "contribution": 0.88,
+          "rule_id": "rule-postgis-for-geo-query-heavy"
+        }
+      ],
+      "target_slug": "postgis",
+      "title": "PostGIS",
+      "triggers_for_next_stage": [
+        "Add geometry validity, coordinate-system rules, and restore validation before production rollout."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "PostGIS is not needed for display-only coordinates or rare exports with no spatial predicates."
+      ],
+      "why_now": [
+        "Geo-query-heavy workloads need spatial types, predicates, and indexes rather than latitude/longitude conventions.",
+        "PostGIS keeps spatial decisions close to transactional state."
+      ]
+    },
+    {
+      "confidence": 0.8,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "recommend_now",
+      "recommendation_class": "recommend_now",
+      "recommendation_score": 0.658,
+      "score_breakdown": {
+        "complexity_penalty": 0.22,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.86,
+        "growth_urgency": 0.545,
+        "operational_feasibility": 0.645,
+        "portability_penalty": 0.06,
+        "workload_fit": 0.86
+      },
+      "sources": [
+        {
+          "contribution": 0.8,
+          "rule_id": "rule-postgis-for-geo-query-heavy"
+        }
+      ],
+      "target_slug": "gist_geospatial",
+      "title": "GiST Geospatial",
+      "triggers_for_next_stage": [
+        "Benchmark representative bounding-box and nearest-neighbor queries."
+      ],
+      "verdict": "recommend_now",
+      "why_not_yet": [
+        "Index choice should wait if the product only stores points for display."
+      ],
+      "why_now": [
+        "GiST spatial indexes are the expected access path for containment, intersection, and distance predicates."
       ]
     },
     {
@@ -337,42 +411,6 @@
       ]
     },
     {
-      "confidence": 0.62,
-      "followup_questions": [],
-      "kind": "extension",
-      "module_slug": "e3-postgis",
-      "original_verdict": "candidate_later",
-      "recommendation_class": "candidate_later",
-      "recommendation_score": 0.497,
-      "score_breakdown": {
-        "complexity_penalty": 0.35,
-        "data_shape_fit": 0.82,
-        "domain_fit": 0.66,
-        "growth_urgency": 0.457,
-        "operational_feasibility": 0.563,
-        "portability_penalty": 0.08,
-        "workload_fit": 0.48
-      },
-      "sources": [
-        {
-          "contribution": 0.62,
-          "rule_id": "rule-postgis-candidate-for-geospatial"
-        }
-      ],
-      "target_slug": "postgis",
-      "title": "PostGIS",
-      "triggers_for_next_stage": [
-        "Promote when dispatch, pricing, compliance, or availability depends on indexed spatial predicates rather than display-only coordinates."
-      ],
-      "verdict": "candidate_later",
-      "why_not_yet": [
-        "Coordinates and small zone sets do not justify spatial types and operators until containment, distance, or intersection queries become hot paths."
-      ],
-      "why_now": [
-        "The data model already stores geospatial values, so PostGIS should stay on the review path."
-      ]
-    },
-    {
       "confidence": 0.56,
       "followup_questions": [],
       "kind": "extension",
@@ -408,16 +446,57 @@
       "why_now": [
         "The intake mentions semantic or vector-style search, so pgvector should stay visible as a possible later option."
       ]
+    },
+    {
+      "confidence": 0.82,
+      "followup_questions": [],
+      "kind": "anti_pattern_warning",
+      "module_slug": null,
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.82,
+      "score_breakdown": {
+        "complexity_penalty": 0.0,
+        "data_shape_fit": 0.0,
+        "domain_fit": 0.0,
+        "growth_urgency": 0.0,
+        "operational_feasibility": 0.0,
+        "portability_penalty": 0.0,
+        "workload_fit": 0.0
+      },
+      "sources": [
+        {
+          "contribution": 0.82,
+          "rule_id": "rule-warn-geo-logic-without-postgis"
+        }
+      ],
+      "target_slug": "geo_logic_without_postgis",
+      "title": "Geo Logic Without PostGIS",
+      "triggers_for_next_stage": [
+        "Adopt spatial types and validation rules before encoding geometry in ad hoc numeric columns."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "PostGIS can wait for display-only coordinates, but this intake has geo-query-heavy workload signals."
+      ],
+      "why_now": [
+        "Geo-heavy logic without PostGIS evidence risks incorrect distance, containment, and indexing behavior."
+      ]
     }
   ],
   "score_breakdown": {
-    "complexity_penalty": 0.227,
-    "data_shape_fit": 0.742,
-    "domain_fit": 0.717,
-    "growth_urgency": 0.518,
-    "operational_feasibility": 0.65,
-    "portability_penalty": 0.049,
-    "workload_fit": 0.713
+    "complexity_penalty": 0.226,
+    "data_shape_fit": 0.77,
+    "domain_fit": 0.755,
+    "growth_urgency": 0.532,
+    "operational_feasibility": 0.654,
+    "portability_penalty": 0.05,
+    "workload_fit": 0.77
   },
-  "warnings": []
+  "warnings": [
+    {
+      "anti_pattern_slug": "geo_logic_without_postgis",
+      "message": "Geo-heavy logic without PostGIS evidence risks incorrect distance, containment, and indexing behavior."
+    }
+  ]
 }

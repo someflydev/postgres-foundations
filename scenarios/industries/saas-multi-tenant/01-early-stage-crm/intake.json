@@ -48,6 +48,7 @@
   "workload_patterns": [
     "oltp_heavy",
     "read_heavy",
+    "semantic_retrieval",
     "strong_tenant_locality"
   ]
 }

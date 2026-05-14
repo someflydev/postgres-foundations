@@ -1,9 +1,9 @@
 # PostgreSQL Architecture Recommendation
-Intake: healthcare-clinic-ops-ehr-adjacent  |  Generated: 2026-05-14T07:31:47.529076Z
+Intake: healthcare-clinic-ops-ehr-adjacent  |  Generated: 2026-05-14T10:55:17.529670Z
 Industry: Healthcare Operations  |  Tenancy: single_tenant  |  Ops tolerance: low
 
 ## Summary
-The intake points to 2 immediate recommendations, 9 later candidates, and 1 item that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. No anti-pattern warning matched this intake.
+The intake points to 2 immediate recommendations, 10 later candidates, and 1 item that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. No anti-pattern warning matched this intake.
 
 ## Recommend now
 
@@ -65,6 +65,11 @@ The intake points to 2 immediate recommendations, 9 later candidates, and 1 item
   - Why not something else: Do not treat cryptographic functions as a security architecture without review.
   - Triggers for next stage: Adopt when URL-safe identifiers or database-side UUID defaults are explicit requirements.
 
+- **PostGIS** — score 0.49 — [module e3-postgis]
+  - Why now: The data model already stores geospatial values, so PostGIS should stay on the review path.
+  - Why not something else: Coordinates and small zone sets do not justify spatial types and operators until containment, distance, or intersection queries become hot paths.
+  - Triggers for next stage: Promote when dispatch, pricing, compliance, or availability depends on indexed spatial predicates rather than display-only coordinates.
+
 
 ## Not enough evidence
 
@@ -94,6 +99,7 @@ The intake points to 2 immediate recommendations, 9 later candidates, and 1 item
 | jsonb | 0.65 | 0.85 | 0.62 | 0.72 | 0.28 | 0.04 | 0.18 | 0.55 |
 | expression_indexes | 0.62 | 0.74 | 0.70 | 0.70 | 0.28 | 0.04 | 0.13 | 0.54 |
 | pgcrypto | 0.60 | 0.64 | 0.60 | 0.77 | 0.23 | 0.04 | 0.12 | 0.50 |
+| postgis | 0.66 | 0.82 | 0.48 | 0.62 | 0.28 | 0.08 | 0.35 | 0.49 |
 | pgvector | 0.45 | 0.40 | 0.50 | 0.51 | 0.23 | 0.08 | 0.72 | 0.33 |
 
 
@@ -108,6 +114,7 @@ The intake points to 2 immediate recommendations, 9 later candidates, and 1 item
 - rule-gin-jsonb-for-containment (contrib 0.66)
 - rule-jsonb-hybrid-columns-for-semi-structured (contrib 0.71)
 - rule-pgcrypto-for-public-identifiers (contrib 0.58)
+- rule-postgis-candidate-for-geospatial (contrib 0.62)
 - rule-pgvector-not-yet-without-embeddings (contrib 0.56)
 
 
@@ -130,13 +137,14 @@ The intake points to 2 immediate recommendations, 9 later candidates, and 1 item
   "as_of_date": "2026-05-12",
   "data_shapes": [
     "relational_core",
+    "geospatial",
     "ranges_windows",
     "semi_structured_jsonb"
   ],
   "existing_postgres_topology": "single_primary",
   "explicit_bias_against": [],
   "explicit_bias_for": [],
-  "free_form_notes": "They need appointment conflict protection and audit trails before considering search or analytics extensions. Some clinics share providers across locations, making simple office-based scheduling rules fail during holiday coverage. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "free_form_notes": "They need appointment conflict protection and audit trails before considering search or analytics extensions. Clinic locations appear on patient-facing maps, but spatial predicates are not a hot path yet. Some clinics share providers across locations, making simple office-based scheduling rules fail during holiday coverage. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
   "intake_id": "healthcare-clinic-ops-ehr-adjacent",
   "migration_or_federation_needs": {
     "has_legacy_non_postgres_source": false,

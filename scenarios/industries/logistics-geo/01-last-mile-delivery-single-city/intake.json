@@ -8,7 +8,7 @@
   "existing_postgres_topology": "single_primary",
   "explicit_bias_against": [],
   "explicit_bias_for": [],
-  "free_form_notes": "Coordinates support dispatch screens and small service-zone checks, but routing remains in the application. The team is tempted by PostGIS but has not made spatial predicates a hot path; GiST range checks for shift windows matter more today. Restore drills are immature.",
+  "free_form_notes": "Coordinates support dispatch screens, service-zone containment, and nearby-driver checks on every quote, but routing remains in the application. The team is tempted to keep latitude and longitude math in application code instead of adopting PostGIS, while GiST range checks for shift windows also matter today. Restore drills are immature.",
   "intake_id": "logistics-last-mile-single-city",
   "migration_or_federation_needs": {
     "has_legacy_non_postgres_source": false,
@@ -42,6 +42,7 @@
   "tenancy_model": "single_tenant",
   "workload_patterns": [
     "oltp_heavy",
-    "read_heavy"
+    "read_heavy",
+    "geo_query_heavy"
   ]
 }

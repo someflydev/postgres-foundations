@@ -1,9 +1,9 @@
 # PostgreSQL Architecture Recommendation
-Intake: ecommerce-dtc-mid-stage  |  Generated: 2026-05-14T07:31:45.987185Z
+Intake: ecommerce-dtc-mid-stage  |  Generated: 2026-05-14T10:55:16.611732Z
 Industry: Ecommerce Marketplace  |  Tenancy: single_tenant  |  Ops tolerance: low
 
 ## Summary
-The intake points to 3 immediate recommendations, 14 later candidates, and 1 item that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. No anti-pattern warning matched this intake.
+The intake points to 3 immediate recommendations, 17 later candidates, and 1 item that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
 
 ## Recommend now
 
@@ -24,6 +24,16 @@ The intake points to 3 immediate recommendations, 14 later candidates, and 1 ite
 
 
 ## Candidate later
+
+- **pg_trgm** — score 0.63 — [module e2-pg-trgm]
+  - Why now: Fuzzy lexical matching is the cheapest next step beyond core FTS for typo-tolerant search. pg_trgm is broadly available on managed PostgreSQL.
+  - Why not something else: Do not index every text column; scope it to product fields with measured fuzzy-search value. The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first.
+  - Triggers for next stage: If lexical similarity plateaus below product goals, evaluate pgvector for semantic retrieval.
+
+- **GIN Trigram Similarity** — score 0.62
+  - Why now: GIN trigram indexes support targeted similarity and substring search paths.
+  - Why not something else: Wait until the searched columns and acceptable false-positive rate are known.
+  - Triggers for next stage: Adopt after EXPLAIN confirms sequential scans or slow ILIKE paths on target columns.
 
 - **Composite Equality Then Range** — score 0.62
   - Why now: Hot OLTP and read-heavy filters often need equality columns before range or sort columns.
@@ -90,6 +100,11 @@ The intake points to 3 immediate recommendations, 14 later candidates, and 1 ite
   - Why not something else: Replicas inherit bad query plans and introduce lag; they are not a first fix for missing indexes.
   - Triggers for next stage: Adopt when read routing, lag tolerance, and consistency expectations are explicit.
 
+- **Expression Index for Normalization** — score 0.55
+  - Why now: Normalized lookup benefits from matching the indexed expression to application predicates.
+  - Why not something else: Expression indexes are fragile when SQL does not consistently use the same expression.
+  - Triggers for next stage: Adopt after query review confirms stable lower, unaccent, or extracted-key predicates.
+
 - **pgcrypto** — score 0.52 — [module when-uuid-is-the-right-key]
   - Why now: Database-generated UUID defaults are useful for public identifiers and distributed inserts.
   - Why not something else: Do not treat cryptographic functions as a security architecture without review.
@@ -106,7 +121,7 @@ The intake points to 3 immediate recommendations, 14 later candidates, and 1 ite
 
 ## Avoid for now
 
-- No anti-pattern warnings matched.
+- **jsonb_everything**: The intake language suggests JSONB may be used as a replacement for relational modeling.
 
 
 
@@ -116,6 +131,8 @@ The intake points to 3 immediate recommendations, 14 later candidates, and 1 ite
 | constraints | 0.86 | 0.90 | 0.82 | 0.82 | 0.64 | 0.04 | 0.06 | 0.70 |
 | pg_stat_statements | 0.92 | 0.70 | 0.94 | 0.81 | 0.72 | 0.04 | 0.12 | 0.70 |
 | full_text_search | 0.75 | 0.90 | 0.85 | 0.78 | 0.61 | 0.04 | 0.14 | 0.67 |
+| pg_trgm | 0.70 | 0.90 | 0.80 | 0.74 | 0.61 | 0.04 | 0.35 | 0.63 |
+| gin_trgm_similarity | 0.68 | 0.86 | 0.78 | 0.72 | 0.61 | 0.04 | 0.16 | 0.62 |
 | btree_composite_equality_then_range | 0.72 | 0.70 | 0.84 | 0.74 | 0.64 | 0.04 | 0.12 | 0.62 |
 | partial_indexes | 0.70 | 0.72 | 0.82 | 0.70 | 0.68 | 0.04 | 0.16 | 0.61 |
 | partial_index_for_skew | 0.70 | 0.72 | 0.82 | 0.70 | 0.68 | 0.04 | 0.16 | 0.61 |
@@ -129,6 +146,7 @@ The intake points to 3 immediate recommendations, 14 later candidates, and 1 ite
 | pgbouncer_in_front | 0.76 | 0.60 | 0.80 | 0.61 | 0.69 | 0.12 | 0.35 | 0.56 |
 | expression_indexes | 0.62 | 0.74 | 0.70 | 0.70 | 0.55 | 0.04 | 0.13 | 0.56 |
 | primary_with_read_replicas | 0.70 | 0.62 | 0.82 | 0.61 | 0.66 | 0.10 | 0.35 | 0.56 |
+| expression_index_for_normalization | 0.62 | 0.68 | 0.72 | 0.72 | 0.53 | 0.04 | 0.12 | 0.55 |
 | pgcrypto | 0.60 | 0.64 | 0.60 | 0.77 | 0.50 | 0.04 | 0.12 | 0.52 |
 | pgvector | 0.45 | 0.40 | 0.50 | 0.51 | 0.50 | 0.08 | 0.72 | 0.35 |
 
@@ -137,6 +155,7 @@ The intake points to 3 immediate recommendations, 14 later candidates, and 1 ite
 - rule-prefer-constraints-for-relational-core (contrib 0.86)
 - rule-pg-stat-statements-for-real-workloads (contrib 0.90)
 - rule-full-text-search-before-vector (contrib 0.82)
+- rule-pg-trgm-for-fuzzy-support-ui (contrib 0.75)
 - rule-btree-composite-for-hot-filter-sort (contrib 0.72)
 - rule-partial-indexes-for-skewed-hot-sets (contrib 0.68)
 - rule-generated-columns-for-jsonb-hot-keys (contrib 0.66)
@@ -148,8 +167,10 @@ The intake points to 3 immediate recommendations, 14 later candidates, and 1 ite
 - rule-btree-covering-for-read-heavy (contrib 0.64)
 - rule-pgbouncer-in-front-when-many-short-connections (contrib 0.74)
 - rule-read-replica-when-reporting-needs-isolation (contrib 0.70)
+- rule-expression-index-for-normalization (contrib 0.62)
 - rule-pgcrypto-for-public-identifiers (contrib 0.58)
 - rule-pgvector-not-yet-without-embeddings (contrib 0.56)
+- rule-warn-jsonb-everything (contrib 0.78)
 
 
 ## Next steps (90-day horizon)
@@ -177,7 +198,7 @@ The intake points to 3 immediate recommendations, 14 later candidates, and 1 ite
   "existing_postgres_topology": "single_primary",
   "explicit_bias_against": [],
   "explicit_bias_for": [],
-  "free_form_notes": "They are considering pg_trgm and unaccent for product search, while resisting a separate search service until PostgreSQL evidence says core search is exhausted. Merchandising teams edit product attributes daily, so JSONB flexibility is useful but cannot become an excuse for unindexed filter chaos. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "free_form_notes": "They are considering pg_trgm and unaccent for product search, while resisting a separate search service until PostgreSQL evidence says core search is exhausted. Merchandising teams edit product attributes daily, so JSONB flexibility is useful but the flexible schema pitch cannot become an excuse for everything json storage or unindexed filter chaos. Support also needs case-insensitive email and SKU lookups for order corrections. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
   "intake_id": "ecommerce-dtc-mid-stage",
   "migration_or_federation_needs": {
     "has_legacy_non_postgres_source": false,

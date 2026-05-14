@@ -38,10 +38,11 @@ def test_industry_scenario_reports_match_goldens_and_expected_outputs() -> None:
 
 
 def test_all_rules_have_scenario_coverage_or_emit_triage_gap_file() -> None:
-    rule_ids = {
-        json.loads(path.read_text(encoding="utf-8"))["id"]
-        for path in paths.DECISION_ENGINE_DIR.glob("rules/**/*.json")
-    }
+    rule_ids = set()
+    for path in paths.DECISION_ENGINE_DIR.glob("rules/**/*.json"):
+        rule = json.loads(path.read_text(encoding="utf-8"))
+        if rule["status"] == "active":
+            rule_ids.add(rule["id"])
     triggered = set()
     for scenario_dir in industry_scenario_dirs():
         report = engine.run_decision(scenario_dir / "intake.json")
@@ -49,6 +50,9 @@ def test_all_rules_have_scenario_coverage_or_emit_triage_gap_file() -> None:
             triggered.update(source["rule_id"] for source in recommendation.get("sources", []))
 
     gaps = sorted(rule_ids - triggered)
+    allowlist_path = paths.DECISION_ENGINE_DIR / "rule-coverage-allowlist.json"
+    allowlist_entries = json.loads(allowlist_path.read_text(encoding="utf-8"))
+    allowlisted = {entry["rule_id"] for entry in allowlist_entries}
     out_dir = paths.TMP_DIR / "integration"
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "coverage-gaps.json").write_text(
@@ -56,3 +60,7 @@ def test_all_rules_have_scenario_coverage_or_emit_triage_gap_file() -> None:
         encoding="utf-8",
     )
     assert rule_ids
+    assert set(gaps) <= allowlisted, (
+        "active rules without industry scenario coverage must be covered or "
+        f"listed in {allowlist_path.relative_to(paths.REPO_ROOT)}: {gaps}"
+    )

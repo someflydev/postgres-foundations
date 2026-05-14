@@ -1,9 +1,9 @@
 # PostgreSQL Architecture Recommendation
-Intake: saas-early-stage-crm  |  Generated: 2026-05-14T07:31:51.866860Z
+Intake: saas-early-stage-crm  |  Generated: 2026-05-14T10:55:19.737906Z
 Industry: SaaS Multi-tenant  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: low
 
 ## Summary
-The intake points to 3 immediate recommendations, 7 later candidates, and 1 item that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. No anti-pattern warning matched this intake.
+The intake points to 3 immediate recommendations, 7 later candidates, and 1 item that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
 
 ## Recommend now
 
@@ -63,15 +63,15 @@ The intake points to 3 immediate recommendations, 7 later candidates, and 1 item
 
 ## Not enough evidence
 
-- **pgvector** — score 0.32 — [module e4-pgvector]
-  - Why now: The intake mentions semantic or vector-style search, so pgvector should stay visible as a possible later option.
-  - Why not something else: There is no embeddings_vectors data shape, embedding refresh plan, recall target, or permission-aware retrieval design yet. For geo-heavy logistics, PostGIS answers spatial distance and containment questions more directly than vector search.
+- **pgvector** — score 0.40 — [module e4-pgvector]
+  - Why now: pgvector may become relevant if semantic retrieval requirements survive lexical baselines. The intake mentions semantic or vector-style search, so pgvector should stay visible as a possible later option.
+  - Why not something else: No embedding volume, refresh process, or recall target is present yet. There is no embeddings_vectors data shape, embedding refresh plan, recall target, or permission-aware retrieval design yet. For geo-heavy logistics, PostGIS answers spatial distance and containment questions more directly than vector search.
 
 
 
 ## Avoid for now
 
-- No anti-pattern warnings matched.
+- **vector_before_lexical**: Semantic retrieval is mentioned without embedding data shape evidence.
 
 
 
@@ -88,7 +88,7 @@ The intake points to 3 immediate recommendations, 7 later candidates, and 1 item
 | jsonb | 0.65 | 0.85 | 0.62 | 0.66 | 0.28 | 0.04 | 0.18 | 0.54 |
 | expression_indexes | 0.62 | 0.74 | 0.70 | 0.65 | 0.28 | 0.04 | 0.13 | 0.53 |
 | pgcrypto | 0.60 | 0.64 | 0.60 | 0.71 | 0.23 | 0.04 | 0.12 | 0.49 |
-| pgvector | 0.45 | 0.40 | 0.50 | 0.45 | 0.23 | 0.08 | 0.72 | 0.32 |
+| pgvector | 0.50 | 0.60 | 0.68 | 0.44 | 0.26 | 0.08 | 0.72 | 0.40 |
 
 
 ## Cited rules
@@ -100,6 +100,7 @@ The intake points to 3 immediate recommendations, 7 later candidates, and 1 item
 - rule-gin-jsonb-for-containment (contrib 0.66)
 - rule-jsonb-hybrid-columns-for-semi-structured (contrib 0.71)
 - rule-pgcrypto-for-public-identifiers (contrib 0.58)
+- rule-warn-vector-before-lexical (contrib 0.52)
 - rule-pgvector-not-yet-without-embeddings (contrib 0.56)
 
 
@@ -168,6 +169,7 @@ The intake points to 3 immediate recommendations, 7 later candidates, and 1 item
   "workload_patterns": [
     "oltp_heavy",
     "read_heavy",
+    "semantic_retrieval",
     "strong_tenant_locality"
   ]
 }

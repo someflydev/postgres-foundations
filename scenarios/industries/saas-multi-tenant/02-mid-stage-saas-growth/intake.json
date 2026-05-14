@@ -7,8 +7,13 @@
   ],
   "existing_postgres_topology": "primary_with_read_replicas",
   "explicit_bias_against": [],
-  "explicit_bias_for": [],
-  "free_form_notes": "They are deciding whether the largest enterprise tenant should move to its own schema and whether reporting should hit a replica or materialized rollups. The largest tenant negotiates quarterly custom data-retention terms, while smaller tenants expect shared release velocity. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "explicit_bias_for": [
+    {
+      "extension_slug": "pg_stat_statements",
+      "reason": "The team wants query evidence before turning replicas into the default reporting answer."
+    }
+  ],
+  "free_form_notes": "They are deciding whether the largest enterprise tenant should move to its own schema and whether reporting should hit a replica or materialized rollups. The largest tenant negotiates quarterly custom data-retention terms, while smaller tenants expect shared release velocity. The team wants pg_stat_statements evidence before treating read replicas as a performance bandage. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
   "intake_id": "saas-mid-stage-growth",
   "migration_or_federation_needs": {
     "has_legacy_non_postgres_source": false,

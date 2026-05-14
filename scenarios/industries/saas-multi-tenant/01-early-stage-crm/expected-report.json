@@ -52,10 +52,11 @@
     "workload_patterns": [
       "oltp_heavy",
       "read_heavy",
+      "semantic_retrieval",
       "strong_tenant_locality"
     ]
   },
-  "generated_at": "2026-05-14T07:31:51.866860Z",
+  "generated_at": "2026-05-14T10:55:19.737906Z",
   "intake_id": "saas-early-stage-crm",
   "intake_summary": {
     "industry": "saas_multi_tenant",
@@ -70,7 +71,7 @@
     },
     "not_enough_evidence": {
       "count": 1,
-      "score": 0.317
+      "score": 0.403
     },
     "recommend_now": {
       "count": 3,
@@ -448,17 +449,21 @@
       "module_slug": "e4-pgvector",
       "original_verdict": "not_enough_evidence",
       "recommendation_class": "not_enough_evidence",
-      "recommendation_score": 0.317,
+      "recommendation_score": 0.403,
       "score_breakdown": {
         "complexity_penalty": 0.72,
-        "data_shape_fit": 0.4,
-        "domain_fit": 0.45,
-        "growth_urgency": 0.228,
-        "operational_feasibility": 0.452,
+        "data_shape_fit": 0.6,
+        "domain_fit": 0.5,
+        "growth_urgency": 0.255,
+        "operational_feasibility": 0.439,
         "portability_penalty": 0.08,
-        "workload_fit": 0.5
+        "workload_fit": 0.68
       },
       "sources": [
+        {
+          "contribution": 0.52,
+          "rule_id": "rule-warn-vector-before-lexical"
+        },
         {
           "contribution": 0.56,
           "rule_id": "rule-pgvector-not-yet-without-embeddings"
@@ -467,26 +472,70 @@
       "target_slug": "pgvector",
       "title": "pgvector",
       "triggers_for_next_stage": [
+        "Add embeddings_vectors data shape and representative evaluation queries.",
         "Revisit pgvector after an embedding corpus, offline evaluation set, and lexical or spatial baseline gaps are documented."
       ],
       "verdict": "not_enough_evidence",
       "why_not_yet": [
+        "No embedding volume, refresh process, or recall target is present yet.",
         "There is no embeddings_vectors data shape, embedding refresh plan, recall target, or permission-aware retrieval design yet.",
         "For geo-heavy logistics, PostGIS answers spatial distance and containment questions more directly than vector search."
       ],
       "why_now": [
+        "pgvector may become relevant if semantic retrieval requirements survive lexical baselines.",
         "The intake mentions semantic or vector-style search, so pgvector should stay visible as a possible later option."
+      ]
+    },
+    {
+      "confidence": 0.74,
+      "followup_questions": [],
+      "kind": "anti_pattern_warning",
+      "module_slug": null,
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.74,
+      "score_breakdown": {
+        "complexity_penalty": 0.0,
+        "data_shape_fit": 0.0,
+        "domain_fit": 0.0,
+        "growth_urgency": 0.0,
+        "operational_feasibility": 0.0,
+        "portability_penalty": 0.0,
+        "workload_fit": 0.0
+      },
+      "sources": [
+        {
+          "contribution": 0.74,
+          "rule_id": "rule-warn-vector-before-lexical"
+        }
+      ],
+      "target_slug": "vector_before_lexical",
+      "title": "Vector Before Lexical",
+      "triggers_for_next_stage": [
+        "Revisit when embeddings, refresh cadence, and lexical failure cases are documented."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "Vector search should follow document modeling, lexical baseline, permissions, and evaluation sets."
+      ],
+      "why_now": [
+        "Semantic retrieval is mentioned without embedding data shape evidence."
       ]
     }
   ],
   "score_breakdown": {
     "complexity_penalty": 0.206,
-    "data_shape_fit": 0.745,
-    "domain_fit": 0.7,
-    "growth_urgency": 0.33,
-    "operational_feasibility": 0.652,
+    "data_shape_fit": 0.763,
+    "domain_fit": 0.705,
+    "growth_urgency": 0.332,
+    "operational_feasibility": 0.651,
     "portability_penalty": 0.044,
-    "workload_fit": 0.742
+    "workload_fit": 0.758
   },
-  "warnings": []
+  "warnings": [
+    {
+      "anti_pattern_slug": "vector_before_lexical",
+      "message": "Semantic retrieval is mentioned without embedding data shape evidence."
+    }
+  ]
 }

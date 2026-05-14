@@ -11,8 +11,13 @@
     ],
     "existing_postgres_topology": "primary_with_read_replicas",
     "explicit_bias_against": [],
-    "explicit_bias_for": [],
-    "free_form_notes": "They are deciding whether the largest enterprise tenant should move to its own schema and whether reporting should hit a replica or materialized rollups. The largest tenant negotiates quarterly custom data-retention terms, while smaller tenants expect shared release velocity. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+    "explicit_bias_for": [
+      {
+        "extension_slug": "pg_stat_statements",
+        "reason": "The team wants query evidence before turning replicas into the default reporting answer."
+      }
+    ],
+    "free_form_notes": "They are deciding whether the largest enterprise tenant should move to its own schema and whether reporting should hit a replica or materialized rollups. The largest tenant negotiates quarterly custom data-retention terms, while smaller tenants expect shared release velocity. The team wants pg_stat_statements evidence before treating read replicas as a performance bandage. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
     "intake_id": "saas-mid-stage-growth",
     "migration_or_federation_needs": {
       "has_legacy_non_postgres_source": false,
@@ -53,7 +58,7 @@
       "strong_tenant_locality"
     ]
   },
-  "generated_at": "2026-05-14T07:31:52.175690Z",
+  "generated_at": "2026-05-14T10:55:19.884445Z",
   "intake_id": "saas-mid-stage-growth",
   "intake_summary": {
     "industry": "saas_multi_tenant",
@@ -702,6 +707,42 @@
       "why_now": [
         "High peak connections without pooling evidence risks backend exhaustion and idle-session waste."
       ]
+    },
+    {
+      "confidence": 0.62,
+      "followup_questions": [],
+      "kind": "anti_pattern_warning",
+      "module_slug": null,
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.62,
+      "score_breakdown": {
+        "complexity_penalty": 0.0,
+        "data_shape_fit": 0.0,
+        "domain_fit": 0.0,
+        "growth_urgency": 0.0,
+        "operational_feasibility": 0.0,
+        "portability_penalty": 0.0,
+        "workload_fit": 0.0
+      },
+      "sources": [
+        {
+          "contribution": 0.62,
+          "rule_id": "rule-warn-replica-as-performance-bandage"
+        }
+      ],
+      "target_slug": "replica_as_performance_bandage",
+      "title": "Replica as Performance Bandage",
+      "triggers_for_next_stage": [
+        "Use pg_stat_statements to rank query pain before adding more replicas."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "Replicas isolate reads but do not fix inefficient SQL, poor plans, or write bottlenecks."
+      ],
+      "why_now": [
+        "Existing replicas plus performance focus can hide missing query and index work."
+      ]
     }
   ],
   "score_breakdown": {
@@ -717,6 +758,10 @@
     {
       "anti_pattern_slug": "no_pooling_high_connections",
       "message": "High peak connections without pooling evidence risks backend exhaustion and idle-session waste."
+    },
+    {
+      "anti_pattern_slug": "replica_as_performance_bandage",
+      "message": "Existing replicas plus performance focus can hide missing query and index work."
     }
   ]
 }

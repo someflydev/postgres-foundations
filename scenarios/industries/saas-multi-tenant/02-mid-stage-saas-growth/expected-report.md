@@ -1,9 +1,9 @@
 # PostgreSQL Architecture Recommendation
-Intake: saas-mid-stage-growth  |  Generated: 2026-05-14T07:31:52.175690Z
+Intake: saas-mid-stage-growth  |  Generated: 2026-05-14T10:55:19.884445Z
 Industry: SaaS Multi-tenant  |  Tenancy: multi_tenant_schema_per_tenant  |  Ops tolerance: medium
 
 ## Summary
-The intake points to 2 immediate recommendations, 14 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 1 anti-pattern that should be handled regardless of scoring.
+The intake points to 2 immediate recommendations, 14 later candidates, and 0 items that need stronger evidence before adoption. The posture stays PostgreSQL core-first: adopt the recommendations with matched data shapes and workload pressure, defer heavier tools until the operating model is clear, and keep portability visible. The warning section calls out 2 anti-patterns that should be handled regardless of scoring.
 
 ## Recommend now
 
@@ -100,6 +100,8 @@ The intake points to 2 immediate recommendations, 14 later candidates, and 0 ite
 
 - **no_pooling_high_connections**: High peak connections without pooling evidence risks backend exhaustion and idle-session waste.
 
+- **replica_as_performance_bandage**: Existing replicas plus performance focus can hide missing query and index work.
+
 
 
 ## Score breakdown
@@ -140,6 +142,7 @@ The intake points to 2 immediate recommendations, 14 later candidates, and 0 ite
 - rule-read-replica-when-reporting-needs-isolation (contrib 0.70)
 - rule-pgcrypto-for-public-identifiers (contrib 0.58)
 - rule-warn-no-pooling-high-connections (contrib 0.76)
+- rule-warn-replica-as-performance-bandage (contrib 0.62)
 
 
 ## Next steps (90-day horizon)
@@ -166,8 +169,13 @@ The intake points to 2 immediate recommendations, 14 later candidates, and 0 ite
   ],
   "existing_postgres_topology": "primary_with_read_replicas",
   "explicit_bias_against": [],
-  "explicit_bias_for": [],
-  "free_form_notes": "They are deciding whether the largest enterprise tenant should move to its own schema and whether reporting should hit a replica or materialized rollups. The largest tenant negotiates quarterly custom data-retention terms, while smaller tenants expect shared release velocity. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "explicit_bias_for": [
+    {
+      "extension_slug": "pg_stat_statements",
+      "reason": "The team wants query evidence before turning replicas into the default reporting answer."
+    }
+  ],
+  "free_form_notes": "They are deciding whether the largest enterprise tenant should move to its own schema and whether reporting should hit a replica or materialized rollups. The largest tenant negotiates quarterly custom data-retention terms, while smaller tenants expect shared release velocity. The team wants pg_stat_statements evidence before treating read replicas as a performance bandage. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
   "intake_id": "saas-mid-stage-growth",
   "migration_or_federation_needs": {
     "has_legacy_non_postgres_source": false,

@@ -6,13 +6,14 @@
     "as_of_date": "2026-05-12",
     "data_shapes": [
       "relational_core",
+      "geospatial",
       "ranges_windows",
       "semi_structured_jsonb"
     ],
     "existing_postgres_topology": "single_primary",
     "explicit_bias_against": [],
     "explicit_bias_for": [],
-    "free_form_notes": "They need appointment conflict protection and audit trails before considering search or analytics extensions. Some clinics share providers across locations, making simple office-based scheduling rules fail during holiday coverage. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+    "free_form_notes": "They need appointment conflict protection and audit trails before considering search or analytics extensions. Clinic locations appear on patient-facing maps, but spatial predicates are not a hot path yet. Some clinics share providers across locations, making simple office-based scheduling rules fail during holiday coverage. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
     "intake_id": "healthcare-clinic-ops-ehr-adjacent",
     "migration_or_federation_needs": {
       "has_legacy_non_postgres_source": false,
@@ -51,7 +52,7 @@
       "read_heavy"
     ]
   },
-  "generated_at": "2026-05-14T07:31:47.529076Z",
+  "generated_at": "2026-05-14T10:55:17.529670Z",
   "intake_id": "healthcare-clinic-ops-ehr-adjacent",
   "intake_summary": {
     "industry": "healthcare_ops",
@@ -61,8 +62,8 @@
   },
   "overall": {
     "candidate_later": {
-      "count": 9,
-      "score": 0.564
+      "count": 10,
+      "score": 0.556
     },
     "not_enough_evidence": {
       "count": 1,
@@ -491,6 +492,42 @@
       ]
     },
     {
+      "confidence": 0.62,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e3-postgis",
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.488,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.82,
+        "domain_fit": 0.66,
+        "growth_urgency": 0.277,
+        "operational_feasibility": 0.623,
+        "portability_penalty": 0.08,
+        "workload_fit": 0.48
+      },
+      "sources": [
+        {
+          "contribution": 0.62,
+          "rule_id": "rule-postgis-candidate-for-geospatial"
+        }
+      ],
+      "target_slug": "postgis",
+      "title": "PostGIS",
+      "triggers_for_next_stage": [
+        "Promote when dispatch, pricing, compliance, or availability depends on indexed spatial predicates rather than display-only coordinates."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Coordinates and small zone sets do not justify spatial types and operators until containment, distance, or intersection queries become hot paths."
+      ],
+      "why_now": [
+        "The data model already stores geospatial values, so PostGIS should stay on the review path."
+      ]
+    },
+    {
       "confidence": 0.56,
       "followup_questions": [],
       "kind": "extension",
@@ -529,13 +566,13 @@
     }
   ],
   "score_breakdown": {
-    "complexity_penalty": 0.198,
-    "data_shape_fit": 0.757,
-    "domain_fit": 0.695,
-    "growth_urgency": 0.328,
-    "operational_feasibility": 0.716,
-    "portability_penalty": 0.043,
-    "workload_fit": 0.725
+    "complexity_penalty": 0.209,
+    "data_shape_fit": 0.762,
+    "domain_fit": 0.692,
+    "growth_urgency": 0.324,
+    "operational_feasibility": 0.708,
+    "portability_penalty": 0.046,
+    "workload_fit": 0.706
   },
   "warnings": []
 }

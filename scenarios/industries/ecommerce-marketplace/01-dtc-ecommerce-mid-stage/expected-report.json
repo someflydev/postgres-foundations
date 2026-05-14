@@ -12,7 +12,7 @@
     "existing_postgres_topology": "single_primary",
     "explicit_bias_against": [],
     "explicit_bias_for": [],
-    "free_form_notes": "They are considering pg_trgm and unaccent for product search, while resisting a separate search service until PostgreSQL evidence says core search is exhausted. Merchandising teams edit product attributes daily, so JSONB flexibility is useful but cannot become an excuse for unindexed filter chaos. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+    "free_form_notes": "They are considering pg_trgm and unaccent for product search, while resisting a separate search service until PostgreSQL evidence says core search is exhausted. Merchandising teams edit product attributes daily, so JSONB flexibility is useful but the flexible schema pitch cannot become an excuse for everything json storage or unindexed filter chaos. Support also needs case-insensitive email and SKU lookups for order corrections. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
     "intake_id": "ecommerce-dtc-mid-stage",
     "migration_or_federation_needs": {
       "has_legacy_non_postgres_source": false,
@@ -50,7 +50,7 @@
       "search_heavy"
     ]
   },
-  "generated_at": "2026-05-14T07:31:45.987185Z",
+  "generated_at": "2026-05-14T10:55:16.611732Z",
   "intake_id": "ecommerce-dtc-mid-stage",
   "intake_summary": {
     "industry": "ecommerce_marketplace",
@@ -60,8 +60,8 @@
   },
   "overall": {
     "candidate_later": {
-      "count": 14,
-      "score": 0.575
+      "count": 17,
+      "score": 0.579
     },
     "not_enough_evidence": {
       "count": 1,
@@ -181,6 +181,80 @@
       ],
       "why_now": [
         "Document search should first establish lexical parsing, ranking, filters, and explainable relevance."
+      ]
+    },
+    {
+      "confidence": 0.75,
+      "followup_questions": [],
+      "kind": "extension",
+      "module_slug": "e2-pg-trgm",
+      "original_verdict": "recommend_now",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.63,
+      "score_breakdown": {
+        "complexity_penalty": 0.35,
+        "data_shape_fit": 0.9,
+        "domain_fit": 0.7,
+        "growth_urgency": 0.608,
+        "operational_feasibility": 0.74,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.8
+      },
+      "sources": [
+        {
+          "contribution": 0.75,
+          "rule_id": "rule-pg-trgm-for-fuzzy-support-ui"
+        }
+      ],
+      "target_slug": "pg_trgm",
+      "title": "pg_trgm",
+      "triggers_for_next_stage": [
+        "If lexical similarity plateaus below product goals, evaluate pgvector for semantic retrieval."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Do not index every text column; scope it to product fields with measured fuzzy-search value.",
+        "The rule matched, but weighted score is below the recommend-now threshold; confirm operational ownership, portability posture, and workload evidence first."
+      ],
+      "why_now": [
+        "Fuzzy lexical matching is the cheapest next step beyond core FTS for typo-tolerant search.",
+        "pg_trgm is broadly available on managed PostgreSQL."
+      ]
+    },
+    {
+      "confidence": 0.68,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.62,
+      "score_breakdown": {
+        "complexity_penalty": 0.16,
+        "data_shape_fit": 0.86,
+        "domain_fit": 0.68,
+        "growth_urgency": 0.608,
+        "operational_feasibility": 0.717,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.78
+      },
+      "sources": [
+        {
+          "contribution": 0.68,
+          "rule_id": "rule-pg-trgm-for-fuzzy-support-ui"
+        }
+      ],
+      "target_slug": "gin_trgm_similarity",
+      "title": "GIN Trigram Similarity",
+      "triggers_for_next_stage": [
+        "Adopt after EXPLAIN confirms sequential scans or slow ILIKE paths on target columns."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Wait until the searched columns and acceptable false-positive rate are known."
+      ],
+      "why_now": [
+        "GIN trigram indexes support targeted similarity and substring search paths."
       ]
     },
     {
@@ -661,6 +735,42 @@
       ]
     },
     {
+      "confidence": 0.62,
+      "followup_questions": [],
+      "kind": "index_pattern",
+      "module_slug": null,
+      "original_verdict": "candidate_later",
+      "recommendation_class": "candidate_later",
+      "recommendation_score": 0.554,
+      "score_breakdown": {
+        "complexity_penalty": 0.12,
+        "data_shape_fit": 0.68,
+        "domain_fit": 0.62,
+        "growth_urgency": 0.525,
+        "operational_feasibility": 0.717,
+        "portability_penalty": 0.04,
+        "workload_fit": 0.72
+      },
+      "sources": [
+        {
+          "contribution": 0.62,
+          "rule_id": "rule-expression-index-for-normalization"
+        }
+      ],
+      "target_slug": "expression_index_for_normalization",
+      "title": "Expression Index for Normalization",
+      "triggers_for_next_stage": [
+        "Adopt after query review confirms stable lower, unaccent, or extracted-key predicates."
+      ],
+      "verdict": "candidate_later",
+      "why_not_yet": [
+        "Expression indexes are fragile when SQL does not consistently use the same expression."
+      ],
+      "why_now": [
+        "Normalized lookup benefits from matching the indexed expression to application predicates."
+      ]
+    },
+    {
       "confidence": 0.58,
       "followup_questions": [],
       "kind": "extension",
@@ -732,16 +842,57 @@
       "why_now": [
         "The intake mentions semantic or vector-style search, so pgvector should stay visible as a possible later option."
       ]
+    },
+    {
+      "confidence": 0.78,
+      "followup_questions": [],
+      "kind": "anti_pattern_warning",
+      "module_slug": null,
+      "original_verdict": "avoid_for_now",
+      "recommendation_class": "avoid_for_now",
+      "recommendation_score": 0.78,
+      "score_breakdown": {
+        "complexity_penalty": 0.0,
+        "data_shape_fit": 0.0,
+        "domain_fit": 0.0,
+        "growth_urgency": 0.0,
+        "operational_feasibility": 0.0,
+        "portability_penalty": 0.0,
+        "workload_fit": 0.0
+      },
+      "sources": [
+        {
+          "contribution": 0.78,
+          "rule_id": "rule-warn-jsonb-everything"
+        }
+      ],
+      "target_slug": "jsonb_everything",
+      "title": "JSONB Everything",
+      "triggers_for_next_stage": [
+        "Extract hot keys and invariants once filters, joins, or audit rules repeat."
+      ],
+      "verdict": "avoid_for_now",
+      "why_not_yet": [
+        "JSONB is useful for variable attributes, not for hiding core entities, constraints, or tenant keys."
+      ],
+      "why_now": [
+        "The intake language suggests JSONB may be used as a replacement for relational modeling."
+      ]
     }
   ],
   "score_breakdown": {
-    "complexity_penalty": 0.214,
-    "data_shape_fit": 0.708,
-    "domain_fit": 0.688,
-    "growth_urgency": 0.613,
-    "operational_feasibility": 0.702,
-    "portability_penalty": 0.063,
-    "workload_fit": 0.759
+    "complexity_penalty": 0.213,
+    "data_shape_fit": 0.723,
+    "domain_fit": 0.685,
+    "growth_urgency": 0.609,
+    "operational_feasibility": 0.705,
+    "portability_penalty": 0.06,
+    "workload_fit": 0.76
   },
-  "warnings": []
+  "warnings": [
+    {
+      "anti_pattern_slug": "jsonb_everything",
+      "message": "The intake language suggests JSONB may be used as a replacement for relational modeling."
+    }
+  ]
 }

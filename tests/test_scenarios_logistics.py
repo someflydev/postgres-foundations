@@ -11,7 +11,7 @@ def test_logistics_industry_scenarios_validate_and_match_goldens() -> None:
 
 def test_logistics_postgis_and_timescale_posture_progresses_by_scale() -> None:
     small = load_report("logistics-geo", "01-last-mile-delivery-single-city")
-    assert "postgis" in slugs_by_class(small, "candidate_later")
+    assert {"postgis", "gist_geospatial"} <= slugs_by_class(small, "recommend_now")
 
     regional = load_report("logistics-geo", "02-multi-region-logistics-with-zones")
     assert {"postgis", "partitioning", "brin_append_only_chronological"} <= slugs_by_class(

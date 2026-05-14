@@ -8,7 +8,7 @@
   "existing_postgres_topology": "single_primary",
   "explicit_bias_against": [],
   "explicit_bias_for": [],
-  "free_form_notes": "They are considering pg_trgm and unaccent for product search, while resisting a separate search service until PostgreSQL evidence says core search is exhausted. Merchandising teams edit product attributes daily, so JSONB flexibility is useful but cannot become an excuse for unindexed filter chaos. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
+  "free_form_notes": "They are considering pg_trgm and unaccent for product search, while resisting a separate search service until PostgreSQL evidence says core search is exhausted. Merchandising teams edit product attributes daily, so JSONB flexibility is useful but the flexible schema pitch cannot become an excuse for everything json storage or unindexed filter chaos. Support also needs case-insensitive email and SKU lookups for order corrections. Growth horizon: 6, 12, and 24 months. Restore drills are not documented.",
   "intake_id": "ecommerce-dtc-mid-stage",
   "migration_or_federation_needs": {
     "has_legacy_non_postgres_source": false,

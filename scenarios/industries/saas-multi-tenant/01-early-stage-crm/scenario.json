@@ -16,7 +16,9 @@
     "semi_structured_jsonb"
   ],
   "expected_decision_outputs": {
-    "avoid_for_now": [],
+    "avoid_for_now": [
+      "vector_before_lexical"
+    ],
     "candidate_later": [
       "expression_indexes",
       "generated_columns",
@@ -57,6 +59,7 @@
   "workload_patterns": [
     "oltp_heavy",
     "read_heavy",
+    "semantic_retrieval",
     "strong_tenant_locality"
   ]
 }

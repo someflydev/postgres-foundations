@@ -17,17 +17,20 @@
     "ranges_windows"
   ],
   "expected_decision_outputs": {
-    "avoid_for_now": [],
+    "avoid_for_now": [
+      "geo_logic_without_postgis"
+    ],
     "candidate_later": [
       "exclusion_constraints",
       "gist_range_exclusion",
       "partial_index_for_skew",
       "partial_indexes",
-      "pgcrypto",
-      "postgis"
+      "pgcrypto"
     ],
     "recommend_now": [
       "constraints",
+      "gist_geospatial",
+      "postgis",
       "pg_stat_statements"
     ]
   },
@@ -54,6 +57,7 @@
   "title": "Single-city last-mile delivery with modest zones",
   "workload_patterns": [
     "oltp_heavy",
-    "read_heavy"
+    "read_heavy",
+    "geo_query_heavy"
   ]
 }
