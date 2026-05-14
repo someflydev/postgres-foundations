@@ -18,7 +18,7 @@ link map used by `pgfound docs check`.
 
 | Goal | Read |
 | --- | --- |
-| Work through lessons and exercises | [Learner Workflow](learner-workflow.md) |
+| Work through lessons and exercises | [Learner Workflow](learner-workflow.md), [Lesson Catalog](../lessons/README.md), and [Exercise Catalog](../exercises/README.md) |
 | Understand reusable domains | [Domain Conventions](domain-conventions.md) |
 | Practice expressive SQL | [Expressive SQL Style](expressive-sql-style.md) |
 | Use concurrency scenarios | [Concurrency Harness](concurrency-harness.md) and [Concurrency Playbook](concurrency-playbook.md) |

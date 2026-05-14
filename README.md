@@ -74,7 +74,7 @@ Architecture decisions are recorded under [docs/adr/](docs/adr/). The ADRs expla
 
 ## How To Use It
 
-If you want to learn PostgreSQL from zero, start with [curriculum/README.md](curriculum/README.md), then follow [docs/learner-workflow.md](docs/learner-workflow.md). Use the Docker lab, seed packs, exercises, review command, and progress dashboard as the main loop.
+If you want to learn PostgreSQL from zero, start with [curriculum/README.md](curriculum/README.md), use [lessons/README.md](lessons/README.md) and [exercises/README.md](exercises/README.md) to find the active work, then follow [docs/learner-workflow.md](docs/learner-workflow.md). Use the Docker lab, seed packs, exercises, review command, and progress dashboard as the main loop.
 
 If you want to level up operationally, start with [docs/admin-track/README.md](docs/admin-track/README.md) and [docs/extension-track/README.md](docs/extension-track/README.md). Those tracks assume core competence and move into roles, pooling, restore drills, monitoring, replication, extension posture, and operational tradeoffs.
 

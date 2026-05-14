@@ -2,7 +2,8 @@
 
 PostgreSQL Foundations uses a small repeatable loop:
 
-1. Pick one active exercise from the phase README.
+1. Pick one active exercise from [curriculum/README.md](../curriculum/README.md),
+   [exercises/README.md](../exercises/README.md), or `pgfound content list`.
 2. Load the seed pack when needed.
 3. Run the exercise prompt.
 4. Write an answer in `tmp/answers/<exercise-id>.sql`.
