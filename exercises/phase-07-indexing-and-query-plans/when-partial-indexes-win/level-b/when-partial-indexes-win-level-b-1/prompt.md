@@ -1,5 +1,13 @@
 # When Partial Indexes Win Level B1
 
-Use pgfound lab explain to investigate When Partial Indexes Win. Identify the workload, propose the matching index or statistics action, run ANALYZE, and compare estimated rows, actual rows, buffers, and node types.
+## Scenario
 
-Record the before and after plan and explain the maintenance tradeoff.
+The operations dashboard reads rare pending orders ordered by recent placement time.
+
+## Task
+
+Compare two candidate access paths or rewrites. Use row estimates, actual rows, buffers, and maintenance cost to decide the pending-order dashboard should keep or reject the partial index. Include a partial index whose predicate is provably implied by the query.
+
+## Required Artifact
+
+Submit the relevant SQL or critique notes plus the before/after plan observations. Name the read benefit, write or storage cost, and the condition that would make you remove or defer the index.

@@ -26,7 +26,11 @@
     "seq_scan",
     "statistics",
     "vacuum",
-    "write_amplification"
+    "write_amplification",
+    "geography",
+    "geometry",
+    "postgis",
+    "srid"
   ],
   "not_yet_allowed_concepts": [
     "full_text_search",
@@ -38,25 +42,22 @@
   "schema_scope": {
     "phase": "7b",
     "tables": [
-      "ecommerce.orders",
-      "ecommerce.customers",
-      "events.events",
-      "events.event_windows",
-      "scheduling.appointments"
+      "logistics.service_zones",
+      "logistics.delivery_events"
     ]
   },
   "dataset": {
-    "seed_pack_id": "event_heavy_ops",
-    "max_rows_hint": 1200000
+    "seed_pack_id": "logistics_geo",
+    "max_rows_hint": 100000
   },
-  "search_path": "ecommerce, events, scheduling, public",
+  "search_path": "logistics, public",
   "expected_output_shape": "explain_plan",
   "sessions": 1,
   "output_comparison": "ordered",
   "success_criteria": [
-    "Names the exact query pattern and predicate or operator.",
-    "Compares estimated rows, actual rows, buffers, and selected node types.",
-    "Explains the read benefit and write, storage, or maintenance cost."
+    "Names the exact spatial predicate, geometry or geography type, and SRID assumption.",
+    "Compares estimated rows, actual rows, buffers, and selected spatial index node types.",
+    "Explains the PostGIS operational boundary, read benefit, and GiST maintenance cost."
   ],
   "time_target_minutes": 45,
   "rubric_id": "indexing-reasoning",
@@ -70,8 +71,9 @@
   ],
   "status": "active",
   "oral_defense_prompts": [
-    "Why did the original plan choose its access path?",
-    "Which predicate, expression, or operator must match the index?",
-    "What evidence would make you remove this index later?"
-  ]
+    "What makes this a spatial predicate rather than display-only coordinates?",
+    "Why does GiST help ST_Contains or ST_DWithin but not arbitrary application-side math?",
+    "What evidence would make PostGIS not yet appropriate for this workload?"
+  ],
+  "lab_harness_profile": "postgis"
 }

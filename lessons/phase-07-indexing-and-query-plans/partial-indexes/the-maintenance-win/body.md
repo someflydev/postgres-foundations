@@ -2,72 +2,57 @@
 
 ## Problem Framing
 
-Phase 7b starts from a stricter rule than a catalog tour: every index exists because a concrete query pattern and a real data distribution made it a better tradeoff than the alternatives. The Maintenance Win is taught through that rule. A learner should be able to point at the predicate, join key, sort key, containment operator, or range operator that creates the need. They should also be able to point at the rows that will not benefit, because those rows still pay storage and maintenance cost when an index is too broad.
+Index design is not only a read-path decision. Every index is also a write-path, vacuum, cache, backup, and restore decision. The maintenance win of a smaller or removed index is often more important than a single faster query. This lesson focuses on that accounting. A learner should be able to explain which indexes earn their keep, which indexes overlap, and which indexes should be dropped because their maintenance cost is larger than their read value.
 
-The working domains are intentionally familiar. Ecommerce orders give us a skewed status distribution where delivered orders dominate and pending, refunded, and canceled rows are operationally hot but rare. Event-heavy operations give us append-heavy rows where occurred_at usually tracks physical insertion order. Scheduling gives us time ranges that can overlap, contain one another, and require exclusion-style correctness. Phase 4b introduced arrays, ranges, and JSONB as modeling tools; this lesson returns to them with the planner in the room.
-
-The central operational question is not "can PostgreSQL create this index?" The question is "which repeated query becomes cheaper, how do we prove it, and what does the system now have to maintain?" A full B-tree on status may be an attractive first guess, but if most rows have the same value it can be a poor access path. A partial index can be excellent when the predicate is stable and exactly matches the hot workflow. A GIN index can be decisive for JSONB containment and array membership, yet expensive to build and maintain. GiST can support range overlap and exclusion logic, but it is not a universal replacement for B-tree. BRIN can summarize large chronological tables in tiny storage, but only when physical correlation makes those summaries selective enough.
+The danger in advanced indexing is that specialized access paths feel sophisticated. A partial index, expression index, GIN index, GiST index, or BRIN index can all be correct in the right workload. They can also quietly slow inserts, updates, autovacuum, and incident response. The platform doctrine is operational: an index is a contract with a query pattern and a measured benefit, not a trophy.
 
 ## Minimal Concept Introduction
 
-The planner matches query predicates to available access paths using operator classes, statistics, row estimates, and cost settings. In this lesson the required vocabulary includes smaller index, vacuum, write amplification. The practical habit is always the same: write the slow or suspicious query, run EXPLAIN or EXPLAIN ANALYZE BUFFERS, read the estimated rows and actual rows, then change one thing. After the change, run the same query again and compare the plan. The goal is not merely to see an index name. The goal is to see fewer pages read, fewer rows filtered after access, a lower cost estimate when statistics support it, or a more appropriate node type for the data shape.
+Write amplification is the extra work paid when a row change must update table storage plus every affected index. Large indexes also consume shared buffers, lengthen backup and restore time, and give autovacuum more dead entries to clean. A maintenance review therefore starts with two questions: which indexes are scanned, and which indexes are expensive to maintain? PostgreSQL's statistics views, especially `pg_stat_user_indexes`, help find unused indexes. Size functions such as `pg_relation_size` and `pg_size_pretty` help make the cost visible.
 
-Partial indexes add a WHERE clause to the index definition. PostgreSQL can use the index only when the query predicate implies that WHERE clause. This is why a partial index on status = 'pending' is not automatically used by a query that says status IN ('pending', 'refunded'), even when pending is one of the values. Expression indexes store the result of an expression such as lower(email) or date_trunc('day', created_at). They are powerful when application queries consistently use the same expression, but fragile when the query drifts to a different expression or time zone rule.
-
-GIN indexes invert membership-like structures: JSONB keys and values, array elements, and later full-text lexemes. The default jsonb_ops class supports more operators; jsonb_path_ops is smaller and targeted for containment. GiST indexes are a framework for search trees over shapes, ranges, and many extension types. For ranges, GiST supports operators such as && and @>. BRIN stores summaries for ranges of heap pages. It is often the right first thought for very large append-heavy event tables filtered by time.
+The maintenance win can come from a partial index that replaces a broad index, from dropping a redundant index whose leading columns are covered by another index, or from rejecting a proposed GIN index because the write rate is too high for the read benefit. The point is to keep the set small enough that each index has a job.
 
 ## Worked Example
 
-Suppose the operations dashboard asks for pending orders every minute:
+Worked example anchor: redundant-order-index-maintenance
+
+Suppose an ecommerce system has accumulated these indexes during several tuning passes:
 
 ```sql
-EXPLAIN (ANALYZE, BUFFERS)
-SELECT id, order_number, placed_at
-FROM ecommerce.orders
-WHERE status = 'pending'
-ORDER BY placed_at DESC
-LIMIT 50;
+CREATE INDEX orders_customer_idx ON ecommerce.orders (customer_id);
+CREATE INDEX orders_customer_placed_idx ON ecommerce.orders (customer_id, placed_at DESC);
+CREATE INDEX orders_customer_status_idx ON ecommerce.orders (customer_id, status);
 ```
 
-A full index on status may still carry entries for every delivered order. If delivered rows are more than ninety percent of the table, that index is larger than the hot query needs, and it must be updated for rows the dashboard will never read. A partial index can encode the actual workload:
+Before dropping anything, inspect usage and size:
 
 ```sql
-CREATE INDEX orders_pending_recent_idx
-ON ecommerce.orders (placed_at DESC)
-WHERE status = 'pending';
-ANALYZE ecommerce.orders;
+SELECT
+    indexrelname,
+    idx_scan,
+    pg_size_pretty(pg_relation_size(indexrelid)) AS index_size
+FROM pg_stat_user_indexes
+WHERE schemaname = 'ecommerce'
+  AND relname = 'orders'
+ORDER BY pg_relation_size(indexrelid) DESC;
 ```
 
-The verification step is part of the answer. The post-change plan should show an index access path that can satisfy the pending predicate and recent ordering with far fewer buffers. If the query is written as lower(status) = 'pending', or as status <> 'delivered', the partial-index predicate may not match. That failure is not PostgreSQL being stubborn; it is the planner refusing to assume a condition that is not guaranteed by the query text and available constraints.
-
-For JSONB, the same workflow applies with a different access method:
-
-```sql
-CREATE INDEX events_payload_gin_path_idx
-ON events.events USING gin (payload jsonb_path_ops);
-ANALYZE events.events;
-```
-
-A containment predicate such as payload @> '{"phase": 7, "severity": "warning"}' can now be tested before and after the index. If the query extracts a text value with payload ->> 'severity' and compares it with equality, the containment-oriented GIN index may not help. The index has to match the operator family used by the query.
+Then connect the candidate index to real queries. If the primary workload is "recent orders for a customer", `(customer_id, placed_at DESC)` may cover the single-column lookup well enough because `customer_id` is the leading column. If no query filters by `(customer_id, status)`, that index may be pure write cost. The safe change is not `DROP INDEX` during a hunch. It is a documented review: capture usage, confirm no known query depends on the candidate, test in staging, and then use `DROP INDEX CONCURRENTLY` in production when appropriate.
 
 ## Diagnostic Questions
 
-Ask these questions before accepting an index design. What is the exact predicate or operator that must become faster? How many rows match it, both as an estimate and as actual rows? Is the data distribution skewed, correlated with insertion order, or mostly uniform? Does the proposed index make writes, vacuum, or autovacuum materially more expensive? Does the query predicate imply the partial-index WHERE clause exactly enough for the planner to use it? Does the expression in the query match the expression in the index? Is a GIN, GiST, or BRIN index being chosen because the data type and operator demand it, or because the index name sounds advanced?
+For each index, ask which query uses it, how often it is scanned, how large it is, and which writes touch it. Ask whether it duplicates another index's leading columns. Ask whether an index-only scan is realistic or whether visibility-map misses still force heap reads. Ask whether a partial index can replace a broad one because only a rare state is operationally hot. Ask whether a BRIN index would be enough for an append-heavy time filter instead of a much larger B-tree.
 
-When estimates are badly wrong, do not jump directly to forcing a plan. PostgreSQL does not support optimizer hints in core, and this course treats that as a design signal. Run ANALYZE. Inspect whether columns are correlated. Consider extended statistics with CREATE STATISTICS when a combination of columns is misestimated because single-column histograms miss the relationship. A plan with estimated rows of 10 and actual rows of 200000 is a statistics problem before it is an index problem.
+A maintenance review should also name the rollback path. If a dropped index turns out to matter, how long does a concurrent rebuild take on the production table? Is there enough disk headroom for the rebuild? Are replicas, backups, and maintenance windows accounted for?
 
 ## Common Pitfalls
 
-The common failure is adding a specialized index without a workload. Partial indexes fail when the predicate in production is broader than the predicate in the index, when the rare value stops being rare, or when a prepared statement hides constants in a way that prevents implication. Expression indexes fail when applications apply inconsistent normalization, such as lower(email) in one path and email ILIKE in another. GIN indexes fail as a tradeoff when updates are frequent, pending lists grow, and the query volume does not justify the maintenance. GiST range indexes fail when the query can use a simpler scalar B-tree predicate. BRIN fails when the table is randomly updated or physically uncorrelated with the filtered column.
-
-Another pitfall is reading EXPLAIN as a scoreboard. Lower estimated cost is not proof by itself, and an index scan is not always better than a sequential scan. The plan must be read with rows, loops, buffers, and timing. A Bitmap Heap Scan can be exactly right when many matching tuples are scattered across heap pages. An Index Only Scan may still fetch heap pages when the visibility map is not favorable. A sequential scan over a small table can be ideal.
+The most common pitfall is treating `idx_scan = 0` as automatic permission to drop. A rarely used index may protect an important monthly close, compliance export, or incident query. The second pitfall is measuring only query latency and ignoring the write path. The third is keeping overlapping indexes because nobody owns removal. The fourth is adding one-off indexes for an emergency and never scheduling the cleanup.
 
 ## Explain It Back
 
-Explain the index as a contract between query and data. For The Maintenance Win, name the query pattern, the data distribution, the access method, and the maintenance cost. Then show the proof using EXPLAIN ANALYZE BUFFERS. If the proof depends on estimates, state whether the estimates match actual rows. If they do not, propose ANALYZE, extended statistics, or a query rewrite before adding more indexes.
-
-A strong answer sounds operational: "The dashboard reads rare pending orders by recent time. The partial index contains only pending rows ordered by placed_at, so the planner can avoid scanning delivered rows and can stop early for the LIMIT. It costs one extra index entry only for rows that enter the pending state, not for every delivered order. I verified it by comparing buffers and actual rows before and after." That is the level of reasoning Phase 7b expects.
+A strong answer sounds like an operations review: "This index is 8 GB, has no scans in the observed window, and overlaps with `(customer_id, placed_at DESC)` for our known customer lookup. It adds write amplification to every order insert and update. I would verify the query inventory, test removal in staging, and drop it concurrently with a rebuild plan if a hidden report depends on it." The maintenance win is not abstract tidiness. It is lower write cost, less bloat pressure, smaller backups, and a smaller set of access paths the team can actually reason about.
 
 ## References and Further Reading
 
-Use `docs/indexing-playbook-part2.md` as the local reference for partial, expression, GIN, GiST, and BRIN choices. Keep `docs/indexing-playbook-part1.md` nearby for B-tree, composite, covering, and access-path fundamentals. PostgreSQL's official documentation on indexes, operator classes, EXPLAIN, and planner statistics is the external reference set, but the lab proof is the source of truth for each exercise.
+Use `docs/anti-patterns/unused_indexes.md`, `docs/anti-patterns/redundant_indexes.md`, and `docs/indexing-playbook-part2.md` while reviewing index value and removal criteria.

@@ -24,10 +24,12 @@ PHASE7B_LESSONS = {
 WORD_RE = re.compile(r"\b[\w'-]+\b")
 REQUIRED_TEXT = {
     "when-partial-indexes-win": ["partial index", "status = 'pending'", "predicate"],
+    "the-maintenance-win": ["write amplification", "unused indexes", "DROP INDEX CONCURRENTLY"],
     "functional-indexes": ["lower(email)", "date_trunc"],
     "gin-for-jsonb-and-arrays": ["jsonb_path_ops", "jsonb_ops", "array membership"],
     "gin-cost-model": ["fastupdate", "pending list", "bloat"],
     "gist-for-ranges-and-exclusion": ["exclusion constraint", "&&"],
+    "gist-for-geospatial-preview": ["ST_Contains", "ST_DWithin", "geometry", "geography", "SRID"],
     "brin-for-append-heavy-chronological-data": ["BRIN", "physical correlation"],
     "explain-analyze-deep-dive": ["estimated rows", "actual rows", "CREATE STATISTICS"],
     "plan-debugging-workflow": ["EXPLAIN ANALYZE BUFFERS", "hypothesize", "measure"],
@@ -105,6 +107,36 @@ def test_phase7b_required_drills_are_present() -> None:
     assert "USING brin" in exercise_text
     assert "bloat-to-value ratio" in exercise_text
     assert "CREATE STATISTICS" in exercise_text
+
+
+def test_phase7b_content_is_topic_specific_not_recycled() -> None:
+    anchors: dict[str, str] = {}
+    pending_order_example_paths = []
+
+    for lesson_path in _phase7b_lesson_paths():
+        lesson = _load_json(lesson_path)
+        body = (lesson_path.parent / lesson["body_path"]).read_text(encoding="utf-8")
+        match = re.search(r"Worked example anchor: ([a-z0-9-]+)", body)
+        assert match, lesson["id"]
+        anchors[lesson["id"]] = match.group(1)
+        if "Suppose the operations dashboard asks for pending orders every minute" in body:
+            pending_order_example_paths.append(lesson_path.parent.name)
+
+    assert len(set(anchors.values())) == len(PHASE7B_LESSONS)
+    assert pending_order_example_paths == ["when-partial-indexes-win"]
+
+    geospatial_text = (
+        paths.LESSONS_DIR / PHASE_DIR / "gist" / "gist-for-geospatial-preview" / "body.md"
+    ).read_text(encoding="utf-8")
+    assert "status = 'pending'" not in geospatial_text
+    assert "PostGIS" in geospatial_text
+
+    generic_prompts = [
+        path
+        for path in (paths.EXERCISES_DIR / PHASE_DIR).glob("**/prompt.md")
+        if "Use pgfound lab explain to investigate" in path.read_text(encoding="utf-8")
+    ]
+    assert generic_prompts == []
 
 
 def test_phase7b_docs_and_seed_extensions_are_present() -> None:

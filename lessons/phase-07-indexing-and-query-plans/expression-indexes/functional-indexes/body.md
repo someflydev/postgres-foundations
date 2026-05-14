@@ -2,72 +2,60 @@
 
 ## Problem Framing
 
-Phase 7b starts from a stricter rule than a catalog tour: every index exists because a concrete query pattern and a real data distribution made it a better tradeoff than the alternatives. Functional Indexes is taught through that rule. A learner should be able to point at the predicate, join key, sort key, containment operator, or range operator that creates the need. They should also be able to point at the rows that will not benefit, because those rows still pay storage and maintenance cost when an index is too broad.
+Functional indexes, often called expression indexes, are for queries that repeatedly filter or sort by a derived value rather than the stored column value. They are powerful when the expression is stable, deterministic for the query's purpose, and used consistently. They are fragile when application paths normalize data in different ways. This lesson uses `lower(email)` and `date_trunc` because they show both sides: normalized lookup and time bucketing.
 
-The working domains are intentionally familiar. Ecommerce orders give us a skewed status distribution where delivered orders dominate and pending, refunded, and canceled rows are operationally hot but rare. Event-heavy operations give us append-heavy rows where occurred_at usually tracks physical insertion order. Scheduling gives us time ranges that can overlap, contain one another, and require exclusion-style correctness. Phase 4b introduced arrays, ranges, and JSONB as modeling tools; this lesson returns to them with the planner in the room.
-
-The central operational question is not "can PostgreSQL create this index?" The question is "which repeated query becomes cheaper, how do we prove it, and what does the system now have to maintain?" A full B-tree on status may be an attractive first guess, but if most rows have the same value it can be a poor access path. A partial index can be excellent when the predicate is stable and exactly matches the hot workflow. A GIN index can be decisive for JSONB containment and array membership, yet expensive to build and maintain. GiST can support range overlap and exclusion logic, but it is not a universal replacement for B-tree. BRIN can summarize large chronological tables in tiny storage, but only when physical correlation makes those summaries selective enough.
+The key question is whether the expression is part of the data access contract. If the application always finds a customer by case-insensitive email, an index on raw `email` does not match the predicate. If daily reporting groups orders by the day of `placed_at`, an index on the timestamp may not help the expression predicate unless the query can use a range on the raw timestamp or an expression index that exactly matches the expression.
 
 ## Minimal Concept Introduction
 
-The planner matches query predicates to available access paths using operator classes, statistics, row estimates, and cost settings. In this lesson the required vocabulary includes lower(email), date_trunc, immutable expression. The practical habit is always the same: write the slow or suspicious query, run EXPLAIN or EXPLAIN ANALYZE BUFFERS, read the estimated rows and actual rows, then change one thing. After the change, run the same query again and compare the plan. The goal is not merely to see an index name. The goal is to see fewer pages read, fewer rows filtered after access, a lower cost estimate when statistics support it, or a more appropriate node type for the data shape.
+A B-tree expression index stores the result of an expression for each row. PostgreSQL can use it when the query applies the same expression in a way the planner recognizes. The expression must be immutable or stable enough for the index definition PostgreSQL accepts. More importantly, the team must standardize the query pattern. `lower(email) = lower($1)` and `email ILIKE $1` are not the same access path. `date_trunc('day', placed_at)` and a half-open timestamp range are also different designs.
 
-Partial indexes add a WHERE clause to the index definition. PostgreSQL can use the index only when the query predicate implies that WHERE clause. This is why a partial index on status = 'pending' is not automatically used by a query that says status IN ('pending', 'refunded'), even when pending is one of the values. Expression indexes store the result of an expression such as lower(email) or date_trunc('day', created_at). They are powerful when application queries consistently use the same expression, but fragile when the query drifts to a different expression or time zone rule.
-
-GIN indexes invert membership-like structures: JSONB keys and values, array elements, and later full-text lexemes. The default jsonb_ops class supports more operators; jsonb_path_ops is smaller and targeted for containment. GiST indexes are a framework for search trees over shapes, ranges, and many extension types. For ranges, GiST supports operators such as && and @>. BRIN stores summaries for ranges of heap pages. It is often the right first thought for very large append-heavy event tables filtered by time.
+Expression indexes can be a bridge between ideal modeling and real workload pressure. They can protect a legacy email column that was not normalized on write. They can speed a report while the team decides whether a generated column would make the derived value more explicit. They should not hide inconsistent application rules forever.
 
 ## Worked Example
 
-Suppose the operations dashboard asks for pending orders every minute:
+Worked example anchor: case-insensitive-customer-email
+
+A support tool needs to find customers by email regardless of case:
 
 ```sql
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT id, order_number, placed_at
-FROM ecommerce.orders
-WHERE status = 'pending'
-ORDER BY placed_at DESC
-LIMIT 50;
+SELECT id, email, created_at
+FROM ecommerce.customers
+WHERE lower(email) = lower('Ada@example.com');
 ```
 
-A full index on status may still carry entries for every delivered order. If delivered rows are more than ninety percent of the table, that index is larger than the hot query needs, and it must be updated for rows the dashboard will never read. A partial index can encode the actual workload:
+A normal index on `email` cannot satisfy `lower(email)`. The matching index is on the expression:
 
 ```sql
-CREATE INDEX orders_pending_recent_idx
-ON ecommerce.orders (placed_at DESC)
-WHERE status = 'pending';
-ANALYZE ecommerce.orders;
+CREATE INDEX customers_lower_email_idx
+ON ecommerce.customers (lower(email));
+ANALYZE ecommerce.customers;
 ```
 
-The verification step is part of the answer. The post-change plan should show an index access path that can satisfy the pending predicate and recent ordering with far fewer buffers. If the query is written as lower(status) = 'pending', or as status <> 'delivered', the partial-index predicate may not match. That failure is not PostgreSQL being stubborn; it is the planner refusing to assume a condition that is not guaranteed by the query text and available constraints.
+After the change, verify that the plan uses the expression index and that actual rows match expectations. Then check every application path that performs email lookup. If one path uses `lower(email)` and another uses `email ILIKE`, the index will not reliably serve both. The right long-term fix may be a canonicalized email column or a generated column with a uniqueness constraint, but the expression index is a valid measured step when the existing table is already in production.
 
-For JSONB, the same workflow applies with a different access method:
+A reporting example has a different tradeoff:
 
 ```sql
-CREATE INDEX events_payload_gin_path_idx
-ON events.events USING gin (payload jsonb_path_ops);
-ANALYZE events.events;
+CREATE INDEX orders_order_day_idx
+ON ecommerce.orders (date_trunc('day', placed_at));
 ```
 
-A containment predicate such as payload @> '{"phase": 7, "severity": "warning"}' can now be tested before and after the index. If the query extracts a text value with payload ->> 'severity' and compares it with equality, the containment-oriented GIN index may not help. The index has to match the operator family used by the query.
+This can help a query that filters on `date_trunc('day', placed_at)`, but a half-open range such as `placed_at >= DATE '2026-05-01' AND placed_at < DATE '2026-05-02'` may use a normal timestamp index and avoid expression fragility. The learner must defend which query shape the system will standardize.
 
 ## Diagnostic Questions
 
-Ask these questions before accepting an index design. What is the exact predicate or operator that must become faster? How many rows match it, both as an estimate and as actual rows? Is the data distribution skewed, correlated with insertion order, or mostly uniform? Does the proposed index make writes, vacuum, or autovacuum materially more expensive? Does the query predicate imply the partial-index WHERE clause exactly enough for the planner to use it? Does the expression in the query match the expression in the index? Is a GIN, GiST, or BRIN index being chosen because the data type and operator demand it, or because the index name sounds advanced?
-
-When estimates are badly wrong, do not jump directly to forcing a plan. PostgreSQL does not support optimizer hints in core, and this course treats that as a design signal. Run ANALYZE. Inspect whether columns are correlated. Consider extended statistics with CREATE STATISTICS when a combination of columns is misestimated because single-column histograms miss the relationship. A plan with estimated rows of 10 and actual rows of 200000 is a statistics problem before it is an index problem.
+Ask whether the expression appears in the actual predicate, not only in a report title. Ask whether the expression is deterministic for the business rule. Ask whether a generated column would make the rule clearer. Ask whether a normal range predicate could avoid the expression index. Ask how many writes now maintain the derived value and whether the query volume justifies it. For date buckets, ask about time zone rules before indexing `date_trunc`; a day in UTC may not be the day the business means.
 
 ## Common Pitfalls
 
-The common failure is adding a specialized index without a workload. Partial indexes fail when the predicate in production is broader than the predicate in the index, when the rare value stops being rare, or when a prepared statement hides constants in a way that prevents implication. Expression indexes fail when applications apply inconsistent normalization, such as lower(email) in one path and email ILIKE in another. GIN indexes fail as a tradeoff when updates are frequent, pending lists grow, and the query volume does not justify the maintenance. GiST range indexes fail when the query can use a simpler scalar B-tree predicate. BRIN fails when the table is randomly updated or physically uncorrelated with the filtered column.
-
-Another pitfall is reading EXPLAIN as a scoreboard. Lower estimated cost is not proof by itself, and an index scan is not always better than a sequential scan. The plan must be read with rows, loops, buffers, and timing. A Bitmap Heap Scan can be exactly right when many matching tuples are scattered across heap pages. An Index Only Scan may still fetch heap pages when the visibility map is not favorable. A sequential scan over a small table can be ideal.
+The common failure is adding an expression index and then writing a different expression in production. Another failure is indexing a convenience expression that should be materialized as a real invariant, such as a normalized SKU that must be unique. For time expressions, the pitfall is mixing local time and UTC without saying which one the index represents. For JSONB extraction expressions, the pitfall is pretending an expression index on one key is the same as a GIN index for containment; those are different operator families and different maintenance costs.
 
 ## Explain It Back
 
-Explain the index as a contract between query and data. For Functional Indexes, name the query pattern, the data distribution, the access method, and the maintenance cost. Then show the proof using EXPLAIN ANALYZE BUFFERS. If the proof depends on estimates, state whether the estimates match actual rows. If they do not, propose ANALYZE, extended statistics, or a query rewrite before adding more indexes.
-
-A strong answer sounds operational: "The dashboard reads rare pending orders by recent time. The partial index contains only pending rows ordered by placed_at, so the planner can avoid scanning delivered rows and can stop early for the LIMIT. It costs one extra index entry only for rows that enter the pending state, not for every delivered order. I verified it by comparing buffers and actual rows before and after." That is the level of reasoning Phase 7b expects.
+A strong explanation says: "The query predicate is `lower(email) = lower($1)`, so a raw email index does not match. The expression index stores `lower(email)` and lets the planner seek the normalized value. I would standardize all case-insensitive lookup SQL on this expression, verify buffers and actual rows with EXPLAIN ANALYZE, and consider a generated normalized email column if this becomes a core identity invariant." That explanation connects the expression, the query, and the operational maintenance cost.
 
 ## References and Further Reading
 
-Use `docs/indexing-playbook-part2.md` as the local reference for partial, expression, GIN, GiST, and BRIN choices. Keep `docs/indexing-playbook-part1.md` nearby for B-tree, composite, covering, and access-path fundamentals. PostgreSQL's official documentation on indexes, operator classes, EXPLAIN, and planner statistics is the external reference set, but the lab proof is the source of truth for each exercise.
+Use `docs/indexing-playbook-part2.md` for expression index checks and `docs/constraints-cookbook.md` when the derived value should become an enforced data invariant.

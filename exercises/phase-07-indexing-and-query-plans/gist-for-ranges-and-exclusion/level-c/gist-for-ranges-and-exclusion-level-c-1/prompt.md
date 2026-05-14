@@ -1,9 +1,13 @@
 # GiST for Ranges and Exclusion Level C1
 
-Investigate the GiST-backed exclusion lesson. First, try to reason about an
-overlap rule without a GiST-backed exclusion constraint and explain why
-PostgreSQL exclusion constraints require a supporting access method. Then pivot
-to the read workload: run a range `&&` query, add the GiST index that supports
-that operator, and prove the indexed range search is fast at scale.
+## Scenario
 
-Record the before and after plan and explain the maintenance tradeoff.
+Scheduling needs to find and prevent overlapping provider appointment windows.
+
+## Task
+
+Run the before query, make the smallest defensible change, run ANALYZE when statistics can change, and capture the after plan. Defend whether the requirement is read performance, write-time correctness, or both with a GiST-backed range overlap query or exclusion constraint using the && operator.
+
+## Required Artifact
+
+Submit the relevant SQL or critique notes plus the before/after plan observations. Name the read benefit, write or storage cost, and the condition that would make you remove or defer the index.

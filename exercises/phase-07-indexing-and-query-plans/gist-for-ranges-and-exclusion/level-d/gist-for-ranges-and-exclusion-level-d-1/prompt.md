@@ -1,5 +1,13 @@
 # GiST for Ranges and Exclusion Level D1
 
-Use pgfound lab explain to investigate GiST for Ranges and Exclusion. Identify the workload, propose the matching index or statistics action, run ANALYZE, and compare estimated rows, actual rows, buffers, and node types.
+## Scenario
 
-Record the before and after plan and explain the maintenance tradeoff.
+Scheduling needs to find and prevent overlapping provider appointment windows.
+
+## Task
+
+Critique the proposed fix. Name the broken assumption, capture or describe the plan evidence, and defend whether the requirement is read performance, write-time correctness, or both. Your answer must include the artifact: a GiST-backed range overlap query or exclusion constraint using the && operator.
+
+## Required Artifact
+
+Submit the relevant SQL or critique notes plus the before/after plan observations. Name the read benefit, write or storage cost, and the condition that would make you remove or defer the index.

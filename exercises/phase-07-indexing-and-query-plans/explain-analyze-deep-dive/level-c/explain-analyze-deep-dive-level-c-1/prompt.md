@@ -1,5 +1,13 @@
 # EXPLAIN ANALYZE Deep Dive Level C1
 
-Use pgfound lab explain to investigate EXPLAIN ANALYZE Deep Dive. Identify the workload, propose the matching index or statistics action, run ANALYZE, and compare estimated rows, actual rows, buffers, and node types.
+## Scenario
 
-Record the before and after plan and explain the maintenance tradeoff.
+A tenant-and-status query has a severe estimated rows versus actual rows mismatch.
+
+## Task
+
+Run the before query, make the smallest defensible change, run ANALYZE when statistics can change, and capture the after plan. Defend whether the next change should be ANALYZE, extended statistics, a query rewrite, or an index with plan evidence from rows, loops, buffers, and CREATE STATISTICS before adding another index.
+
+## Required Artifact
+
+Submit the relevant SQL or critique notes plus the before/after plan observations. Name the read benefit, write or storage cost, and the condition that would make you remove or defer the index.

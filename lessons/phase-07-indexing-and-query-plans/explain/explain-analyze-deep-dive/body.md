@@ -2,72 +2,58 @@
 
 ## Problem Framing
 
-Phase 7b starts from a stricter rule than a catalog tour: every index exists because a concrete query pattern and a real data distribution made it a better tradeoff than the alternatives. EXPLAIN ANALYZE Deep Dive is taught through that rule. A learner should be able to point at the predicate, join key, sort key, containment operator, or range operator that creates the need. They should also be able to point at the rows that will not benefit, because those rows still pay storage and maintenance cost when an index is too broad.
+An index recommendation is weak unless the learner can read the plan that proves or disproves it. This lesson goes deeper than naming node types. It focuses on estimated rows, actual rows, loops, buffers, timing, and the places where planner statistics explain surprising choices. The goal is to make a learner slow down before adding another index. Sometimes the problem is not the missing index; it is a bad estimate, stale statistics, correlated columns, or a query shape that hides selectivity.
 
-The working domains are intentionally familiar. Ecommerce orders give us a skewed status distribution where delivered orders dominate and pending, refunded, and canceled rows are operationally hot but rare. Event-heavy operations give us append-heavy rows where occurred_at usually tracks physical insertion order. Scheduling gives us time ranges that can overlap, contain one another, and require exclusion-style correctness. Phase 4b introduced arrays, ranges, and JSONB as modeling tools; this lesson returns to them with the planner in the room.
-
-The central operational question is not "can PostgreSQL create this index?" The question is "which repeated query becomes cheaper, how do we prove it, and what does the system now have to maintain?" A full B-tree on status may be an attractive first guess, but if most rows have the same value it can be a poor access path. A partial index can be excellent when the predicate is stable and exactly matches the hot workflow. A GIN index can be decisive for JSONB containment and array membership, yet expensive to build and maintain. GiST can support range overlap and exclusion logic, but it is not a universal replacement for B-tree. BRIN can summarize large chronological tables in tiny storage, but only when physical correlation makes those summaries selective enough.
+`EXPLAIN` shows the plan PostgreSQL expects to run. `EXPLAIN ANALYZE` runs the query and shows what happened. `BUFFERS` adds page-read evidence. Together they let the learner compare model and reality. If estimated rows and actual rows are close, the planner had a good model even if the result is still too slow. If estimated rows are off by orders of magnitude, the investigation should turn toward statistics and predicates before more indexes are added.
 
 ## Minimal Concept Introduction
 
-The planner matches query predicates to available access paths using operator classes, statistics, row estimates, and cost settings. In this lesson the required vocabulary includes estimated rows, actual rows, CREATE STATISTICS. The practical habit is always the same: write the slow or suspicious query, run EXPLAIN or EXPLAIN ANALYZE BUFFERS, read the estimated rows and actual rows, then change one thing. After the change, run the same query again and compare the plan. The goal is not merely to see an index name. The goal is to see fewer pages read, fewer rows filtered after access, a lower cost estimate when statistics support it, or a more appropriate node type for the data shape.
+A plan is a tree. Each node has a cost estimate, an estimated row count, actual timing, actual rows, and loops. A node that runs once and returns too many rows is different from a node that runs thousands of times because it is inside a nested loop. Buffers reveal whether the query is doing substantial heap or index page work. Timing is useful, but buffers and row counts are more stable across machines.
 
-Partial indexes add a WHERE clause to the index definition. PostgreSQL can use the index only when the query predicate implies that WHERE clause. This is why a partial index on status = 'pending' is not automatically used by a query that says status IN ('pending', 'refunded'), even when pending is one of the values. Expression indexes store the result of an expression such as lower(email) or date_trunc('day', created_at). They are powerful when application queries consistently use the same expression, but fragile when the query drifts to a different expression or time zone rule.
-
-GIN indexes invert membership-like structures: JSONB keys and values, array elements, and later full-text lexemes. The default jsonb_ops class supports more operators; jsonb_path_ops is smaller and targeted for containment. GiST indexes are a framework for search trees over shapes, ranges, and many extension types. For ranges, GiST supports operators such as && and @>. BRIN stores summaries for ranges of heap pages. It is often the right first thought for very large append-heavy event tables filtered by time.
+Extended statistics matter when columns are correlated. Single-column statistics may know the distribution of `tenant_id` and `status` separately but miss that one large tenant owns most open records. `CREATE STATISTICS` can teach PostgreSQL about dependencies, most-common value combinations, or ndistinct relationships. That can change row estimates without adding an index.
 
 ## Worked Example
 
-Suppose the operations dashboard asks for pending orders every minute:
+Worked example anchor: tenant-status-row-estimate-mismatch
+
+A SaaS activity query filters by tenant and status:
 
 ```sql
 EXPLAIN (ANALYZE, BUFFERS)
-SELECT id, order_number, placed_at
-FROM ecommerce.orders
-WHERE status = 'pending'
-ORDER BY placed_at DESC
-LIMIT 50;
+SELECT id, tenant_id, status, created_at
+FROM saas.activity_events
+WHERE tenant_id = '00000000-0000-0000-0000-000000000042'
+  AND status = 'open'
+ORDER BY created_at DESC
+LIMIT 100;
 ```
 
-A full index on status may still carry entries for every delivered order. If delivered rows are more than ninety percent of the table, that index is larger than the hot query needs, and it must be updated for rows the dashboard will never read. A partial index can encode the actual workload:
+The suspicious plan estimates 50 rows but returns 50000 before sorting and limiting. That mismatch can make PostgreSQL choose a nested loop, sort, or index path that looked cheap on paper. Before adding a specialized index, teach the planner about the relationship:
 
 ```sql
-CREATE INDEX orders_pending_recent_idx
-ON ecommerce.orders (placed_at DESC)
-WHERE status = 'pending';
-ANALYZE ecommerce.orders;
+CREATE STATISTICS activity_events_tenant_status_stats
+    (dependencies, mcv)
+ON tenant_id, status
+FROM saas.activity_events;
+ANALYZE saas.activity_events;
 ```
 
-The verification step is part of the answer. The post-change plan should show an index access path that can satisfy the pending predicate and recent ordering with far fewer buffers. If the query is written as lower(status) = 'pending', or as status <> 'delivered', the partial-index predicate may not match. That failure is not PostgreSQL being stubborn; it is the planner refusing to assume a condition that is not guaranteed by the query text and available constraints.
-
-For JSONB, the same workflow applies with a different access method:
-
-```sql
-CREATE INDEX events_payload_gin_path_idx
-ON events.events USING gin (payload jsonb_path_ops);
-ANALYZE events.events;
-```
-
-A containment predicate such as payload @> '{"phase": 7, "severity": "warning"}' can now be tested before and after the index. If the query extracts a text value with payload ->> 'severity' and compares it with equality, the containment-oriented GIN index may not help. The index has to match the operator family used by the query.
+Run the same plan again. The expected improvement is not always a faster query by itself. The first proof is that estimated rows move closer to actual rows. Once the estimate is honest, an index decision becomes more meaningful. A composite index may still be right, but now it is chosen against a better model.
 
 ## Diagnostic Questions
 
-Ask these questions before accepting an index design. What is the exact predicate or operator that must become faster? How many rows match it, both as an estimate and as actual rows? Is the data distribution skewed, correlated with insertion order, or mostly uniform? Does the proposed index make writes, vacuum, or autovacuum materially more expensive? Does the query predicate imply the partial-index WHERE clause exactly enough for the planner to use it? Does the expression in the query match the expression in the index? Is a GIN, GiST, or BRIN index being chosen because the data type and operator demand it, or because the index name sounds advanced?
+Ask where the largest estimate error appears. Compare estimated rows and actual rows for each node, not only the final result. Ask whether high loops amplify a small per-loop cost. Ask whether buffers are mostly shared hits, reads, or dirtied pages. Ask whether a filter removes many rows after access, which may indicate the index does not match enough predicates. Ask whether stale statistics, correlation, or data skew explain the mismatch.
 
-When estimates are badly wrong, do not jump directly to forcing a plan. PostgreSQL does not support optimizer hints in core, and this course treats that as a design signal. Run ANALYZE. Inspect whether columns are correlated. Consider extended statistics with CREATE STATISTICS when a combination of columns is misestimated because single-column histograms miss the relationship. A plan with estimated rows of 10 and actual rows of 200000 is a statistics problem before it is an index problem.
+Also ask whether the query was run with representative parameters. A plan captured for a small tenant may not explain a large tenant. A prepared statement may use a generic plan. A local dev database may not have production skew.
 
 ## Common Pitfalls
 
-The common failure is adding a specialized index without a workload. Partial indexes fail when the predicate in production is broader than the predicate in the index, when the rare value stops being rare, or when a prepared statement hides constants in a way that prevents implication. Expression indexes fail when applications apply inconsistent normalization, such as lower(email) in one path and email ILIKE in another. GIN indexes fail as a tradeoff when updates are frequent, pending lists grow, and the query volume does not justify the maintenance. GiST range indexes fail when the query can use a simpler scalar B-tree predicate. BRIN fails when the table is randomly updated or physically uncorrelated with the filtered column.
-
-Another pitfall is reading EXPLAIN as a scoreboard. Lower estimated cost is not proof by itself, and an index scan is not always better than a sequential scan. The plan must be read with rows, loops, buffers, and timing. A Bitmap Heap Scan can be exactly right when many matching tuples are scattered across heap pages. An Index Only Scan may still fetch heap pages when the visibility map is not favorable. A sequential scan over a small table can be ideal.
+The common pitfall is reading an index scan as success and a sequential scan as failure. Another is chasing the top cost number while ignoring actual rows and loops. A third is treating timing from a single warm-cache run as proof. A fourth is adding indexes when `ANALYZE` or `CREATE STATISTICS` would address the planner's wrong assumptions. A fifth is comparing before and after plans while changing multiple things at once.
 
 ## Explain It Back
 
-Explain the index as a contract between query and data. For EXPLAIN ANALYZE Deep Dive, name the query pattern, the data distribution, the access method, and the maintenance cost. Then show the proof using EXPLAIN ANALYZE BUFFERS. If the proof depends on estimates, state whether the estimates match actual rows. If they do not, propose ANALYZE, extended statistics, or a query rewrite before adding more indexes.
-
-A strong answer sounds operational: "The dashboard reads rare pending orders by recent time. The partial index contains only pending rows ordered by placed_at, so the planner can avoid scanning delivered rows and can stop early for the LIMIT. It costs one extra index entry only for rows that enter the pending state, not for every delivered order. I verified it by comparing buffers and actual rows before and after." That is the level of reasoning Phase 7b expects.
+A strong explanation says: "The problematic node estimated 50 rows and returned 50000 actual rows, so the planner underpriced the downstream sort and join. Buffers show the query touched far more heap pages than expected. I would run ANALYZE, add `CREATE STATISTICS` for correlated tenant and status columns if needed, then retest the same query before deciding on a composite index." That answer reads the plan as evidence, not decoration.
 
 ## References and Further Reading
 
-Use `docs/indexing-playbook-part2.md` as the local reference for partial, expression, GIN, GiST, and BRIN choices. Keep `docs/indexing-playbook-part1.md` nearby for B-tree, composite, covering, and access-path fundamentals. PostgreSQL's official documentation on indexes, operator classes, EXPLAIN, and planner statistics is the external reference set, but the lab proof is the source of truth for each exercise.
+Use `docs/indexing-playbook-part2.md`, `docs/observability-intro.md`, and PostgreSQL documentation for `EXPLAIN`, planner statistics, and extended statistics.

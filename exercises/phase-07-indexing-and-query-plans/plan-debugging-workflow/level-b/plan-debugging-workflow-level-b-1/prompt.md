@@ -1,5 +1,13 @@
 # Plan Debugging Workflow Level B1
 
-Use pgfound lab explain to investigate Plan Debugging Workflow. Identify the workload, propose the matching index or statistics action, run ANALYZE, and compare estimated rows, actual rows, buffers, and node types.
+## Scenario
 
-Record the before and after plan and explain the maintenance tradeoff.
+A team is debugging a slow containment query and wants a repeatable one-change workflow.
+
+## Task
+
+Compare two candidate access paths or rewrites. Use row estimates, actual rows, buffers, and maintenance cost to decide whether the measured result supports committing the change. Include a before plan, one hypothesis, one measured change, and rollback criteria.
+
+## Required Artifact
+
+Submit the relevant SQL or critique notes plus the before/after plan observations. Name the read benefit, write or storage cost, and the condition that would make you remove or defer the index.
