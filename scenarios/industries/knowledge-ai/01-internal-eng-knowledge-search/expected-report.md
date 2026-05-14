@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: knowledge-internal-eng-search  |  Generated: 2026-05-13T16:52:14.900987Z
+Intake: knowledge-internal-eng-search  |  Generated: 2026-05-14T07:31:48.332586Z
 Industry: Knowledge and AI Retrieval  |  Tenancy: single_tenant  |  Ops tolerance: low
 
 ## Summary

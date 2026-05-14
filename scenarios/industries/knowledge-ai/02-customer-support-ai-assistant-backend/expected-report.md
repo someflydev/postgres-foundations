@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: knowledge-support-ai-assistant-backend  |  Generated: 2026-05-13T16:52:15.040020Z
+Intake: knowledge-support-ai-assistant-backend  |  Generated: 2026-05-14T07:31:48.675013Z
 Industry: Knowledge and AI Retrieval  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: medium
 
 ## Summary

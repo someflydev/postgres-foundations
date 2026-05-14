@@ -1,5 +1,5 @@
 {
-  "engine_version": "0.0.1",
+  "engine_version": "0.1.0",
   "followup_question_groups": {},
   "followup_questions": [],
   "full_intake": {
@@ -63,7 +63,7 @@
       "read_heavy"
     ]
   },
-  "generated_at": "2026-05-13T16:52:15.738720Z",
+  "generated_at": "2026-05-14T07:31:50.140671Z",
   "intake_id": "modernization-legacy-monolith-carveout",
   "intake_summary": {
     "industry": "modernization_bridge",

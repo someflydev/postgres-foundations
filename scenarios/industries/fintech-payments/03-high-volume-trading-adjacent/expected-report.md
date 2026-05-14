@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: fintech-high-volume-trading-adjacent  |  Generated: 2026-05-13T16:52:14.350328Z
+Intake: fintech-high-volume-trading-adjacent  |  Generated: 2026-05-14T07:31:47.194169Z
 Industry: Fintech Payments  |  Tenancy: single_tenant  |  Ops tolerance: low
 
 ## Summary

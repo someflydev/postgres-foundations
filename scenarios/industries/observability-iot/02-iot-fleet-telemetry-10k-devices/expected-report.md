@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: observability-iot-fleet-10k-devices  |  Generated: 2026-05-13T16:52:16.281756Z
+Intake: observability-iot-fleet-10k-devices  |  Generated: 2026-05-14T07:31:51.274874Z
 Industry: Observability and IoT  |  Tenancy: single_tenant  |  Ops tolerance: high
 
 ## Summary

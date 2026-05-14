@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: saas-multi-tenant-minimal  |  Generated: 2026-05-12T00:00:00Z
+Intake: saas-multi-tenant-minimal  |  Generated: 2026-05-14T07:36:44.877586Z
 Industry: SaaS Multi-tenant  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: low
 
 ## Summary

@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: logistics-last-mile-single-city  |  Generated: 2026-05-13T16:52:15.318828Z
+Intake: logistics-last-mile-single-city  |  Generated: 2026-05-14T07:31:49.272364Z
 Industry: Logistics and Geospatial Operations  |  Tenancy: single_tenant  |  Ops tolerance: low
 
 ## Summary

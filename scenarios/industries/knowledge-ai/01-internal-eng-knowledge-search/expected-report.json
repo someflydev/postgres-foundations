@@ -1,5 +1,5 @@
 {
-  "engine_version": "0.0.1",
+  "engine_version": "0.1.0",
   "followup_question_groups": {},
   "followup_questions": [],
   "full_intake": {
@@ -56,7 +56,7 @@
       "search_heavy"
     ]
   },
-  "generated_at": "2026-05-13T16:52:14.900987Z",
+  "generated_at": "2026-05-14T07:31:48.332586Z",
   "intake_id": "knowledge-internal-eng-search",
   "intake_summary": {
     "industry": "knowledge_ai",

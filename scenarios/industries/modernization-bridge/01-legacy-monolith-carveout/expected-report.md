@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: modernization-legacy-monolith-carveout  |  Generated: 2026-05-13T16:52:15.738720Z
+Intake: modernization-legacy-monolith-carveout  |  Generated: 2026-05-14T07:31:50.140671Z
 Industry: Modernization Bridge  |  Tenancy: single_tenant  |  Ops tolerance: low
 
 ## Summary

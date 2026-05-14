@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: modernization-zero-downtime-major-upgrade  |  Generated: 2026-05-13T16:52:16.005809Z
+Intake: modernization-zero-downtime-major-upgrade  |  Generated: 2026-05-14T07:31:50.722428Z
 Industry: Modernization Bridge  |  Tenancy: single_tenant  |  Ops tolerance: high
 
 ## Summary

@@ -1,5 +1,5 @@
 {
-  "engine_version": "0.0.1",
+  "engine_version": "0.1.0",
   "followup_question_groups": {},
   "followup_questions": [],
   "full_intake": {
@@ -55,7 +55,7 @@
       "append_heavy"
     ]
   },
-  "generated_at": "2026-05-13T16:52:14.075105Z",
+  "generated_at": "2026-05-14T07:31:46.685265Z",
   "intake_id": "fintech-startup-payments-gateway",
   "intake_summary": {
     "industry": "fintech_payments",

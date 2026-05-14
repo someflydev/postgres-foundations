@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: logistics-global-fleet-analytics  |  Generated: 2026-05-13T16:52:15.605360Z
+Intake: logistics-global-fleet-analytics  |  Generated: 2026-05-14T07:31:49.864270Z
 Industry: Logistics and Geospatial Operations  |  Tenancy: single_tenant  |  Ops tolerance: high
 
 ## Summary

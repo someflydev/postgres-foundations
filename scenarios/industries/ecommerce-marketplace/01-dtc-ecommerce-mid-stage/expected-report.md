@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: ecommerce-dtc-mid-stage  |  Generated: 2026-05-13T16:52:13.653985Z
+Intake: ecommerce-dtc-mid-stage  |  Generated: 2026-05-14T07:31:45.987185Z
 Industry: Ecommerce Marketplace  |  Tenancy: single_tenant  |  Ops tolerance: low
 
 ## Summary

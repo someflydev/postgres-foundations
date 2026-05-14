@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: observability-real-time-incident-ops  |  Generated: 2026-05-13T16:52:16.428479Z
+Intake: observability-real-time-incident-ops  |  Generated: 2026-05-14T07:31:51.579202Z
 Industry: Observability and IoT  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: medium
 
 ## Summary

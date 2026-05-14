@@ -1,5 +1,5 @@
 {
-  "engine_version": "0.0.1",
+  "engine_version": "0.1.0",
   "followup_question_groups": {},
   "followup_questions": [],
   "full_intake": {
@@ -65,7 +65,7 @@
       "analytics_adjacent"
     ]
   },
-  "generated_at": "2026-05-13T16:52:16.844764Z",
+  "generated_at": "2026-05-14T07:31:52.469124Z",
   "intake_id": "saas-multi-region-compliance",
   "intake_summary": {
     "industry": "saas_multi_tenant",

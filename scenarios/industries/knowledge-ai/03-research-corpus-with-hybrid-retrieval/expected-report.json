@@ -1,5 +1,5 @@
 {
-  "engine_version": "0.0.1",
+  "engine_version": "0.1.0",
   "followup_question_groups": {},
   "followup_questions": [],
   "full_intake": {
@@ -64,7 +64,7 @@
       "strong_tenant_locality"
     ]
   },
-  "generated_at": "2026-05-13T16:52:15.183144Z",
+  "generated_at": "2026-05-14T07:31:48.946517Z",
   "intake_id": "knowledge-research-corpus-hybrid-retrieval",
   "intake_summary": {
     "industry": "knowledge_ai",

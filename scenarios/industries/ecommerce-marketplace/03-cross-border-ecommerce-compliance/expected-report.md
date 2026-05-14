@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: ecommerce-cross-border-compliance  |  Generated: 2026-05-13T16:52:13.933773Z
+Intake: ecommerce-cross-border-compliance  |  Generated: 2026-05-14T07:31:46.451724Z
 Industry: Ecommerce Marketplace  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: medium
 
 ## Summary

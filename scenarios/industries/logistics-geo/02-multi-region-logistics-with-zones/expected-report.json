@@ -1,5 +1,5 @@
 {
-  "engine_version": "0.0.1",
+  "engine_version": "0.1.0",
   "followup_question_groups": {},
   "followup_questions": [],
   "full_intake": {
@@ -58,7 +58,7 @@
       "geo_query_heavy"
     ]
   },
-  "generated_at": "2026-05-13T16:52:15.462106Z",
+  "generated_at": "2026-05-14T07:31:49.565767Z",
   "intake_id": "logistics-multi-region-zones",
   "intake_summary": {
     "industry": "logistics_geo",

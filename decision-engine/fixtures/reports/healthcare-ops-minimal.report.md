@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: healthcare-ops-minimal  |  Generated: 2026-05-12T00:00:00Z
+Intake: healthcare-ops-minimal  |  Generated: 2026-05-14T07:36:43.983481Z
 Industry: Healthcare Operations  |  Tenancy: multi_tenant_database_per_tenant  |  Ops tolerance: low
 
 ## Summary

@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: logistics-multi-region-zones  |  Generated: 2026-05-13T16:52:15.462106Z
+Intake: logistics-multi-region-zones  |  Generated: 2026-05-14T07:31:49.565767Z
 Industry: Logistics and Geospatial Operations  |  Tenancy: single_tenant  |  Ops tolerance: medium
 
 ## Summary

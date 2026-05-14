@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: fintech-regional-bank-reconciliation  |  Generated: 2026-05-13T16:52:14.207336Z
+Intake: fintech-regional-bank-reconciliation  |  Generated: 2026-05-14T07:31:46.940340Z
 Industry: Fintech Payments  |  Tenancy: single_tenant  |  Ops tolerance: medium
 
 ## Summary

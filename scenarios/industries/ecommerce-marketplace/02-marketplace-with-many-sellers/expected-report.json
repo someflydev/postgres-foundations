@@ -1,5 +1,5 @@
 {
-  "engine_version": "0.0.1",
+  "engine_version": "0.1.0",
   "followup_question_groups": {},
   "followup_questions": [],
   "full_intake": {
@@ -55,7 +55,7 @@
       "analytics_adjacent"
     ]
   },
-  "generated_at": "2026-05-13T16:52:13.792469Z",
+  "generated_at": "2026-05-14T07:31:46.247363Z",
   "intake_id": "ecommerce-marketplace-many-sellers",
   "intake_summary": {
     "industry": "ecommerce_marketplace",

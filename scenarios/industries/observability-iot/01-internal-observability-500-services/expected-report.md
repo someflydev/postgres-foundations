@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: observability-internal-500-services  |  Generated: 2026-05-13T16:52:16.145473Z
+Intake: observability-internal-500-services  |  Generated: 2026-05-14T07:31:50.992168Z
 Industry: Observability and IoT  |  Tenancy: single_tenant  |  Ops tolerance: medium
 
 ## Summary

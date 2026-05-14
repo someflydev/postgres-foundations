@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: ecommerce-marketplace-many-sellers  |  Generated: 2026-05-13T16:52:13.792469Z
+Intake: ecommerce-marketplace-many-sellers  |  Generated: 2026-05-14T07:31:46.247363Z
 Industry: Ecommerce Marketplace  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: medium
 
 ## Summary

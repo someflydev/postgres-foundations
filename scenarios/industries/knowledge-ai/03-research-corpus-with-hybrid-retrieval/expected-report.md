@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: knowledge-research-corpus-hybrid-retrieval  |  Generated: 2026-05-13T16:52:15.183144Z
+Intake: knowledge-research-corpus-hybrid-retrieval  |  Generated: 2026-05-14T07:31:48.946517Z
 Industry: Knowledge and AI Retrieval  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: medium
 
 ## Summary

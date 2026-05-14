@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: saas-mid-stage-growth  |  Generated: 2026-05-13T16:52:16.706818Z
+Intake: saas-mid-stage-growth  |  Generated: 2026-05-14T07:31:52.175690Z
 Industry: SaaS Multi-tenant  |  Tenancy: multi_tenant_schema_per_tenant  |  Ops tolerance: medium
 
 ## Summary

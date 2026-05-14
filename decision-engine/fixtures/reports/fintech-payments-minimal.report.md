@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: fintech-payments-minimal  |  Generated: 2026-05-12T00:00:00Z
+Intake: fintech-payments-minimal  |  Generated: 2026-05-14T07:36:43.543577Z
 Industry: Fintech Payments  |  Tenancy: multi_tenant_shared_schema  |  Ops tolerance: medium
 
 ## Summary

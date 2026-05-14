@@ -1,5 +1,5 @@
 # PostgreSQL Architecture Recommendation
-Intake: healthcare-clinic-ops-ehr-adjacent  |  Generated: 2026-05-13T16:52:14.497008Z
+Intake: healthcare-clinic-ops-ehr-adjacent  |  Generated: 2026-05-14T07:31:47.529076Z
 Industry: Healthcare Operations  |  Tenancy: single_tenant  |  Ops tolerance: low
 
 ## Summary
