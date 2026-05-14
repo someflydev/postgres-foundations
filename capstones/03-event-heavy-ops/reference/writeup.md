@@ -1,5 +1,7 @@
 # Reference Writeup
 
+## Modeling
+
 This solution keeps the first production version in PostgreSQL core. The event
 table is partitioned by range on `event_time` because the dominant reads and the
 retention lifecycle are both time-bound. Monthly partitions are a practical
@@ -8,6 +10,8 @@ manageable while giving the planner a clear pruning boundary for last-day and
 seven-day investigations. If a real month becomes too large for maintenance
 windows, the next core adjustment is weekly partitions, not an automatic move to
 an extension.
+
+## Indexes
 
 The index posture starts deliberately small. BRIN on `event_time` matches an
 append-heavy event stream where physical locality mostly follows time. A btree
@@ -55,7 +59,7 @@ time-series operational expertise on the team. The adoption proposal must also
 cover managed-service availability, backup and restore behavior, upgrade
 process, and an exit plan for features that create lock-in.
 
-## Operational Tolerance
+## Operations and Operational Tolerance
 
 The team can operate SQL schema migrations, monthly partition creation, index
 checks, and planned detach/export retention. It cannot yet operate a complex

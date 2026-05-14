@@ -1,5 +1,7 @@
 # Reference Writeup
 
+## Modeling
+
 The modernization bridge keeps the legacy database as the source of truth for
 legacy customers, orders, and products. The new service owns its local schema:
 tenants, customer links, new local orders, and cached aggregates. This boundary
@@ -16,6 +18,8 @@ database does not have. RLS does not make the foreign legacy tables tenant-safe;
 the application must reach legacy rows through local mappings and reviewed
 queries.
 
+## Indexes
+
 The materialized view caches legacy order totals by customer. This is useful for
 dashboard and list screens that do not need every request to cross the FDW
 boundary. The cache is not a source of truth. Its refresh policy should be
@@ -24,6 +28,13 @@ on demand after high-value imports. The UI or API contract must say whether the
 aggregate is near-real-time or stale by design. If direct FDW reads show a new
 order and the cache does not, that is a refresh-policy issue, not a data-loss
 incident.
+
+The indexing plan keeps local lookup paths explicit: tenant identifiers,
+legacy IDs, and cache refresh predicates should have narrow btree support before
+any broader search or analytics feature is considered. Foreign tables are not a
+substitute for local indexes on new-service truth.
+
+## Operations
 
 FDW failure modes are operationally important. Network failure, remote
 credentials, remote locks, changed legacy schemas, missing predicate pushdown,

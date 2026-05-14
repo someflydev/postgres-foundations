@@ -35,7 +35,7 @@ def lint_writeup(
     lower = text.lower()
     signals: list[Signal] = []
     findings: list[Finding] = []
-    missing = [section for section in required_sections if section.lower() not in lower]
+    missing = [section for section in required_sections if not _section_present(lower, section)]
     if missing:
         signals.append(
             Signal("writeup_required_sections", "missing", ", ".join(missing), str(path))
@@ -121,3 +121,15 @@ def _sparse_sections(text: str, required_sections: list[str], minimum_words: int
         if len(WORD_RE.findall(body)) < minimum_words:
             sparse.append(section)
     return sparse
+
+
+def _section_present(lower_text: str, section: str) -> bool:
+    normalized = section.lower()
+    if normalized in lower_text:
+        return True
+    if normalized == "not yet":
+        return (
+            "not-yet" in lower_text
+            or re.search(r"\bnot\s+[a-z0-9_'\s-]{0,40}\syet\b", lower_text) is not None
+        )
+    return False

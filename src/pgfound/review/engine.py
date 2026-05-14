@@ -401,7 +401,7 @@ def _capstone_posture_signals(artifact_dir: Path) -> tuple[list[Signal], list[Fi
         ),
         Signal(
             "not_yet_section_present",
-            "present" if "not yet" in writeup_text else "missing",
+            "present" if _has_not_yet_language(writeup_text) else "missing",
             "Checked writeup for explicit not-yet posture.",
             _relative(artifact_dir / "writeup.md"),
         ),
@@ -435,7 +435,7 @@ def _capstone_posture_signals(artifact_dir: Path) -> tuple[list[Signal], list[Fi
         ),
         (
             "citus_without_distribution_key_justification",
-            "citus" in combined_sql or "citus" in writeup_text,
+            "citus" in combined_sql or _positive_extension_posture(writeup_text, "citus"),
             "distribution key" not in writeup_text and "distributed by" not in writeup_text,
             "Citus is proposed without distribution-key justification",
             (
@@ -448,7 +448,7 @@ def _capstone_posture_signals(artifact_dir: Path) -> tuple[list[Signal], list[Fi
             (
                 "timescaledb" in combined_sql
                 or "hypertable" in combined_sql
-                or "timescaledb" in writeup_text
+                or _positive_extension_posture(writeup_text, "timescaledb")
             ),
             "partition" not in writeup_text and "pg_partman" not in writeup_text,
             "TimescaleDB is proposed without partitioning comparison",
@@ -491,6 +491,24 @@ def _extension_posture_word_count(text: str) -> int:
     if not match:
         return 0
     return len(re.findall(r"[a-z0-9_']+", match.group("body")))
+
+
+def _has_not_yet_language(text: str) -> bool:
+    return (
+        "not yet" in text
+        or "not-yet" in text
+        or re.search(r"\bnot\s+[a-z0-9_'\s-]{0,40}\syet\b", text) is not None
+    )
+
+
+def _positive_extension_posture(text: str, extension_name: str) -> bool:
+    if extension_name not in text:
+        return False
+    positive_patterns = (
+        rf"{re.escape(extension_name)}\s+(?:is\s+)?(?:enabled|adopted|required|recommended|now)",
+        rf"(?:enable|adopt|require|recommend)\s+{re.escape(extension_name)}",
+    )
+    return any(re.search(pattern, text) for pattern in positive_patterns)
 
 
 def _uses_pgvector(sql_text: str) -> bool:
