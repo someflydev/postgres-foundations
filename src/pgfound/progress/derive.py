@@ -90,10 +90,12 @@ def compute_module_progress(
     """Mark a module met when every lesson cluster has a passing Level D attempt."""
     exercises = load_exercise_meta()
     lessons = load_lesson_meta()
-    passing_exercise_ids = {
+    passing_exit_exercise_ids = {
         attempt.exercise_id
         for attempt in attempts
-        if _attempt_passed(attempt) and exercises.get(attempt.exercise_id, None)
+        if (meta := exercises.get(attempt.exercise_id))
+        and meta.level == "D"
+        and _attempt_has_passing_rubric(attempt)
     }
     touched: dict[str, list[ExerciseAttempt]] = defaultdict(list)
     for attempt in attempts:
@@ -121,7 +123,7 @@ def compute_module_progress(
                     for exercise_id in lesson.exercise_ids
                     if exercises.get(exercise_id) and exercises[exercise_id].level == "D"
                 )
-            passed = sorted(set(level_d_ids) & passing_exercise_ids)
+            passed = sorted(set(level_d_ids) & passing_exit_exercise_ids)
             if passed:
                 met_clusters += 1
                 evidence.append(f"{cluster_id}: {passed[0]}")
@@ -145,6 +147,10 @@ def compute_module_progress(
 def _attempt_passed(attempt: ExerciseAttempt) -> bool:
     if attempt.check_result.lower() in PASSING_CHECK_RESULTS:
         return True
+    return _attempt_has_passing_rubric(attempt)
+
+
+def _attempt_has_passing_rubric(attempt: ExerciseAttempt) -> bool:
     if not attempt.rubric_scores:
         return False
     valid_scores = [score for score in attempt.rubric_scores.values() if score >= 0]

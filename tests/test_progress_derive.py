@@ -57,7 +57,8 @@ def test_module_progress_requires_level_d_per_cluster(monkeypatch) -> None:
             ),
         )
     )
-    assert progress["phase-01"].status == "met"
+    assert progress["phase-01"].status == "in-progress"
+    assert progress["phase-01"].evidence == ()
 
     progress = derive.compute_module_progress(
         (
@@ -76,3 +77,4 @@ def test_module_progress_requires_level_d_per_cluster(monkeypatch) -> None:
         )
     )
     assert progress["phase-01"].status == "met"
+    assert progress["phase-01"].evidence == ("cluster-one: lesson-b-level-d-1",)
