@@ -177,6 +177,20 @@ Cross-system integration references introduced by PROMPT_48:
 - `Makefile` targets: `test-integration`, `test-all`
 - `src/pgfound/content/seed_doctor.py`
 
+Public documentation references introduced by PROMPT_49:
+
+- `README.md`
+- `CONTRIBUTING.md`
+- `LICENSE`
+- `AUTHORS.md`
+- `docs/README.md`
+- `docs/decision-engine-known-edges.md`
+- `docs/reviewer-checklists/`
+- `scripts/readme-lint.sh`
+- `src/pgfound/docs.py`
+- `tests/test_readme.py`
+- `tests/test_docs_check.py`
+
 Decision-engine prompt pack references introduced by PROMPT_44:
 
 - `decision-engine/prompts/README.md`

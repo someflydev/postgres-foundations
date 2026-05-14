@@ -6,7 +6,7 @@ Current baseline:
 - CLI entry point: `pgfound = pgfound.cli:main`
 - CLI surface: `pgfound version`, `doctor`, `lab`, `ops`, `content`, `exercise`,
   `capstone`, `progress`, `review`, `decision`, `interview`, `llm`, `coach`,
-  `next`, and `remediate` command groups/commands.
+  `docs`, `next`, and `remediate` command groups/commands.
 - Test suite: `tests/test_cli.py`, `tests/test_paths.py`,
   `tests/test_lab_psql.py`, and Docker Compose tests.
 - Tooling: `uv`, `ruff`, `pytest`
@@ -52,6 +52,10 @@ Current baseline:
   `pgfound decision prompt list|render`; extended the reusable prompt renderer
   to support multiple prompt roots; and documented the planning prompt workflow
   in `docs/llm-usage.md`.
+- Public docs: PROMPT_49 rewrote `README.md`, added `docs/README.md`,
+  `docs/decision-engine-known-edges.md`, `CONTRIBUTING.md`, `LICENSE`,
+  `AUTHORS.md`, reviewer checklists, `scripts/readme-lint.sh`, and
+  `pgfound docs check`.
 - Industry scenario fixtures: PROMPT_45 added twelve scenario packs under
   `scenarios/industries/` for SaaS multi-tenant, fintech payments, healthcare
   ops, and ecommerce marketplace. Each pack has `scenario.json`,
@@ -363,6 +367,8 @@ Expected green checks:
 - `uv run pgfound content list`
 - `uv run pgfound content validate`
 - `uv run pgfound content lint`
+- `uv run pgfound docs check`
+- `scripts/readme-lint.sh`
 - `uv run pgfound decision catalog check`
 - `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json`
 - `uv run pgfound content seed ecommerce --phase 4a --reset`

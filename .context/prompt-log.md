@@ -225,7 +225,12 @@ Completed:
   scenario regressions, and admin/extension alignment; added shared lab
   availability fixtures, `make test-integration`, `make test-all`, and
   `docs/ci-requirements.md`.
+- PROMPT_49: Public-facing documentation pass; rewrote the top-level README,
+  added docs audience index and decision-engine known edges, added
+  `CONTRIBUTING.md`, MIT `LICENSE`, `AUTHORS.md`, reviewer checklists,
+  README lint script, `pgfound docs check`, and tests for README/docs checks.
 
 Next expected prompt:
 
-- PROMPT_49: top-level README, architecture docs, and contribution guide.
+- PROMPT_50: CI workflow, pre-commit configuration, and release-readiness
+  checks.
