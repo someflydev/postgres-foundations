@@ -264,6 +264,7 @@ def validate_content(
     path_globs: tuple[str, ...] = (),
     include_examples: bool = False,
     strict: bool = False,
+    schema_only: bool = False,
 ) -> ValidationReport:
     validate_schema_files()
     files = discover_content_files(path_globs=path_globs, include_examples=include_examples)
@@ -301,10 +302,11 @@ def validate_content(
             )
         loaded.append(LoadedContent(kind=kind, path=file_path, data=data))
 
-    cross_errors, cross_warnings = _cross_file_checks(loaded)
-    errors.extend(cross_errors)
-    warnings.extend(cross_warnings)
-    warnings.extend(_catalog_warnings(loaded))
+    if not schema_only:
+        cross_errors, cross_warnings = _cross_file_checks(loaded)
+        errors.extend(cross_errors)
+        warnings.extend(cross_warnings)
+        warnings.extend(_catalog_warnings(loaded))
 
     if strict and warnings:
         errors.extend(
@@ -504,7 +506,7 @@ def _industry_scenario_errors(item: LoadedContent) -> list[ValidationIssue]:
             ValidationIssue(
                 item.kind,
                 expected_json_path,
-                "expected-report.json is stale; run pgfound decision golden-refresh --confirm",
+                "expected-report.json is stale; run pgfound decision golden-refresh --dry-run",
             )
         )
 

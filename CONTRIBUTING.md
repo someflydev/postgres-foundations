@@ -30,13 +30,19 @@ Decision-engine changes should follow the four-layer prompt pack under
 ```bash
 uv sync
 uv run pgfound doctor
+uv run pre-commit install
 make fmt
 make lint
 make test
 ```
 
-`pre-commit install` is intentionally deferred until the CI and pre-commit
-configuration exists. PROMPT_50 is expected to add that setup.
+The pre-commit setup runs Ruff, light YAML checks for workflow and compose
+files, staged-file content validation, docs checks for staged Markdown files,
+and standard whitespace/file-size guards. To run the same hooks manually:
+
+```bash
+uv run pre-commit run --all-files
+```
 
 ## Commit And PR Hygiene
 
@@ -46,10 +52,7 @@ Use imperative subject lines. Prefer scope prefixes such as
 Before opening a PR, run:
 
 ```bash
-make lint
-uv run pgfound content validate
-uv run pgfound content lint
-uv run pytest -q
+make verify
 ```
 
 PRs should include the user need, changed artifacts, verification commands, and

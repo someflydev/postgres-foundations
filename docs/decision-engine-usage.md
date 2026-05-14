@@ -66,6 +66,10 @@ their `expected-report.json` and `expected-report.md` files with:
 uv run pgfound decision golden-refresh --confirm
 ```
 
+Use `uv run pgfound decision golden-refresh --dry-run` in CI or before a PR to
+fail without writing files when generated scenario reports differ from checked-in
+goldens.
+
 `uv run pgfound content validate` checks that scenario intakes validate, report
 goldens validate, and recorded scenario reports still match the current engine
 output.

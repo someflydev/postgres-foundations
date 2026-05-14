@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .venv
+            .ruff_cache
+          key: lint-${{ runner.os }}-${{ hashFiles('uv.lock', 'pyproject.toml') }}
+      - run: uv sync
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pgfound content validate --strict
+      - run: uv run pgfound content lint --strict
+      - run: uv run pgfound decision catalog check
+      - run: uv run pgfound decision rules lint
+      - run: uv run pgfound docs check
+
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .venv
+            .ruff_cache
+          key: unit-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('uv.lock', 'pyproject.toml') }}
+      - run: uv sync
+      - run: uv run pytest -q -m 'not docker'
+
+  integration-core:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: pgfound
+          POSTGRES_PASSWORD: pgfound
+          POSTGRES_DB: pgfound
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U pgfound -d pgfound"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      PGFOUND_DB_URL: postgresql://pgfound:pgfound@localhost:5432/pgfound
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .venv
+            .ruff_cache
+          key: integration-core-${{ runner.os }}-${{ hashFiles('uv.lock', 'pyproject.toml') }}
+      - run: uv sync
+      - run: uv run pytest -q -m 'docker and not (postgis or pgvector or timescale or citus or replication)'
+
+  decision-goldens:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .venv
+            .ruff_cache
+          key: decision-goldens-${{ runner.os }}-${{ hashFiles('uv.lock', 'pyproject.toml') }}
+      - run: uv sync
+      - run: uv run pgfound decision golden-refresh --dry-run

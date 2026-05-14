@@ -141,6 +141,8 @@ Options:
 - `--include-examples`: also validate the five schema example files.
 - `--paths GLOB`: restrict validation to one glob or file path. May be provided
   more than once.
+- `--schema-only`: validate selected files against their schemas without
+  running cross-file checks. This is intended for staged-file pre-commit checks.
 - `--strict`: treat warnings as errors.
 
 ## `pgfound content scaffold lesson`

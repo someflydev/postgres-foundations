@@ -1,0 +1,14 @@
+name: Nightly Heavy
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: nightly-heavy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  extension-profiles:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Heavy extension-profile jobs are intentionally manual until maintainers enable a schedule."

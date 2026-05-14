@@ -2,6 +2,7 @@
 
 import difflib
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -505,12 +506,23 @@ def content_show(kind: str, content_id: str) -> None:
     is_flag=True,
     help="Also validate schema example files under content-schemas/examples/.",
 )
-def content_validate(path_globs: tuple[str, ...], include_examples: bool, strict: bool) -> None:
+@click.option(
+    "--schema-only",
+    is_flag=True,
+    help="Only validate selected files against their schemas; skip cross-file checks.",
+)
+def content_validate(
+    path_globs: tuple[str, ...],
+    include_examples: bool,
+    strict: bool,
+    schema_only: bool,
+) -> None:
     """Validate content files and schema-level cross references."""
     report = content_validator.validate_content(
         path_globs=path_globs,
         include_examples=include_examples,
         strict=strict,
+        schema_only=schema_only,
     )
 
     table = Table(title="pgfound content validate")
@@ -1600,34 +1612,85 @@ def decision_diff(report_a: Path, report_b: Path) -> None:
         click.echo(line)
 
 
+def _decision_golden_json_matches(existing: str, generated: str) -> bool:
+    try:
+        existing_report = json.loads(existing)
+        generated_report = json.loads(generated)
+    except json.JSONDecodeError:
+        return existing == generated
+    if isinstance(existing_report, dict) and isinstance(generated_report, dict):
+        existing_report = dict(existing_report)
+        generated_report = dict(generated_report)
+        existing_report["generated_at"] = "<generated_at>"
+        generated_report["generated_at"] = "<generated_at>"
+    return existing_report == generated_report
+
+
+def _decision_golden_markdown_matches(existing: str, generated: str) -> bool:
+    generated_re = re.compile(r"Generated: [^|\n]+")
+    existing_normalized = generated_re.sub("Generated: <generated_at>", existing)
+    generated_normalized = generated_re.sub("Generated: <generated_at>", generated)
+    return existing_normalized.rstrip("\n") == generated_normalized.rstrip("\n")
+
+
 @decision.command("golden-refresh", help="Regenerate scenario decision report goldens.")
 @click.option(
     "--confirm",
     is_flag=True,
     help="Overwrite expected-report.json and expected-report.md files.",
 )
-def decision_golden_refresh(confirm: bool) -> None:
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Check whether generated scenario goldens match without writing files.",
+)
+def decision_golden_refresh(confirm: bool, dry_run: bool) -> None:
     """Refresh industry scenario decision-engine goldens."""
-    if not confirm:
-        raise click.ClickException("refusing to overwrite goldens without --confirm")
+    if confirm and dry_run:
+        raise click.ClickException("choose either --confirm or --dry-run")
+    if not confirm and not dry_run:
+        raise click.ClickException("choose --dry-run to check goldens or --confirm to overwrite")
 
     scenario_root = paths.SCENARIOS_DIR / "industries"
     intake_paths = sorted(scenario_root.glob("*/*/intake.json"))
     if not intake_paths:
         raise click.ClickException("no industry scenario intakes found")
 
+    stale_paths: list[Path] = []
     for intake_path in intake_paths:
         try:
             report = decision_engine.run_decision(intake_path)
         except decision_engine.DecisionValidationError as exc:
             raise click.ClickException(f"{intake_path}: {exc}") from exc
         scenario_dir = intake_path.parent
-        (scenario_dir / "expected-report.json").write_text(
-            decision_report_writer.render_json(report),
-            encoding="utf-8",
-        )
-        (scenario_dir / "expected-report.md").write_text(
-            decision_report_writer.render_markdown(report, show_scores=True),
-            encoding="utf-8",
-        )
+        expected_outputs = {
+            scenario_dir / "expected-report.json": decision_report_writer.render_json(report),
+            scenario_dir / "expected-report.md": decision_report_writer.render_markdown(
+                report,
+                show_scores=True,
+            ),
+        }
+        if dry_run:
+            for output_path, generated in expected_outputs.items():
+                if not output_path.exists():
+                    stale_paths.append(output_path)
+                    continue
+                existing = output_path.read_text(encoding="utf-8")
+                matches = (
+                    _decision_golden_json_matches(existing, generated)
+                    if output_path.suffix == ".json"
+                    else _decision_golden_markdown_matches(existing, generated)
+                )
+                if not matches:
+                    stale_paths.append(output_path)
+            continue
+        for output_path, generated in expected_outputs.items():
+            output_path.write_text(generated, encoding="utf-8")
         _success(f"refreshed decision golden: {scenario_dir}")
+
+    if stale_paths:
+        for path in stale_paths:
+            click.echo(f"stale decision golden: {path.relative_to(paths.REPO_ROOT)}", err=True)
+        raise click.ClickException("decision goldens are stale; run with --confirm to refresh")
+    if dry_run:
+        _success(f"PASS: checked {len(intake_paths)} scenario decision golden(s)")

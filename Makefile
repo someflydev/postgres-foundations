@@ -1,4 +1,4 @@
-.PHONY: install fmt lint test test-integration test-all cli lab-up lab-down lab-nuke lab-psql lab-logs lab-sandbox-up
+.PHONY: install fmt lint test test-integration test-all verify cli lab-up lab-down lab-nuke lab-psql lab-logs lab-sandbox-up
 
 COMPOSE := docker compose -f docker/docker-compose.yml
 
@@ -20,6 +20,9 @@ test-integration:
 
 test-all:
 	uv run pytest
+
+verify:
+	scripts/verify-all.sh
 
 cli:
 	uv run pgfound
