@@ -212,7 +212,13 @@ Completed:
   TimescaleDB, postgres_fdw, Citus, and logical-replication posture rules for
   the new fixtures; added `pgfound decision scenarios audit`; documented the
   scenario set; and added per-industry plus coverage-audit tests.
+- PROMPT_47: Progress tracking and remediation flows; replaced the progress
+  helper with a `pgfound.progress` package containing typed models, atomic
+  `tmp/progress/` storage, derived module progress, Rich dashboard/export
+  rendering, remediation-pack generation, next-action planning, coach reports,
+  and learner-as-architect `decision from-progress` intake generation; added
+  `docs/progress-and-remediation.md` and focused progress/remediation tests.
 
 Next expected prompt:
 
-- PROMPT_47: progress tracking and remediation flows on the training side.
+- PROMPT_48: cross-system integration tests and golden outputs.

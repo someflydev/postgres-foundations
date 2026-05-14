@@ -93,6 +93,10 @@ concrete, operational, and PostgreSQL core-first.
 - Capstone scheduling concurrency check: `uv run pgfound lab concurrency run scenarios/concurrency/scheduling-double-booking.yaml`
 - Explain plan: `uv run pgfound lab explain <sql-file-or-inline>`
 - Progress summary: `uv run pgfound progress show`
+- Progress init: `uv run pgfound progress init --name test`
+- Remediation pack: `uv run pgfound remediate --module phase-06`
+- Next recommendation: `uv run pgfound next`
+- Coach report: `uv run pgfound coach report tmp/progress/profile.json`
 - Lab up: `make lab-up`
 - Lab down: `make lab-down`
 - Lab reset: `make lab-nuke`

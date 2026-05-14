@@ -158,6 +158,17 @@ Decision-engine scoring and report references introduced by PROMPT_43:
 - `tests/test_report_writer.py`
 - `tests/test_decision_golden.py`
 
+Progress and remediation references introduced by PROMPT_47:
+
+- `src/pgfound/progress/`
+- `src/pgfound/progress/README.md`
+- `docs/progress-and-remediation.md`
+- `docs/cli.md`
+- `tests/test_progress_store.py`
+- `tests/test_progress_derive.py`
+- `tests/test_remediation.py`
+- `tests/test_next_command.py`
+
 Decision-engine prompt pack references introduced by PROMPT_44:
 
 - `decision-engine/prompts/README.md`
@@ -372,7 +383,7 @@ Phase 3 database-truth references introduced by PROMPT_13:
 Seed and runner polish references introduced by PROMPT_14:
 
 - `src/pgfound/content/seed_doctor.py`
-- `src/pgfound/progress.py`
+- `src/pgfound/progress/`
 - `src/pgfound/lab/psql.py`
 - `docs/learner-workflow.md`
 

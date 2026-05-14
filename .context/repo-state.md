@@ -5,8 +5,8 @@ Current baseline:
 - Python package: `src/pgfound/`
 - CLI entry point: `pgfound = pgfound.cli:main`
 - CLI surface: `pgfound version`, `doctor`, `lab`, `ops`, `content`, `exercise`,
-  `capstone`, `progress`, `review`, `decision`, and `interview` command
-  groups.
+  `capstone`, `progress`, `review`, `decision`, `interview`, `llm`, `coach`,
+  `next`, and `remediate` command groups/commands.
 - Test suite: `tests/test_cli.py`, `tests/test_paths.py`,
   `tests/test_lab_psql.py`, and Docker Compose tests.
 - Tooling: `uv`, `ruff`, `pytest`
@@ -337,6 +337,7 @@ Canonical docs:
 - `docs/anti-patterns/partition_too_early.md`
 - `capstones/README.md`
 - `docs/learner-workflow.md`
+- `docs/progress-and-remediation.md`
 - `docs/glossary.md`
 - `curriculum/README.md`
 - `curriculum/capability-layers.md`
@@ -389,6 +390,9 @@ Expected green checks:
 - `uv run pgfound lab explain --help`
 - `uv run pytest -q -m 'not docker'`
 - `uv run pgfound progress show`
+- `uv run pgfound progress init --name test`
+- `uv run pgfound remediate --module phase-06`
+- `uv run pgfound next`
 - `docker compose -f docker/docker-compose.yml config`
 
 Known local-only artifacts may exist after verification: `.venv/`,
