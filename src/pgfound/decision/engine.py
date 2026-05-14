@@ -285,6 +285,13 @@ def validate_intake_references(intake: dict[str, Any]) -> None:
         for slug in intake["workload_patterns"]:
             if slug not in workloads:
                 errors.append(f"intake references missing workload_pattern:{slug}")
+    if _catalog_present("extension"):
+        extensions = load_catalog_index("extension")
+        for field in ("explicit_bias_for", "explicit_bias_against"):
+            for bias in intake[field]:
+                slug = bias["extension_slug"]
+                if slug not in extensions:
+                    errors.append(f"intake references missing extension:{slug} in {field}")
     if errors:
         raise DecisionValidationError("\n".join(errors))
 

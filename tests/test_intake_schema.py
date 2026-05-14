@@ -58,3 +58,27 @@ def test_invalid_intake_fails(tmp_path: Path) -> None:
 
     with pytest.raises(DecisionValidationError):
         run_decision(invalid_path)
+
+
+def test_intake_extension_bias_slugs_must_exist(tmp_path: Path) -> None:
+    base_path = (
+        paths.DECISION_ENGINE_DIR / "fixtures" / "intakes" / "saas-multi-tenant-minimal.json"
+    )
+    intake = json.loads(base_path.read_text(encoding="utf-8"))
+    intake["explicit_bias_for"] = [
+        {"extension_slug": "not_a_real_extension", "reason": "Regression guard."}
+    ]
+    invalid_path = tmp_path / "invalid-extension-bias.json"
+    invalid_path.write_text(json.dumps(intake), encoding="utf-8")
+
+    with pytest.raises(DecisionValidationError, match="explicit_bias_for"):
+        run_decision(invalid_path)
+
+    intake["explicit_bias_for"] = []
+    intake["explicit_bias_against"] = [
+        {"extension_slug": "still_not_real", "reason": "Regression guard."}
+    ]
+    invalid_path.write_text(json.dumps(intake), encoding="utf-8")
+
+    with pytest.raises(DecisionValidationError, match="explicit_bias_against"):
+        run_decision(invalid_path)
