@@ -218,7 +218,14 @@ Completed:
   rendering, remediation-pack generation, next-action planning, coach reports,
   and learner-as-architect `decision from-progress` intake generation; added
   `docs/progress-and-remediation.md` and focused progress/remediation tests.
+- PROMPT_48: Cross-system integration suite under `tests/integration/` covering
+  learner progress/remediation/next flows, capstone start and reference review,
+  interview sessions, decision-engine scenario goldens and rule coverage gaps,
+  active content linting, cross-reference resolution, seed doctor checks,
+  scenario regressions, and admin/extension alignment; added shared lab
+  availability fixtures, `make test-integration`, `make test-all`, and
+  `docs/ci-requirements.md`.
 
 Next expected prompt:
 
-- PROMPT_48: cross-system integration tests and golden outputs.
+- PROMPT_49: top-level README, architecture docs, and contribution guide.

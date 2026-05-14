@@ -213,6 +213,13 @@ Current baseline:
   YAML-front-matter/Jinja2 format, added follow-up and closing-feedback prompt
   rendering, added `pgfound interview dispatch`, and added capstone reviewer
   prompt bundles under `tmp/reviews/capstone/<id>/<timestamp>/`.
+- Cross-system integration: PROMPT_48 added `tests/integration/` for
+  end-to-end learner, capstone, interview, decision-engine, content-reference,
+  seed-doctor, scenario-regression, and admin/extension alignment checks. The
+  suite uses shared `lab_available` and `sandbox_lab_available` fixtures, marks
+  sandbox-backed tests with `@pytest.mark.docker`, and is exposed through
+  `make test-integration` and `make test-all`. CI expectations are documented
+  in `docs/ci-requirements.md`.
 - Administration track A1-A2: PROMPT_31 added `curriculum/admin/map.json`
   with A1-A6 module anchors, validator/schema support for `admin_map` content
   and admin lesson `module_id` directory checks, 15 active lessons under

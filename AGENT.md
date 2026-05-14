@@ -33,6 +33,8 @@ concrete, operational, and PostgreSQL core-first.
 - Format: `uv run ruff format .`
 - Lint: `uv run ruff check .`
 - Test: `uv run pytest -q`
+- Integration tests: `make test-integration`
+- Full test target: `make test-all`
 - CLI smoke: `uv run pgfound --help`
 - Decision run: `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json`
 - Decision run JSON stdout: `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json --format json`

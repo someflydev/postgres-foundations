@@ -169,6 +169,14 @@ Progress and remediation references introduced by PROMPT_47:
 - `tests/test_remediation.py`
 - `tests/test_next_command.py`
 
+Cross-system integration references introduced by PROMPT_48:
+
+- `tests/conftest.py`
+- `tests/integration/`
+- `docs/ci-requirements.md`
+- `Makefile` targets: `test-integration`, `test-all`
+- `src/pgfound/content/seed_doctor.py`
+
 Decision-engine prompt pack references introduced by PROMPT_44:
 
 - `decision-engine/prompts/README.md`
