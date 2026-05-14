@@ -1,20 +1,25 @@
-"""Progress record helpers."""
+"""Progress record helpers and package API."""
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from pgfound import paths
+from pgfound.progress import derive, remediation, reports, store
+from pgfound.progress.models import (
+    CapstoneAttempt,
+    ExerciseAttempt,
+    InterviewAttempt,
+    LearnerProfile,
+    ModuleProgress,
+)
 
 
 @dataclass(frozen=True)
 class ProgressSummary:
-    """Aggregate progress counts."""
-
     profile_exists: bool
     exercise_files: int
     exercise_attempts: int
@@ -22,20 +27,20 @@ class ProgressSummary:
     capstone_attempts: int
 
 
+def utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
 def progress_root() -> Path:
-    return paths.REPO_ROOT / "tmp" / "progress"
+    return store.progress_root()
 
 
 def exercise_progress_path(exercise_id: str) -> Path:
-    return progress_root() / "exercises" / f"{exercise_id}.json"
+    return store.exercise_progress_path(exercise_id)
 
 
 def capstone_progress_path(capstone_id: str) -> Path:
-    return progress_root() / "capstones" / f"{capstone_id}.json"
-
-
-def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return store.capstone_progress_path(capstone_id)
 
 
 def append_exercise_attempt(
@@ -45,38 +50,30 @@ def append_exercise_attempt(
     completed_at: str | None = None,
     self_assessment: str = "not_recorded",
     check_result: str = "not_run",
+    rubric_scores: dict[str, int | float] | None = None,
     notes: str = "",
 ) -> Path:
-    """Append one exercise attempt in the canonical tmp/progress format."""
     path = exercise_progress_path(exercise_id)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    payload = read_exercise_progress(path)
-    payload["exercise_id"] = exercise_id
-    payload.setdefault("attempts", []).append(
-        {
-            "started_at": started_at,
-            "completed_at": completed_at or utc_now(),
-            "self_assessment": self_assessment,
-            "check_result": check_result,
-            "notes": notes,
-        }
+    payload = store.read_exercise_progress(path)
+    attempt = ExerciseAttempt(
+        exercise_id=exercise_id,
+        started_at=started_at,
+        completed_at=completed_at or utc_now(),
+        self_assessment=self_assessment,
+        check_result=check_result,
+        rubric_scores=rubric_scores or {},
+        notes=notes,
     )
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    return path
+    attempts = list(payload.setdefault("attempts", []))
+    attempts.append(attempt.to_attempt_dict())
+    return store.write_exercise_progress(exercise_id, attempts)
 
 
 def read_exercise_progress(path: Path) -> dict[str, Any]:
-    if not path.is_file():
-        return {"exercise_id": path.stem, "attempts": []}
-    data = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(data.get("attempts"), list):
-        msg = f"invalid progress record, attempts must be a list: {path}"
-        raise ValueError(msg)
-    return data
+    return store.read_exercise_progress(path)
 
 
 def summarize(root: Path | None = None) -> ProgressSummary:
-    """Read tmp/progress and return a minimal summary."""
     base = root or progress_root()
     exercise_files = 0
     exercise_attempts = 0
@@ -88,10 +85,7 @@ def summarize(root: Path | None = None) -> ProgressSummary:
     capstone_attempts = 0
     for path in sorted((base / "capstones").glob("*.json")):
         capstone_files += 1
-        data = json.loads(path.read_text(encoding="utf-8"))
-        attempts = data.get("attempts", [])
-        if isinstance(attempts, list):
-            capstone_attempts += len(attempts)
+        capstone_attempts += len(store.read_capstone_progress(path).get("attempts", []))
 
     return ProgressSummary(
         profile_exists=(base / "profile.json").is_file(),
@@ -100,3 +94,25 @@ def summarize(root: Path | None = None) -> ProgressSummary:
         capstone_files=capstone_files,
         capstone_attempts=capstone_attempts,
     )
+
+
+__all__ = [
+    "CapstoneAttempt",
+    "ExerciseAttempt",
+    "InterviewAttempt",
+    "LearnerProfile",
+    "ModuleProgress",
+    "ProgressSummary",
+    "append_exercise_attempt",
+    "capstone_progress_path",
+    "derive",
+    "exercise_progress_path",
+    "paths",
+    "progress_root",
+    "read_exercise_progress",
+    "remediation",
+    "reports",
+    "store",
+    "summarize",
+    "utc_now",
+]
