@@ -39,6 +39,7 @@ SEED_TABLE_RE = re.compile(
 )
 SYSTEM_SCHEMAS = {"information_schema", "pg_catalog", "pgfound"}
 NON_TABLE_REFS = {"lateral", "unnest"}
+QUERY_START_RE = re.compile(r"^\s*(?:WITH|SELECT|CREATE)\b", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
@@ -93,7 +94,8 @@ def run_seed_doctor(
             )
             continue
 
-        pack_phase_dir = packs_root / seed_pack_id / "phases"
+        pack_dir = packs_root / seed_pack_id
+        pack_phase_dir = pack_dir / "phases"
         try:
             phase_path = pack_phase_dir / _phase_file_name(phase)
         except ValueError:
@@ -107,7 +109,35 @@ def run_seed_doctor(
                 )
             )
             continue
-        if not phase_path.is_file():
+        if not phase_path.is_file() and not _has_requested_phase_file(pack_phase_dir, phase):
+            declared_tables = _schema_scope_tables(data)
+            if declared_tables and _phase_files(pack_phase_dir, phase):
+                seed_tables = _seed_tables(pack_phase_dir, phase)
+                seed_tables.update(declared_tables)
+                _check_solution_refs(
+                    exercise_path,
+                    data,
+                    exercise_id,
+                    seed_pack_id,
+                    phase,
+                    seed_tables,
+                    issues,
+                )
+                continue
+            root_sql_files = tuple(sorted(pack_dir.glob("*.sql")))
+            if root_sql_files:
+                seed_tables = _seed_tables_from_files(root_sql_files)
+                seed_tables.update(declared_tables)
+                _check_solution_refs(
+                    exercise_path,
+                    data,
+                    exercise_id,
+                    seed_pack_id,
+                    phase,
+                    seed_tables,
+                    issues,
+                )
+                continue
             issues.append(
                 _issue(
                     exercise_id,
@@ -120,22 +150,16 @@ def run_seed_doctor(
             continue
 
         seed_tables = _seed_tables(pack_phase_dir, phase)
-        solution_path = exercise_path.parent / str(data.get("solution_path", ""))
-        if solution_path.name != "solution.sql" or not solution_path.is_file():
-            continue
-        for table_ref in sorted(_solution_table_refs(solution_path)):
-            if _is_external_schema_ref(table_ref, seed_pack_id):
-                continue
-            if table_ref not in seed_tables:
-                issues.append(
-                    _issue(
-                        exercise_id,
-                        exercise_path,
-                        seed_pack_id,
-                        phase,
-                        f"solution references table not found in seed SQL: {table_ref}",
-                    )
-                )
+        seed_tables.update(_schema_scope_tables(data))
+        _check_solution_refs(
+            exercise_path,
+            data,
+            exercise_id,
+            seed_pack_id,
+            phase,
+            seed_tables,
+            issues,
+        )
 
     return SeedDoctorReport(exercises_checked=checked, issues=tuple(issues))
 
@@ -175,9 +199,28 @@ def _phase_files(pack_phase_dir: Path, phase: str) -> tuple[Path, ...]:
     files = []
     for path in pack_phase_dir.glob("phase-*.sql"):
         match = seed.PHASE_FILE_RE.match(path.name)
-        if match and seed.phase_sort_key(match.group("phase")) <= requested_key:
+        if not match:
+            continue
+        actual_key = seed.phase_sort_key(match.group("phase"))
+        include = actual_key <= requested_key
+        if phase.isdigit() and actual_key[0] == requested_key[0]:
+            include = True
+        if include:
             files.append(path)
     return tuple(sorted(files, key=lambda path: seed.phase_sort_key(seed._phase_from_path(path))))
+
+
+def _has_requested_phase_file(pack_phase_dir: Path, phase: str) -> bool:
+    if (pack_phase_dir / _phase_file_name(phase)).is_file():
+        return True
+    if not phase.isdigit():
+        return False
+    requested_number = int(phase)
+    for path in pack_phase_dir.glob("phase-*.sql"):
+        match = seed.PHASE_FILE_RE.match(path.name)
+        if match and seed.phase_sort_key(match.group("phase"))[0] == requested_number:
+            return True
+    return False
 
 
 def _phase_file_name(phase: str) -> str:
@@ -189,8 +232,12 @@ def _phase_file_name(phase: str) -> str:
 
 
 def _seed_tables(pack_phase_dir: Path, phase: str) -> set[str]:
+    return _seed_tables_from_files(_phase_files(pack_phase_dir, phase))
+
+
+def _seed_tables_from_files(sql_files: tuple[Path, ...]) -> set[str]:
     tables: set[str] = set()
-    for sql_file in _phase_files(pack_phase_dir, phase):
+    for sql_file in sql_files:
         sql = sql_file.read_text(encoding="utf-8")
         for match in SEED_TABLE_RE.finditer(sql):
             schema = match.group("schema")
@@ -200,8 +247,47 @@ def _seed_tables(pack_phase_dir: Path, phase: str) -> set[str]:
     return tables
 
 
+def _schema_scope_tables(data: dict[str, Any]) -> set[str]:
+    schema_scope = data.get("schema_scope", {})
+    if not isinstance(schema_scope, dict):
+        return set()
+    tables = set()
+    for table_ref in schema_scope.get("tables", []):
+        table_ref = str(table_ref)
+        tables.add(table_ref)
+        tables.add(table_ref.rsplit(".", 1)[-1])
+    return tables
+
+
+def _check_solution_refs(
+    exercise_path: Path,
+    data: dict[str, Any],
+    exercise_id: str,
+    seed_pack_id: str,
+    phase: str,
+    seed_tables: set[str],
+    issues: list[SeedDoctorIssue],
+) -> None:
+    solution_path = exercise_path.parent / str(data.get("solution_path", ""))
+    if not solution_path.is_file():
+        return
+    for table_ref in sorted(_solution_table_refs(solution_path)):
+        if _is_external_schema_ref(table_ref, seed_pack_id):
+            continue
+        if table_ref not in seed_tables:
+            issues.append(
+                _issue(
+                    exercise_id,
+                    exercise_path,
+                    seed_pack_id,
+                    phase,
+                    f"solution references table not found in seed SQL: {table_ref}",
+                )
+            )
+
+
 def _solution_table_refs(solution_path: Path) -> set[str]:
-    sql = solution_path.read_text(encoding="utf-8")
+    sql = _query_like_sql(solution_path.read_text(encoding="utf-8"))
     created = {
         _format_table_ref(match.group("schema"), match.group("table"))
         for match in CREATE_TABLE_RE.finditer(sql)
@@ -215,7 +301,12 @@ def _solution_table_refs(solution_path: Path) -> set[str]:
     for match in TABLE_REF_RE.finditer(sql):
         schema = match.group("schema")
         table = match.group("table")
-        if schema in SYSTEM_SCHEMAS or table.lower() in NON_TABLE_REFS:
+        table_lower = table.lower()
+        if (
+            schema in SYSTEM_SCHEMAS
+            or table_lower in NON_TABLE_REFS
+            or table_lower.startswith("pg_")
+        ):
             continue
         table_ref = _format_table_ref(schema, table)
         if table_ref in created or table in created:
@@ -226,3 +317,17 @@ def _solution_table_refs(solution_path: Path) -> set[str]:
 
 def _format_table_ref(schema: str | None, table: str) -> str:
     return f"{schema}.{table}" if schema else table
+
+
+def _query_like_sql(sql: str) -> str:
+    """Keep statements where FROM/JOIN table references are meaningful."""
+    lines = []
+    for line in sql.splitlines():
+        stripped = line.split("--", 1)[0]
+        if stripped.strip():
+            lines.append(stripped)
+    statements = []
+    for statement in "\n".join(lines).split(";"):
+        if QUERY_START_RE.match(statement):
+            statements.append(statement)
+    return ";\n".join(statements)
