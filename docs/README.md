@@ -56,6 +56,7 @@ link map used by `pgfound docs check`.
 | --- | --- |
 | Author content | [Authoring](authoring.md), [Authoring Lessons](authoring-lessons.md), and [Authoring Exercises](authoring-exercises.md) |
 | Understand CI expectations | [CI Requirements](ci-requirements.md) |
+| Prepare a release | [Release Readiness](release-readiness.md) and [Known Gaps](known-gaps.md) |
 | Use postmortems | [Postmortem Template](postmortem-template.md) |
 | Extend admin modules | [Admin Track](admin-track/README.md) |
 | Extend extension modules | [Extension Track](extension-track/README.md) |

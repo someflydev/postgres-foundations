@@ -229,8 +229,13 @@ Completed:
   added docs audience index and decision-engine known edges, added
   `CONTRIBUTING.md`, MIT `LICENSE`, `AUTHORS.md`, reviewer checklists,
   README lint script, `pgfound docs check`, and tests for README/docs checks.
+- PROMPT_50: CI workflow, pre-commit configuration, and release readiness;
+  added GitHub Actions CI and manual heavy-profile workflow stub, pre-commit
+  hooks with staged content/docs wrappers, `scripts/verify-all.sh`,
+  `make verify`, release readiness and known-gaps docs, changelog/version
+  bump to 0.1.0, decision golden `--dry-run`, and CI/verify script tests.
 
 Next expected prompt:
 
-- PROMPT_50: CI workflow, pre-commit configuration, and release-readiness
-  checks.
+- None. The initial promptset is complete; future work should start at
+  PROMPT_51.txt only when explicitly added.

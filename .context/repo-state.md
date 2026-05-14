@@ -56,6 +56,12 @@ Current baseline:
   `docs/decision-engine-known-edges.md`, `CONTRIBUTING.md`, `LICENSE`,
   `AUTHORS.md`, reviewer checklists, `scripts/readme-lint.sh`, and
   `pgfound docs check`.
+- CI and release readiness: PROMPT_50 added GitHub Actions CI under
+  `.github/workflows/ci.yml`, a manual heavy-profile workflow stub,
+  `.pre-commit-config.yaml`, staged content/docs pre-commit wrapper scripts,
+  `scripts/verify-all.sh`, `make verify`, `docs/release-readiness.md`,
+  `docs/known-gaps.md`, `CHANGELOG.md`, package version `0.1.0`, and
+  `pgfound decision golden-refresh --dry-run`.
 - Industry scenario fixtures: PROMPT_45 added twelve scenario packs under
   `scenarios/industries/` for SaaS multi-tenant, fintech payments, healthcare
   ops, and ecommerce marketplace. Each pack has `scenario.json`,

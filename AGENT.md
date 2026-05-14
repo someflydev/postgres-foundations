@@ -35,6 +35,9 @@ concrete, operational, and PostgreSQL core-first.
 - Test: `uv run pytest -q`
 - Integration tests: `make test-integration`
 - Full test target: `make test-all`
+- Verify before push: `make verify`
+- Pre-commit install: `uv run pre-commit install`
+- Pre-commit all files: `uv run pre-commit run --all-files`
 - CLI smoke: `uv run pgfound --help`
 - Decision run: `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json`
 - Decision run JSON stdout: `uv run pgfound decision run decision-engine/fixtures/intakes/saas-multi-tenant-minimal.json --format json`
@@ -42,6 +45,7 @@ concrete, operational, and PostgreSQL core-first.
 - Decision report diff: `uv run pgfound decision diff decision-engine/fixtures/reports/saas-multi-tenant-minimal.report.md decision-engine/fixtures/reports/logistics-geo-minimal.report.md`
 - Decision golden update: `scripts/update-decision-goldens.sh --confirm`
 - Decision scenario golden refresh: `uv run pgfound decision golden-refresh --confirm`
+- Decision scenario golden dry-run: `uv run pgfound decision golden-refresh --dry-run`
 - Decision scenario coverage audit: `uv run pgfound decision scenarios audit`
 - Decision catalog list: `uv run pgfound decision catalog list --kind industry`
 - Decision catalog check: `uv run pgfound decision catalog check`
@@ -49,6 +53,7 @@ concrete, operational, and PostgreSQL core-first.
 - Decision prompt list: `uv run pgfound decision prompt list`
 - Decision prompt render: `uv run pgfound decision prompt render layer-2-evaluator/evaluate-intake --context tests/fixtures/evaluator-context.json`
 - Content validate: `uv run pgfound content validate`
+- Content staged schema validate: `uv run pgfound content validate --strict --schema-only --paths <path>`
 - Content examples validate: `uv run pgfound content validate --include-examples`
 - Content lint: `uv run pgfound content lint`
 - Docs check: `uv run pgfound docs check`
