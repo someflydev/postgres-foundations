@@ -26,4 +26,3 @@ stages:
     prompt_template: interview/stages/oral-defense
     budget_minutes: 10
 rubric_id: senior-backend
-

@@ -15,4 +15,3 @@ uv run pgfound llm render critique/query-critique \
 The rendering contract is intentionally plain Markdown plus YAML front matter.
 The platform records rendered prompts as audit artifacts before any future LLM
 dispatch layer is allowed to send them.
-

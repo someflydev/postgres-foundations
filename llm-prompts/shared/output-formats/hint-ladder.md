@@ -8,4 +8,3 @@ Return Markdown with exactly four hints:
 4. Near-solution hint.
 
 Do not provide a full final answer. Each hint should be usable independently.
-

@@ -45,11 +45,7 @@ def assert_scenario_valid(scenario_dir: Path) -> None:
 
 def load_report(industry_dir: str, scenario_dir: str) -> dict:
     report_path = (
-        paths.SCENARIOS_DIR
-        / "industries"
-        / industry_dir
-        / scenario_dir
-        / "expected-report.json"
+        paths.SCENARIOS_DIR / "industries" / industry_dir / scenario_dir / "expected-report.json"
     )
     return json.loads(report_path.read_text(encoding="utf-8"))
 

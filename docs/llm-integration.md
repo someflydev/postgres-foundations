@@ -30,4 +30,3 @@ uv run pgfound llm render critique/query-critique \
 The rendered Markdown should be saved with review artifacts before dispatch.
 Do not use LLM output as a substitute for running SQL, inspecting plans,
 checking constraints, or reproducing concurrency behavior in multiple sessions.
-

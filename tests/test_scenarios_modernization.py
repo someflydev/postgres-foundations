@@ -15,9 +15,7 @@ def test_modernization_bridge_recommends_migration_tools_without_sharding() -> N
     assert "citus" in slugs_by_class(carveout, "avoid_for_now")
 
     consolidation = load_report("modernization-bridge", "02-multi-database-consolidation")
-    assert {"logical_replication", "postgres_fdw"} <= slugs_by_class(
-        consolidation, "recommend_now"
-    )
+    assert {"logical_replication", "postgres_fdw"} <= slugs_by_class(consolidation, "recommend_now")
 
     upgrade = load_report("modernization-bridge", "03-near-zero-downtime-major-upgrade")
     assert {

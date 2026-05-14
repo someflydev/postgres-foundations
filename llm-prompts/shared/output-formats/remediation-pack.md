@@ -14,4 +14,3 @@ mistake it targets.
 ## Explainability Prompt
 
 One oral-defense prompt that forces the learner to explain the repaired model.
-

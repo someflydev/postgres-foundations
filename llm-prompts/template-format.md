@@ -46,4 +46,3 @@ Reference to a shared output-format file.
 Prompts should preserve self-directed practice. When a learner has not made an
 attempt, the model should ask for one or offer a minimal next observation step
 rather than solving the exercise.
-

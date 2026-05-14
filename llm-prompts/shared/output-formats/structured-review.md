@@ -18,4 +18,3 @@ List any concepts used before introduction. Say `None observed` when absent.
 ## Questions
 
 Two oral-defense questions that test whether the learner can explain the work.
-

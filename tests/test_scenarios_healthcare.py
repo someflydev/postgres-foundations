@@ -17,8 +17,7 @@ def test_healthcare_industry_scenarios_validate_and_match_goldens() -> None:
 def test_healthcare_scenarios_include_hipaa_and_audit_posture() -> None:
     scenario_root = paths.SCENARIOS_DIR / "industries" / "healthcare-ops"
     intakes = [
-        json.loads(path.read_text(encoding="utf-8"))
-        for path in scenario_root.glob("*/intake.json")
+        json.loads(path.read_text(encoding="utf-8")) for path in scenario_root.glob("*/intake.json")
     ]
     assert any("hipaa" in intake["security_constraints"] for intake in intakes)
     assert all("audit_required" in intake["security_constraints"] for intake in intakes)

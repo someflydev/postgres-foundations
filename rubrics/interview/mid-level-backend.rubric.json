@@ -90,4 +90,3 @@
   ],
   "notes": "Signal patterns intentionally use weak transcript heuristics until PROMPT_29/30 add LLM-assisted review."
 }
-

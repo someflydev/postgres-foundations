@@ -24,4 +24,3 @@ assistant, not a replacement for judgment.
 Current signal families include correctness comparison, plan comparison, schema
 artifact checks, RLS/index/runbook presence, writeup section lint, extension
 posture checks, and concurrency scenario results.
-
