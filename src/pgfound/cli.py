@@ -14,6 +14,7 @@ from rich.console import Console
 from rich.table import Table
 
 import pgfound
+from pgfound import docs as docs_checker
 from pgfound import exercise as exercise_runner
 from pgfound import ops as ops_queries
 from pgfound import paths
@@ -74,6 +75,24 @@ def version() -> None:
 @main.group(help="Run operational PostgreSQL lab helpers.")
 def ops() -> None:
     """Run operational PostgreSQL lab helpers."""
+
+
+@main.group(help="Validate repository documentation.")
+def docs() -> None:
+    """Validate repository documentation."""
+
+
+@docs.command("check", help="Validate docs links and report orphan docs pages.")
+def docs_check() -> None:
+    """Validate docs links and report orphan docs pages."""
+    result = docs_checker.validate_markdown_links(paths.REPO_ROOT / "docs")
+    for warning in result.warnings:
+        click.echo(f"warning: {warning}")
+    for error in result.errors:
+        click.echo(f"error: {error}", err=True)
+    if result.errors:
+        raise click.ClickException("docs check found broken links")
+    click.echo("docs check passed")
 
 
 @ops.command("query", help="Run a canonical monitoring SQL script against the lab.")

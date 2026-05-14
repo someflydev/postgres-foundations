@@ -10,6 +10,7 @@ fmt:
 
 lint:
 	uv run ruff check .
+	scripts/readme-lint.sh
 
 test:
 	uv run pytest
